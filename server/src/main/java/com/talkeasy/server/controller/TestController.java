@@ -1,4 +1,4 @@
-package com.talkeasy.server.common.controller;
+package com.talkeasy.server.controller;
 
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.service.TestService;
