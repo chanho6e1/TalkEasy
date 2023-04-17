@@ -1,0 +1,69 @@
+{
+  "groups": [
+    {
+      "name": "",
+      "type": "com.talkeasy.server.config.SwaggerConfiguration",
+      "sourceType": "com.talkeasy.server.config.SwaggerConfiguration"
+    },
+    {
+      "name": "app",
+      "type": "com.talkeasy.server.config.properties.AppProperties",
+      "sourceType": "com.talkeasy.server.config.properties.AppProperties"
+    },
+    {
+      "name": "app.auth",
+      "type": "com.talkeasy.server.config.properties.AppProperties$Auth",
+      "sourceType": "com.talkeasy.server.config.properties.AppProperties",
+      "sourceMethod": "getAuth()"
+    },
+    {
+      "name": "app.oauth2",
+      "type": "com.talkeasy.server.config.properties.AppProperties$OAuth2",
+      "sourceType": "com.talkeasy.server.config.properties.AppProperties",
+      "sourceMethod": "getOauth2()"
+    },
+    {
+      "name": "cors",
+      "type": "com.talkeasy.server.config.properties.CorsProperties",
+      "sourceType": "com.talkeasy.server.config.properties.CorsProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "app.auth.token-expiration-msec",
+      "type": "java.lang.Long",
+      "sourceType": "com.talkeasy.server.config.properties.AppProperties$Auth"
+    },
+    {
+      "name": "app.auth.token-secret",
+      "type": "java.lang.String",
+      "sourceType": "com.talkeasy.server.config.properties.AppProperties$Auth"
+    },
+    {
+      "name": "app.oauth2.authorized-redirect-uris",
+      "type": "java.util.List<java.lang.String>",
+      "sourceType": "com.talkeasy.server.config.properties.AppProperties$OAuth2"
+    },
+    {
+      "name": "cors.allowed-headers",
+      "type": "java.lang.String",
+      "sourceType": "com.talkeasy.server.config.properties.CorsProperties"
+    },
+    {
+      "name": "cors.allowed-methods",
+      "type": "java.lang.String",
+      "sourceType": "com.talkeasy.server.config.properties.CorsProperties"
+    },
+    {
+      "name": "cors.allowed-origins",
+      "type": "java.lang.String",
+      "sourceType": "com.talkeasy.server.config.properties.CorsProperties"
+    },
+    {
+      "name": "cors.max-age",
+      "type": "java.lang.Long",
+      "sourceType": "com.talkeasy.server.config.properties.CorsProperties"
+    }
+  ],
+  "hints": []
+}
