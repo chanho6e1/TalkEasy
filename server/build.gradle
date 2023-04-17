@@ -1,0 +1,124 @@
+buildscript {
+    ext {
+        querydslVersion = "5.0.0"
+    }
+}
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '2.7.9'
+    id 'io.spring.dependency-management' version '1.0.15.RELEASE'
+
+    //querydsl 추가
+    id 'com.ewerk.gradle.plugins.querydsl' version '1.0.10'
+}
+
+group = 'com.talkeasy'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+    querydsl.extendsFrom compileClasspath
+
+}
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+
+//JPA를 사용하기 위한 스타터 라이브러리
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+//OAuth 2.0 클라이언트를 사용하기 위한 스타터 라이브러리
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+//스프링 시큐리티를 사용하기 위한 스타터 라이브러리
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+//lombok설정
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+//스프링 부트 개발 도구 라이브러리 (코드 수정시 자동으로 재시작 등)
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+//인메모리 데이터베이스인 H2를 사용하기 위한 라이브러리
+    runtimeOnly 'com.h2database:h2'
+
+//스프링 웹 애플리케이션을 개발하기 위한 스타터 라이브
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+
+//스프링 부트가 바로 꺼지는 문제 해결을 위해 추가
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+
+// https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.22'
+
+//코드 수정시 서버 재시작
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+//스웨거 설정
+    implementation 'io.springfox:springfox-swagger2:2.9.2'
+    implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+//validation설정
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+
+//AWS 서비스를 사용하기 위한 스프링 부트 스타터
+//    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+
+
+    ////주석 풀 것들
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+//
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+//    implementation 'org.mongodb:mongodb-driver-sync:4.6.1'
+    implementation 'com.querydsl:querydsl-mongodb:5.0.0'
+
+
+    //mysql - querydsl 추가
+    implementation "com.querydsl:querydsl-jpa:${querydslVersion}"
+    implementation "com.querydsl:querydsl-apt:${querydslVersion}"
+
+
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+
+//querydsl 추가
+def querydslDir = "$buildDir/generated/querydsl"
+
+querydsl {
+    jpa = true
+    querydslSourcesDir = querydslDir
+}
+sourceSets {
+    main.java.srcDir querydslDir
+}
+compileQuerydsl {
+    options.annotationProcessorPath = configurations.querydsl
+}
+
+
+
+task copyPrivate(type: Copy) {
+    copy {
+        from '../talkeasy'
+        include "application.yml"
+        into 'src/main/resources'
+    }
+    copy {
+        from '../talkeasy'
+        include "application.properties"
+        into 'src/main/resources'
+    }
+}
