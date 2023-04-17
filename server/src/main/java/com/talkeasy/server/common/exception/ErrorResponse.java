@@ -18,8 +18,4 @@ public class ErrorResponse {
         this.message = message;
     }
 
-//    public ErrorResponse(String message, Object data) {
-//        this.message = message;
-//        this.data = data;
-//    }
 }

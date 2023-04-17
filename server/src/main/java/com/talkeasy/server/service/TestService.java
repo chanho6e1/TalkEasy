@@ -17,12 +17,11 @@ public class TestService {
     private final TestRepository testRepository;
     private final MongoTemplate mongoTemplate;
 
-    public List<Test> getAllBooks() {
+    public List<Test> getTests() {
         List<Test> test = testRepository.findAll();
-
         return test;
     }
-//
+
 
 
 }
