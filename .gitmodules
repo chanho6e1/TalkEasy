@@ -1,0 +1,3 @@
+[submodule "talkeasy"]
+	path = talkeasy
+	url = https://lab.ssafy.com/gms9424/talkeasy.git
