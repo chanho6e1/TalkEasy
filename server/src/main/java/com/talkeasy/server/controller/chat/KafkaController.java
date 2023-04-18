@@ -14,11 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 public class KafkaController {
 
     private final KafkaProducer producer;
-    
+
     @PostMapping
     public String sendMessage(@RequestParam("message") String message) {
         this.producer.sendMessage(message);
-
         return "success";
     }
 }
