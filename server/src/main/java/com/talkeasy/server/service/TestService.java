@@ -33,5 +33,13 @@ public class TestService {
         return tests;
     }
 
+//    public Page<Test> getTest(int page, int size) {
+//        Query query = Query.query(Criteria.where("category").is(1).and("is_noun").is(0));
+//        long count = mongoTemplate.count(query, Test.class);
+//        Pageable pageable = PageRequest.of(page, size);
+//        List<Test> tests = mongoTemplate.find(query.with(pageable), Test.class);
+//        return new PageImpl<>(tests, pageable, count);
+//    }
+
 
 }
