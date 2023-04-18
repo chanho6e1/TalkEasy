@@ -5,10 +5,17 @@ import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.stereotype.Service;
 
-@Document("test")
+import javax.persistence.Column;
+import org.springframework.data.annotation.Id;
+
+@Document("test1")
 @Getter
 @Setter
 public class Test {
-    private String name;
-    private String job;
+
+    @Id
+    private Integer id;
+    private String title;
+    private Integer category;
+    private Integer is_noun;
 }

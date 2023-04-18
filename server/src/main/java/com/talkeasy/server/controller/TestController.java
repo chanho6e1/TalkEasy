@@ -21,10 +21,9 @@ public class TestController {
     private final TestService testService;
 
     @GetMapping()
-    @ApiOperation(value = "test", notes = "test")
+    @ApiOperation(value = "어떤 컨트롤러인지", notes = "자세한 설명(어떤 값을 입력하고 어떤 값을 반환하는지)")
     public ResponseEntity<CommonResponse> test() {
-
-        return ResponseEntity.ok().body(CommonResponse.of(
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
                 "test 조회 성공", testService.getTests()));
     }
 }
