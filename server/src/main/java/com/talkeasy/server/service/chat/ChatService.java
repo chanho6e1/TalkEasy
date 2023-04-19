@@ -32,7 +32,7 @@ public class ChatService {
     public Object sendMessage(MessageDto messageDto) {
 
         log.info("send Message : " + messageDto.getMsg());
-//        kafkaTemplate.send(messageDto.getRoomId(), messageDto);
+        kafkaTemplate.send(messageDto.getRoomId(), messageDto);
 
         ChatRoomDetail chatRoom = new ChatRoomDetail(messageDto.getSender(), messageDto.getRoomId(), messageDto.getMsg(), LocalDateTime.now().toString(), LocalDateTime.now().toString());
         ChatRoomDetail newChat = mongoTemplate.insert(chatRoom);
