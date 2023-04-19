@@ -9,12 +9,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 
-@DynamicUpdate
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
 @Document(collection = "USER")
 @Builder
 public class Member {
