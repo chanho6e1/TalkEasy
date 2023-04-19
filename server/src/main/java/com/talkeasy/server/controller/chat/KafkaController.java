@@ -1,12 +1,10 @@
 package com.talkeasy.server.controller.chat;
 
+import com.talkeasy.server.dto.MessageDto;
 import com.talkeasy.server.service.chat.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,7 +14,7 @@ public class KafkaController {
     private final KafkaProducer producer;
 
     @PostMapping
-    public String sendMessage(@RequestParam("message") String message) {
+    public String sendMessage(@RequestBody MessageDto message) {
         this.producer.sendMessage(message);
         return "success";
     }
