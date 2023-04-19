@@ -91,6 +91,7 @@ dependencies {
 
     //kafka
     implementation 'org.springframework.kafka:spring-kafka'
+    implementation 'org.apache.kafka:kafka-streams'
 //
 }
 
@@ -111,8 +112,6 @@ sourceSets {
 compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
-
-
 
 task copyPrivate(type: Copy) {
     copy {
