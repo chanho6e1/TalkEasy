@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomUserDetailService implements UserDetailsService {
-    UserService userService;
+    MemberService userService;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Member member= userService.getUserInfo(username);

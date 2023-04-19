@@ -7,6 +7,7 @@ import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,9 +26,9 @@ import java.util.Date;
 @Log4j2
 @Configuration
 @RequiredArgsConstructor
-@PropertySource("classpath:application-oauth.properties")
+@PropertySource("classpath:/application.yml")
 public class JwtTokenProvider {
-    @Value("${app.auth.token.secret-key}")
+    @Value("${spring.app.auth.token.secret-key}")
     private String SECRET_KEY;
     private Long ACCESS_TOKEN_EXPIRE_LENGTH = 1000L*60*60000;
     private Long REFRESH_TOKEN_EXPIRE_LENGTH = 1000L*60*60*24*7000;

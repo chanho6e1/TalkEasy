@@ -113,15 +113,15 @@ compileQuerydsl {
 
 
 
-task copyPrivate(type: Copy) {
-    copy {
-        from '../talkeasy'
-        include "application.yml"
-        into 'src/main/resources'
-    }
-    copy {
-        from '../talkeasy'
-        include "application.properties"
-        into 'src/main/resources'
-    }
-}
+//task copyPrivate(type: Copy) {
+//    copy {
+//        from '../talkeasy'
+//        include "application.yml"
+//        into 'src/main/resources'
+//    }
+//    copy {
+//        from '../talkeasy'
+//        include "application.properties"
+//        into 'src/main/resources'
+//    }
+//}
