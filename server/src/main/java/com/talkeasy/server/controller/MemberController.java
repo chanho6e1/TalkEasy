@@ -1,17 +1,18 @@
 package com.talkeasy.server.controller;
 
 import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.service.user.MemberService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -29,17 +30,14 @@ public class MemberController {
     private final MemberService memberService;
 //    private final OAuthService oAuthService;
 
-    //    @Operation(summary = "login of user", description = "로그인")
-//    @ApiResponses({@ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(implementation = Token.class)))})
-//    @Parameters({@Parameter(name = "provider", description = "Name of provider", example = "kakao, naver, google")})
-    @GetMapping("/login/oauth")
-    public ResponseEntity<?> login(@RequestBody String accessToken) { // 인가 코드
-//        Token token = oAuthService.login(provider, code);
+    @ApiOperation(value = "로그인 하기", notes = "access token 을 보내면 유저정보 반환")
+    @PostMapping ("/login/oauth")
+    public ResponseEntity<CommonResponse> login(@RequestParam (value = "accessToken") String accessToken) { // 인가 코드
+        log.info("AccessToken : " + accessToken);
         String email;
         try {
-//            email = getInfo(accessToken);
-            email = "wldnjs4255@naver.com";
-            log.info("이메일을 받아왔어요!");
+            email = getInfo(accessToken);
+            log.info("이메일을 받아왔어요!" + email);
 
             if (memberService.findUserByEmail(email) != null) {
                 log.info("이미 데이터베이스에 아이디(login_id)가 있어요");
@@ -84,6 +82,7 @@ public class MemberController {
             if (hasEmail) {
                 email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
             }
+
             System.out.println(element.getAsJsonObject().get("kakao_account").getAsJsonObject());
             return email;
         } catch (MalformedURLException e) {
@@ -91,5 +90,6 @@ public class MemberController {
             e.printStackTrace();
             return "no_email";
         }
+
     }
 }

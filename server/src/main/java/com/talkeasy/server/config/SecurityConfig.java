@@ -35,7 +35,7 @@ public class SecurityConfig {
                         "/sign-api/exception/**"
                 ).permitAll()
                 .anyRequest().authenticated();
-
+        http.csrf().disable();
         return http.build();
 
 
