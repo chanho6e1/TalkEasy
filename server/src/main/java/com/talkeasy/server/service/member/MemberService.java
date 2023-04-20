@@ -1,4 +1,4 @@
-package com.talkeasy.server.service.user;
+package com.talkeasy.server.service.member;
 
 import com.talkeasy.server.domain.Member;
 import com.talkeasy.server.repository.member.MembersRepository;
@@ -8,8 +8,6 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -24,15 +22,11 @@ public class MemberService {
     }
 
     public Member findUserByEmail(String email) {
-        System.out.println("여기 들어옴");
-        List<Member> member = mongoTemplate.findAll(Member.class, "MEMBER");
-//        Object member = mongoTemplate.findOne(
-//                Query.query(Criteria.where("email").is(email)), Member.class);
-        System.out.println("size : "+member.size());
-        System.out.println("size : ");
+        return mongoTemplate.findOne(
+                Query.query(Criteria.where("email").is(email)), Member.class);
+    }
 
-//        System.out.println(member.get(0).getEmail());
-//        System.out.println(member.getEmail());
-        return null;
+    public void saveUser(Member member) {
+        memberRepository.save(member);
     }
 }

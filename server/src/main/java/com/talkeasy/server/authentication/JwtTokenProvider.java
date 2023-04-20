@@ -1,13 +1,11 @@
 package com.talkeasy.server.authentication;
 
-import com.talkeasy.server.domain.Member;
-import com.talkeasy.server.service.user.CustomUserDetailService;
+import com.talkeasy.server.service.member.CustomUserDetailService;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -38,26 +36,29 @@ public class JwtTokenProvider {
         this.SECRET_KEY = Base64.getEncoder().encodeToString(SECRET_KEY.getBytes());
     }
 
-    public String createAccessToken(Member member) {
-        return createToken(member, ACCESS_TOKEN_EXPIRE_LENGTH);
+    public String createAccessToken(String email) {
+
+        return createToken(email, ACCESS_TOKEN_EXPIRE_LENGTH);
     }
 
-    public String createRefreshToken(Member member) {
-        return createToken(member, REFRESH_TOKEN_EXPIRE_LENGTH);
+    public String createRefreshToken(String email) {
+        return createToken(email, REFRESH_TOKEN_EXPIRE_LENGTH);
     }
 
-    public String createToken(Member member, long expireLength) {
-        Claims claims = Jwts.claims().setSubject(member.getEmail()); // payload부분에 들어갈 정보 조각
-        claims.put("username", member.getEmail());
+    public String createToken(String email, long expireLength) {
+        Claims claims = Jwts.claims().setSubject(email); // payload부분에 들어갈 정보 조각
+        claims.put("email", email);
         Date now = new Date();
-        Date validity = new Date(now.getTime() + expireLength);
+
+        Date validity = new Date(now.getTime() + expireLength );
+
         Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
-//        Object SignatureAlgorithm = io.jsonwebtoken.SignatureAlgorithm.HS512;
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(validity)
-                .signWith(key, io.jsonwebtoken.SignatureAlgorithm.HS512)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
     }

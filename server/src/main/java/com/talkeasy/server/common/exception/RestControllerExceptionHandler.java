@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,12 +21,14 @@ import java.util.List;
 @Slf4j
 public class RestControllerExceptionHandler {
 
+
     // 로그인이 필요한 서비스에서 로그인 되어있지 않은 경우 예외 처리
     @ExceptionHandler(UnAuthorizedException.class)
     public ResponseEntity<ErrorResponse> resolveException(UnAuthorizedException exception) {
         ErrorResponse errResponse = exception.getErrResponse();
 //        return new ResponseEntity<>(errResponse, HttpStatus.UNAUTHORIZED);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errResponse);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
+//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errResponse);
 
     }
 
@@ -89,5 +92,17 @@ public class RestControllerExceptionHandler {
          ErrorResponse errResponse =  new ErrorResponse( "파일 용량이 너무 큽니다.");
 //        return new ResponseEntity<>(errResponse, HttpStatus.PAYLOAD_TOO_LARGE);
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(errResponse);
+    }
+
+    @ExceptionHandler(NullPointerException.class)
+    public ResponseEntity<ErrorResponse> resolveException(NullPointerException exception) {
+        ErrorResponse errResponse = new ErrorResponse("정보를 찾을 수 없습니다.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<ErrorResponse> resolveException(IOException exception) {
+        ErrorResponse errResponse = new ErrorResponse("서버에러");
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errResponse);
     }
 }

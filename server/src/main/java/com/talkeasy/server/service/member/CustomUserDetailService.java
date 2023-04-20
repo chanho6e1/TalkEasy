@@ -1,4 +1,4 @@
-package com.talkeasy.server.service.user;
+package com.talkeasy.server.service.member;
 
 import com.talkeasy.server.domain.Member;
 import org.springframework.security.core.userdetails.User;
@@ -18,7 +18,7 @@ public class CustomUserDetailService implements UserDetailsService {
             throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
         } else {
             UserDetails userDetails = User.builder()
-                    .username(member.getName())
+                    .username(member.getUserName())
                     .build();
             return userDetails;
 

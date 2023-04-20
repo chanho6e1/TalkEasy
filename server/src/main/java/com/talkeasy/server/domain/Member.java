@@ -16,43 +16,40 @@ import javax.validation.constraints.Size;
 @Builder
 public class Member {
     @Id
-    private String _id;
+    private String id;
 
-//    @Column(name = "name", length = 100)
-//    @NotNull
-//    @Size(max = 100)
-    private String name;
+    @Column(name = "name", length = 100)
+    @Size(max = 100)
+    private String userName;
 
-//    @Column(name = "email", length = 512, unique = false)
-//    @Nullable
-//    @Size(max = 512)
+    @Column(name = "email", length = 512, unique = false)
+    @Size(max = 512)
     private String email;
 
 //
-//    @Column(name = "profile", length = 512)
-////    @NotNull
-//    @Size(max = 512)
-//    private String imageUrl;
+    @Column(name = "imageUrl", length = 512)
+//    @NotNull
+    @Size(max = 512)
+    private String imageUrl;
+
+    @Column(name = "role")
+    private Integer role; //0:보호자/1:피보호자
+    @Column(name = "gender")
+    private Integer gender; //0:남/1:여
+//
+    @Column(name = "age")
+    private Integer age;
+
+    @Column(name = "accessToken")
+    private String accessToken;
+
+    @Column(name = "birthDate")
+    private String birthDate;
 //
 ////    @Column(name = "PROVIDER_TYPE", length = 20)
 ////    @Enumerated(EnumType.STRING)
 ////    @NotNull
 ////    private AuthProvider providerType;
 //
-//    //    String providerId;
-//    @Column(name = "role")
-//    @Nullable
-//    private Integer role; //0:보호자/1:피보호자
-//    @Column(name = "gender")
-//    @Nullable
-//    private Integer gender; //0:남/1:여
-//
-//    @Column(name = "age")
-//    @Nullable
-//    private Integer age;
-//
-//    @Column(name = "access_token")
-//    @Nullable
-//    private String accessToken;
-
+//        String providerId;
 }
