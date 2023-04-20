@@ -72,7 +72,7 @@ dependencies {
 
 
 //AWS 서비스를 사용하기 위한 스프링 부트 스타터
-//    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 
     ////주석 풀 것들
