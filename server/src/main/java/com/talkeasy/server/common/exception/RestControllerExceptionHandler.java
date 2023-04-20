@@ -1,6 +1,5 @@
 package com.talkeasy.server.common.exception;
 
-import com.talkeasy.server.common.CommonResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,7 +60,7 @@ public class RestControllerExceptionHandler {
     //type mismatch exception, 잘못된 인자
     @ExceptionHandler(ArgumentMismatchException.class)
     public ResponseEntity<ErrorResponse> resolveException(ArgumentMismatchException exception) {
-        ErrorResponse errResponse =  exception.getErrResponse();
+        ErrorResponse errResponse = exception.getErrResponse();
 //        return new ResponseEntity<>(errResponse, HttpStatus.BAD_REQUEST);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errResponse);
 
@@ -72,7 +70,7 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<ErrorResponse>> handleValidationExceptions(BindingResult bindingResult) {
         List<ErrorResponse> list = new ArrayList<>();
-        bindingResult.getAllErrors().forEach(c ->list.add(new ErrorResponse(c.getDefaultMessage(), ((FieldError)c).getField())));
+        bindingResult.getAllErrors().forEach(c -> list.add(new ErrorResponse(c.getDefaultMessage(), ((FieldError) c).getField())));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(list);
     }
 
@@ -80,7 +78,7 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(BindException.class)
     public ResponseEntity<List<ErrorResponse>> handleBindException(BindingResult bindingResult) {
         List<ErrorResponse> list = new ArrayList<>();
-        bindingResult.getAllErrors().forEach(c ->list.add(new ErrorResponse( c.getDefaultMessage(), ((FieldError)c).getField())));
+        bindingResult.getAllErrors().forEach(c -> list.add(new ErrorResponse(c.getDefaultMessage(), ((FieldError) c).getField())));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(list);
     }
 
@@ -89,7 +87,7 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
     public ResponseEntity<?> handleMaxUploadSizeExceptions(MaxUploadSizeExceededException exception) {
-         ErrorResponse errResponse =  new ErrorResponse( "파일 용량이 너무 큽니다.");
+        ErrorResponse errResponse = new ErrorResponse("파일 용량이 너무 큽니다.");
 //        return new ResponseEntity<>(errResponse, HttpStatus.PAYLOAD_TOO_LARGE);
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(errResponse);
     }
@@ -100,9 +98,10 @@ public class RestControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
     }
 
-    @ExceptionHandler(IOException.class)
-    public ResponseEntity<ErrorResponse> resolveException(IOException exception) {
-        ErrorResponse errResponse = new ErrorResponse("서버에러");
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errResponse);
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> resolveException(NotFoundException exception) {
+        ErrorResponse errResponse = new ErrorResponse("정보를 찾을 수 없습니다.");
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
     }
+
 }

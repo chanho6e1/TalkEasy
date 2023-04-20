@@ -1,17 +1,14 @@
 package com.talkeasy.server.domain;
 
-import com.sun.istack.NotNull;
-import com.sun.istack.Nullable;
-import lombok.*;
-import org.hibernate.annotations.DynamicUpdate;
+import lombok.Builder;
+import lombok.Getter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 import javax.validation.constraints.Size;
 
 @Getter
-@Setter
 @Document(collection = "MEMBER")
 @Builder
 public class Member {
@@ -31,12 +28,10 @@ public class Member {
 //    @NotNull
     @Size(max = 512)
     private String imageUrl;
-
     @Column(name = "role")
     private Integer role; //0:보호자/1:피보호자
     @Column(name = "gender")
     private Integer gender; //0:남/1:여
-//
     @Column(name = "age")
     private Integer age;
 

@@ -1,6 +1,5 @@
 package com.talkeasy.server.service.member;
 
-//import com.talkeasy.server.authentication.JwtTokenProvider;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.talkeasy.server.authentication.JwtTokenProvider;
@@ -28,16 +27,18 @@ public class OAuthService {
 
     public String getToken(String accessToken) {
         log.info("========== AccessToken : {} ", accessToken);
+
         String email = null;
         String token;
 
         try {
-            email = getInfo(accessToken);
-        }catch (IOException e){
-            log.info("========== exception 발생");
+            email = getEmail(accessToken);
+            log.info("========== getInfo email : {}", email);
+        } catch (IOException e) {
+            log.info("========== exception 발생 : {} ", e.getMessage());
         }
 
-        if(memberService.findUserByEmail(email)==null){
+        if (memberService.findUserByEmail(email) == null) {
             log.info("========== 데이터 베이스에 아이디(login_id)가 없다.");
             throw new NullPointerException();
         }
@@ -47,7 +48,7 @@ public class OAuthService {
         return token;
     }
 
-    public String getInfo(String token) throws IOException{
+    public String getEmail(String token) throws IOException {
         String reqURL = "https://kapi.kakao.com/v2/user/me";
         URL url;
         try {
@@ -56,9 +57,13 @@ public class OAuthService {
             conn.setRequestMethod("POST");
             conn.setDoOutput(true);
             conn.setRequestProperty("Authorization", "Bearer " + token);
-            int responseCode = conn.getResponseCode();
 
-                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            int responseCode = conn.getResponseCode();
+            if (responseCode != 200) {
+                throw new NotFoundException("token 에러");
+            }
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
             String line;
             StringBuilder sb = new StringBuilder();
@@ -73,7 +78,6 @@ public class OAuthService {
             if (element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("has_email").getAsBoolean()) {
                 email = element.getAsJsonObject().get("kakao_account").getAsJsonObject().get("email").getAsString();
             }
-
             return email;
         } catch (MalformedURLException e) {
             // TODO Auto-generated catch block

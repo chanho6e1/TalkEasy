@@ -26,11 +26,12 @@ import java.util.Date;
 @RequiredArgsConstructor
 @PropertySource("classpath:/application.yml")
 public class JwtTokenProvider {
+    private final CustomUserDetailService userDetailsService;
     @Value("${spring.app.auth.token.secret-key}")
     private String SECRET_KEY;
-    private Long ACCESS_TOKEN_EXPIRE_LENGTH = 1000L*60*60000;
-    private Long REFRESH_TOKEN_EXPIRE_LENGTH = 1000L*60*60*24*7000;
-    private final CustomUserDetailService userDetailsService;
+    private final Long ACCESS_TOKEN_EXPIRE_LENGTH = 1000L * 60 * 60000;
+//    private final Long REFRESH_TOKEN_EXPIRE_LENGTH = 1000L * 60 * 60 * 24 * 7000;
+
     @PostConstruct
     protected void init() {
         this.SECRET_KEY = Base64.getEncoder().encodeToString(SECRET_KEY.getBytes());
@@ -41,16 +42,12 @@ public class JwtTokenProvider {
         return createToken(email, ACCESS_TOKEN_EXPIRE_LENGTH);
     }
 
-    public String createRefreshToken(String email) {
-        return createToken(email, REFRESH_TOKEN_EXPIRE_LENGTH);
-    }
-
     public String createToken(String email, long expireLength) {
         Claims claims = Jwts.claims().setSubject(email); // payload부분에 들어갈 정보 조각
         claims.put("email", email);
         Date now = new Date();
 
-        Date validity = new Date(now.getTime() + expireLength );
+        Date validity = new Date(now.getTime() + expireLength);
 
         Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
 
@@ -60,7 +57,6 @@ public class JwtTokenProvider {
                 .setExpiration(validity)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
-
     }
 
     public boolean validateToken(String token) { // 토큰 유효성 검사
@@ -80,7 +76,7 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
-    public String getUserIdentifier(String token){
+    public String getUserIdentifier(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(SECRET_KEY.getBytes())
                 .build()

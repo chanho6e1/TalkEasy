@@ -17,10 +17,9 @@ public class CustomUserDetailService implements UserDetailsService {
         if (member == null) {
             throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
         } else {
-            UserDetails userDetails = User.builder()
-                    .username(member.getUserName())
+            return User.builder()
+                    .username(member.getName())
                     .build();
-            return userDetails;
 
         }
     }
