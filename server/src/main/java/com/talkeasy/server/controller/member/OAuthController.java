@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.io.IOException;
 
-@Api(tags = {"Member 관련 API"})
+@Api(tags = {"Oauth 로그인 관련 API"})
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/api/oauth")
