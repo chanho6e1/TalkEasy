@@ -3,10 +3,11 @@ package com.talkeasy.server.service.member;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.talkeasy.server.authentication.JwtTokenProvider;
-import com.talkeasy.server.repository.member.MembersRepository;
+import com.talkeasy.server.common.exception.NotFoundException;
+import com.talkeasy.server.domain.Member;
+import com.talkeasy.server.dto.user.MemberDetailRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.couchbase.CouchbaseProperties;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -87,5 +88,17 @@ public class OAuthService {
 
     }
 
+    public String registerUser(MemberDetailRequest member) {
+
+        String email = null;
+        try {
+            email = getEmail(member.getAccessToken());
+        } catch (IOException e) {
+            log.info("========== exception 발생 : {}", e.getMessage());
+        }
+        memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(member.getImageUrl()).role(member.getRole()).gender(member.getGender()).age(member.getAge()).birthDate(member.getBirthDate()).build());
+
+        return jwtTokenProvider.createAccessToken(email);
+    }
 
 }

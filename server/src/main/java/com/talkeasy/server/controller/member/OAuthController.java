@@ -21,7 +21,7 @@ import java.io.IOException;
 @Api(tags = {"Member 관련 API"})
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/oauth")
 @Slf4j
 public class OAuthController {
     private final OAuthService oAuthService;
