@@ -9,8 +9,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Getter
 @Setter
 public class ChatRoom {
+
+    //id는 소문자로 설정해야함
     @Id
-    private String Id;
+    private String id;
     private Long[] users;
     private String title; // 채팅방 이름
     private String date; // 생성 시간?
@@ -21,3 +23,4 @@ public class ChatRoom {
         this.date = date;
     }
 }
+//
