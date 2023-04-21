@@ -3,8 +3,10 @@ package com.talkeasy.server.controller.member;
 
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.domain.Member;
+import com.talkeasy.server.dto.user.MemberDetailResponse;
 import com.talkeasy.server.dto.user.MemberInfoUpdateRequest;
 import com.talkeasy.server.service.member.MemberService;
+import com.talkeasy.server.service.member.OAuth2UserImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -43,12 +45,11 @@ public class MemberController {
         return ResponseEntity.ok().body(CommonResponse.of("회원가입 성공"));
     }
 
-    @ApiOperation(value = "test", notes = "test")
+    @ApiOperation(value = "유저 정보 조회", notes = "유저 정보 조회하기")
     @GetMapping
-    public ResponseEntity<CommonResponse> test(@AuthenticationPrincipal Member member) throws IOException {
-        log.info("========== test member : {}", member.getName());
+    public ResponseEntity<CommonResponse> getUserInfo(@AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
 
-        return ResponseEntity.ok().body(CommonResponse.of("member filter test"));
+        return ResponseEntity.ok().body(CommonResponse.of("member 조회 성공", new MemberDetailResponse(oAuth2User.getMember())));
     }
 
 }

@@ -1,14 +1,13 @@
 package com.talkeasy.server.dto.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.talkeasy.server.domain.Member;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class MemberDetailResponse {
 
     private String userName;
@@ -17,9 +16,14 @@ public class MemberDetailResponse {
     private Integer role; //0:보호자/1:피보호자
     private Integer gender; //0:남/1:여
     private Integer age;
-    private String accessToken;
 
-
-
+    public MemberDetailResponse(Member member) {
+        this.userName = member.getName();
+        this.email = member.getEmail();
+        this.imageUrl = member.getImageUrl();
+        this.role = member.getRole();
+        this.gender = member.getAge();
+        this.age = member.getAge();
+    }
 }
 

@@ -27,9 +27,9 @@ import java.util.Date;
 @PropertySource("classpath:/application.yml")
 public class JwtTokenProvider {
     private final CustomUserDetailService userDetailsService;
+    private final Long ACCESS_TOKEN_EXPIRE_LENGTH = 1000L * 60 * 60000;
     @Value("${spring.app.auth.token.secret-key}")
     private String SECRET_KEY;
-    private final Long ACCESS_TOKEN_EXPIRE_LENGTH = 1000L * 60 * 60000;
 //    private final Long REFRESH_TOKEN_EXPIRE_LENGTH = 1000L * 60 * 60 * 24 * 7000;
 
     @PostConstruct
@@ -84,6 +84,6 @@ public class JwtTokenProvider {
     }
 
     public String resolveToken(HttpServletRequest request) { // 헤더로 부터 토큰 얻어옴
-        return request.getHeader("X-AUTH-TOKEN");
+        return request.getHeader("Authorization");
     }
 }

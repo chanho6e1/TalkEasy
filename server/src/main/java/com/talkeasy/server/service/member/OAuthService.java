@@ -34,7 +34,6 @@ public class OAuthService {
 
         try {
             email = getEmail(accessToken);
-            log.info("========== getInfo email : {}", email);
         } catch (IOException e) {
             log.info("========== exception 발생 : {} ", e.getMessage());
         }
@@ -44,8 +43,6 @@ public class OAuthService {
             throw new NullPointerException();
         }
         token = jwtTokenProvider.createAccessToken(email);
-        log.info("========== jwt Token : {} ", token);
-
         return token;
     }
 
