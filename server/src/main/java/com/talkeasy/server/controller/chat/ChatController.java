@@ -69,7 +69,7 @@ public class ChatController {//producer
         System.out.println(newChat.getId());
 
         kafkaTemplate.send(messageDto.getRoomId(), messageDto);
-        messagingTemplate.convertAndSend("/topic/64411ac7fe7e9b41ad3cb0ae", messageDto);
+//        messagingTemplate.convertAndSend("/topic/64411ac7fe7e9b41ad3cb0ae", messageDto);
     }
 
 //    @MessageMapping()

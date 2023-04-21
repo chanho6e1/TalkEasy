@@ -20,7 +20,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/chat")
-                .setAllowedOrigins("http://localhost:8081", "https://j8d207.p.ssafy.io", "http://j8d207.p.ssafy.io:8081")
+                .setAllowedOrigins("http://192.168.100.57:8081", "http://192.168.100.58:8081", "http://localhost:8081", "https://j8d207.p.ssafy.io", "http://j8d207.p.ssafy.io:8081")
 //                .setAllowedOrigins("*")
                 .withSockJS();
     }
