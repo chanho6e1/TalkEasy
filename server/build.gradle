@@ -33,10 +33,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 //OAuth 2.0 클라이언트를 사용하기 위한 스타터 라이브러리
-//    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
 
 //스프링 시큐리티를 사용하기 위한 스타터 라이브러리
-//    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
 
 //lombok설정
@@ -73,7 +73,7 @@ dependencies {
 
 
 //AWS 서비스를 사용하기 위한 스프링 부트 스타터
-//    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+    implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
 
     ////주석 풀 것들
@@ -93,6 +93,11 @@ dependencies {
     implementation 'org.springframework.kafka:spring-kafka'
     implementation 'org.apache.kafka:kafka-streams'
 //
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.2'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.2'
+
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.9.1'//
 }
 
 tasks.named('test') {
@@ -113,15 +118,15 @@ compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
 
-//task copyPrivate(type: Copy) {
-//    copy {
-//        from '../talkeasy'
-//        include "application.yml"
-//        into 'src/main/resources'
-//    }
-//    copy {
-//        from '../talkeasy'
-//        include "application.properties"
-//        into 'src/main/resources'
-//    }
-//}
+task copyPrivate(type: Copy) {
+    copy {
+        from '../talkeasy'
+        include "application.yml"
+        into 'src/main/resources'
+    }
+    copy {
+        from '../talkeasy'
+        include "application.properties"
+        into 'src/main/resources'
+    }
+}

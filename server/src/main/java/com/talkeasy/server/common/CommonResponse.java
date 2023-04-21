@@ -39,4 +39,6 @@ public class CommonResponse<T>{
     public static CommonResponse<Object> fail(String message) {
         return new CommonResponse<>(message, new Object());
     }
+
+
 }
