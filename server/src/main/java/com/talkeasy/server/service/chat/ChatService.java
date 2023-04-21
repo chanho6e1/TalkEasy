@@ -1,7 +1,9 @@
 package com.talkeasy.server.service.chat;
 
+import com.talkeasy.server.domain.Test;
 import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
+import com.talkeasy.server.dto.ChatRoomResponseDto;
 import com.talkeasy.server.dto.MessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,8 @@ import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.kafka.config.KafkaListenerEndpointRegistry;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
@@ -25,11 +29,9 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -46,16 +48,10 @@ public class ChatService {
         ChatRoom newRoom = mongoTemplate.insert(chatRoom);
         String topicName  = newRoom.getId();
 
-        // 초대된 유저들이 토픽을 구독하도록 코드 추가
-
-
-
 
         NewTopic newTopic = new NewTopic(topicName, 1, (short) 1); // 파티션 추후 증가
         kafkaAdmin.createOrModifyTopics(newTopic);
         
-        //상대방도 토픽 구독 해야함
-
         return newRoom.getId();
 
  }
@@ -71,16 +67,24 @@ public class ChatService {
         return newChat.getId();
     }
 
+    public List<ChatRoomResponseDto> getChatRoom(Long userId) {
 
+        Query query = Query.query(Criteria.where("users").elemMatch(Criteria.where("$eq").is(userId)));
+        List<ChatRoom> chatRooms = mongoTemplate.find(query, ChatRoom.class);
 
-    private ConsumerFactory<String, MessageDto> kafkaConsumerFactory() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, UUID.randomUUID().toString());
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        return new DefaultKafkaConsumerFactory<>(props);
+        //ChatRoomResponseDto notReadCnt 추가
+        return  chatRooms.stream()
+                .map(room -> {
+                    long notReadCnt = mongoTemplate.count(
+                            Query.query(
+                                    Criteria.where("roomId").is(room.getId())
+                                            .and("sender").ne(userId)
+                                            .and("isRead").is(false)
+                            ),
+                            ChatRoomDetail.class
+                    );
+                    return ChatRoomResponseDto.of(room, notReadCnt);
+                })
+                .collect(Collectors.toList());
     }
-
-
 }
