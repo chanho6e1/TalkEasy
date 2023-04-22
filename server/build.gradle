@@ -125,7 +125,7 @@ compileQuerydsl {
     options.annotationProcessorPath = configurations.querydsl
 }
 
-//task copyPrivate(type: Copy) {
+task copyPrivate(type: Copy) {
 //    copy {
 //        from '../talkeasy'
 //        include "application.yml"
@@ -136,10 +136,10 @@ compileQuerydsl {
 //        include "application.properties"
 //        into 'src/main/resources'
 //    }
-
-    copy {
-        from '../talkeasy/static'
-        include "index.html"
-        into 'src/main/resources/static'
-    }
-//}
+//
+//    copy {
+//        from '../talkeasy/static'
+//        include "index.html"
+//        into 'src/main/resources/static'
+//    }
+}

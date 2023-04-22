@@ -1,4 +1,4 @@
-package com.talkeasy.server.config;
+package com.talkeasy.server.config.socket;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -19,10 +19,15 @@ public class StompConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-        registry.setPathMatcher(new AntPathMatcher("."));  // url을 chat/room/3 -> chat.room.3으로 참조하기 위한 설정
-        registry.setApplicationDestinationPrefixes("/pub");
+        registry.setPathMatcher(new AntPathMatcher("."))  // url을 chat/room/3 -> chat.room.3으로 참조하기 위한 설정
+        .setApplicationDestinationPrefixes("/pub")
 
-        //registry.enableSimpleBroker("/sub");
-        registry.enableStompBrokerRelay("/queue", "/topic", "/exchange", "/amq/queue");
+//        .enableStompBrokerRelay("/topic")
+        .enableStompBrokerRelay("/queue", "/topic", "/exchange", "/amq/queue")
+                .setClientLogin("guest")
+                .setClientPasscode("guest")
+                .setSystemLogin("guest")
+                .setSystemPasscode("guest");
+//                .setRelayHost()
     }
 }

@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+//사용안함
 @RestController
 //@RequestMapping("/api/chat")
 @RequiredArgsConstructor
@@ -38,12 +39,12 @@ public class ChatController {//producer
     private final SimpMessagingTemplate messagingTemplate;
     private final MongoTemplate mongoTemplate;
 
-    @PostMapping("/api/chat/room")
-    @ApiOperation(value = "채팅방 생성", notes = "자세한 설명(어떤 값을 입력하고 어떤 값을 반환하는지)")
-    public ResponseEntity<CommonResponse> createChatRoom(@RequestParam Long sendId, @RequestParam Long receiveId, @RequestParam String title) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                "채팅방 생성 성공", chatService.createChatRoom(sendId, receiveId, title)));
-    }
+//    @PostMapping("/api/chat/room")
+//    @ApiOperation(value = "채팅방 생성", notes = "자세한 설명(어떤 값을 입력하고 어떤 값을 반환하는지)")
+//    public ResponseEntity<CommonResponse> createChatRoom(@RequestParam Long sendId, @RequestParam Long receiveId, @RequestParam String title) {
+//        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+//                "채팅방 생성 성공", chatService.createChatRoom(sendId, receiveId, title)));
+//    }
 
     @PostMapping("/send")
     @ApiOperation(value = "채팅 메시지 전송", notes = "자세한 설명(어떤 값을 입력하고 어떤 값을 반환하는지)")
@@ -93,12 +94,12 @@ public class ChatController {//producer
         }
     }
 
-    @GetMapping("/api/chat/my")
-    @ApiOperation(value = "채팅방 조회", notes = "자세한 설명(어떤 값을 입력하고 어떤 값을 반환하는지)")
-    public ResponseEntity<CommonResponse> getChatRoom(@RequestParam Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "채팅방 조회 성공", chatService.getChatRoom(userId)));
-    }
+//    @GetMapping("/api/chat/my")
+//    @ApiOperation(value = "채팅방 조회", notes = "자세한 설명(어떤 값을 입력하고 어떤 값을 반환하는지)")
+//    public ResponseEntity<CommonResponse> getChatRoom(@RequestParam Long userId) {
+//        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+//                "채팅방 조회 성공", chatService.getChatRoom(userId)));
+//    }
 
 
 }

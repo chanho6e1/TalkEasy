@@ -1,4 +1,4 @@
-package com.talkeasy.server.config;
+package com.talkeasy.server.config.socket;
 
 import com.talkeasy.server.dto.MessageDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
@@ -26,32 +26,32 @@ import java.util.Map;
 @Configuration
 public class KafkaConsumerConfig {
 
-    @Value("${spring.kafka.bootstrap-servers}")
-    private String bootstrapServers;
-
-    @Bean
-    ConcurrentKafkaListenerContainerFactory<String, MessageDto> kafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, MessageDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
-        return factory;
-    }
-
-    @Bean
-    public ConsumerFactory<String, MessageDto> consumerFactory() {
-        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(MessageDto.class));
-    }
-
-    @Bean
-    public Map<String, Object> consumerConfigurations() {
-        Map<String, Object> configurations = new HashMap<>();
-        configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-//        configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.100.57:9092");
-        configurations.put(ConsumerConfig.GROUP_ID_CONFIG, "my-group");
-        configurations.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        configurations.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        configurations.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        return configurations;
-    }
+//    @Value("${spring.kafka.bootstrap-servers}")
+//    private String bootstrapServers;
+//
+//    @Bean
+//    ConcurrentKafkaListenerContainerFactory<String, MessageDto> kafkaListenerContainerFactory() {
+//        ConcurrentKafkaListenerContainerFactory<String, MessageDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+//        factory.setConsumerFactory(consumerFactory());
+//        return factory;
+//    }
+//
+//    @Bean
+//    public ConsumerFactory<String, MessageDto> consumerFactory() {
+//        return new DefaultKafkaConsumerFactory<>(consumerConfigurations(), new StringDeserializer(), new JsonDeserializer<>(MessageDto.class));
+//    }
+//
+//    @Bean
+//    public Map<String, Object> consumerConfigurations() {
+//        Map<String, Object> configurations = new HashMap<>();
+//        configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
+////        configurations.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "192.168.100.57:9092");
+//        configurations.put(ConsumerConfig.GROUP_ID_CONFIG, "my-group");
+//        configurations.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+//        configurations.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+//        configurations.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+//        return configurations;
+//    }
 
 
 //    @KafkaListener(topics = "64411ac7fe7e9b41ad3cb0ae")
