@@ -1,4 +1,4 @@
-package com.talkeasy.server.config;
+package com.talkeasy.server.config.socket;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

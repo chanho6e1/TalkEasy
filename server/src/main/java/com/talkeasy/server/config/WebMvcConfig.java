@@ -1,10 +1,12 @@
 package com.talkeasy.server.config;
 
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 
 @RequiredArgsConstructor
 @Configuration
@@ -21,5 +23,6 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         HttpMethod.PATCH.name())
                 .maxAge(1000);
     }
+
 
 }
