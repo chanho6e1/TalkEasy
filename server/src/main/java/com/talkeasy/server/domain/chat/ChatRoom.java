@@ -5,6 +5,8 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Optional;
+
 @Document("chat_room")
 @Getter
 @Setter
@@ -22,5 +24,6 @@ public class ChatRoom {
         this.title = title;
         this.date = date;
     }
+
 }
 //

@@ -1,6 +1,6 @@
 package com.talkeasy.server.domain.chat;
 
-import com.talkeasy.server.dto.MessageDto;
+import com.talkeasy.server.dto.chat.MessageDto;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

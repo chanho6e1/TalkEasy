@@ -1,4 +1,4 @@
-package com.talkeasy.server.dto;
+package com.talkeasy.server.dto.chat;
 
 import com.talkeasy.server.domain.chat.ChatRoom;
 import lombok.Getter;
@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 public class ChatRoomDetailResponseDto {
 
-    private String Id;
+    private String id;
     private String[] users;
     private String title; // 채팅방 이름
     private String date; // 생성 시간?
@@ -21,7 +21,7 @@ public class ChatRoomDetailResponseDto {
     }
 
     public ChatRoomDetailResponseDto(ChatRoom chatRoom) {
-        Id = chatRoom.getId();
+        this.id = chatRoom.getId();
         this.users = chatRoom.getUsers();
         this.title = chatRoom.getTitle();
         this.date = chatRoom.getDate();

@@ -2,9 +2,8 @@ package com.talkeasy.server.controller.chat;
 
 import com.google.gson.Gson;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
-import com.talkeasy.server.dto.ChatRoomDto;
-import com.talkeasy.server.dto.MakeChatRoomDto;
-import com.talkeasy.server.dto.MessageDto;
+import com.talkeasy.server.dto.chat.ChatRoomDto;
+import com.talkeasy.server.dto.chat.MakeChatRoomDto;
 import com.talkeasy.server.service.chat.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +29,8 @@ public class ChatRoomHandler {
             return;
         }
 //        //비즈니스 로직 (mongodb 저장, 채팅 보내기)
-        chatService.saveChat(chat);
+        String roomId = chatService.saveChat(chat);
+        chat.setRoomId(roomId);
         chatService.doChat(chat, message);
 
     }
@@ -41,9 +41,8 @@ public class ChatRoomHandler {
         System.out.println("room");
 
         String str = new String(message.getBody());
-//        MakeChatRoomDto dto = new Gson().fromJson(str, MakeChatRoomDto.class);
-//        ChatRoomDto chatRoomDto = chatService.makeRoom(dto);
-//        chatService.createQueue(chatRoomDto);
+        MakeChatRoomDto dto = new Gson().fromJson(str, MakeChatRoomDto.class);
+        chatService.createRoom(dto.getUser1(), dto.getUser2());
     }
 
     @RabbitListener(queues = "chat.queue.644622d7619f462dc0aad696.1")

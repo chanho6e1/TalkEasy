@@ -1,4 +1,4 @@
-package com.talkeasy.server.dto;
+package com.talkeasy.server.dto.chat;
 
 import lombok.Getter;
 

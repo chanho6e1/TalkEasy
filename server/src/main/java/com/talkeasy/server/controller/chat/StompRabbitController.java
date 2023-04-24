@@ -1,31 +1,20 @@
 package com.talkeasy.server.controller.chat;
 
-import com.google.gson.Gson;
-import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
-import com.talkeasy.server.dto.ChatRoomResponseDto;
-import com.talkeasy.server.dto.MessageDto;
-import com.talkeasy.server.dto.ReadMessageDto;
-import com.talkeasy.server.service.chat.ChatService;
-import com.talkeasy.server.service.chat.TTSService;
-import io.swagger.annotations.ApiOperation;
+import com.talkeasy.server.dto.chat.MessageDto;
+import com.talkeasy.server.dto.chat.ReadMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @RestController
@@ -39,9 +28,7 @@ public class StompRabbitController {
     private final static String CHAT_QUEUE_NAME = "chat.queue";
     private final MongoTemplate mongoTemplate;
     private final SimpMessagingTemplate messagingTemplate;
-    private final ChatService chatService;
-    private final TTSService ttsService;
-    private final RabbitTemplate rabbitTemplate;
+
 
     //////////////////<-----------
 

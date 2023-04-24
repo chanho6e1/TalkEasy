@@ -5,6 +5,7 @@ import com.google.auth.oauth2.GoogleCredentials;
 import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
 
+import com.talkeasy.server.config.s3.S3Uploader;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
@@ -25,7 +26,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 public class TTSService {
 
     private final ResourceLoader resourceLoader;
-//    private final S3Uploader s3Uploader;
+    private final S3Uploader s3Uploader;
 
 
     public String getTTS(String text) throws IOException, UnsupportedAudioFileException {
@@ -75,9 +76,9 @@ public class TTSService {
 
         // Upload the MP3 file to S3 and get the URL
         String s3Key = "static/tts/" + UUID.randomUUID().toString() + ".mp3";
-//        String s3Url = s3Uploader.upload(multipartFile, s3Key);
+        String s3Url = s3Uploader.uploadFiles(multipartFile, s3Key);
 
-        return "";
+        return s3Url;
     }
 
 
