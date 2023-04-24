@@ -1,6 +1,7 @@
 package com.talkeasy.server.domain.chat;
 
 import com.talkeasy.server.dto.MessageDto;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,27 +14,24 @@ import static java.time.LocalTime.now;
 @Getter
 @Setter
 @NoArgsConstructor
+@Data
 public class ChatRoomDetail {
+
     @Id
     private String id;
     private String roomId;
-    private String sender;
     private String msg; // 메시지 내용
     private String created_dt; // 생성 시간?
     private String updated_dt; // 생성 시간?
     private boolean readStatus; // 생성 시간?
+    private String toUserId;
+    private String fromUserId;
 
 
-    public ChatRoomDetail(String users, String roomId, String msg, String created_dt, String updated_dt) {
-        this.sender = users;
-        this.roomId = roomId;
-        this.msg = msg;
-        this.created_dt = created_dt;
-        this.updated_dt = updated_dt;
-    }
 
     public ChatRoomDetail(MessageDto messageDto) {
-        this.sender = messageDto.getSender();
+        this.toUserId = messageDto.getToUserId();
+        this.fromUserId = messageDto.getFromUserId();
         this.roomId = messageDto.getRoomId();
         this.msg = messageDto.getMsg();
         this.created_dt = messageDto.getCreated_dt();

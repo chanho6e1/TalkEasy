@@ -13,11 +13,11 @@ public class ChatRoom {
     //id는 소문자로 설정해야함
     @Id
     private String id;
-    private Long[] users;
+    private String[] users;
     private String title; // 채팅방 이름
     private String date; // 생성 시간?
 
-    public ChatRoom(Long[] users, String title, String date) {
+    public ChatRoom(String[] users, String title, String date) {
         this.users = users;
         this.title = title;
         this.date = date;

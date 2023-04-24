@@ -1,10 +1,13 @@
 package com.talkeasy.server.controller.chat;
 
+import com.google.gson.Gson;
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
+import com.talkeasy.server.dto.ChatRoomResponseDto;
 import com.talkeasy.server.dto.MessageDto;
 import com.talkeasy.server.dto.ReadMessageDto;
 import com.talkeasy.server.service.chat.ChatService;
+import com.talkeasy.server.service.chat.TTSService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,17 +16,16 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.Message;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.socket.WebSocketSession;
 
+import javax.sound.sampled.UnsupportedAudioFileException;
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.List;
 
 
 @RestController
@@ -38,6 +40,8 @@ public class StompRabbitController {
     private final MongoTemplate mongoTemplate;
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatService chatService;
+    private final TTSService ttsService;
+    private final RabbitTemplate rabbitTemplate;
 
     //////////////////<-----------
 
@@ -66,7 +70,7 @@ public class StompRabbitController {
 
         template.convertAndSend(CHAT_EXCHANGE_NAME, "room." + chatRoomId, chatDto);
 
-//        template.convertAndSend("amq.topic", "room." + chatRoomId, chatDto); //topic
+        ////////////////////
 
     }
 
@@ -76,12 +80,21 @@ public class StompRabbitController {
         System.out.println("chatRoomId " + readMessageDto.getMsgId());
         ChatRoomDetail chat = mongoTemplate.findById(readMessageDto.getMsgId(), ChatRoomDetail.class);
 
-        if (!readMessageDto.getUserId().equals(chat.getSender())) {
+        if (!readMessageDto.getUserId().equals(chat.getFromUserId())) {
             chat.setReadStatus(true);
             mongoTemplate.save(chat);
         }
     }
 
+    //작동 안됨
+    @MessageMapping(value = "/chat.leave.{roomId}")
+    @SendTo("/exchange/chat.exchange/room.{roomId}")
+    public void chatLeave(@DestinationVariable String roomId, MessageDto message) {
+        // 생략
+        System.out.println("out");
+        template.convertAndSend(CHAT_EXCHANGE_NAME, "room." + message.getRoomId(), message);
+
+    }
 
     // receiver()는 단순히 큐에 들어온 메세지를 소비만 한다.
     //, concurrency = "3" : 컨슈머가 3개
@@ -89,46 +102,11 @@ public class StompRabbitController {
     public void receive(MessageDto chatDto) {
 
         messagingTemplate.convertAndSend("/exchange/chat.exchange/room." + chatDto.getRoomId(), chatDto);
-//        messagingTemplate.convertAndSend("/queue/room." + chatDto.getRoomId(), chatDto);
-//        messagingTemplate.convertAndSend("/topic/room." + chatDto.getRoomId(), chatDto);
-
-//        System.out.println(session);
-//        StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(message);
-//        String sessionId = headerAccessor.getSessionId();
-//        System.out.println(sessionId);
-
         log.info("chatDto.getMessage() = {}", chatDto.getMsg());
     }
 
 
-    ///////////////////-------------->
 
 
-    /////////////////<----------
-    @GetMapping("api/chat/chat-history/{chatRoomId}")
-    public ResponseEntity<CommonResponse> getChatHistory(@PathVariable String chatRoomId,
-                                                         @RequestParam(required = false, defaultValue = "1") int offset,
-                                                         @RequestParam(value = "size", required = false, defaultValue = "10") int size
-    ) {
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                "채팅방 내부 메시지 조회", chatService.getChatHistory(chatRoomId, offset, size)));
-    }
-
-    @PostMapping("/api/chat/room")
-    @ApiOperation(value = "채팅방 생성", notes = "파라미터로 sendId, receiveId, title(채팅방제목)을 주면 채팅방 아이디를 반환")
-    public ResponseEntity<CommonResponse> createChatRoom(@RequestParam Long sendId, @RequestParam Long receiveId, @RequestParam String title) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                "채팅방 생성 성공", chatService.createChatRoom(sendId, receiveId, title)));
-    }
-
-    @GetMapping("/api/chat/my")
-    @ApiOperation(value = "채팅방 조회", notes = "내가 속한 채팅방 리스트를 반환")
-    public ResponseEntity<CommonResponse> getChatRoom(@RequestParam Long userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "채팅방 조회 성공", chatService.getChatRoom(userId)));
-    }
-
-    /////////////////---------->
 
 }
