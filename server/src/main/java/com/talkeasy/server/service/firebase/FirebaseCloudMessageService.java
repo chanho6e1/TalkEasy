@@ -62,7 +62,7 @@ public class FirebaseCloudMessageService {
 
     //firebase 서비스 인증 정보
     private String getAccessToken() throws IOException {
-        String firebaseConfigPath = "firebase/firebase_service_key.json";
+        String firebaseConfigPath = "firebase/talkeasy-1e037-firebase-adminsdk-cak0e-48150f03c5.json";
 
         GoogleCredentials googleCredentials = GoogleCredentials
                 .fromStream(new ClassPathResource(firebaseConfigPath).getInputStream())
