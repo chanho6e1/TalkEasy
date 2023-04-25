@@ -23,7 +23,8 @@ public class ChatRoomHandler {
     private final ChatService chatService;
     //서버로 들어오는 채팅값
     @RabbitListener(queues = "chat.queue")
-    public void chatControl(Message message, Channel channel, @Header(value = AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+//    public void chatControl(Message message, Channel channel, @Header(value = AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
+    public void chatControl(Message message) {
         // Json : String -> Object : ChatDto
 
         log.info("message : {}", message);
@@ -38,7 +39,7 @@ public class ChatRoomHandler {
         chat.setRoomId(roomId);
         chatService.doChat(chat, message);
 
-        channel.basicAck(tag, false);
+//        channel.basicAck(tag, false);
     }
 
     @RabbitListener(queues = "room.queue")
