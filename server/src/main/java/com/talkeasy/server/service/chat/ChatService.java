@@ -2,10 +2,13 @@ package com.talkeasy.server.service.chat;
 
 import com.google.gson.Gson;
 import com.talkeasy.server.common.PagedResponse;
+import com.talkeasy.server.domain.Member;
 import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
+import com.talkeasy.server.domain.chat.LastChat;
 import com.talkeasy.server.dto.chat.ChatRoomDto;
-import com.talkeasy.server.dto.chat.ChatRoomResponseDto;
+import com.talkeasy.server.dto.chat.ChatRoomListDto;
+import com.talkeasy.server.dto.chat.UserInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
@@ -25,7 +28,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -35,7 +37,6 @@ public class ChatService {
     private final MongoTemplate mongoTemplate;
     private final RabbitTemplate rabbitTemplate;
     private final AmqpAdmin amqpAdmin;
-
     public String createRoom(String user1, String user2) {
 
         ChatRoom chatRoom = new ChatRoom(new String[]{user1, user2}, "hihi", LocalDateTime.now().toString());
@@ -55,9 +56,9 @@ public class ChatService {
 
     public void createQueue(ChatRoomDto chatRoomDto) {
         StringBuilder sb = new StringBuilder();
-        sb.append("room.").append(chatRoomDto.getRoomId()).append(".").append(chatRoomDto.getSendId());
+        sb.append("room.").append(chatRoomDto.getRoomId()).append(".").append(chatRoomDto.getFromUserId());
 
-        Queue queue = QueueBuilder.durable("chat.queue." + chatRoomDto.getRoomId() + "." + chatRoomDto.getSendId()).build();
+        Queue queue = QueueBuilder.durable("chat.queue." + chatRoomDto.getRoomId() + "." + chatRoomDto.getFromUserId()).build();
         amqpAdmin.declareQueue(queue);
         Binding binding = BindingBuilder.bind(queue)
                 .to(new TopicExchange("chat.exchange"))
@@ -66,9 +67,9 @@ public class ChatService {
 
 
         sb = new StringBuilder();
-        sb.append("room.").append(chatRoomDto.getRoomId()).append(".").append(chatRoomDto.getReceiveId());
+        sb.append("room.").append(chatRoomDto.getRoomId()).append(".").append(chatRoomDto.getToUserId());
 
-        queue = QueueBuilder.durable("chat.queue." + chatRoomDto.getRoomId() + "." + chatRoomDto.getReceiveId()).build();
+        queue = QueueBuilder.durable("chat.queue." + chatRoomDto.getRoomId() + "." + chatRoomDto.getToUserId()).build();
         amqpAdmin.declareQueue(queue);
         binding = BindingBuilder.bind(queue)
                 .to(new TopicExchange("chat.exchange"))
@@ -86,47 +87,45 @@ public class ChatService {
 
 
     public String saveChat(ChatRoomDetail chat) {
-        ChatRoomDetail newRoom = mongoTemplate.insert(chat);
-        return newRoom.getRoomId();
+        ChatRoomDetail chatRoomDetail = mongoTemplate.insert(chat);
+
+        //마지막 채팅 저장
+        saveLastChat(chat);
+
+        return chatRoomDetail.getRoomId();
     }
 
     public void doChat(ChatRoomDetail chat, Message message) {
         StringBuilder sb = new StringBuilder();
         sb.append("room.").append(chat.getRoomId()).append(".").append(chat.getToUserId());
-//        if(chat.getRoomId().equals("-1") || chat.getToUserId().equals("-1") || chat.getFromUserId().equals("-1) return;
-        rabbitTemplate.send("chat.exchange", sb.toString(), message);
-        List<ChatRoomResponseDto> fromUserList = this.getChatRoomList(chat.getFromUserId());
-        List<ChatRoomResponseDto> toUserList = this.getChatRoomList(chat.getToUserId());
+
+        //message에 읽음 정보 추가
+//        Message msg = MessageBuilder
+//                .withBody(message.getBody())
+//                .setHeader("senderId", chat.getFromUserId())
+//                .setHeader("receiverId", chat.getToUserId())
+//                .setHeader("readCnt", chat.getReadCnt())
+//                .build();
 
         Gson gson = new Gson();
 
+        Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
+
+        System.out.println("msg body " + msg.getBody().toString());
+
+//        rabbitTemplate.send("chat.exchange", sb.toString(), message);
+        rabbitTemplate.send("chat.exchange", sb.toString(), msg);
+        List<ChatRoomListDto> fromUserList = this.getChatRoomList(chat.getFromUserId());
+        List<ChatRoomListDto> toUserList = this.getChatRoomList(chat.getToUserId());
+
         rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
         rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getToUserId(), gson.toJson(toUserList));
+
+
     }
 
 
     ///////////////////////////////////////
-
-    public List<ChatRoomResponseDto> getChatRoom(Long userId) {
-
-        Query query = Query.query(Criteria.where("users").elemMatch(Criteria.where("$eq").is(userId)));
-        List<ChatRoom> chatRooms = mongoTemplate.find(query, ChatRoom.class);
-
-        //ChatRoomResponseDto notReadCnt 추가
-        return chatRooms.stream()
-                .map(room -> {
-                    long notReadCnt = mongoTemplate.count(
-                            Query.query(
-                                    Criteria.where("roomId").is(room.getId())
-                                            .and("sender").ne(userId)
-                                            .and("isRead").is(false)
-                            ),
-                            ChatRoomDetail.class
-                    );
-                    return ChatRoomResponseDto.of(room, (int) notReadCnt);
-                })
-                .collect(Collectors.toList());
-    }
 
     public PagedResponse<ChatRoomDetail> getChatHistory(String chatRoomId, int offset, int size) {
 
@@ -148,35 +147,61 @@ public class ChatService {
     }
 
 
-    public List<ChatRoomResponseDto> getChatRoomList(String userId) {
-        List<ChatRoomResponseDto> list = new ArrayList<>();
-        System.out.println(userId);
-//        List<LastChatDto> lastChatDtos = chatDao.getLastChatList(userId);
-//        int size = lastChatDtos.size();
-//        RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate);
-//        QueueInformation queueInformation = null;
-//        for(int i = size - 1; i >= 0; i--) {
-//            LastChatDto lastChatDto = lastChatDtos.get(i);
-//            ChatRoomListDto dto = new ChatRoomListDto();
-//            int otherUserId = lastChatDto.getFromUserId();
-//            if(userId == otherUserId) {
-//                otherUserId = lastChatDto.getToUserId();
-//            }
-//            UserDto userDto = userService.getUserById(otherUserId);
-//            dto.setRoomId(lastChatDto.getRoomId());
-//            dto.setUserId(otherUserId);
-//            dto.setContent(lastChatDto.getContent());
-//            dto.setProfile(userDto.getProfile());
-//            dto.setNickname(userDto.getNickname());
-//            dto.setDate(lastChatDto.getDate());
-//            StringBuilder queueName = new StringBuilder();
-//            queueName.append("chat.queue.").append(lastChatDto.getRoomId()).append(".").append(userId);
-//            queueInformation = rabbitAdmin.getQueueInfo(queueName.toString());
-//            dto.setNoReadCnt(queueInformation.getMessageCount());
-//            list.add(dto);
-//        }
+    public List<ChatRoomListDto> getChatRoomList(String userId) {
+        List<ChatRoomListDto> chatRoomListDtoList = new ArrayList<>();
+//        System.out.println(userId);
 
-        return list;
+        List<LastChat> lastChatList = getLastChatList(userId);
+        int size = lastChatList.size();
+
+        RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate);
+
+        for (int i = size - 1; i >= 0; i--) {
+
+            LastChat lastChat = lastChatList.get(i);
+            String otherUserId = lastChat.getFromUserId();
+
+            ChatRoomListDto chatRoomListDto = new ChatRoomListDto(lastChat);
+
+            if (userId == otherUserId) {
+                otherUserId = lastChat.getToUserId();
+            }
+
+            Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(otherUserId)), Member.class);
+
+            chatRoomListDto.setProfile(member.getImageUrl());
+            chatRoomListDto.setName(member.getName());
+
+            StringBuilder queueName = new StringBuilder();
+            queueName.append("chat.queue.").append(lastChat.getRoomId()).append(".").append(userId);
+            QueueInformation queueInformation = rabbitAdmin.getQueueInfo(queueName.toString());
+
+
+            log.info("queueInfor cnt : {}", queueInformation.getMessageCount());
+            chatRoomListDto.setNoReadCnt(queueInformation.getMessageCount());
+//            chatRoomListDto.setNoReadCnt(0);
+            System.out.println("queueInformation.getMessageCount() "+ queueInformation.getMessageCount());
+            chatRoomListDtoList.add(chatRoomListDto);
+        }
+
+        return chatRoomListDtoList;
+    }
+
+
+    public void saveLastChat(ChatRoomDetail chat) {
+
+        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(chat.getRoomId())), LastChat.class);
+
+        LastChat lastChatDto = new LastChat(chat);
+        lastChatDto.setUserId(chat.getFromUserId());
+        mongoTemplate.save(lastChatDto, "last_chat");
+
+        lastChatDto.setUserId(chat.getToUserId());
+        mongoTemplate.save(lastChatDto, "last_chat");
+    }
+
+    public List<LastChat> getLastChatList(String userId) {
+        return mongoTemplate.find(Query.query(Criteria.where("userId").is(userId)), LastChat.class);
     }
 
 
@@ -195,4 +220,18 @@ public class ChatService {
         return roomId;
     }
 
+    public List<UserInfo> getUserInfoByRoom(String roomId) {
+
+        ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(roomId)), ChatRoom.class);
+        String[] user = chatRoom.getUsers();
+
+        Member member1 = mongoTemplate.findOne(Query.query(Criteria.where("id").is(user[0])), Member.class);
+        Member member2 = mongoTemplate.findOne(Query.query(Criteria.where("id").is(user[1])), Member.class);
+
+        List<UserInfo> userInfos = new ArrayList<>();
+        userInfos.add(UserInfo.builder().userId(member1.getId()).userName(member1.getName()).profileImg(member1.getImageUrl()).build());
+        userInfos.add(UserInfo.builder().userId(member2.getId()).userName(member2.getName()).profileImg(member2.getImageUrl()).build());
+
+        return userInfos;
+    }
 }

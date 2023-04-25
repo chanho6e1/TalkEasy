@@ -68,7 +68,7 @@ public class StompRabbitController {
         ChatRoomDetail chat = mongoTemplate.findById(readMessageDto.getMsgId(), ChatRoomDetail.class);
 
         if (!readMessageDto.getUserId().equals(chat.getFromUserId())) {
-            chat.setReadStatus(true);
+//            chat.setReadStatus(true);
             mongoTemplate.save(chat);
         }
     }
@@ -85,12 +85,12 @@ public class StompRabbitController {
 
     // receiver()는 단순히 큐에 들어온 메세지를 소비만 한다.
     //, concurrency = "3" : 컨슈머가 3개
-    @RabbitListener(queues = CHAT_QUEUE_NAME)
-    public void receive(MessageDto chatDto) {
-
-        messagingTemplate.convertAndSend("/exchange/chat.exchange/room." + chatDto.getRoomId(), chatDto);
-        log.info("chatDto.getMessage() = {}", chatDto.getMsg());
-    }
+//    @RabbitListener(queues = CHAT_QUEUE_NAME)
+//    public void receive(MessageDto chatDto) {
+//
+//        messagingTemplate.convertAndSend("/exchange/chat.exchange/room." + chatDto.getRoomId(), chatDto);
+//        log.info("chatDto.getMessage() = {}", chatDto.getMsg());
+//    }
 
 
 

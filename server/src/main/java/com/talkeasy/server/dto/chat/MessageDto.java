@@ -17,4 +17,5 @@ public class MessageDto{
     private String fromUserId;
     private String msg; // 메시지 내용
     private String created_dt; // 생성 시간?
+
 }

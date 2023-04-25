@@ -1,6 +1,7 @@
 package com.talkeasy.server.controller.chat;
 
 import com.google.gson.Gson;
+import com.rabbitmq.client.Channel;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
 import com.talkeasy.server.dto.chat.ChatRoomDto;
 import com.talkeasy.server.dto.chat.MakeChatRoomDto;
@@ -9,7 +10,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.support.AmqpHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -18,7 +23,7 @@ public class ChatRoomHandler {
     private final ChatService chatService;
     //서버로 들어오는 채팅값
     @RabbitListener(queues = "chat.queue")
-    public void chatControl(Message message) {
+    public void chatControl(Message message, Channel channel, @Header(value = AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
         // Json : String -> Object : ChatDto
 
         log.info("message : {}", message);
@@ -33,6 +38,7 @@ public class ChatRoomHandler {
         chat.setRoomId(roomId);
         chatService.doChat(chat, message);
 
+        channel.basicAck(tag, false);
     }
 
     @RabbitListener(queues = "room.queue")
@@ -45,15 +51,6 @@ public class ChatRoomHandler {
         chatService.createRoom(dto.getUser1(), dto.getUser2());
     }
 
-    @RabbitListener(queues = "chat.queue.644622d7619f462dc0aad696.1")
-    public void getTest(Message message) {
-        log.info("message : {}", message);
-        System.out.println("getTest");
 
-//        String str = new String(message.getBody());
-//        MakeChatRoomDto dto = new Gson().fromJson(str, MakeChatRoomDto.class);
-//        ChatRoomDto chatRoomDto = chatService.makeRoom(dto);
-//        chatService.createQueue(chatRoomDto);
-    }
 
 }

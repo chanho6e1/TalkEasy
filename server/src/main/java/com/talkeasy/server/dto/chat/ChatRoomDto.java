@@ -8,14 +8,14 @@ import lombok.Setter;
 @Data
 public class ChatRoomDto {
     private String roomId;
-    private String sendId;
-    private String receiveId;
+    private String fromUserId;
+    private String toUserId;
     private String title;
 
     public ChatRoomDto (ChatRoom chatRoom){
         this.roomId = chatRoom.getId();
-        this.sendId = chatRoom.getUsers()[0];
-        this.receiveId = chatRoom.getUsers()[1];
+        this.fromUserId = chatRoom.getUsers()[0];
+        this.toUserId = chatRoom.getUsers()[1];
         this.title = chatRoom.getTitle();
     }
 }

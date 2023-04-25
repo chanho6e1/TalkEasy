@@ -2,6 +2,7 @@ package com.talkeasy.server.controller.chat;
 
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
+import com.talkeasy.server.dto.chat.MakeChatRoomDto;
 import com.talkeasy.server.dto.chat.ReadMessageDto;
 import com.talkeasy.server.service.chat.ChatService;
 import com.talkeasy.server.service.chat.TTSService;
@@ -20,7 +21,7 @@ import java.io.IOException;
 
 
 @RestController
-@RequestMapping("/api/chat")
+@RequestMapping("/api/chats")
 @RequiredArgsConstructor
 @Api(tags = {"chat 컨트롤러"})
 public class ChatController {//producer
@@ -31,11 +32,11 @@ public class ChatController {//producer
     private final TTSService ttsService;
 
     @PostMapping("/create")
-    @ApiOperation(value = "채팅방 생성", notes = "파라미터로 sendUserId, receiveUserId 주면 채팅방 아이디를 반환")
-    public ResponseEntity<?> createRoom(@RequestParam String user1, @RequestParam String user2) {
+    @ApiOperation(value = "채팅방 생성", notes = "user1, user2 주면 채팅방 아이디를 반환")
+    public ResponseEntity<?> createRoom(MakeChatRoomDto dto) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                "채팅방 생성 성공", chatService.createRoom(user1, user2)));
+                "채팅방 생성 성공", chatService.createRoom(dto.getUser1(), dto.getUser2())));
     }
 
     @DeleteMapping("/{roomId}")
@@ -46,6 +47,14 @@ public class ChatController {//producer
                 "채팅방 삭제 성공", chatService.deleteRoom(roomId)));
     }
 
+    @GetMapping("/{roomId}")
+    @ApiOperation(value = "채팅방 참가자 정보 조회", notes = "PathVariable로 roomId 주면 채팅방 참가자 정보 반환")
+    public ResponseEntity<?> getUserInfoByRoom(@PathVariable String roomId) {
+
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+                "채팅방 참가자 정보 조회 성공", chatService.getUserInfoByRoom(roomId)));
+    }
+
 
     @MessageMapping("/read")
     public void handleReadMessageEvent(ReadMessageDto readMessageDto) {
@@ -53,7 +62,8 @@ public class ChatController {//producer
         ChatRoomDetail chat = mongoTemplate.findById(readMessageDto.getMsgId(), ChatRoomDetail.class);
 
         if(!readMessageDto.getUserId().equals(chat.getFromUserId())){
-            chat.setReadStatus(true);
+            if(chat.getReadCnt() > 0)
+                chat.setReadCnt(0);
             mongoTemplate.save(chat);
         }
     }
@@ -72,9 +82,9 @@ public class ChatController {//producer
 
     @GetMapping("/my")
     @ApiOperation(value = "채팅방 조회", notes = "내가 속한 채팅방 리스트를 반환")
-    public ResponseEntity<CommonResponse> getChatRoom(@RequestParam Long userId) {
+    public ResponseEntity<CommonResponse> getChatRoom(@RequestParam String userId) {
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "채팅방 조회 성공", chatService.getChatRoom(userId)));
+                "채팅방 조회 성공", chatService.getChatRoomList(userId)));
     }
 
     @GetMapping("/tts")
