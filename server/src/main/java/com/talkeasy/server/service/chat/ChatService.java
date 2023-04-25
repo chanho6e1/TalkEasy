@@ -81,6 +81,7 @@ public class ChatService {
         String str = new String(message.getBody());
         ChatRoomDetail chat = new Gson().fromJson(str, ChatRoomDetail.class);
         chat.setCreated_dt(LocalDateTime.now().toString());
+        chat.setReadCnt(1);
         log.info("{}", chat);
         return chat;
     }
@@ -115,8 +116,8 @@ public class ChatService {
 
 //        rabbitTemplate.send("chat.exchange", sb.toString(), message);
         rabbitTemplate.send("chat.exchange", sb.toString(), msg);
-        List<ChatRoomListDto> fromUserList = this.getChatRoomList(chat.getFromUserId());
-        List<ChatRoomListDto> toUserList = this.getChatRoomList(chat.getToUserId());
+        List<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
+        List<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
 
         rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
         rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getToUserId(), gson.toJson(toUserList));
@@ -163,7 +164,7 @@ public class ChatService {
 
             ChatRoomListDto chatRoomListDto = new ChatRoomListDto(lastChat);
 
-            if (userId == otherUserId) {
+            if (userId == otherUserId) { //내가 보낸 사람이라면
                 otherUserId = lastChat.getToUserId();
             }
 
@@ -176,11 +177,16 @@ public class ChatService {
             queueName.append("chat.queue.").append(lastChat.getRoomId()).append(".").append(userId);
             QueueInformation queueInformation = rabbitAdmin.getQueueInfo(queueName.toString());
 
-
-            log.info("queueInfor cnt : {}", queueInformation.getMessageCount());
-            chatRoomListDto.setNoReadCnt(queueInformation.getMessageCount());
-//            chatRoomListDto.setNoReadCnt(0);
-            System.out.println("queueInformation.getMessageCount() "+ queueInformation.getMessageCount());
+            int idx = 0;
+            if(queueInformation != null) {
+                log.info("queueInfo cnt : {}", queueInformation.getMessageCount());
+                chatRoomListDto.setNoReadCnt(queueInformation.getMessageCount());
+                System.out.println("queueInformation.getMessageCount() "+ queueInformation.getMessageCount()+" "+ idx++ );
+            }
+            else {
+                System.out.println(idx++);
+                System.out.println("queueInformation is null");
+            }
             chatRoomListDtoList.add(chatRoomListDto);
         }
 

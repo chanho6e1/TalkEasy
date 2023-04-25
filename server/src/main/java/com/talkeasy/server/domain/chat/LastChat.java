@@ -22,7 +22,7 @@ public class LastChat {
     private String fromUserId;
 
     public LastChat(ChatRoomDetail chat) {
-        this.id = id;
+        this.id = chat.getId();
         this.roomId = chat.getRoomId();
         this.msg = chat.getMsg();
         this.created_dt = chat.getCreated_dt();
