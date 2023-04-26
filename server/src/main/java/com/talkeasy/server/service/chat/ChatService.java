@@ -156,6 +156,7 @@ public class ChatService {
         int size = lastChatList.size();
 
         RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate);
+        int idx = 0;
 
         for (int i = size - 1; i >= 0; i--) {
 
@@ -177,7 +178,6 @@ public class ChatService {
             queueName.append("chat.queue.").append(lastChat.getRoomId()).append(".").append(userId);
             QueueInformation queueInformation = rabbitAdmin.getQueueInfo(queueName.toString());
 
-            int idx = 0;
             if(queueInformation != null) {
                 log.info("queueInfo cnt : {}", queueInformation.getMessageCount());
                 chatRoomListDto.setNoReadCnt(queueInformation.getMessageCount());
