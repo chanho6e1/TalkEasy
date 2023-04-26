@@ -1,3 +1,5 @@
+@file:Suppress("DSL_SCOPE_VIOLATION")
+
 buildscript {
     extra.set("compose_version", "1.4.2")
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
