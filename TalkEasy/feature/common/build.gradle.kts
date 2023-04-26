@@ -39,7 +39,6 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit)
     debugImplementation(libs.bundles.debug.compose)
 
-
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 //    implementation("androidx.core:core-ktx:1.7.0")
