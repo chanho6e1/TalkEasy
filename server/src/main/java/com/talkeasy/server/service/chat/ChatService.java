@@ -142,8 +142,7 @@ public class ChatService {
                 // query.skip(-1).limit(-1)의 이유는 현재 쿼리가 페이징 하려고 하는 offset 까지만 보기에 이를 맨 처음부터 끝까지로 set 해줘 정확한 도큐먼트 개수를 구한다.
         );
 
-        return new PagedResponse<>(metaDataPage.getContent(), metaDataPage.getNumber() + 1, metaDataPage.getSize(), metaDataPage.getTotalElements(),
-                metaDataPage.getTotalPages(), metaDataPage.isLast());
+        return new PagedResponse<>(metaDataPage.getContent(), metaDataPage.getTotalPages());
 
     }
 
@@ -169,13 +168,13 @@ public class ChatService {
                 otherUserId = lastChat.getToUserId();
             }
 
-            Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(otherUserId)), Member.class);
+            Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(otherUserId)), Member.class); // 수신자의 정보 가져오기
 
-            chatRoomListDto.setProfile(member.getImageUrl());
-            chatRoomListDto.setName(member.getName());
+            chatRoomListDto.setProfile(member.getImageUrl()); // 수신자 프로필
+            chatRoomListDto.setName(member.getName()); // 수신자 이름
 
             StringBuilder queueName = new StringBuilder();
-            queueName.append("chat.queue.").append(lastChat.getRoomId()).append(".").append(userId);
+            queueName.append("chat.queue.").append(lastChat.getRoomId()).append(".").append(userId); // 내꺼
             QueueInformation queueInformation = rabbitAdmin.getQueueInfo(queueName.toString());
 
             if(queueInformation != null) {
