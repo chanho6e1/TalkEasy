@@ -9,10 +9,18 @@ plugins {
 android {
     namespace = "com.ssafy.talkeasy.feature.common"
 
+    defaultConfig {
+        minSdk = 26
+        targetSdk = 33
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
+    }
     buildFeatures {
         compose = true
     }
-
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.2"
     }

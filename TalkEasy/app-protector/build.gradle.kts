@@ -81,6 +81,10 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+
+    implementation(project(":core:data"))
+    implementation(project(":core:domain"))
+    implementation(project(":feature:common"))
 }
 
 kapt {
