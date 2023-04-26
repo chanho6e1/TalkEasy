@@ -1,7 +1,9 @@
 package com.talkeasy.server.controller.chat;
 
 import com.talkeasy.server.common.CommonResponse;
+import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
+import com.talkeasy.server.dto.chat.ChatTextDto;
 import com.talkeasy.server.dto.chat.MakeChatRoomDto;
 import com.talkeasy.server.dto.chat.ReadMessageDto;
 import com.talkeasy.server.service.chat.ChatService;
@@ -30,7 +32,6 @@ public class ChatController {//producer
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
     private final MongoTemplate mongoTemplate;
-    private final TTSService ttsService;
     private final ChatUserService chatUserService;
 
     @PostMapping("/create")
@@ -73,13 +74,12 @@ public class ChatController {//producer
 
     /////////////////<----------
     @GetMapping("/chat-history/{chatRoomId}")
-    public ResponseEntity<CommonResponse> getChatHistory(@PathVariable String chatRoomId,
-                                                         @RequestParam(required = false, defaultValue = "1") int offset,
-                                                         @RequestParam(value = "size", required = false, defaultValue = "10") int size
+    public ResponseEntity<PagedResponse> getChatHistory(@PathVariable String chatRoomId,
+                                                        @RequestParam(required = false, defaultValue = "1") int offset,
+                                                        @RequestParam(value = "size", required = false, defaultValue = "10") int size
     ) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "채팅방 내부 메시지 조회", chatService.getChatHistory(chatRoomId, offset, size)));
+        return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatHistory(chatRoomId, offset, size));
     }
 
 
@@ -90,12 +90,7 @@ public class ChatController {//producer
                 "채팅방 조회 성공", chatService.getChatRoomList(userId)));
     }
 
-    @GetMapping("/tts")
-    @ApiOperation(value = "text-to-speech", notes = "text를 주면 음성 파일로 반환")
-    public ResponseEntity<CommonResponse> getTTS(@RequestParam String text) throws IOException, UnsupportedAudioFileException {
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "tts 조회 성공", ttsService.getTTS(text)));
-    }
+
 
     /////////////////---------->
     ///test
@@ -103,7 +98,7 @@ public class ChatController {//producer
     @ApiOperation(value = "회원가입시 큐생성(테스트용)", notes = "쿼리스트링으로 userId를 주면 큐를 만듬")
     public ResponseEntity<CommonResponse> createUserQueue(@RequestParam String userId) throws IOException, UnsupportedAudioFileException {
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "tts 조회 성공", chatUserService.createUserQueue(userId)));
+                "큐 생성 성공", chatUserService.createUserQueue(userId)));
     }
 
 

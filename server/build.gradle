@@ -119,6 +119,9 @@ dependencies {
     //firebase
     implementation 'com.google.firebase:firebase-admin:6.8.1'
     implementation group: 'com.squareup.okhttp3', name:'okhttp', version:'4.2.2'
+
+    //gpt api
+    implementation group: 'com.theokanning.openai-gpt3-java', name: 'client', version: '0.9.0'
 }
 
 tasks.named('test') {
