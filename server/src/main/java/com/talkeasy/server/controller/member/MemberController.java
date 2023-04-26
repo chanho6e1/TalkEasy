@@ -33,16 +33,26 @@ public class MemberController {
     private final MemberService memberService;
     private final S3Uploader s3Uploader;
 
+//    @ApiOperation(value = "회원정보 수정하기", notes = "사진 변경, 이름 변경, 성별 변경, 생년월일 변경")
+//    @PostMapping(value = "/update", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+//    public ResponseEntity<CommonResponse> saveImg(@ApiParam(value = "사용자 등록 이미지") @RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile
+//            , @RequestPart(name = "value") MemberInfoUpdateRequest memberInfoUpdateRequest,
+//                                                  @AuthenticationPrincipal Member member) throws IOException {
+//        log.info("========== /update multipartFile : {}, memberInfoUpdateRequest : {}, member : {}", multipartFile, memberInfoUpdateRequest.getName(), member.getName());
+//
+////        memberService.update(member);
+//
+//        return ResponseEntity.ok().body(CommonResponse.of("회원가입 성공"));
+//    }
+
     @ApiOperation(value = "회원정보 수정하기", notes = "사진 변경, 이름 변경, 성별 변경, 생년월일 변경")
-    @PostMapping(value = "/update", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<CommonResponse> saveImg(@ApiParam(value = "사용자 등록 이미지") @RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile
-            , @RequestPart(name = "value") MemberInfoUpdateRequest memberInfoUpdateRequest,
-                                                  @AuthenticationPrincipal Member member) throws IOException {
-        log.info("========== /update multipartFile : {}, memberInfoUpdateRequest : {}, member : {}", multipartFile, memberInfoUpdateRequest.getName(), member.getName());
+    @PutMapping(value = "/update", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<CommonResponse> saveImg(@ApiParam(value = "사용자 등록 이미지") @RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile,
+                                                  @RequestPart(name = "value") MemberInfoUpdateRequest memberInfoUpdateRequest,
+                                                  @AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
+        log.info("========== /update multipartFile : {}, memberInfoUpdateRequest : {}, member : {}", multipartFile, memberInfoUpdateRequest.getName(), oAuth2User.getMember().getName());
 
-//        memberService.update(member);
-
-        return ResponseEntity.ok().body(CommonResponse.of("회원가입 성공"));
+        return ResponseEntity.ok().body(CommonResponse.of("회원정보 수정 성공", new MemberDetailResponse(memberService.updateUserInfo(multipartFile, memberInfoUpdateRequest, oAuth2User.getMember().getId()))));
     }
 
     @ApiOperation(value = "유저 정보 조회", notes = "유저 정보 조회하기")
@@ -56,7 +66,8 @@ public class MemberController {
     public ResponseEntity<CommonResponse> updateUserImage(@RequestParam("images") MultipartFile multipartFile) {
         try {
             log.info("============file: " + multipartFile);
-            s3Uploader.uploadFiles(multipartFile, "talkeasy");
+            String s = s3Uploader.uploadFiles(multipartFile, "talkeasy");
+            System.out.println("return 값 : " + s);
         } catch (Exception e) { return new ResponseEntity(HttpStatus.BAD_REQUEST); }
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
