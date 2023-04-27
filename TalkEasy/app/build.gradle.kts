@@ -25,12 +25,9 @@ android {
     }
 
     buildTypes {
-        val release by getting {
+        getting {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 
@@ -80,7 +77,7 @@ dependencies {
 
     // Glide
     implementation(libs.glide)
-    annotationProcessor(libs.glide.compiler)
+    kapt(libs.glide.compiler)
 
     // GoogleMap
     implementation(libs.google.map)

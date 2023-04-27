@@ -73,7 +73,7 @@ dependencies {
 
     // Glide
     implementation(libs.glide)
-    annotationProcessor(libs.glide.compiler)
+    kapt(libs.glide.compiler)
 
     // GoogleMap
     implementation(libs.google.map)
