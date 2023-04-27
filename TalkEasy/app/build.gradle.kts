@@ -93,6 +93,7 @@ dependencies {
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
     implementation(project(":feature:common"))
+    implementation(project(":feature:aac"))
 }
 
 kapt {
