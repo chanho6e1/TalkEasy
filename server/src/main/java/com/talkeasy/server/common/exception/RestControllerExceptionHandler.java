@@ -94,7 +94,7 @@ public class RestControllerExceptionHandler {
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ErrorResponse> resolveException(NullPointerException exception) {
-        ErrorResponse errResponse = new ErrorResponse("정보를 찾을 수 없습니다.");
+        ErrorResponse errResponse = new ErrorResponse("정보를 찾을 수 없습니다.","");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
     }
 
