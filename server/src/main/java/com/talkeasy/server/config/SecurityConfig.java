@@ -36,7 +36,8 @@ public class SecurityConfig {
                         "/api/chats/**",
                         "/api/fcm/**",
                         "/api/test/**",
-                        "/api/aac/**"
+                        "/api/aac/**",
+                        "/room.html"
                 ).permitAll()
                 .anyRequest().authenticated();
         http.csrf().disable();
