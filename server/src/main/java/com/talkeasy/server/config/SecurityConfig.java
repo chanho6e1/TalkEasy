@@ -32,7 +32,10 @@ public class SecurityConfig {
                         "/webjars/**",
                         "/swagger-ui.html",
                         "/sign-api/exception/**",
-                        "/api/**"
+                        "/api/chats/**",
+                        "/api/fcm/**",
+                        "/api/test/**",
+                        "/api/aac/**"
                 ).permitAll()
                 .anyRequest().authenticated();
         http.csrf().disable();
