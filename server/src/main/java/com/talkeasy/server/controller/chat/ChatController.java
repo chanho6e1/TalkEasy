@@ -34,9 +34,9 @@ public class ChatController {//producer
     private final MongoTemplate mongoTemplate;
     private final ChatUserService chatUserService;
 
-    @PostMapping("/create")
+    @PostMapping()
     @ApiOperation(value = "채팅방 생성", notes = "user1, user2 주면 채팅방 아이디를 반환")
-    public ResponseEntity<?> createRoom(MakeChatRoomDto dto) {
+    public ResponseEntity<?> createRoom(@RequestBody MakeChatRoomDto dto) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 "채팅방 생성 성공", chatService.createRoom(dto.getUser1(), dto.getUser2())));
@@ -54,8 +54,8 @@ public class ChatController {//producer
     @ApiOperation(value = "채팅방 참가자 정보 조회", notes = "PathVariable로 roomId 주면 채팅방 참가자 정보 반환")
     public ResponseEntity<?> getUserInfoByRoom(@PathVariable String roomId) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "채팅방 참가자 정보 조회 성공", chatService.getUserInfoByRoom(roomId)));
+        return ResponseEntity.status(HttpStatus.OK).body(
+                chatService.getUserInfoByRoom(roomId));
     }
 
 
@@ -89,7 +89,6 @@ public class ChatController {//producer
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
                 "채팅방 조회 성공", chatService.getChatRoomList(userId)));
     }
-
 
 
     /////////////////---------->

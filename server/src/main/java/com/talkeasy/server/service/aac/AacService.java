@@ -6,6 +6,7 @@ import com.talkeasy.server.domain.aac.AAC;
 import com.talkeasy.server.domain.aac.AacCategory;
 import com.talkeasy.server.domain.aac.CustomAAC;
 import com.talkeasy.server.dto.aac.CustomAACDto;
+import com.talkeasy.server.dto.aac.ResponseAACDto;
 import com.talkeasy.server.dto.chat.ChatTextDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,7 @@ public class AacService {
         Query query = new Query(Criteria.where("category").is(categoryId));
         List<AAC> result = mongoTemplate.find(query, AAC.class);
 
-        return new PagedResponse<>(result, 1);
+        return new PagedResponse<>(result.stream().map((a)-> new ResponseAACDto(a)).collect(Collectors.toList()), 1);
     }
 
     // 카테고리 종류
@@ -67,7 +68,8 @@ public class AacService {
                 () -> mongoTemplate.count(query.skip(-1).limit(-1), AAC.class)
         );
 
-        return new PagedResponse<>(metaDataPage.getContent(), metaDataPage.getTotalPages());
+        List<ResponseAACDto> result = metaDataPage.getContent().stream().map((a)-> new ResponseAACDto(a)).collect(Collectors.toList());
+        return new PagedResponse<>(result, metaDataPage.getTotalPages());
     }
 
     public PagedResponse<CustomAAC> getAacByCustom(String userId, int offset, int size) {
@@ -83,8 +85,8 @@ public class AacService {
                 () -> mongoTemplate.count(query.skip(-1).limit(-1), CustomAAC.class)
         );
 
-        return new PagedResponse<>(metaDataPage.getContent(), metaDataPage.getTotalPages());
-
+        List<ResponseAACDto> result = metaDataPage.getContent().stream().map((a)-> new ResponseAACDto(a)).collect(Collectors.toList());
+        return new PagedResponse<>(result, metaDataPage.getTotalPages());
     }
 
     // aac 연관 동사 조회
@@ -93,9 +95,10 @@ public class AacService {
         Query query = new Query(Criteria.where("id").is(aacId));
         AAC aac = mongoTemplate.findOne(query, AAC.class);
 
-        List<AAC> result = Arrays.stream(aac.getRelative_verb().split(" "))
+        List<ResponseAACDto> result = Arrays.stream(aac.getRelative_verb().split(" "))
                 .filter(a -> !a.equals("0"))
                 .map(a -> mongoTemplate.findOne(new Query(Criteria.where("id").is(a)), AAC.class))
+                .map(a-> new ResponseAACDto(a))
                 .collect(Collectors.toList());
 
         return new PagedResponse<>(result, 1);

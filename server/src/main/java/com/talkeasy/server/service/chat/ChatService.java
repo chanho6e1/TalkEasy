@@ -225,7 +225,7 @@ public class ChatService {
         return roomId;
     }
 
-    public List<UserInfo> getUserInfoByRoom(String roomId) {
+    public PagedResponse<UserInfo> getUserInfoByRoom(String roomId) {
 
         ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(roomId)), ChatRoom.class);
         String[] user = chatRoom.getUsers();
@@ -237,6 +237,6 @@ public class ChatService {
         userInfos.add(UserInfo.builder().userId(member1.getId()).userName(member1.getName()).profileImg(member1.getImageUrl()).build());
         userInfos.add(UserInfo.builder().userId(member2.getId()).userName(member2.getName()).profileImg(member2.getImageUrl()).build());
 
-        return userInfos;
+        return new PagedResponse<>(userInfos, 1);
     }
 }
