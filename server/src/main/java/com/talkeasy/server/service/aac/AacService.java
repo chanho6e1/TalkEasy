@@ -7,6 +7,11 @@ import com.talkeasy.server.domain.aac.AacCategory;
 import com.talkeasy.server.domain.aac.CustomAAC;
 import com.talkeasy.server.dto.aac.CustomAACDto;
 import com.talkeasy.server.dto.chat.ChatTextDto;
+import com.theokanning.openai.OpenAiService;
+import com.theokanning.openai.completion.CompletionRequest;
+import com.theokanning.openai.edit.EditChoice;
+import com.theokanning.openai.edit.EditRequest;
+import com.theokanning.openai.edit.EditResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -150,28 +155,53 @@ public class AacService {
     /* gpt */
     public String getGenereteText(ChatTextDto text) {
 
-        RestTemplate restTemplate = new RestTemplate();
+        OpenAiService service = new OpenAiService("{my-api-key");
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth("apiKey"); // apiKey는 OpenAI에서 발급받은 API 키입니다.
+        String input = "아파요 고통스러워요 배 땀 생리대";
 
-        String requestBody = "{\"prompt\": \"'" + text + "'어순에 맞게 배열해줘, 사족 붙이지 말고\"}";
+//        EditRequest editRequest = EditRequest.builder()
+//                .input(input)
+//                .model("text-davinci-edit-001")
+//                .instruction("어순에 맞게 배열하고 문장 만들어줘")
+//                .build();
+//
+//        EditResult editResult = service.createEdit(editRequest);
+//        System.out.println(editResult.getChoices().get(0).getText());
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
-        String url = "https://api.openai.com/v1/engines/davinci-codex/completions";
+        CompletionRequest completionRequest = CompletionRequest.builder()
+                .prompt(text.getText())
+                .model("text-davinci-003")
+                .maxTokens(100) // 원하는 출력 길이 조정 (선택사항)
+                .temperature(0.5) // 다양성 조절 (선택사항)
+//                .echo(true)
+                .build();
 
-        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
-        if (response.getStatusCode() == HttpStatus.OK) {
-            String responseBody = response.getBody();
-            // API로부터 응답을 받아 처리합니다.
-            System.out.println(responseBody);
-            return responseBody;
-        } else {
-            // API 호출이 실패한 경우 에러 처리합니다.
-            System.err.println("Failed to call GPT API: " + response.getStatusCodeValue());
-            return "Fail";
-        }
+//        System.out.println(service.createCompletion(completionRequest).getChoices());
+
+        return service.createCompletion(completionRequest).getChoices().get(0).toString();
+
+//        RestTemplate restTemplate = new RestTemplate();
+//
+//        HttpHeaders headers = new HttpHeaders();
+//        headers.setContentType(MediaType.APPLICATION_JSON);
+//        headers.setBearerAuth("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"); // apiKey는 OpenAI에서 발급받은 API 키입니다.
+//
+//        String requestBody = "{\"prompt\": \"'" + text + "'어순에 맞게 배열해줘, 사족 붙이지 말고\"}";
+//
+//        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
+//        String url = "https://api.openai.com/v1/engines/davinci-codex/completions";
+//
+//        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+//        if (response.getStatusCode() == HttpStatus.OK) {
+//            String responseBody = response.getBody();
+//            // API로부터 응답을 받아 처리합니다.
+//            System.out.println(responseBody);
+//            return responseBody;
+//        } else {
+//            // API 호출이 실패한 경우 에러 처리합니다.
+//            System.err.println("Failed to call GPT API: " + response.getStatusCodeValue());
+//            return "Fail";
+//        }
 
 //        OpenAiService service = new OpenAiService("{gpt api 키}");
 //        CompletionRequest completionRequest = CompletionRequest.builder()

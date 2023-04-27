@@ -97,7 +97,7 @@ public class AacController {
     public ResponseEntity<?> getGenereteText(ChatTextDto text) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                "카테고리 목록 조회 성공", aacService.getGenereteText(text)));
+                "문자열 생성 성공", aacService.getGenereteText(text)));
     }
 
 
