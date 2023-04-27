@@ -85,9 +85,8 @@ public class ChatController {//producer
 
     @GetMapping("/my")
     @ApiOperation(value = "채팅방 조회", notes = "내가 속한 채팅방 리스트를 반환")
-    public ResponseEntity<CommonResponse> getChatRoom(@RequestParam String userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "채팅방 조회 성공", chatService.getChatRoomList(userId)));
+    public ResponseEntity<?> getChatRoom(@RequestParam String userId) {
+        return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatRoomList(userId));
     }
 
 

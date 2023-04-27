@@ -37,6 +37,7 @@ public class ChatService {
     private final MongoTemplate mongoTemplate;
     private final RabbitTemplate rabbitTemplate;
     private final AmqpAdmin amqpAdmin;
+
     public String createRoom(String user1, String user2) {
 
         ChatRoom chatRoom = new ChatRoom(new String[]{user1, user2}, "hihi", LocalDateTime.now().toString());
@@ -60,9 +61,7 @@ public class ChatService {
 
         Queue queue = QueueBuilder.durable("chat.queue." + chatRoomDto.getRoomId() + "." + chatRoomDto.getFromUserId()).build();
         amqpAdmin.declareQueue(queue);
-        Binding binding = BindingBuilder.bind(queue)
-                .to(new TopicExchange("chat.exchange"))
-                .with(sb.toString());
+        Binding binding = BindingBuilder.bind(queue).to(new TopicExchange("chat.exchange")).with(sb.toString());
         amqpAdmin.declareBinding(binding);
 
 
@@ -71,9 +70,7 @@ public class ChatService {
 
         queue = QueueBuilder.durable("chat.queue." + chatRoomDto.getRoomId() + "." + chatRoomDto.getToUserId()).build();
         amqpAdmin.declareQueue(queue);
-        binding = BindingBuilder.bind(queue)
-                .to(new TopicExchange("chat.exchange"))
-                .with(sb.toString());
+        binding = BindingBuilder.bind(queue).to(new TopicExchange("chat.exchange")).with(sb.toString());
         amqpAdmin.declareBinding(binding);
     }
 
@@ -116,8 +113,8 @@ public class ChatService {
 
 //        rabbitTemplate.send("chat.exchange", sb.toString(), message);
         rabbitTemplate.send("chat.exchange", sb.toString(), msg);
-        List<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
-        List<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
+        PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
+        PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
 
         rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
         rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getToUserId(), gson.toJson(toUserList));
@@ -135,10 +132,7 @@ public class ChatService {
 
         List<ChatRoomDetail> filteredMetaData = mongoTemplate.find(query, ChatRoomDetail.class);
 
-        Page<ChatRoomDetail> metaDataPage = PageableExecutionUtils.getPage(
-                filteredMetaData,
-                pageable,
-                () -> mongoTemplate.count(query.skip(-1).limit(-1), ChatRoomDetail.class)
+        Page<ChatRoomDetail> metaDataPage = PageableExecutionUtils.getPage(filteredMetaData, pageable, () -> mongoTemplate.count(query.skip(-1).limit(-1), ChatRoomDetail.class)
                 // query.skip(-1).limit(-1)의 이유는 현재 쿼리가 페이징 하려고 하는 offset 까지만 보기에 이를 맨 처음부터 끝까지로 set 해줘 정확한 도큐먼트 개수를 구한다.
         );
 
@@ -147,7 +141,7 @@ public class ChatService {
     }
 
 
-    public List<ChatRoomListDto> getChatRoomList(String userId) {
+    public PagedResponse<ChatRoomListDto> getChatRoomList(String userId) {
         List<ChatRoomListDto> chatRoomListDtoList = new ArrayList<>();
 //        System.out.println(userId);
 
@@ -177,19 +171,19 @@ public class ChatService {
             queueName.append("chat.queue.").append(lastChat.getRoomId()).append(".").append(userId); // 내꺼
             QueueInformation queueInformation = rabbitAdmin.getQueueInfo(queueName.toString());
 
-            if(queueInformation != null) {
+            if (queueInformation != null) {
                 log.info("queueInfo cnt : {}", queueInformation.getMessageCount());
                 chatRoomListDto.setNoReadCnt(queueInformation.getMessageCount());
-                System.out.println("queueInformation.getMessageCount() "+ queueInformation.getMessageCount()+" "+ idx++ );
-            }
-            else {
+                System.out.println("queueInformation.getMessageCount() " + queueInformation.getMessageCount() + " " + idx++);
+            } else {
                 System.out.println(idx++);
                 System.out.println("queueInformation is null");
             }
             chatRoomListDtoList.add(chatRoomListDto);
         }
 
-        return chatRoomListDtoList;
+        return new PagedResponse<>(chatRoomListDtoList, 1);
+
     }
 
 
