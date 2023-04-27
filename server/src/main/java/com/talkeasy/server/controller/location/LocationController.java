@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/api/location")
@@ -27,10 +28,10 @@ public class LocationController {
 
     @PostMapping
     @ApiOperation(value = "위치정보", notes = "위치정보를 받아와서 카프카에 저장")
-    public ResponseEntity<CommonResponse> saveKafka(@AuthenticationPrincipal OAuth2UserImpl member, @RequestBody LocationDto locationDto) {
+    public ResponseEntity<CommonResponse> saveLocationToKafka(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member, @RequestBody LocationDto locationDto) {
 
         locationDto.setEmail(member.getEmail());
-        kafkaProducerService.sendMessage(member.getId() + ", " + "좌표data");
+        kafkaProducerService.sendMessage(locationDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 "카프카에 저장 성공"));

@@ -1,5 +1,6 @@
 package com.talkeasy.server.service;
 
+import com.talkeasy.server.dto.LocationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -13,24 +14,22 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 @Slf4j
 public class KafkaProducerService {
 
-    private final KafkaTemplate<String, String> kafkaTemplate;
+    private final KafkaTemplate<String, LocationDto> kafkaTemplate;
 
-    private String topicName = "testTopic333";
+    public void sendMessage(LocationDto message) {
+        log.info("========== Produce message : {}", message.toString());
 
-    public void sendMessage(String message) {
-        System.out.println(String.format("Produce message : %s", message));
-        log.info("==========Produce message : {}", message);
-
-        ListenableFuture<SendResult<String, String>> kafka = kafkaTemplate.send(topicName, message);
+        String topicName = "testTopic333";
+        ListenableFuture<SendResult<String, LocationDto>> kafka = kafkaTemplate.send(topicName, message);
         kafka.addCallback(new ListenableFutureCallback<>() {
             @Override
-            public void onSuccess(SendResult<String, String> result) {
-                log.info("[message = {}] Location event Sent, record : {}", message, result.getProducerRecord());
+            public void onSuccess(SendResult<String, LocationDto> result) {
+                log.info("========== [message = {}] Location event Sent successfully, record : {}", message, result.getProducerRecord());
             }
 
             @Override
             public void onFailure(Throwable ex) {
-                log.warn("[message = {}] Location event Send Fail", message);
+                log.warn("========== [message = {}] Location event Send Fail", message);
             }
         });
     }
