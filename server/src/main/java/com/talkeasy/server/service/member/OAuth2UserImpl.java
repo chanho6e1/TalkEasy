@@ -84,4 +84,7 @@ public class OAuth2UserImpl implements OAuth2User, UserDetails {
     public String getName() {
         return member.getName();
     }
+
+
+    public String getId() {return member.getId();}
 }
