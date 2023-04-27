@@ -143,11 +143,11 @@ compileQuerydsl {
 }
 
 task copyPrivate(type: Copy) {
-//    copy {
-//        from '../talkeasy'
-//        include "application.yml"
-//        into 'src/main/resources'
-//    }
+    copy {
+        from '../talkeasy'
+        include "application.yml"
+        into 'src/main/resources'
+    }
     copy {
         from '../talkeasy'
         include "talkeasy-384300-3d129ed9d54d.json"
