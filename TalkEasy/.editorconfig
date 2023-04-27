@@ -9,34 +9,88 @@ insert_final_newline = false
 max_line_length = 100
 tab_width = 4
 ij_continuation_indent_size = 8
+
+# 자동 정렬 무시할 코드 시작에 // @formatter:off 하고(주석 포함)
+# 다시 시작할 곳에 // @formatter:on 하기(마찬가지로 주석 포함)
 ij_formatter_off_tag = @formatter:off
 ij_formatter_on_tag = @formatter:on
-ij_formatter_tags_enabled = false
+ij_formatter_tags_enabled = true
+
+# 스페이스와 탭을 혼용하여 intent 를 할 수 있다(?)
 ij_smart_tabs = false
-ij_visual_guides = none
-ij_wrap_on_typing = false
-ij_kotlin_align_in_columns_case_branch = false
-ij_kotlin_align_multiline_binary_operation = false
-ij_kotlin_align_multiline_extends_list = false
-ij_kotlin_align_multiline_method_parentheses = false
+
+# 설정한 숫자의 열에 가이드라인이 나타남
+ij_visual_guides = 100
+
+# 코드 작성할 때 max_line_length 넘으면 자동으로 줄이 넘어감
+ij_wrap_on_typing = true
+
+# case branch 의 열을 맞추는 옵션
+ij_kotlin_align_in_columns_case_branch = true
+
+# 이항 연산자를 여러 줄에 걸쳐 사용할 때, 각 줄의 연산자를 맞추는 옵션
+ij_kotlin_align_multiline_binary_operation = true
+
+# 클래스나 인터페이스가 여러 줄에 걸쳐 상속 받는 경우, 각 줄의 항목을 맞추는 옵션
+ij_kotlin_align_multiline_extends_list = true
+
+# 메소드 선언이 여러 줄에 걸쳐 작성될 때, 각 줄의 괄호를 맞추는 옵션
+ij_kotlin_align_multiline_method_parentheses = true
+
+# 메소드나 함수의 매개변수가 여러 줄에 걸쳐 작성될 때, 각 줄의 매개변수를 맞추는 옵션
 ij_kotlin_align_multiline_parameters = true
-ij_kotlin_align_multiline_parameters_in_calls = false
-ij_kotlin_allow_trailing_comma = false
-ij_kotlin_allow_trailing_comma_on_call_site = false
+
+# 메소드나 함수를 호출할 때, 매개변수가 여러 줄에 걸쳐 작성될 때, 각 줄의 매개변수를 맞추는 옵션
+ij_kotlin_align_multiline_parameters_in_calls = true
+
+# 클래스나 함수의 매개변수, 배열 등의 마지막 요소 뒤에 쉼표를 허용하는 옵션
+ij_kotlin_allow_trailing_comma = true
+
+# 함수 호출 시 매개변수 목록의 마지막 요소 뒤에 쉼표를 허용하는 옵션
+ij_kotlin_allow_trailing_comma_on_call_site = true
+
+# 할당 연산자(=)가 문장을 나누는 경우, 할당 연산자를 어떻게 나눌지를 설정
 ij_kotlin_assignment_wrap = normal
-ij_kotlin_blank_lines_after_class_header = 0
+
+# 클래스나 인터페이스 선언 후 공백 라인을 몇 개 추가할 지를 설정
+ij_kotlin_blank_lines_after_class_header = 1
+
+# when 블록에서 각 브랜치 사이에 공백 라인을 몇 개 추가할 지를 설정
 ij_kotlin_blank_lines_around_block_when_branches = 0
+
+# 주석이나 어노테이션이 달린 선언문 앞에 몇 개의 공백 라인을 추가할 지를 설정
 ij_kotlin_blank_lines_before_declaration_with_comment_or_annotation_on_separate_line = 1
+
+# 블록 주석(/* */)의 시작과 끝 사이에 공백을 추가할 지를 설정
 ij_kotlin_block_comment_add_space = false
-ij_kotlin_block_comment_at_first_column = true
+
+# 블록 주석이 첫 번째 열에서 시작할 지를 설정
+ij_kotlin_block_comment_at_first_column = false
+
+# 함수 호출 시 왼쪽 괄호(() 다음에 새로운 줄을 시작할지를 설정
 ij_kotlin_call_parameters_new_line_after_left_paren = true
+
+# 함수 호출 시 오른쪽 괄호())를 새로운 줄에 위치시킬지를 설정
 ij_kotlin_call_parameters_right_paren_on_new_line = true
+
+# 함수 호출 시 매개변수 줄바꿈을 제어
 ij_kotlin_call_parameters_wrap = on_every_item
+
+# catch 키워드가 새 줄에서 시작할지 여부를 제어
 ij_kotlin_catch_on_new_line = false
+
+# 클래스 애너테이션 줄바꿈을 제어
 ij_kotlin_class_annotation_wrap = split_into_lines
+
 ij_kotlin_code_style_defaults = KOTLIN_OFFICIAL
-ij_kotlin_continuation_indent_for_chained_calls = false
-ij_kotlin_continuation_indent_for_expression_bodies = false
+
+# 메서드 체인 호출 시 연속된 들여쓰기를 적용할지 여부를 제어
+ij_kotlin_continuation_indent_for_chained_calls = true
+
+# 식 본문(expression body)에 대한 연속된 들여쓰기를 제어
+ij_kotlin_continuation_indent_for_expression_bodies = true
+
+#
 ij_kotlin_continuation_indent_in_argument_lists = false
 ij_kotlin_continuation_indent_in_elvis = false
 ij_kotlin_continuation_indent_in_if_conditions = false
