@@ -1,7 +1,6 @@
 package com.talkeasy.server.controller.location;
 
 import com.talkeasy.server.common.CommonResponse;
-import com.talkeasy.server.dto.MessageDto;
 import com.talkeasy.server.service.KafkaProducerService;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
 import io.swagger.annotations.Api;
