@@ -1,6 +1,6 @@
 package com.talkeasy.server.service;
 
-import com.talkeasy.server.dto.MessageDto;
+import com.talkeasy.server.dto.chat.MessageDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
