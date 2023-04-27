@@ -150,9 +150,15 @@ public class AacService {
 
         OpenAiService service = new OpenAiService(apiKey);
 
+//        System.out.println(text.getText());
+
+        String inputText = "'" + text.getText() + " . this words rearrange and complete in korean please.'";
+
         CompletionRequest completionRequest = CompletionRequest.builder()
+                .prompt(inputText)
 //                .prompt(text.getText() + " this words rearrange and complete in korean please.")
-                .prompt(text.getText() + " . 이 단어들을 어순 맞게 문장 완성해줘.")
+//                .prompt(text.getText() + " . 이 단어들을 어순 맞게 문장 완성해줘.")
+//                .prompt(text.getText())
                 .model("text-davinci-003")
                 .maxTokens(100) // 원하는 출력 길이 조정 (선택사항)
                 .temperature(0.5) // 다양성 조절 (선택사항)
