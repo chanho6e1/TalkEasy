@@ -10,9 +10,6 @@ import com.talkeasy.server.dto.aac.ResponseAACDto;
 import com.talkeasy.server.dto.chat.ChatTextDto;
 import com.theokanning.openai.OpenAiService;
 import com.theokanning.openai.completion.CompletionRequest;
-import com.theokanning.openai.edit.EditChoice;
-import com.theokanning.openai.edit.EditRequest;
-import com.theokanning.openai.edit.EditResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -23,9 +20,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.support.PageableExecutionUtils;
-import org.springframework.http.*;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,15 +33,6 @@ public class AacService {
 
     private final MongoTemplate mongoTemplate;
 
-    // 고정 카테고리 내용
-    public PagedResponse<AAC> getFixedAac(String categoryId) {
-
-        Query query = new Query(Criteria.where("category").is(categoryId));
-        List<AAC> result = mongoTemplate.find(query, AAC.class);
-
-        return new PagedResponse<>(result.stream().map((a)-> new ResponseAACDto(a)).collect(Collectors.toList()), 1);
-    }
-
     // 카테고리 종류
     public PagedResponse<AacCategory> getCategory() {
 
@@ -56,14 +42,14 @@ public class AacService {
     }
 
     // 카테고리별 aac 조회
-    public PagedResponse<?> getAacByCategory(String userId, String categoryId, int offset, int size) {
+    public PagedResponse<?> getAacByCategory(String userId, String categoryId, int fixed, int offset, int size) {
 
         if(categoryId.equals("9")){
             return getAacByCustom(userId, offset, size);
         }
 
         Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "title")); // 가나다 순으로
-        Query query = new Query(Criteria.where("category").is(categoryId)).with(pageable);
+        Query query = new Query(Criteria.where("category").is(categoryId).and("fixed").is(fixed)).with(pageable);
 
         List<AAC> filteredMetaData = mongoTemplate.find(query, AAC.class);
 
@@ -158,7 +144,7 @@ public class AacService {
     /* gpt */
     public String getGenereteText(ChatTextDto text) {
 
-        OpenAiService service = new OpenAiService("{my-api-key");
+        OpenAiService service = new OpenAiService("{my-api-key}");
 
         String input = "아파요 고통스러워요 배 땀 생리대";
 
@@ -182,38 +168,6 @@ public class AacService {
 //        System.out.println(service.createCompletion(completionRequest).getChoices());
 
         return service.createCompletion(completionRequest).getChoices().get(0).toString();
-
-//        RestTemplate restTemplate = new RestTemplate();
-//
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//        headers.setBearerAuth("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"); // apiKey는 OpenAI에서 발급받은 API 키입니다.
-//
-//        String requestBody = "{\"prompt\": \"'" + text + "'어순에 맞게 배열해줘, 사족 붙이지 말고\"}";
-//
-//        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
-//        String url = "https://api.openai.com/v1/engines/davinci-codex/completions";
-//
-//        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
-//        if (response.getStatusCode() == HttpStatus.OK) {
-//            String responseBody = response.getBody();
-//            // API로부터 응답을 받아 처리합니다.
-//            System.out.println(responseBody);
-//            return responseBody;
-//        } else {
-//            // API 호출이 실패한 경우 에러 처리합니다.
-//            System.err.println("Failed to call GPT API: " + response.getStatusCodeValue());
-//            return "Fail";
-//        }
-
-//        OpenAiService service = new OpenAiService("{gpt api 키}");
-//        CompletionRequest completionRequest = CompletionRequest.builder()
-//                .prompt("Somebody once told me the world is gonna roll me")
-//                .model("ada")
-//                .echo(true)
-//                .build();
-
-//        return "";
     }
 
 }
