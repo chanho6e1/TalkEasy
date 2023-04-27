@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.kotlin.jvm) apply false
     alias(libs.plugins.hilt) apply false
     alias(libs.plugins.androidx.navigation.safe.args) apply false
-    alias(libs.plugins.ktlint) apply false
+    alias(libs.plugins.ktlint) apply true
 }
 subprojects {
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
