@@ -148,26 +148,26 @@ task copyPrivate(type: Copy) {
 //        include "application.yml"
 //        into 'src/main/resources'
 //    }
-    copy {
-        from '../talkeasy'
-        include "talkeasy-384300-3d129ed9d54d.json"
-        into 'src/main/resources'
-    }
-    copy {
-        from '../talkeasy'
-        include "application.properties"
-        into 'src/main/resources'
-    }
-
-    copy {
-        from '../talkeasy/static'
-        include "index.html"
-        into 'src/main/resources/static'
-    }
-
-    copy {
-        from '../talkeasy/firebase'
-        include "talkeasy-1e037-firebase-adminsdk-cak0e-48150f03c5.json"
-        into 'src/main/resources/firebase'
-    }
+//    copy {
+//        from '../talkeasy'
+//        include "talkeasy-384300-3d129ed9d54d.json"
+//        into 'src/main/resources'
+//    }
+//    copy {
+//        from '../talkeasy'
+//        include "application.properties"
+//        into 'src/main/resources'
+//    }
+//
+//    copy {
+//        from '../talkeasy/static'
+//        include "index.html"
+//        into 'src/main/resources/static'
+//    }
+//
+//    copy {
+//        from '../talkeasy/firebase'
+//        include "talkeasy-1e037-firebase-adminsdk-cak0e-48150f03c5.json"
+//        into 'src/main/resources/firebase'
+//    }
 }
