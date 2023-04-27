@@ -6,11 +6,11 @@ plugins {
     id("kotlin-kapt")
 }
 android {
-    namespace = "com.ssafy.app_protector"
+    namespace = "com.ssafy.protector"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.ssafy.app_protector"
+        applicationId = "com.ssafy.protector"
         minSdk = 26
         targetSdk = 33
         versionCode = 1

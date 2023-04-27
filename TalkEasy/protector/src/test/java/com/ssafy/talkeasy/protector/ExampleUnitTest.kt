@@ -1,4 +1,4 @@
-package com.ssafy.talkeasy.app_protector
+package com.ssafy.talkeasy.protector
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

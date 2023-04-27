@@ -14,7 +14,7 @@ dependencyResolutionManagement {
 }
 rootProject.name = "TalkEasy"
 include(":app")
-include(":app-protector")
+include(":protector")
 include(":core:data")
 include(":core:domain")
 include(":feature:common")

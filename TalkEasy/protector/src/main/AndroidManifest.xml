@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TalkEasy">
         <activity
-            android:name="com.ssafy.talkeasy.app_protector.MainActivity"
+            android:name="com.ssafy.talkeasy.protector.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.TalkEasy">
             <intent-filter>
