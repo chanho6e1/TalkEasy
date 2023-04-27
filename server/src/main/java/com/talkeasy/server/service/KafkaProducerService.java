@@ -19,7 +19,7 @@ public class KafkaProducerService {
     public void sendMessage(LocationDto message) {
         log.info("========== Produce message : {}", message.toString());
 
-        String topicName = "testTopic333";
+        String topicName = "exam-topic3";
         ListenableFuture<SendResult<String, LocationDto>> kafka = kafkaTemplate.send(topicName, message);
         kafka.addCallback(new ListenableFutureCallback<>() {
             @Override
