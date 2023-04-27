@@ -12,6 +12,7 @@ import com.theokanning.openai.OpenAiService;
 import com.theokanning.openai.completion.CompletionRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,9 @@ import java.util.stream.Collectors;
 public class AacService {
 
     private final MongoTemplate mongoTemplate;
+
+    @Value("${openAI.api.key}")
+    private String apiKey;
 
     // 카테고리 종류
     public PagedResponse<AacCategory> getCategory() {
@@ -144,30 +148,17 @@ public class AacService {
     /* gpt */
     public String getGenereteText(ChatTextDto text) {
 
-        OpenAiService service = new OpenAiService("{my-api-key}");
-
-        String input = "아파요 고통스러워요 배 땀 생리대";
-
-//        EditRequest editRequest = EditRequest.builder()
-//                .input(input)
-//                .model("text-davinci-edit-001")
-//                .instruction("어순에 맞게 배열하고 문장 만들어줘")
-//                .build();
-//
-//        EditResult editResult = service.createEdit(editRequest);
-//        System.out.println(editResult.getChoices().get(0).getText());
+        OpenAiService service = new OpenAiService(apiKey);
 
         CompletionRequest completionRequest = CompletionRequest.builder()
                 .prompt(text.getText())
                 .model("text-davinci-003")
                 .maxTokens(100) // 원하는 출력 길이 조정 (선택사항)
                 .temperature(0.5) // 다양성 조절 (선택사항)
-//                .echo(true)
+                .n(1)
                 .build();
 
-//        System.out.println(service.createCompletion(completionRequest).getChoices());
-
-        return service.createCompletion(completionRequest).getChoices().get(0).toString();
+        return service.createCompletion(completionRequest).getChoices().get(0).getText().strip();
     }
 
 }
