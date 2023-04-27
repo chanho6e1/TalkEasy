@@ -30,7 +30,7 @@ import java.io.IOException;
 public class ChatController {//producer
 
     private final ChatService chatService;
-    private final SimpMessagingTemplate messagingTemplate;
+//    private final SimpMessagingTemplate messagingTemplate;
     private final MongoTemplate mongoTemplate;
     private final ChatUserService chatUserService;
 
