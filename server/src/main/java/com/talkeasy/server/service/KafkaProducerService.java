@@ -3,6 +3,7 @@ package com.talkeasy.server.service;
 import com.talkeasy.server.dto.LocationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class KafkaProducerService {
     public void sendMessage(LocationDto message) {
         log.info("========== Produce message : {}", message.toString());
 
-        String topicName = "exam-topic3";
+        String topicName = "exam-topic4";
         ListenableFuture<SendResult<String, LocationDto>> kafka = kafkaTemplate.send(topicName, message);
         kafka.addCallback(new ListenableFutureCallback<>() {
             @Override
