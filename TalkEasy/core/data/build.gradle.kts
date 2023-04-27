@@ -13,6 +13,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.test.espresso)
+    implementation(libs.kotlinx.coroutines.android)
+
+    implementation(libs.bundles.retrofit)
+    implementation(libs.bundles.okhttp3)
 
     implementation(project(":core:domain"))
 }

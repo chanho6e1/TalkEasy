@@ -31,6 +31,7 @@ google-map-location = "21.0.1"
 firebase-bom = "31.5.0"
 
 ktlint = "11.3.2"
+kotlinxCoroutines = "1.5.2"
 
 [libraries]
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
@@ -85,6 +86,8 @@ google-map-location = { module = "com.google.android.gms:play-services-location"
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
+
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 
 [bundles]
 androidx = ["androidx-core", "androidx-navigation-fragment", "androidx-navigation-ui", "androidx-navigation-fragment-ktx", "androidx-navigation-ui-ktx",
