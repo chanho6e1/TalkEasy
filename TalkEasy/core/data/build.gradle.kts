@@ -6,6 +6,11 @@ plugins {
 android {
     namespace = "com.ssafy.talkeasy.core.data"
     compileSdk = 33
+
+    defaultConfig {
+        minSdk = 26
+        targetSdk = 33
+    }
 }
 
 dependencies {
