@@ -34,13 +34,14 @@ public class OAuthService {
 
         try {
             email = getEmail(accessToken);
+            log.info("dsglkenlsgnse : {}",email);
         } catch (IOException e) {
             log.info("========== exception 발생 : {} ", e.getMessage());
         }
 
         if (memberService.findUserByEmail(email) == null) {
             log.info("========== 데이터 베이스에 아이디(login_id)가 없다.");
-            throw new NullPointerException();
+            return null;
         }
         token = jwtTokenProvider.createAccessToken(email);
         return token;
