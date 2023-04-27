@@ -1,41 +1,33 @@
 package com.talkeasy.server.domain;
 
+import com.talkeasy.server.dto.user.MemberInfoUpdateRequest;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.Column;
-import javax.validation.constraints.Size;
-
 @Getter
-@Document(collection = "MEMBER")
+@Setter
+@Document(collection = "member")
 @Builder
 public class Member {
     @Id
     private String id;
-
-    @Column(name = "name", length = 100)
-    @Size(max = 100)
     private String name;
-
-    @Column(name = "email", length = 512, unique = false)
-    @Size(max = 512)
     private String email;
-    @Column(name = "imageUrl", length = 512)
-    @Size(max = 512)
     private String imageUrl;
-    @Column(name = "role")
     private Integer role; //0:보호자/1:피보호자
-    @Column(name = "gender")
     private Integer gender; //0:남/1:여
-    @Column(name = "age")
     private Integer age;
-
-//    @Column(name = "accessToken")
-//    private String accessToken;
-
-    @Column(name = "birthDate")
     private String birthDate;
+
+    public Member setUserInfo(MemberInfoUpdateRequest request, String imageUrl){
+        this.name = request.getName();
+        this.gender = request.getGender();
+        this.birthDate = request.getBirthDate();
+        this.imageUrl = imageUrl != null ? imageUrl : "";
+        return this;
+    }
 
 }
