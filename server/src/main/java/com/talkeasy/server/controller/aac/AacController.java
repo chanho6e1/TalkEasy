@@ -34,21 +34,16 @@ public class AacController {
         return ResponseEntity.status(HttpStatus.OK).body(aacService.getCategory());
     }
 
-    @GetMapping("/categories/{categoryId}/fixed")
-    @ApiOperation(value = "카테고리별 고정 AAC 조회", notes = "1: 고정 2: 음식 3: 인간관계 4: 기분 5: 긴급/피해상황  6: 병원/건강  7: 생활  8: 교통  9:사용자 지정")
-    public ResponseEntity<?> getFixedAAC(@PathVariable String categoryId) {
-
-        return ResponseEntity.status(HttpStatus.OK).body(aacService.getFixedAac(categoryId));
-    }
-
     @GetMapping("/categories/{categoryId}")
-    @ApiOperation(value = "카테고리별 aac 조회", notes = "카테고리별 aac을 조회한다. 고정 제외")
+    @ApiOperation(value = "카테고리별 aac 조회", notes = "1: 고정 2: 음식 3: 인간관계 4: 기분 5: 긴급/피해상황  6: 병원/건강  7: 생활  8: 교통  9:사용자 지정 \n" +
+            "fixed=0: 일반 카테고리 내용 조회 // fixed=1: 고정 카테고리 내용 조회")
     public ResponseEntity<?> getCategoryContents(@PathVariable String categoryId,
+                                                 @RequestParam(required = false, defaultValue = "0") int fixed,
                                                  @RequestParam(required = false, defaultValue = "1") int offset,
                                                  @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                  @ApiIgnore @AuthenticationPrincipal Member member) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(aacService.getAacByCategory(member.getId(), categoryId, offset, size));
+        return ResponseEntity.status(HttpStatus.OK).body(aacService.getAacByCategory(member.getId(), categoryId, fixed,offset, size));
     }
 
     @GetMapping("/relative-verb/{aacId}")
