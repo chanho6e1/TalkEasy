@@ -27,7 +27,7 @@ public class StompRabbitController {
     private final static String CHAT_EXCHANGE_NAME = "chat.exchange";
     private final static String CHAT_QUEUE_NAME = "chat.queue";
     private final MongoTemplate mongoTemplate;
-    private final SimpMessagingTemplate messagingTemplate;
+//    private final SimpMessagingTemplate messagingTemplate;
 
 
     //////////////////<-----------
