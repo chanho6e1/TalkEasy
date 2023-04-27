@@ -2,17 +2,14 @@ package com.talkeasy.server.controller.location;
 
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.dto.LocationDto;
-import com.talkeasy.server.dto.MessageDto;
 import com.talkeasy.server.service.KafkaProducerService;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

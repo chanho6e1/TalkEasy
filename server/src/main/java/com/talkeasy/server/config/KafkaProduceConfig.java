@@ -1,6 +1,5 @@
 package com.talkeasy.server.config;
 
-import com.talkeasy.server.dto.MessageDto;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
