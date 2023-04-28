@@ -20,6 +20,7 @@ public class ChatRoomHandler {
 
     private final ChatService chatService;
     private final ChatReadService chatReadService;
+
     //서버로 들어오는 채팅값
     @RabbitListener(queues = "chat.queue")
     public void chatControl(Message message) {
