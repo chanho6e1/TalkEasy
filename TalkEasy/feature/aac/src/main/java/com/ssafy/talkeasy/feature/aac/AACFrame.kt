@@ -1,17 +1,24 @@
 package com.ssafy.talkeasy.feature.aac
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,8 +39,30 @@ import com.ssafy.talkeasy.feature.common.ui.theme.textStyleNormal22
 
 @Composable
 fun AACFrame() {
-    Column {
-        Row { }
+    val onRight = remember {
+        mutableStateOf(true)
+    }
+
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp, bottom = 21.dp, start = 24.dp, end = 36.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (onRight.value) {
+                // ChatPartner(profileImageId = profileImageId, name = name)
+                DefaultProfile()
+
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                    ButtonSOS()
+
+                    Spacer(modifier = Modifier.width(20.dp))
+
+                    ButtonAlarmAndSetting()
+                }
+            }
+        }
     }
 }
 
@@ -87,13 +116,48 @@ fun ButtonSOS() {
 }
 
 @Composable
-@Preview
-fun DefaultProfile() {
-    ChatPartner(R.drawable.ic_chat_tts, "TTS(음성 출력) 모드")
+@Preview(showBackground = true)
+fun ButtonAlarmAndSetting() {
+    val (newAlarm, setNewAlarm) = remember {
+        mutableStateOf(false)
+    }
+
+    Row {
+        IconButton(onClick = { setNewAlarm(!newAlarm) }) {
+            Icon(
+                painter = if (newAlarm) {
+                    painterResource(id = R.drawable.ic_alarm_new)
+                } else {
+                    painterResource(id = R.drawable.ic_alarm_default)
+                },
+                contentDescription = stringResource(string.image_alarm_default),
+                modifier = Modifier.size(40.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.width(18.dp))
+
+        IconButton(onClick = {
+            // 세팅 화면으로 전환
+            setNewAlarm(!newAlarm)
+        }) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_setting),
+                contentDescription = stringResource(string.image_setting),
+                modifier = Modifier.size(40.dp)
+            )
+        }
+    }
 }
 
 @Composable
-@Preview
+@Preview(showBackground = true)
+fun DefaultProfile() {
+    ChatPartner(R.drawable.ic_chat_tts, stringResource(string.content_chat_mode_tts))
+}
+
+@Composable
+@Preview(showBackground = true)
 fun PreviewProfile() {
     ChatPartner(profileImageId = R.drawable.ic_profile_default, name = "일이삼사오육칠팔구십일이삼사오육칠")
 }
