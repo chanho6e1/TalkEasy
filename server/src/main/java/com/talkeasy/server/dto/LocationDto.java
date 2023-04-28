@@ -1,13 +1,15 @@
 package com.talkeasy.server.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
+import java.io.Serializable;
+
+@Data
 @AllArgsConstructor
-public class LocationDto {
+@NoArgsConstructor
+public class LocationDto implements Serializable {
     String email;
     String x, y;
 }
