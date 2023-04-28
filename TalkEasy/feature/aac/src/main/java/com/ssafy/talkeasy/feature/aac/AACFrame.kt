@@ -23,7 +23,10 @@ import com.ssafy.talkeasy.feature.aac.R.string
 import com.ssafy.talkeasy.feature.common.R
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
+import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_error
+import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_errorContainer
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
+import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold22
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleNormal16
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleNormal22
 
@@ -67,6 +70,19 @@ fun ChatPartner(profileImageId: Int, name: String) {
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
             )
         }
+    }
+}
+
+@Composable
+@Preview
+fun ButtonSOS() {
+    Surface(shape = MaterialTheme.shapes.extraSmall, color = md_theme_light_errorContainer) {
+        Text(
+            text = "SOS",
+            color = md_theme_light_error,
+            style = textStyleBold22,
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp)
+        )
     }
 }
 
