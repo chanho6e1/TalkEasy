@@ -6,9 +6,7 @@ import com.talkeasy.server.domain.Member;
 import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
 import com.talkeasy.server.domain.chat.LastChat;
-import com.talkeasy.server.dto.chat.ChatRoomDto;
-import com.talkeasy.server.dto.chat.ChatRoomListDto;
-import com.talkeasy.server.dto.chat.UserInfo;
+import com.talkeasy.server.dto.chat.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
@@ -26,6 +24,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 
+import java.text.DateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -56,6 +55,9 @@ public class ChatService {
     }
 
     public void createQueue(ChatRoomDto chatRoomDto) {
+
+        /* chat.queue */
+
         StringBuilder sb = new StringBuilder();
         sb.append("room.").append(chatRoomDto.getRoomId()).append(".").append(chatRoomDto.getFromUserId());
 
@@ -72,6 +74,26 @@ public class ChatService {
         amqpAdmin.declareQueue(queue);
         binding = BindingBuilder.bind(queue).to(new TopicExchange("chat.exchange")).with(sb.toString());
         amqpAdmin.declareBinding(binding);
+
+        /* read.queue */
+
+        sb = new StringBuilder();
+        sb.append("room.").append(chatRoomDto.getRoomId()).append(".").append(chatRoomDto.getFromUserId());
+
+        queue = QueueBuilder.durable("read.queue."  + chatRoomDto.getRoomId() +  "." + chatRoomDto.getFromUserId()).build();
+        amqpAdmin.declareQueue(queue);
+        binding = BindingBuilder.bind(queue).to(new TopicExchange("read.exchange")).with(sb.toString());
+        amqpAdmin.declareBinding(binding);
+
+        sb = new StringBuilder();
+        sb.append("room.").append(chatRoomDto.getRoomId()).append(".").append(chatRoomDto.getToUserId());
+
+        queue = QueueBuilder.durable("read.queue."   + chatRoomDto.getRoomId() +  "." + chatRoomDto.getToUserId()).build();
+        amqpAdmin.declareQueue(queue);
+        binding = BindingBuilder.bind(queue).to(new TopicExchange("read.exchange")).with(sb.toString());
+        amqpAdmin.declareBinding(binding);
+
+
     }
 
     public ChatRoomDetail convertChat(Message message) {
@@ -93,25 +115,14 @@ public class ChatService {
         return chatRoomDetail.getRoomId();
     }
 
-    public void doChat(ChatRoomDetail chat, Message message) {
+    public void doChat(ChatRoomDetail chat) {
         StringBuilder sb = new StringBuilder();
         sb.append("room.").append(chat.getRoomId()).append(".").append(chat.getToUserId());
-
-        //message에 읽음 정보 추가
-//        Message msg = MessageBuilder
-//                .withBody(message.getBody())
-//                .setHeader("senderId", chat.getFromUserId())
-//                .setHeader("receiverId", chat.getToUserId())
-//                .setHeader("readCnt", chat.getReadCnt())
-//                .build();
 
         Gson gson = new Gson();
 
         Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
 
-        System.out.println("msg body " + msg.getBody().toString());
-
-//        rabbitTemplate.send("chat.exchange", sb.toString(), message);
         rabbitTemplate.send("chat.exchange", sb.toString(), msg);
         PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
         PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
@@ -233,4 +244,6 @@ public class ChatService {
 
         return new PagedResponse<>(userInfos, 1);
     }
+
+
 }

@@ -13,7 +13,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 //    @Override
 //    public void registerStompEndpoints(StompEndpointRegistry registry) {
 //        registry.addEndpoint("/stomp/chat")
-//                .setAllowedOriginPatterns("http://*.*.*.*:8081", "http://*:8081") //안해도 무관
+//                .setAllowedOriginPatterns("*") //안해도 무관
 //                .withSockJS();
 //    }
 //

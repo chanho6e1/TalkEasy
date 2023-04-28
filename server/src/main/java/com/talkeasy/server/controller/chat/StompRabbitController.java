@@ -2,7 +2,6 @@ package com.talkeasy.server.controller.chat;
 
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
 import com.talkeasy.server.dto.chat.MessageDto;
-import com.talkeasy.server.dto.chat.ReadMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -61,17 +60,17 @@ public class StompRabbitController {
 
     }
 
-    @MessageMapping("/chat.read.{chatRoomId}")
-    public void read(ReadMessageDto readMessageDto, @DestinationVariable String chatRoomId) {
-
-        System.out.println("chatRoomId " + readMessageDto.getMsgId());
-        ChatRoomDetail chat = mongoTemplate.findById(readMessageDto.getMsgId(), ChatRoomDetail.class);
-
-        if (!readMessageDto.getUserId().equals(chat.getFromUserId())) {
-//            chat.setReadStatus(true);
-            mongoTemplate.save(chat);
-        }
-    }
+//    @MessageMapping("/chat.read.{chatRoomId}")
+//    public void read(ReadMessageDto readMessageDto, @DestinationVariable String chatRoomId) {
+//
+//        System.out.println("chatRoomId " + readMessageDto.getMsgId());
+//        ChatRoomDetail chat = mongoTemplate.findById(readMessageDto.getMsgId(), ChatRoomDetail.class);
+//
+//        if (!readMessageDto.getUserId().equals(chat.getFromUserId())) {
+////            chat.setReadStatus(true);
+//            mongoTemplate.save(chat);
+//        }
+//    }
 
     //작동 안됨
     @MessageMapping(value = "/chat.leave.{roomId}")
