@@ -4,7 +4,7 @@ import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.domain.Member;
 import com.talkeasy.server.dto.aac.CustomAACDto;
 import com.talkeasy.server.dto.chat.ChatTextDto;
-import com.talkeasy.server.service.aac.AacService;
+import com.talkeasy.server.service.aac.AACService;
 import com.talkeasy.server.service.chat.TTSService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,10 +21,10 @@ import java.io.IOException;
 @RestController
 @RequestMapping("/api/aac")
 @RequiredArgsConstructor
-@Api(tags = {"aac 컨트롤러"})
-public class AacController {
+@Api(tags = {"AAC 컨트롤러"})
+public class AACController {
 
-    private final AacService aacService;
+    private final AACService aacService;
     private final TTSService ttsService;
 
     @GetMapping("/categories")
