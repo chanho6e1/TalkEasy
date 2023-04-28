@@ -17,19 +17,18 @@ public class KafkaProducerService {
     private final KafkaTemplate<String, LocationDto> kafkaTemplate;
 
     public void sendMessage(LocationDto message) {
-        log.info("========== Produce message : {}", message.toString());
 
-        String topicName = "testTopic333";
+        String topicName = "topic-test-01";
         ListenableFuture<SendResult<String, LocationDto>> kafka = kafkaTemplate.send(topicName, message);
         kafka.addCallback(new ListenableFutureCallback<>() {
             @Override
             public void onSuccess(SendResult<String, LocationDto> result) {
-                log.info("========== [message = {}] Location event Sent successfully, record : {}", message, result.getProducerRecord());
+                log.info("========== [send success] message : {} record : {}", message, result.getProducerRecord());
             }
 
             @Override
             public void onFailure(Throwable ex) {
-                log.warn("========== [message = {}] Location event Send Fail", message);
+                log.warn("========== [send fail] message : {} ", message);
             }
         });
     }
