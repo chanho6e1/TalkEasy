@@ -169,7 +169,7 @@ task copyPrivate(type: Copy) {
 
     copy {
         from '../talkeasy/firebase'
-        include "talkeasy-1e037-firebase-adminsdk-cak0e-48150f03c5.json"
+        include "serviceAccountKey.json"
         into 'src/main/resources/firebase'
     }
 }
