@@ -5,6 +5,7 @@ import com.rabbitmq.client.Channel;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
 import com.talkeasy.server.dto.chat.ChatRoomDto;
 import com.talkeasy.server.dto.chat.MakeChatRoomDto;
+import com.talkeasy.server.dto.firebase.FcmMessage;
 import com.talkeasy.server.service.chat.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import java.io.IOException;
 @Component
 public class ChatRoomHandler {
     private final ChatService chatService;
+
     //서버로 들어오는 채팅값
     @RabbitListener(queues = "chat.queue")
 //    public void chatControl(Message message, Channel channel, @Header(value = AmqpHeaders.DELIVERY_TAG) long tag) throws IOException {
@@ -50,7 +52,6 @@ public class ChatRoomHandler {
         MakeChatRoomDto dto = new Gson().fromJson(str, MakeChatRoomDto.class);
         chatService.createRoom(dto.getUser1(), dto.getUser2());
     }
-
 
 
 }
