@@ -2,21 +2,15 @@ package com.talkeasy.server.controller.chat;
 
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.common.PagedResponse;
-import com.talkeasy.server.domain.chat.ChatRoomDetail;
-import com.talkeasy.server.dto.chat.ChatTextDto;
 import com.talkeasy.server.dto.chat.MakeChatRoomDto;
-import com.talkeasy.server.dto.chat.ReadMessageDto;
 import com.talkeasy.server.service.chat.ChatService;
 import com.talkeasy.server.service.chat.ChatUserService;
-import com.talkeasy.server.service.chat.TTSService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -59,20 +53,6 @@ public class ChatController {//producer
     }
 
 
-    @MessageMapping("/read")
-    public void handleReadMessageEvent(ReadMessageDto readMessageDto) {
-
-        ChatRoomDetail chat = mongoTemplate.findById(readMessageDto.getMsgId(), ChatRoomDetail.class);
-
-        if (!readMessageDto.getUserId().equals(chat.getFromUserId())) {
-            if (chat.getReadCnt() > 0) {
-                chat.setReadCnt(0);
-                mongoTemplate.save(chat);
-            }
-        }
-    }
-
-    /////////////////<----------
     @GetMapping("/chat-history/{chatRoomId}")
     public ResponseEntity<PagedResponse> getChatHistory(@PathVariable String chatRoomId,
                                                         @RequestParam(required = false, defaultValue = "1") int offset,
@@ -90,8 +70,7 @@ public class ChatController {//producer
     }
 
 
-    /////////////////---------->
-    ///test
+    /* test */
     @GetMapping("/user")
     @ApiOperation(value = "회원가입시 큐생성(테스트용)", notes = "쿼리스트링으로 userId를 주면 큐를 만듬")
     public ResponseEntity<CommonResponse> createUserQueue(@RequestParam String userId) throws IOException, UnsupportedAudioFileException {

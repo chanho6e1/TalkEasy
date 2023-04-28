@@ -2,10 +2,8 @@ package com.talkeasy.server.controller.chat;
 
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
 import com.talkeasy.server.dto.chat.MessageDto;
-import com.talkeasy.server.dto.chat.ReadMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -61,18 +59,6 @@ public class StompRabbitController {
 
     }
 
-    @MessageMapping("/chat.read.{chatRoomId}")
-    public void read(ReadMessageDto readMessageDto, @DestinationVariable String chatRoomId) {
-
-        System.out.println("chatRoomId " + readMessageDto.getMsgId());
-        ChatRoomDetail chat = mongoTemplate.findById(readMessageDto.getMsgId(), ChatRoomDetail.class);
-
-        if (!readMessageDto.getUserId().equals(chat.getFromUserId())) {
-//            chat.setReadStatus(true);
-            mongoTemplate.save(chat);
-        }
-    }
-
     //작동 안됨
     @MessageMapping(value = "/chat.leave.{roomId}")
     @SendTo("/exchange/chat.exchange/room.{roomId}")
@@ -82,18 +68,6 @@ public class StompRabbitController {
         template.convertAndSend(CHAT_EXCHANGE_NAME, "room." + message.getRoomId(), message);
 
     }
-
-    // receiver()는 단순히 큐에 들어온 메세지를 소비만 한다.
-    //, concurrency = "3" : 컨슈머가 3개
-//    @RabbitListener(queues = CHAT_QUEUE_NAME)
-//    public void receive(MessageDto chatDto) {
-//
-//        messagingTemplate.convertAndSend("/exchange/chat.exchange/room." + chatDto.getRoomId(), chatDto);
-//        log.info("chatDto.getMessage() = {}", chatDto.getMsg());
-//    }
-
-
-
 
 
 }
