@@ -14,12 +14,13 @@ import java.io.IOException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/fcm")
-@Api(tags = {"firebase fcm 컨트롤러"})
+@Api(tags = {"FCM 컨트롤러"})
 public class FirebaseController {
     private final FirebaseCloudMessageService firebaseCloudMessageService;
 
     @PostMapping
-    public ResponseEntity pushMessage(@RequestParam String token, @RequestParam  String title, @RequestParam String body) throws IOException {
+    @ApiOperation(value = "백엔드 테스트용", notes = "(테스트용)")
+    public ResponseEntity pushMessage(@RequestParam String token, @RequestParam String title, @RequestParam String body) throws IOException {
 
         firebaseCloudMessageService.sendMessageTo(token, title, body);
         return ResponseEntity.ok().build();

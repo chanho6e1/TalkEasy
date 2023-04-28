@@ -3,7 +3,7 @@ package com.talkeasy.server.service.aac;
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.common.exception.ArgumentMismatchException;
 import com.talkeasy.server.domain.aac.AAC;
-import com.talkeasy.server.domain.aac.AacCategory;
+import com.talkeasy.server.domain.aac.AACCategory;
 import com.talkeasy.server.domain.aac.CustomAAC;
 import com.talkeasy.server.dto.aac.CustomAACDto;
 import com.talkeasy.server.dto.aac.ResponseAACDto;
@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class AacService {
+public class AACService {
 
     private final MongoTemplate mongoTemplate;
 
@@ -38,9 +38,9 @@ public class AacService {
     private String apiKey;
 
     // 카테고리 종류
-    public PagedResponse<AacCategory> getCategory() {
+    public PagedResponse<AACCategory> getCategory() {
 
-        List<AacCategory> result = mongoTemplate.findAll(AacCategory.class, "aac_category");
+        List<AACCategory> result = mongoTemplate.findAll(AACCategory.class, "aac_category");
 
         return new PagedResponse<>(result, 1);
     }
