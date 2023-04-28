@@ -5,7 +5,7 @@ import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.dto.chat.MakeChatRoomDto;
 import com.talkeasy.server.service.chat.ChatService;
 import com.talkeasy.server.service.chat.ChatTestService;
-import com.talkeasy.server.service.chat.ChatUserService;
+import com.talkeasy.server.service.chat.ChatUserQueueService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +28,7 @@ public class ChatController {//producer
     private final ChatService chatService;
 //    private final SimpMessagingTemplate messagingTemplate;
     private final MongoTemplate mongoTemplate;
-    private final ChatUserService chatUserService;
+    private final ChatUserQueueService chatUserQueueService;
     private final ChatTestService chatTestService;
 
     @PostMapping()
@@ -78,7 +78,7 @@ public class ChatController {//producer
     @ApiOperation(value = "회원가입시 큐생성(테스트용)", notes = "쿼리스트링으로 userId를 주면 큐를 만듬")
     public ResponseEntity<CommonResponse> createUserQueue(@RequestParam String userId) throws IOException, UnsupportedAudioFileException {
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "큐 생성 성공", chatUserService.createUserQueue(userId)));
+                "큐 생성 성공", chatUserQueueService.createUserQueue(userId)));
     }
 
     @GetMapping("/test/receive")

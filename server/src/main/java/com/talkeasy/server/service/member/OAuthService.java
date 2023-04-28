@@ -6,6 +6,7 @@ import com.talkeasy.server.authentication.JwtTokenProvider;
 import com.talkeasy.server.common.exception.NotFoundException;
 import com.talkeasy.server.domain.Member;
 import com.talkeasy.server.dto.user.MemberDetailRequest;
+import com.talkeasy.server.service.chat.ChatUserQueueService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import java.net.URL;
 public class OAuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
+    private final ChatUserQueueService chatUserQueueService;
 
     public String getToken(String accessToken) {
         log.info("========== AccessToken : {} ", accessToken);
@@ -94,7 +96,11 @@ public class OAuthService {
         } catch (IOException e) {
             log.info("========== exception 발생 : {}", e.getMessage());
         }
-        memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(member.getImageUrl()).role(member.getRole()).gender(member.getGender()).age(member.getAge()).birthDate(member.getBirthDate()).build());
+
+        String userId = memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(member.getImageUrl()).role(member.getRole()).gender(member.getGender()).age(member.getAge()).birthDate(member.getBirthDate()).build());
+
+        //채팅에 사용할 유저별 큐 생성
+        chatUserQueueService.createUserQueue(userId);
 
         return jwtTokenProvider.createAccessToken(email);
     }
