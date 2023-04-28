@@ -48,6 +48,7 @@ public class KafkaConfig {
         properties.put(ConsumerConfig.GROUP_ID_CONFIG, "talk-easy-location");
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+        properties.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, "120000");
 
         properties.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, StringDeserializer.class);
         properties.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);

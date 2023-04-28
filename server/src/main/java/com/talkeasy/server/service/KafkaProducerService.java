@@ -19,7 +19,9 @@ public class KafkaProducerService {
     public void sendMessage(LocationDto message) {
 
         String topicName = "topic-test-01";
-        ListenableFuture<SendResult<String, LocationDto>> kafka = kafkaTemplate.send(topicName, message);
+        // String topic, Integer partition, Long timestamp, K key,
+        //			@Nullable V data
+        ListenableFuture<SendResult<String, LocationDto>> kafka = kafkaTemplate.send(topicName, 0, System.currentTimeMillis(),null, message);
         kafka.addCallback(new ListenableFutureCallback<>() {
             @Override
             public void onSuccess(SendResult<String, LocationDto> result) {
