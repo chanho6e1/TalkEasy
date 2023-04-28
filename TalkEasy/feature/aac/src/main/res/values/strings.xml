@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- AAC Top Bar -->
     <string name="image_profile_default">기본 프로필 이미지입니다.</string>
     <string name="image_alarm_default">알림 버튼입니다.</string>
     <string name="image_setting">환경설정 버튼입니다.</string>
     <string name="content_chat_mode_tts">TTS(음성 출력) 모드</string>
+
+    <!-- AAC Chat Box -->
+    <string name="image_preview">미리보기 버튼입니다</string>
+    <string name="image_send_chat">채팅 전송 버튼입니다</string>
 </resources>
