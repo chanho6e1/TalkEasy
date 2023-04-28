@@ -12,6 +12,8 @@ import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,7 +25,7 @@ public class ChatRoomHandler {
 
     //서버로 들어오는 채팅값
     @RabbitListener(queues = "chat.queue")
-    public void chatControl(Message message) {
+    public void chatControl(Message message) throws IOException {
         // Json : String -> Object : ChatDto
 
         log.info(" message : {}", message);
