@@ -92,20 +92,20 @@ fun AACTopBar(onRight: Boolean) {
 fun ChatPartner(profileImageId: Int, name: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(
-            painter = painterResource(id = profileImageId),
-            contentDescription = stringResource(string.image_profile_default),
             modifier = Modifier
                 .size(48.dp)
-                .clip(CircleShape)
+                .clip(CircleShape),
+            painter = painterResource(id = profileImageId),
+            contentDescription = stringResource(string.image_profile_default)
         )
 
         Spacer(modifier = Modifier.width(14.dp))
 
         Text(
+            modifier = Modifier.width(203.dp),
             text = name,
             color = md_theme_light_onBackground,
-            style = textStyleNormal22,
-            modifier = Modifier.width(203.dp)
+            style = textStyleNormal22
         )
 
         Spacer(modifier = Modifier.width(28.dp))
@@ -115,10 +115,10 @@ fun ChatPartner(profileImageId: Int, name: String) {
             color = black_squeeze
         ) {
             Text(
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                 text = "변경",
                 color = delta,
-                style = typography.bodyLarge,
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)
+                style = typography.bodyLarge
             )
         }
     }
@@ -129,10 +129,10 @@ fun ChatPartner(profileImageId: Int, name: String) {
 fun ButtonSOS() {
     Surface(shape = shapes.extraSmall, color = md_theme_light_errorContainer) {
         Text(
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
             text = "SOS",
             color = md_theme_light_error,
-            style = textStyleBold22,
-            modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp)
+            style = textStyleBold22
         )
     }
 }
@@ -147,13 +147,13 @@ fun ButtonAlarmAndSetting() {
     Row {
         IconButton(onClick = { setNewAlarm(!newAlarm) }) {
             Image(
+                modifier = Modifier.size(40.dp),
                 painter = if (newAlarm) {
                     painterResource(id = R.drawable.ic_alarm_new)
                 } else {
                     painterResource(id = R.drawable.ic_alarm_default)
                 },
-                contentDescription = stringResource(string.image_alarm_default),
-                modifier = Modifier.size(40.dp)
+                contentDescription = stringResource(string.image_alarm_default)
             )
         }
 
@@ -164,9 +164,9 @@ fun ButtonAlarmAndSetting() {
             setNewAlarm(!newAlarm)
         }) {
             Icon(
+                modifier = Modifier.size(40.dp),
                 painter = painterResource(id = R.drawable.ic_setting),
-                contentDescription = stringResource(string.image_setting),
-                modifier = Modifier.size(40.dp)
+                contentDescription = stringResource(string.image_setting)
             )
         }
     }
