@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,7 +40,7 @@ import com.ssafy.talkeasy.feature.common.ui.theme.textStyleNormal22
 
 @Composable
 fun AACFrame() {
-    val onRight = remember {
+    val onRight by remember {
         mutableStateOf(true)
     }
 
@@ -50,16 +51,59 @@ fun AACFrame() {
                 .padding(top = 24.dp, bottom = 21.dp, start = 24.dp, end = 36.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if (onRight.value) {
+            AACTopBar(onRight = onRight)
+        }
+    }
+}
+
+@Composable
+fun AACTopBar(onRight: Boolean) {
+    val chatMode by remember {
+        mutableStateOf(true)
+    }
+
+    if (onRight) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp, bottom = 21.dp, start = 24.dp, end = 36.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            if (chatMode) {
                 // ChatPartner(profileImageId = profileImageId, name = name)
+                PreviewProfile()
+            } else {
                 DefaultProfile()
+            }
 
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                    ButtonSOS()
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+                ButtonSOS()
 
-                    Spacer(modifier = Modifier.width(20.dp))
+                Spacer(modifier = Modifier.width(20.dp))
 
-                    ButtonAlarmAndSetting()
+                ButtonAlarmAndSetting()
+            }
+        }
+    } else {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 24.dp, bottom = 21.dp, start = 36.dp, end = 36.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            ButtonSOS()
+
+            Row(horizontalArrangement = Arrangement.End) {
+                ButtonAlarmAndSetting()
+
+                Spacer(modifier = Modifier.width(20.dp))
+
+                if (chatMode) {
+                    // ChatPartner(profileImageId = profileImageId, name = name)
+                    PreviewProfile()
+                } else {
+                    DefaultProfile()
                 }
             }
         }
@@ -124,7 +168,7 @@ fun ButtonAlarmAndSetting() {
 
     Row {
         IconButton(onClick = { setNewAlarm(!newAlarm) }) {
-            Icon(
+            Image(
                 painter = if (newAlarm) {
                     painterResource(id = R.drawable.ic_alarm_new)
                 } else {
