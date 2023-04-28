@@ -24,6 +24,7 @@ public class MemberService {
     private final MembersRepository memberRepository;
     private final MongoTemplate mongoTemplate;
     private final S3Uploader s3Uploader;
+
     public Member getUserInfo(String email) {
         return memberRepository.findByEmail(email);
     }
@@ -33,19 +34,21 @@ public class MemberService {
                 Query.query(Criteria.where("email").is(email)), Member.class);
     }
 
-    public Member updateUserInfo(MultipartFile multipartFile, MemberInfoUpdateRequest request, String memberId){
+    public Member updateUserInfo(MultipartFile multipartFile, MemberInfoUpdateRequest request, String memberId) {
         Member member = mongoTemplate.findOne(
                 Query.query(Criteria.where("id").is(memberId)), Member.class);
         try {
             log.info("============file: " + multipartFile);
             String saveFileName = s3Uploader.uploadFiles(multipartFile, "talkeasy");
             member.setUserInfo(request, saveFileName);
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         return memberRepository.save(member);
 
     }
 
-    public void saveUser(Member member) {
-        memberRepository.save(member);
+    public String saveUser(Member member) {
+        Member member1 = memberRepository.save(member);
+        return member1.getId();
     }
 }
