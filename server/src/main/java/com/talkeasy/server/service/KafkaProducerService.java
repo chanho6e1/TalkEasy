@@ -15,16 +15,16 @@ import org.springframework.util.concurrent.ListenableFutureCallback;
 @Slf4j
 public class KafkaProducerService {
 
-    private final KafkaTemplate<String, LocationDto> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public void sendMessage(LocationDto message) {
-        log.info("========== Produce message : {}", message.toString());
+    public void sendMessage(String message) {
+        log.info("========== Produce message : {}", message);
 
-        String topicName = "exam-topic4";
-        ListenableFuture<SendResult<String, LocationDto>> kafka = kafkaTemplate.send(topicName, message);
+        String topicName = "topic20";
+        ListenableFuture<SendResult<String, String>> kafka = kafkaTemplate.send(topicName, message);
         kafka.addCallback(new ListenableFutureCallback<>() {
             @Override
-            public void onSuccess(SendResult<String, LocationDto> result) {
+            public void onSuccess(SendResult<String, String> result) {
                 log.info("========== [message = {}] Location event Sent successfully, record : {}", message, result.getProducerRecord());
             }
 
