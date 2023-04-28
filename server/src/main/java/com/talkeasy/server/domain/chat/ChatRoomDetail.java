@@ -14,7 +14,6 @@ import static java.time.LocalTime.now;
 @Getter
 @Setter
 @NoArgsConstructor
-@Data
 public class ChatRoomDetail {
 
     @Id
