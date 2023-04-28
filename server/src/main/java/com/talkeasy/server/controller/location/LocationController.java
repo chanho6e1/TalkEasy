@@ -30,9 +30,8 @@ public class LocationController {
     @ApiOperation(value = "위치정보", notes = "위치정보를 받아와서 카프카에 저장")
     public ResponseEntity<CommonResponse> saveLocationToKafka(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member, @RequestBody LocationDto locationDto) {
 
-        log.info("========== location controller");
         locationDto.setEmail(member.getEmail());
-        kafkaProducerService.sendMessage(locationDto.getEmail());
+        kafkaProducerService.sendMessage(locationDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 "카프카에 저장 성공"));
