@@ -31,7 +31,10 @@ android {
         }
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
         }
     }
 
@@ -92,8 +95,8 @@ dependencies {
 
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
-    implementation(project(":feature:common"))
     implementation(project(":feature:aac"))
+    implementation(project(":feature:common"))
 }
 
 kapt {
