@@ -4,6 +4,7 @@ import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.dto.chat.MakeChatRoomDto;
 import com.talkeasy.server.service.chat.ChatService;
+import com.talkeasy.server.service.chat.ChatTestService;
 import com.talkeasy.server.service.chat.ChatUserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
+import java.util.concurrent.TimeoutException;
 
 
 @RestController
@@ -27,6 +29,7 @@ public class ChatController {//producer
 //    private final SimpMessagingTemplate messagingTemplate;
     private final MongoTemplate mongoTemplate;
     private final ChatUserService chatUserService;
+    private final ChatTestService chatTestService;
 
     @PostMapping()
     @ApiOperation(value = "채팅방 생성", notes = "user1, user2 주면 채팅방 아이디를 반환")
@@ -76,6 +79,13 @@ public class ChatController {//producer
     public ResponseEntity<CommonResponse> createUserQueue(@RequestParam String userId) throws IOException, UnsupportedAudioFileException {
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
                 "큐 생성 성공", chatUserService.createUserQueue(userId)));
+    }
+
+    @GetMapping("/test/receive")
+    @ApiOperation(value = "회원가입시 큐생성(테스트용)", notes = " chat/read")
+    public ResponseEntity<CommonResponse> createUserQueue(@RequestParam String roomId, String recieveUserId, String queueName) throws IOException, UnsupportedAudioFileException, TimeoutException {
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+                "큐 생성 성공", chatTestService.receiveMessage(roomId, recieveUserId, queueName)));
     }
 
 

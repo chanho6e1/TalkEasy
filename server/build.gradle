@@ -104,6 +104,8 @@ dependencies {
     implementation 'org.webjars:sockjs-client:1.5.1'
 //     https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-amqp
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
+    implementation "com.rabbitmq:amqp-client:5.14.0"
+
 
     //tts
     implementation 'com.google.cloud:google-cloud-texttospeech:2.15.0'
