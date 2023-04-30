@@ -20,17 +20,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ssafy.talkeasy.feature.aac.R.array
 import com.ssafy.talkeasy.feature.aac.R.string
 import com.ssafy.talkeasy.feature.common.R
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
 import com.ssafy.talkeasy.feature.common.ui.theme.harp
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
-import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
@@ -103,35 +100,6 @@ fun AACChatCard(word: String) {
     }
 }
 
-@Composable
-@Preview(showBackground = true)
-fun AACFixedCards() {
-    val fixedWords = stringArrayResource(id = array.aac_fixed_words)
-
-    LazyRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 36.dp),
-        horizontalArrangement = Arrangement.spacedBy(18.dp)
-    ) {
-        items(fixedWords) { word ->
-            AACFixedCard(word = word)
-        }
-    }
-}
-
-@Composable
-fun AACFixedCard(word: String) {
-    Surface(shape = shapes.extraSmall, color = seed) {
-        Text(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
-            text = word,
-            color = md_theme_light_onBackground,
-            style = typography.titleMedium
-        )
-    }
-}
-
 val words = listOf("네", "119에 전화해주세요", "감사합니다", "안녕하세요", "좋아요", "싫어요", "그만해주세요")
 
 @Composable
@@ -150,10 +118,4 @@ fun PreviewAACChatCards() {
 @Preview
 fun PreviewAACChatCard() {
     AACChatCard(word = "감사합니다")
-}
-
-@Composable
-@Preview
-fun PreviewAACFixedCard() {
-    AACFixedCard(word = "안녕하세요")
 }

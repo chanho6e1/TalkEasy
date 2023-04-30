@@ -11,7 +11,6 @@
     <string name="image_send_chat">채팅 전송 버튼입니다</string>
 
     <!-- AAC Fixed Words -->
-
     <string-array name="aac_fixed_words">
         <item>안녕하세요</item>
         <item>안녕히계세요</item>
@@ -23,5 +22,37 @@
         <item>싫어요</item>
         <item>그만해주세요</item>
         <item>괜찮아요</item>
+    </string-array>
+
+    <!-- AAC Category -->
+    <string-array name="aac_category_index">
+        <item>food</item>
+        <item>designation</item>
+        <item>emotion</item>
+        <item>sos</item>
+        <item>health</item>
+        <item>life</item>
+        <item>traffic</item>
+        <item>custom</item>
+    </string-array>
+    <string-array name="aac_category_word">
+        <item>음식</item>
+        <item>인물/호칭</item>
+        <item>기분</item>
+        <item>긴급/피해상황</item>
+        <item>병원/건강</item>
+        <item>생활</item>
+        <item>교통</item>
+        <item>사용자 지정</item>
+    </string-array>
+    <string-array name="aac_category_content_description">
+        <item> 카테고리 버튼입니다</item>
+        <item>인물/호칭 카테고리 버튼입니다</item>
+        <item>기분 카테고리 버튼입니다</item>
+        <item>긴급/피해상황 카테고리 버튼입니다</item>
+        <item>병원/건강 카테고리 버튼입니다</item>
+        <item>생활 카테고리 버튼입니다</item>
+        <item>교통 카테고리 버튼입니다</item>
+        <item>사용자 지정 카테고리 버튼입니다</item>
     </string-array>
 </resources>
