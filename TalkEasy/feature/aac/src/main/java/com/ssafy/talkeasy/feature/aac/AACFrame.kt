@@ -18,5 +18,7 @@ fun AACFrame() {
         AACTopBar(onRight = onRight)
 
         AACChatBox(words = words)
+
+        AACFixedCards()
     }
 }
