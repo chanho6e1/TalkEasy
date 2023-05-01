@@ -36,7 +36,6 @@ public class OAuthService {
 
         try {
             email = getEmail(accessToken);
-            log.info("dsglkenlsgnse : {}",email);
         } catch (IOException e) {
             log.info("========== exception 발생 : {} ", e.getMessage());
         }
