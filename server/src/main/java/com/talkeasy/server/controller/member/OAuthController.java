@@ -39,7 +39,7 @@ public class OAuthController {
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("로그인 성공", token));
     }
 
-    @ApiOperation(value = "회원정보 등록하기", notes = "jwt 토큰 리턴")
+    @ApiOperation(value = "회원정보 등록하기", notes = "return : jwt 토큰 , role(0 : 보호자, 1 : 피보호자), gender(0 : 남자, 1 : 여자),  * email : 입력제외")
     @PostMapping("/register")
     ResponseEntity<CommonResponse> registerUser(@RequestBody MemberDetailRequest member) {
         log.info("========== /register registerUser name : {}, email : {}, imageUrl : {}", member.getName(), member.getEmail(), member.getImageUrl());
