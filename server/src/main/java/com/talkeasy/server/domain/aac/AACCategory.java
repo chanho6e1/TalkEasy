@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("aac_category")
 @Data
-public class AacCategory {
+public class AACCategory {
     @Id
     private String id;
     private String title; // 카테고리 이름

@@ -6,7 +6,6 @@ import lombok.Setter;
 
 @Setter
 @Getter
-@Data
 public class CustomAACDto {
     String title;
 }

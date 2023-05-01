@@ -3,12 +3,14 @@ package com.talkeasy.server.service.chat;
 import com.google.gson.Gson;
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.domain.Member;
+import com.talkeasy.server.domain.app.UserAppToken;
 import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
 import com.talkeasy.server.domain.chat.LastChat;
 import com.talkeasy.server.dto.chat.ChatRoomDto;
 import com.talkeasy.server.dto.chat.ChatRoomListDto;
 import com.talkeasy.server.dto.chat.UserInfo;
+import com.talkeasy.server.service.firebase.FirebaseCloudMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.*;
@@ -26,6 +28,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -37,6 +40,7 @@ public class ChatService {
     private final MongoTemplate mongoTemplate;
     private final RabbitTemplate rabbitTemplate;
     private final AmqpAdmin amqpAdmin;
+    private final FirebaseCloudMessageService firebaseCloudMessageService;
 
     public String createRoom(String user1, String user2) {
 
@@ -72,6 +76,26 @@ public class ChatService {
         amqpAdmin.declareQueue(queue);
         binding = BindingBuilder.bind(queue).to(new TopicExchange("chat.exchange")).with(sb.toString());
         amqpAdmin.declareBinding(binding);
+
+        /* read.queue*/
+        sb = new StringBuilder();
+        sb.append("room.").append(chatRoomDto.getRoomId()).append(".").append(chatRoomDto.getFromUserId());
+
+        queue = QueueBuilder.durable("read.queue." + chatRoomDto.getRoomId() + "." + chatRoomDto.getFromUserId()).build();
+        amqpAdmin.declareQueue(queue);
+        binding = BindingBuilder.bind(queue).to(new TopicExchange("read.exchange")).with(sb.toString());
+        amqpAdmin.declareBinding(binding);
+
+
+        sb = new StringBuilder();
+        sb.append("room.").append(chatRoomDto.getRoomId()).append(".").append(chatRoomDto.getToUserId());
+
+        queue = QueueBuilder.durable("read.queue." + chatRoomDto.getRoomId() + "." + chatRoomDto.getToUserId()).build();
+        amqpAdmin.declareQueue(queue);
+        binding = BindingBuilder.bind(queue).to(new TopicExchange("read.exchange")).with(sb.toString());
+        amqpAdmin.declareBinding(binding);
+
+
     }
 
     public ChatRoomDetail convertChat(Message message) {
@@ -93,17 +117,9 @@ public class ChatService {
         return chatRoomDetail.getRoomId();
     }
 
-    public void doChat(ChatRoomDetail chat, Message message) {
+    public void doChat(ChatRoomDetail chat, Message message) throws IOException {
         StringBuilder sb = new StringBuilder();
         sb.append("room.").append(chat.getRoomId()).append(".").append(chat.getToUserId());
-
-        //message에 읽음 정보 추가
-//        Message msg = MessageBuilder
-//                .withBody(message.getBody())
-//                .setHeader("senderId", chat.getFromUserId())
-//                .setHeader("receiverId", chat.getToUserId())
-//                .setHeader("readCnt", chat.getReadCnt())
-//                .build();
 
         Gson gson = new Gson();
 
@@ -111,7 +127,6 @@ public class ChatService {
 
         System.out.println("msg body " + msg.getBody().toString());
 
-//        rabbitTemplate.send("chat.exchange", sb.toString(), message);
         rabbitTemplate.send("chat.exchange", sb.toString(), msg);
         PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
         PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
@@ -119,6 +134,11 @@ public class ChatService {
         rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
         rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getToUserId(), gson.toJson(toUserList));
 
+
+        // FCM 알림 - 안드로이드 FCM 연결 시, 주석 풀 것.
+//        Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getFromUserId())), Member.class);
+//        UserAppToken userAppToken = mongoTemplate.findOne(Query.query(Criteria.where("userId").is(chat.getToUserId())), UserAppToken.class);
+//        firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), chat.getMsg());
 
     }
 
