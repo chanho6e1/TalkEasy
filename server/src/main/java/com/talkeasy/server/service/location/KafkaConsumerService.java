@@ -15,7 +15,9 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 
 @Service
@@ -32,34 +34,28 @@ public class KafkaConsumerService {
         return dateTime.format(formatter);
     }
 
-    public void bulk() {
+    public void consume() {
         try (KafkaConsumer<String, LocationDto> kafkaConsumer = new KafkaConsumer<>(consumerFactory.getConfigurationProperties())) {
             org.apache.kafka.common.TopicPartition topicPartition = new TopicPartition("topic-test-02", 0);
 
             kafkaConsumer.assign(Collections.singletonList(topicPartition));
             kafkaConsumer.seek(topicPartition, 0);
 
-            List<Map<String, LocationDto>> list;
-            Map<String, LocationDto> map;
+            List<LocationDto> locationDtos = new ArrayList<>();
 
-            list = new ArrayList<>();
-            map = new HashMap<>();
             ConsumerRecords<String, LocationDto> records = kafkaConsumer.poll(Duration.ofSeconds(10));
 
             log.info("==================== record count : {}", records.count());
 
             for (ConsumerRecord<String, LocationDto> record : records) {
                 if (record.value() != null) {
-                    map.put(String.valueOf(record.value().hashCode()), record.value());
+                    locationDtos.add(record.value());
                     log.info("Topic : {}, Partition : {}, Offset : {}, Timestamp : {}, Key : {}", record.topic(), record.partition(), record.offset(), getTimestampToDate(record.timestamp()), record.key());
                 }
-                list.add(map);
             }
             try {
-                if (!list.get(0).isEmpty()) {
-                    // TODO: BULK TO POSTGRES
-                    log.info("========== bulk to postgres");
-                    postgresKafkaService.bulk(list);
+                if (!locationDtos.isEmpty()) {
+                    postgresKafkaService.bulk(locationDtos);
                 }
             } catch (Exception e) {
                 log.error("error : {}", e.getMessage());
