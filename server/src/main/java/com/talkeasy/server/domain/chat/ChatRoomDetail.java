@@ -24,6 +24,7 @@ public class ChatRoomDetail {
     private Integer readCnt; // 읽음 수정
     private String toUserId;
     private String fromUserId;
+    private String imageUrl;
 
 
 
@@ -34,5 +35,8 @@ public class ChatRoomDetail {
         this.msg = messageDto.getMsg();
         this.created_dt = messageDto.getCreated_dt();
         this.readCnt = 1;
+
+//        this.imageUrl = MessageDto.
+
     }
 }

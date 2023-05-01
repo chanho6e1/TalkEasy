@@ -23,16 +23,17 @@ public class ChatReadService {
 
     private final MongoTemplate mongoTemplate;
     private final RabbitTemplate rabbitTemplate;
+    private final Gson gson;
 
     public ChatReadDto convertChat(Message message) {
         String str = new String(message.getBody());
-        ChatReadDto chat = new Gson().fromJson(str, ChatReadDto.class);
+        ChatReadDto chat = gson.fromJson(str, ChatReadDto.class);
 
         return chat;
     }
 
     public void readMessage(ChatReadDto chatReadDto) {
-        Gson gson = new Gson();
+//        Gson gson = new Gson();
 
         List<ChatRoomDetail> chatList = mongoTemplate.find(Query.query(Criteria.where("created_dt").lt(chatReadDto.getReadTime()).and("readCnt").is(1)
                 .and("roomId").is(chatReadDto.getRoomId())), ChatRoomDetail.class);
@@ -46,8 +47,12 @@ public class ChatReadService {
                     log.info("roomId {}", chat.getRoomId());
                     log.info("userId {}", chat.getToUserId());
 
-                    StringBuilder sb = new StringBuilder();
-                    sb.append("room.").append(chat.getRoomId()).append(".").append(chat.getToUserId()); // 상대방에게 보내기
+                    StringBuilder sb = new StringBuilder()
+                            .append("room.")
+                            .append(chat.getRoomId())
+                            .append(".")
+                            .append(chat.getToUserId()); // 상대방에게 보내기
+
                     log.info("sb {}", sb);
 
                     ChatReadResponseDto chatReadResponseDto = ChatReadResponseDto.builder().msgId(chat.getId()).roomId(chat.getRoomId())
