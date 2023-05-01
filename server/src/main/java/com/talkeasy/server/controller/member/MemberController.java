@@ -17,10 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -52,6 +49,13 @@ public class MemberController {
     public ResponseEntity<CommonResponse> getUserInfo(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("member 조회 성공", new MemberDetailResponse(oAuth2User.getMember())));
+    }
+
+    @ApiOperation(value = "유저 탈퇴", notes = "유저 아이디 입력 시, 관련된 정보 삭제")
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<CommonResponse> deleteUserInfo(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
+
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("member 삭제 성공", memberService.deleteUserInfo(oAuth2User.getId())));
     }
 
 }

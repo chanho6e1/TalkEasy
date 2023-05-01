@@ -51,4 +51,8 @@ public class MemberService {
         Member member1 = memberRepository.save(member);
         return member1.getId();
     }
+
+    public String deleteUserInfo(String userId) {
+        return null;
+    }
 }
