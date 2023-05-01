@@ -2,7 +2,8 @@ package com.talkeasy.server.controller.location;
 
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.dto.LocationDto;
-import com.talkeasy.server.service.KafkaProducerService;
+import com.talkeasy.server.service.location.KafkaConsumerService;
+import com.talkeasy.server.service.location.KafkaProducerService;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -25,15 +26,25 @@ import springfox.documentation.annotations.ApiIgnore;
 public class LocationController {
 
     private final KafkaProducerService kafkaProducerService;
+    private final KafkaConsumerService kafkaConsumerService;
 
     @PostMapping
     @ApiOperation(value = "위치정보", notes = "위치정보를 받아와서 카프카에 저장")
-    public ResponseEntity<CommonResponse> saveLocationToKafka(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member, @RequestBody LocationDto locationDto) {
+    public ResponseEntity<CommonResponse<Object>> saveLocationToKafka(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member, @RequestBody LocationDto locationDto) {
 
         locationDto.setEmail(member.getEmail());
         kafkaProducerService.sendMessage(locationDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 "카프카에 저장 성공"));
+    }
+
+    @PostMapping("/consumer")
+    public ResponseEntity<CommonResponse<Object>> consume() {
+
+        kafkaConsumerService.consume();
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+                "consumer test"));
     }
 }
