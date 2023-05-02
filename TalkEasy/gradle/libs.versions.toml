@@ -98,7 +98,7 @@ androidx = ["androidx-core", "androidx-navigation-fragment", "androidx-navigatio
     "androidx-navigation-dynamic-features-fragment", "androidx-navigation-testing"]
 compose = ["androidx-activity-compose", "androidx-lifecycle-runtime-ktx", "androidx-lifecycle-viewmodel-compose", "androidx-compose-material3", "androidx-compose-foundation",
     "androidx-compose-ui", "androidx-compose-tooling-preview", "androidx-compose-runtime-livedata", "androidx-compose-runtime-rxjava", "androidx-compose-animation",
-    "androidx-compose-material-window-size", "androidx-navigation-compose","androidx-hilt-navigation-compose"]
+    "androidx-compose-material-window-size", "androidx-navigation-compose", "androidx-hilt-navigation-compose"]
 debug-compose = ["androidx-compose-tooling", "androidx-compose-ui-test-manifest"]
 
 retrofit = ["retrofit", "retrofit-converter-gson"]

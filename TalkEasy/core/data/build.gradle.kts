@@ -1,6 +1,8 @@
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("com.google.dagger.hilt.android")
+    id("kotlin-kapt")
 }
 
 android {
@@ -23,5 +25,13 @@ dependencies {
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.okhttp3)
 
+    implementation(libs.hilt)
+    kapt(libs.hilt.compiler)
+
     implementation(project(":core:domain"))
+    implementation(project(":feature:common"))
+}
+
+kapt {
+    correctErrorTypes = true
 }
