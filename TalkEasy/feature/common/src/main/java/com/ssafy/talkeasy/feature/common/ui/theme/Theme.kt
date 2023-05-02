@@ -103,5 +103,10 @@ fun TalkEasyTheme(
         }
     }
 
-    MaterialTheme(colorScheme = colorScheme, typography = Typography, content = content, shapes = shapes)
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content,
+        shapes = shapes
+    )
 }
