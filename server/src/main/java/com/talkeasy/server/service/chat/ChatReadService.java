@@ -33,7 +33,6 @@ public class ChatReadService {
     }
 
     public void readMessage(ChatReadDto chatReadDto) {
-//        Gson gson = new Gson();
 
         List<ChatRoomDetail> chatList = mongoTemplate.find(Query.query(Criteria.where("created_dt").lt(chatReadDto.getReadTime()).and("readCnt").is(1)
                 .and("roomId").is(chatReadDto.getRoomId())), ChatRoomDetail.class);
