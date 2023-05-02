@@ -71,6 +71,14 @@ val Typography =
         )
     )
 
+val textStyleBold32 = TextStyle(
+    fontFamily = welcomeFont,
+    fontWeight = FontWeight.Bold,
+    fontSize = 32.sp,
+    lineHeight = 24.sp,
+    letterSpacing = 0.5.sp
+)
+
 val shapes =
     Shapes(
         extraSmall = RoundedCornerShape(5.dp),
