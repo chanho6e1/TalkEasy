@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_logo_text">TalkEasy</string>
+    <string name="kakao_login_text">카카오 로그인 버튼</string>
+    <string name="bg_main_wave_text">물결 모양 배경 요소</string>
+    <string name="bg_main_leaf_big_text">큰 나뭇잎 배경 요소</string>
+    <string name="bg_main_leaf_small_text">작은 나뭇잎 배경 요소</string>
+</resources>

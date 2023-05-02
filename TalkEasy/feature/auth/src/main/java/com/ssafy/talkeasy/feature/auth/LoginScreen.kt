@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kakao.sdk.auth.model.OAuthToken
@@ -95,7 +96,7 @@ fun LoginContent(
         item {
             Image(
                 painter = painterResource(id = R.drawable.bg_talkeasy_logo_verticcal_trans),
-                contentDescription = "bg_talkeasy_logo_verticcal_trans",
+                contentDescription = stringResource(id = R.string.app_logo_text),
                 modifier = modifier
                     .padding(bottom = 60.dp)
                     .fillMaxSize()
@@ -108,7 +109,7 @@ fun LoginContent(
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_kakao_login),
-                    contentDescription = "ic_kakao_login"
+                    contentDescription = stringResource(id = R.string.kakao_login_text)
                 )
             }
         }
@@ -125,18 +126,18 @@ fun Background(
         Surface(color = md_theme_light_surface) {
             Image(
                 painter = painterResource(id = R.drawable.bg_main_wave),
-                contentDescription = "bottom wave image",
+                contentDescription = stringResource(id = R.string.bg_main_wave_text),
                 modifier = modifier.fillMaxSize(),
                 alignment = Alignment.BottomCenter
             )
             Image(
                 painter = painterResource(id = R.drawable.bg_main_leaf_big),
-                contentDescription = "bg_main_leaf_big",
+                contentDescription = stringResource(id = R.string.bg_main_leaf_big_text),
                 modifier = modifier.align(Alignment.TopEnd)
             )
             Image(
                 painter = painterResource(id = R.drawable.bg_main_leaf_small),
-                contentDescription = "bg_main_leaf_small",
+                contentDescription = stringResource(id = R.string.bg_main_leaf_small_text),
                 modifier = modifier
                     .align(Alignment.BottomStart)
                     .padding(bottom = 51.dp)
