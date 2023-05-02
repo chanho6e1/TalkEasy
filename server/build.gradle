@@ -129,7 +129,7 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.5.4'
 
     // Health Check
-//    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 }
 
@@ -163,11 +163,11 @@ task copyPrivate(type: Copy) {
         into 'src/main/resources'
     }
 
-    copy {
-        from '../talkeasy'
-        include "application-prod.yml"
-        into 'src/main/resources'
-    }
+//    copy {
+//        from '../talkeasy'
+//        include "application-prod.yml"
+//        into 'src/main/resources'
+//    }
 
 
     copy {
