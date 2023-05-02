@@ -6,13 +6,16 @@ import com.talkeasy.server.dto.chat.MakeChatRoomDto;
 import com.talkeasy.server.service.chat.ChatService;
 import com.talkeasy.server.service.chat.ChatTestService;
 import com.talkeasy.server.service.chat.ChatUserQueueService;
+import com.talkeasy.server.service.member.OAuth2UserImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
 import java.io.IOException;
@@ -40,11 +43,12 @@ public class ChatController {//producer
     }
 
     @DeleteMapping("/{roomId}")
-    @ApiOperation(value = "채팅방 삭제", notes = "PathVariable로 roomId 주면 삭제한 roomId 아이디를 반환")
-    public ResponseEntity<?> deleteRoom(@PathVariable String roomId) {
+    @ApiOperation(value = "채팅방 삭제(나가기)", notes = "PathVariable로 roomId 주면 삭제한 roomId 아이디를 반환, '나가기'실행한 사용자만 삭제되고 남은 유저는 그대로 유지")
+    public ResponseEntity<?> deleteRoom(@PathVariable String roomId,
+                                        @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "채팅방 삭제 성공", chatService.deleteRoom(roomId)));
+                "채팅방 삭제 성공", chatService.deleteRoom(roomId, oAuth2User.getId())));
     }
 
     @GetMapping("/{roomId}")

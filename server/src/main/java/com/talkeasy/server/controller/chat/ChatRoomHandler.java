@@ -38,7 +38,7 @@ public class ChatRoomHandler {
         String roomId = chatService.saveChat(chat);
         chat.setRoomId(roomId);
 
-        chatService.doChat(chat, message);
+        chatService.doChat(chat);
 
     }
 

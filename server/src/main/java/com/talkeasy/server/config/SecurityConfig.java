@@ -37,6 +37,7 @@ public class SecurityConfig {
                         "/api/fcm/**",
                         "/api/test/**",
                         "/api/aac/**",
+                        "/api/member/**",
                         "/room.html"
                 ).permitAll()
                 .anyRequest().authenticated();

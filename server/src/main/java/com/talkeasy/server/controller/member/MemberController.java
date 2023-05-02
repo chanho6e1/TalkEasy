@@ -52,10 +52,10 @@ public class MemberController {
     }
 
     @ApiOperation(value = "유저 탈퇴", notes = "유저 아이디 입력 시, 관련된 정보 삭제")
-    @DeleteMapping("/{userId}")
+    @DeleteMapping
     public ResponseEntity<CommonResponse> deleteUserInfo(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("member 삭제 성공", memberService.deleteUserInfo(oAuth2User.getId())));
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("member 삭제 성공", memberService.deleteUserInfo("64475c28970b4a6441e96c52")));
     }
 
 }
