@@ -4,7 +4,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.ssafy.talkeasy.feature.auth.LoginRoute
+import com.ssafy.talkeasy.feature.auth.ui.mobile.LoginRoute
 
 const val loginNavigationRoute = "login_route"
 
