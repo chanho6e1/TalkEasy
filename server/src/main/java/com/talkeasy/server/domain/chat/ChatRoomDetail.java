@@ -1,10 +1,7 @@
 package com.talkeasy.server.domain.chat;
 
 import com.talkeasy.server.dto.chat.MessageDto;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,7 +10,9 @@ import static java.time.LocalTime.now;
 @Document("chat_room_detail")
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
+@AllArgsConstructor
+//@NoArgsConstructor
 public class ChatRoomDetail {
 
     @Id

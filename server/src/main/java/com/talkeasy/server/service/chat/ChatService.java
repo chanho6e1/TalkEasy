@@ -3,7 +3,6 @@ package com.talkeasy.server.service.chat;
 import com.google.gson.Gson;
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.domain.Member;
-import com.talkeasy.server.domain.app.UserAppToken;
 import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
 import com.talkeasy.server.domain.chat.LastChat;
@@ -104,7 +103,7 @@ public class ChatService {
         return chatRoomDetail.getRoomId();
     }
 
-    public void doChat(ChatRoomDetail chat, Message message) throws IOException {
+    public void doChat(ChatRoomDetail chat) throws IOException {
         StringBuilder sb = new StringBuilder()
                 .append("room.")
                 .append(chat.getRoomId())
@@ -117,15 +116,18 @@ public class ChatService {
         PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
         PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
 
-        rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
         rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getToUserId(), gson.toJson(toUserList));
 
+        // 송신자가 관리자일 경우, fcm 안 보냄
+        if (!chat.getFromUserId().equals("admin")) {
+            rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
 
-        /* FCM 알림 - 안드로이드 FCM 연결 시, 주석 풀 것. */
+            /* FCM 알림 - 안드로이드 FCM 연결 시, 주석 풀 것. */
 //        Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getFromUserId())), Member.class);
 //        UserAppToken userAppToken = mongoTemplate.findOne(Query.query(Criteria.where("userId").is(chat.getToUserId())), UserAppToken.class);
 //        firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), chat.getMsg());
 
+        }
     }
 
 
@@ -211,25 +213,44 @@ public class ChatService {
     }
 
 
-    public String deleteRoom(String roomId) {
+    public String deleteRoom(String roomId, String userId) throws IOException {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(roomId));
         ChatRoom chatRoom = mongoTemplate.findOne(query, ChatRoom.class);
+
+        /* chat.queue, read.queue 삭제 */
+        deleteQueue("chat.queue", chatRoom.getId(), userId);
+        deleteQueue("read.queue", chatRoom.getId(), userId);
+
+        if(chatRoom.getUsers().length == 1){
+            // 채팅방에 남은 인원이 1명인 경우만 삭제
+            mongoTemplate.remove(query, ChatRoom.class); //채팅방 삭제
+            mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)), ChatRoomDetail.class); //채팅 내역 삭제
+            return roomId;
+        }
 
 //        if (chatRoom == null) {
 //            throw new ResourceNotFoundException("없는 채팅방 번호입니다");
 //        }
 
-        mongoTemplate.remove(query, ChatRoom.class); //채팅방 삭제
-        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)), ChatRoomDetail.class); //채팅 내역 삭제
+        String toUserId = Arrays.stream(chatRoom.getUsers()).filter(a -> !a.equals(userId))
+                .toArray(String[]::new)[0];
 
-        /* chat.queue, read.queue 삭제 */
+        System.out.println("toUserId :: " + toUserId);
 
-        deleteQueue("chat.queue", chatRoom.getId(), chatRoom.getUsers()[0]);
-        deleteQueue("chat.queue", chatRoom.getId(), chatRoom.getUsers()[1]);
+        ChatRoomDetail chat = ChatRoomDetail.builder()
+                .roomId(chatRoom.getId())
+                .toUserId(toUserId)
+                .fromUserId("admin")
+                .msg("상대방이 나갔습니다.")
+                .created_dt(LocalDateTime.now().toString())
+                .readCnt(0)
+                .build();
 
-        deleteQueue("read.queue", chatRoom.getId(), chatRoom.getUsers()[0]);
-        deleteQueue("read.queue", chatRoom.getId(), chatRoom.getUsers()[1]);
+        doChat(chat);
+
+        chatRoom.setUsers(new String[]{toUserId});
+        mongoTemplate.save(chatRoom);
 
         return roomId;
     }
@@ -249,6 +270,7 @@ public class ChatService {
                         .userId(member.getId())
                         .userName(member.getName())
                         .profileImg(member.getImageUrl())
+                        .deleteStatus(member.getDeleteStatus())
                         .build())
                 .collect(Collectors.toList());
 
