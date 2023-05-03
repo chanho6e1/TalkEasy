@@ -41,7 +41,7 @@ fun LoginFrame() {
                 modifier = Modifier
                     .size(450.dp)
                     .align(Alignment.TopEnd)
-                    .padding(top = 9.dp, start = 155.dp),
+                    .padding(top = 9.dp, start = 155.dp)
             )
 
             Image(
@@ -50,7 +50,7 @@ fun LoginFrame() {
                 modifier = Modifier
                     .size(450.dp)
                     .align(Alignment.BottomStart)
-                    .padding(end = 128.dp, top = 95.dp),
+                    .padding(end = 128.dp, top = 95.dp)
             )
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
