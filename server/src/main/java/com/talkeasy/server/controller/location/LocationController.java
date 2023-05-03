@@ -42,7 +42,7 @@ public class LocationController {
     @PostMapping("/consumer")
     public ResponseEntity<CommonResponse<Object>> consume() {
 
-        kafkaConsumerService.bulk();
+        kafkaConsumerService.consume();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 "consumer test"));

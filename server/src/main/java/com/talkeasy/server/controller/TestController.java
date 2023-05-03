@@ -5,6 +5,7 @@ import com.talkeasy.server.service.TestService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
+
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/api/test")
@@ -28,5 +31,16 @@ public class TestController {
                 "test 조회 성공", testService.getTests()));
     }
 
+
+    private Environment env;
+
+    @GetMapping("/profile")
+    public String getProfile() {
+        return Arrays.stream(env.getActiveProfiles())
+                .findFirst()
+                .orElse("");
+
+
+    }
 
 }

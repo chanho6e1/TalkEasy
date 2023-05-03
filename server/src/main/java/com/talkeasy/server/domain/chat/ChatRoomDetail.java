@@ -1,10 +1,7 @@
 package com.talkeasy.server.domain.chat;
 
 import com.talkeasy.server.dto.chat.MessageDto;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,8 +10,9 @@ import static java.time.LocalTime.now;
 @Document("chat_room_detail")
 @Getter
 @Setter
-@NoArgsConstructor
-@Data
+@Builder
+@AllArgsConstructor
+//@NoArgsConstructor
 public class ChatRoomDetail {
 
     @Id
@@ -25,6 +23,7 @@ public class ChatRoomDetail {
     private Integer readCnt; // 읽음 수정
     private String toUserId;
     private String fromUserId;
+    private String imageUrl;
 
 
 
@@ -35,5 +34,8 @@ public class ChatRoomDetail {
         this.msg = messageDto.getMsg();
         this.created_dt = messageDto.getCreated_dt();
         this.readCnt = 1;
+
+//        this.imageUrl = MessageDto.
+
     }
 }

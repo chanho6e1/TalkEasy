@@ -128,6 +128,9 @@ dependencies {
     // postgres
     implementation 'org.postgresql:postgresql:42.5.4'
 
+    // Health Check
+//    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
 }
 
 tasks.named('test') {
@@ -149,16 +152,24 @@ compileQuerydsl {
 }
 
 task copyPrivate(type: Copy) {
-//    copy {
-//        from '../talkeasy'
-//        include "application.yml"
-//        into 'src/main/resources'
-//    }
+    copy {
+        from '../talkeasy'
+        include "application.yml"
+        into 'src/main/resources'
+    }
     copy {
         from '../talkeasy'
         include "talkeasy-384300-3d129ed9d54d.json"
         into 'src/main/resources'
     }
+
+//    copy {
+//        from '../talkeasy'
+//        include "application-prod.yml"
+//        into 'src/main/resources'
+//    }
+
+
     copy {
         from '../talkeasy'
         include "application.properties"
@@ -176,4 +187,7 @@ task copyPrivate(type: Copy) {
         include "serviceAccountKey.json"
         into 'src/main/resources/firebase'
     }
+
+
+
 }

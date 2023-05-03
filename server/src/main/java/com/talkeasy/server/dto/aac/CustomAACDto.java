@@ -1,6 +1,5 @@
 package com.talkeasy.server.dto.aac;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

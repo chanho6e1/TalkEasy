@@ -3,7 +3,6 @@ package com.talkeasy.server.service.chat;
 import com.google.gson.Gson;
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.domain.Member;
-import com.talkeasy.server.domain.app.UserAppToken;
 import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
 import com.talkeasy.server.domain.chat.LastChat;
@@ -31,6 +30,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -41,6 +41,7 @@ public class ChatService {
     private final RabbitTemplate rabbitTemplate;
     private final AmqpAdmin amqpAdmin;
     private final FirebaseCloudMessageService firebaseCloudMessageService;
+    private final Gson gson;
 
     public String createRoom(String user1, String user2) {
 
@@ -49,58 +50,43 @@ public class ChatService {
 
         createQueue(new ChatRoomDto(chatRoomDto));
 
-        RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate);
-        QueueInformation queueInformation = null;
-
-        StringBuilder queueName = new StringBuilder();
-        queueName.append("chat.queue.").append(chatRoomDto.getId()).append(".").append(user1);
-        queueInformation = rabbitAdmin.getQueueInfo(queueName.toString());
-
         return chatRoom.getId();
     }
 
     public void createQueue(ChatRoomDto chatRoomDto) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("room.").append(chatRoomDto.getRoomId()).append(".").append(chatRoomDto.getFromUserId());
 
-        Queue queue = QueueBuilder.durable("chat.queue." + chatRoomDto.getRoomId() + "." + chatRoomDto.getFromUserId()).build();
-        amqpAdmin.declareQueue(queue);
-        Binding binding = BindingBuilder.bind(queue).to(new TopicExchange("chat.exchange")).with(sb.toString());
-        amqpAdmin.declareBinding(binding);
-
-
-        sb = new StringBuilder();
-        sb.append("room.").append(chatRoomDto.getRoomId()).append(".").append(chatRoomDto.getToUserId());
-
-        queue = QueueBuilder.durable("chat.queue." + chatRoomDto.getRoomId() + "." + chatRoomDto.getToUserId()).build();
-        amqpAdmin.declareQueue(queue);
-        binding = BindingBuilder.bind(queue).to(new TopicExchange("chat.exchange")).with(sb.toString());
-        amqpAdmin.declareBinding(binding);
+        /* chat.queue*/
+        createQueueDetail(chatRoomDto, "chat",chatRoomDto.getFromUserId());
+        createQueueDetail(chatRoomDto, "chat",chatRoomDto.getToUserId());
 
         /* read.queue*/
-        sb = new StringBuilder();
-        sb.append("room.").append(chatRoomDto.getRoomId()).append(".").append(chatRoomDto.getFromUserId());
-
-        queue = QueueBuilder.durable("read.queue." + chatRoomDto.getRoomId() + "." + chatRoomDto.getFromUserId()).build();
-        amqpAdmin.declareQueue(queue);
-        binding = BindingBuilder.bind(queue).to(new TopicExchange("read.exchange")).with(sb.toString());
-        amqpAdmin.declareBinding(binding);
-
-
-        sb = new StringBuilder();
-        sb.append("room.").append(chatRoomDto.getRoomId()).append(".").append(chatRoomDto.getToUserId());
-
-        queue = QueueBuilder.durable("read.queue." + chatRoomDto.getRoomId() + "." + chatRoomDto.getToUserId()).build();
-        amqpAdmin.declareQueue(queue);
-        binding = BindingBuilder.bind(queue).to(new TopicExchange("read.exchange")).with(sb.toString());
-        amqpAdmin.declareBinding(binding);
-
+        createQueueDetail(chatRoomDto, "read",chatRoomDto.getFromUserId());
+        createQueueDetail(chatRoomDto, "read",chatRoomDto.getToUserId());
 
     }
 
+    //queueName: read/chat
+    public void createQueueDetail(ChatRoomDto chatRoomDto, String queueName, String userId) {
+
+        StringBuilder sb = new StringBuilder()
+                .append("room.")
+                .append(chatRoomDto.getRoomId())
+                .append(".")
+                .append(userId);
+
+        Queue queue = QueueBuilder.durable(queueName+ ".queue." + chatRoomDto.getRoomId() + "." + userId).build();
+        amqpAdmin.declareQueue(queue);
+        Binding binding = BindingBuilder.bind(queue).to(new TopicExchange(queueName+ ".exchange")).with(sb.toString());
+        amqpAdmin.declareBinding(binding);
+    }
+
+
+
     public ChatRoomDetail convertChat(Message message) {
         String str = new String(message.getBody());
-        ChatRoomDetail chat = new Gson().fromJson(str, ChatRoomDetail.class);
+
+        ChatRoomDetail chat = gson.fromJson(str, ChatRoomDetail.class);
+
         chat.setCreated_dt(LocalDateTime.now().toString());
         chat.setReadCnt(1);
         log.info("{}", chat);
@@ -117,29 +103,31 @@ public class ChatService {
         return chatRoomDetail.getRoomId();
     }
 
-    public void doChat(ChatRoomDetail chat, Message message) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        sb.append("room.").append(chat.getRoomId()).append(".").append(chat.getToUserId());
-
-        Gson gson = new Gson();
+    public void doChat(ChatRoomDetail chat) throws IOException {
+        StringBuilder sb = new StringBuilder()
+                .append("room.")
+                .append(chat.getRoomId())
+                .append(".")
+                .append(chat.getToUserId());
 
         Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
-
-        System.out.println("msg body " + msg.getBody().toString());
 
         rabbitTemplate.send("chat.exchange", sb.toString(), msg);
         PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
         PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
 
-        rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
         rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getToUserId(), gson.toJson(toUserList));
 
+        // 송신자가 관리자일 경우, fcm 안 보냄
+        if (!chat.getFromUserId().equals("admin")) {
+            rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
 
-        // FCM 알림 - 안드로이드 FCM 연결 시, 주석 풀 것.
+            /* FCM 알림 - 안드로이드 FCM 연결 시, 주석 풀 것. */
 //        Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getFromUserId())), Member.class);
 //        UserAppToken userAppToken = mongoTemplate.findOne(Query.query(Criteria.where("userId").is(chat.getToUserId())), UserAppToken.class);
 //        firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), chat.getMsg());
 
+        }
     }
 
 
@@ -163,48 +151,49 @@ public class ChatService {
 
     public PagedResponse<ChatRoomListDto> getChatRoomList(String userId) {
         List<ChatRoomListDto> chatRoomListDtoList = new ArrayList<>();
-//        System.out.println(userId);
 
         List<LastChat> lastChatList = getLastChatList(userId);
         int size = lastChatList.size();
 
         RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate);
-        int idx = 0;
 
         for (int i = size - 1; i >= 0; i--) {
 
             LastChat lastChat = lastChatList.get(i);
-            String otherUserId = lastChat.getFromUserId();
+            String otherUserId = lastChat.getFromUserId().equals(userId) ? lastChat.getToUserId() : lastChat.getFromUserId();
 
-            ChatRoomListDto chatRoomListDto = new ChatRoomListDto(lastChat);
+            Optional<Member> memberOptional = getMemberById(otherUserId);
+            if (memberOptional.isPresent()) {
+                Member member = memberOptional.get();
+                ChatRoomListDto chatRoomListDto = new ChatRoomListDto(lastChat);
+                chatRoomListDto.setProfile(member.getImageUrl());
+                chatRoomListDto.setName(member.getName());
 
-            if (userId == otherUserId) { //내가 보낸 사람이라면
-                otherUserId = lastChat.getToUserId();
+                QueueInformation queueInformation = getQueueInfo(rabbitAdmin, lastChat.getRoomId(), userId);
+                if (queueInformation != null) {
+                    log.info("queueInfo cnt : {}", queueInformation.getMessageCount());
+                    chatRoomListDto.setNoReadCnt(queueInformation.getMessageCount());
+                } else {
+                    System.out.println("queueInformation is null");
+                }
+
+                chatRoomListDtoList.add(chatRoomListDto);
             }
-
-            Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(otherUserId)), Member.class); // 수신자의 정보 가져오기
-
-            chatRoomListDto.setProfile(member.getImageUrl()); // 수신자 프로필
-            chatRoomListDto.setName(member.getName()); // 수신자 이름
-
-            StringBuilder queueName = new StringBuilder();
-            queueName.append("chat.queue.").append(lastChat.getRoomId()).append(".").append(userId); // 내꺼
-            QueueInformation queueInformation = rabbitAdmin.getQueueInfo(queueName.toString());
-
-            if (queueInformation != null) {
-                log.info("queueInfo cnt : {}", queueInformation.getMessageCount());
-                chatRoomListDto.setNoReadCnt(queueInformation.getMessageCount());
-                System.out.println("queueInformation.getMessageCount() " + queueInformation.getMessageCount() + " " + idx++);
-            } else {
-                System.out.println(idx++);
-                System.out.println("queueInformation is null");
-            }
-            chatRoomListDtoList.add(chatRoomListDto);
         }
 
         return new PagedResponse<>(chatRoomListDtoList, 1);
-
     }
+
+
+    private Optional<Member> getMemberById(String id) {
+        Query query = Query.query(Criteria.where("id").is(id));
+        return Optional.ofNullable(mongoTemplate.findOne(query, Member.class));
+    }
+
+    private QueueInformation getQueueInfo(RabbitAdmin rabbitAdmin, String roomId, String userId) {
+        String queueName = String.format("chat.queue.%s.%s", roomId, userId);
+        return rabbitAdmin.getQueueInfo(queueName);
+     }
 
 
     public void saveLastChat(ChatRoomDetail chat) {
@@ -224,32 +213,66 @@ public class ChatService {
     }
 
 
-    public String deleteRoom(String roomId) {
+    public String deleteRoom(String roomId, String userId) throws IOException {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(roomId));
         ChatRoom chatRoom = mongoTemplate.findOne(query, ChatRoom.class);
+
+        /* chat.queue, read.queue 삭제 */
+        deleteQueue("chat.queue", chatRoom.getId(), userId);
+        deleteQueue("read.queue", chatRoom.getId(), userId);
+
+        if(chatRoom.getUsers().length == 1){
+            // 채팅방에 남은 인원이 1명인 경우만 삭제
+            mongoTemplate.remove(query, ChatRoom.class); //채팅방 삭제
+            mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)), ChatRoomDetail.class); //채팅 내역 삭제
+            return roomId;
+        }
 
 //        if (chatRoom == null) {
 //            throw new ResourceNotFoundException("없는 채팅방 번호입니다");
 //        }
 
-        mongoTemplate.remove(query, ChatRoom.class); //채팅방 삭제
-        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)), ChatRoomDetail.class); //채팅 내역 삭제
+        String toUserId = Arrays.stream(chatRoom.getUsers()).filter(a -> !a.equals(userId))
+                .toArray(String[]::new)[0];
+
+        System.out.println("toUserId :: " + toUserId);
+
+        ChatRoomDetail chat = ChatRoomDetail.builder()
+                .roomId(chatRoom.getId())
+                .toUserId(toUserId)
+                .fromUserId("admin")
+                .msg("상대방이 나갔습니다.")
+                .created_dt(LocalDateTime.now().toString())
+                .readCnt(0)
+                .build();
+
+        doChat(chat);
+
+        chatRoom.setUsers(new String[]{toUserId});
+        mongoTemplate.save(chatRoom);
 
         return roomId;
     }
 
+    private void deleteQueue(String queueName, String roomId, String userId){
+        amqpAdmin.deleteQueue(queueName + "." + roomId + "." + userId);
+    }
+
     public PagedResponse<UserInfo> getUserInfoByRoom(String roomId) {
-
         ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(roomId)), ChatRoom.class);
-        String[] user = chatRoom.getUsers();
+        String[] userIds = chatRoom.getUsers();
 
-        Member member1 = mongoTemplate.findOne(Query.query(Criteria.where("id").is(user[0])), Member.class);
-        Member member2 = mongoTemplate.findOne(Query.query(Criteria.where("id").is(user[1])), Member.class);
+        List<Member> members = mongoTemplate.find(Query.query(Criteria.where("id").in(userIds)), Member.class);
 
-        List<UserInfo> userInfos = new ArrayList<>();
-        userInfos.add(UserInfo.builder().userId(member1.getId()).userName(member1.getName()).profileImg(member1.getImageUrl()).build());
-        userInfos.add(UserInfo.builder().userId(member2.getId()).userName(member2.getName()).profileImg(member2.getImageUrl()).build());
+        List<UserInfo> userInfos = members.stream()
+                .map(member -> UserInfo.builder()
+                        .userId(member.getId())
+                        .userName(member.getName())
+                        .profileImg(member.getImageUrl())
+                        .deleteStatus(member.getDeleteStatus())
+                        .build())
+                .collect(Collectors.toList());
 
         return new PagedResponse<>(userInfos, 1);
     }
