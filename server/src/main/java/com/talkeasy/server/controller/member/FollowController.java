@@ -49,13 +49,13 @@ public class FollowController {
             "기존에 등록된 주보호자의 아이디 입력 시, 주보호자 해제")
     @PutMapping("/protector/{targetId}")
     public ResponseEntity<CommonResponse> putProtector(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User, @PathVariable String targetId){
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("주보호자 등록/변경 성공", followService.putProtector("64475bb2970b4a6441e96c50", targetId)));
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("주보호자 등록/변경 성공", followService.putProtector(oAuth2User.getId(), targetId)));
     }
 
     // 위치정보 토글
     @ApiOperation(value = "위치정보 허용 변경", notes = "피보호자가 각각의 보호자에 대해 위치 정보 접근 여부에 대해 설정한다. 처음 초기 설정은 false")
     @PutMapping("/location/{targetId}")
     public ResponseEntity<CommonResponse> putLocationStatus(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User, @PathVariable String targetId){
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("위치정보 접근권한 변경 성공", followService.putLocationStatus("64475bb2970b4a6441e96c50", targetId)));
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("위치정보 접근권한 변경 성공", followService.putLocationStatus(oAuth2User.getId(), targetId)));
     }
 }
