@@ -5,4 +5,11 @@
     <string name="image_log_in">카카오 로그인 버튼입니다</string>
     <string name="image_logo">앱 로고입니다</string>
     <string name="image_bg_log_in_wave">로그인 화면의 우측 하단에 있는 물결무늬입니다</string>
+
+    <!-- Tablet - Join -->
+    <string name="title_sexual">성별</string>
+    <string name="title_birth">생년월일</string>
+
+    <!-- Tablet - Welcome -->
+    <string name="title_welcome">%s 님\n환영합니다!</string>
 </resources>

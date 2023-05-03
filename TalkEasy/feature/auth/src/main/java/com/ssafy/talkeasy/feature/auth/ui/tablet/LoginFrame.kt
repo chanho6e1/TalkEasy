@@ -46,7 +46,9 @@ fun LoginFrame() {
         ) {
             Image(
                 alignment = Alignment.TopStart,
-                imageVector = ImageVector.vectorResource(id = drawable.bg_log_in_right_leaf_for_tablet),
+                imageVector = ImageVector.vectorResource(
+                    id = drawable.bg_log_in_right_leaf_for_tablet
+                ),
                 contentDescription = stringResource(R.string.image_bg_right_leaf),
                 contentScale = ContentScale.FillHeight
             )
@@ -70,7 +72,9 @@ fun LoginFrame() {
                 color = Color.Transparent
             ) {
                 Image(
-                    imageVector = ImageVector.vectorResource(id = drawable.bg_talkeasy_logo_verticcal_trans),
+                    imageVector = ImageVector.vectorResource(
+                        id = drawable.bg_talkeasy_logo_verticcal_trans
+                    ),
                     contentDescription = stringResource(R.string.image_logo),
                     contentScale = ContentScale.FillWidth
                 )

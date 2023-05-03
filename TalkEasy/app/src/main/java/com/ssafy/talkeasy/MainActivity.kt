@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.ssafy.talkeasy.feature.auth.ui.tablet.LoginFrame
+import com.ssafy.talkeasy.feature.auth.ui.tablet.WelcomeFrame
 import com.ssafy.talkeasy.feature.common.ui.theme.TalkEasyTheme
 
 class MainActivity : ComponentActivity() {
@@ -21,7 +21,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    LoginFrame()
+                    WelcomeFrame("일이삼사오육칠팔구십일이삼사오육칠")
                 }
             }
         }

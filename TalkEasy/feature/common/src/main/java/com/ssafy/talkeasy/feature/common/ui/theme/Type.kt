@@ -24,8 +24,8 @@ val Typography =
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
             fontSize = 24.sp,
-            lineHeight = 28.sp,
-            letterSpacing = 0.sp
+            lineHeight = 24.sp,
+            letterSpacing = 0.5.sp
         ),
         titleMedium = TextStyle(
             fontFamily = welcomeFont,
@@ -70,6 +70,14 @@ val Typography =
             letterSpacing = 0.5.sp
         )
     )
+
+val welcomeBold40 = TextStyle(
+    fontFamily = welcomeFont,
+    fontWeight = FontWeight.Bold,
+    fontSize = 40.sp,
+    lineHeight = 44.sp,
+    letterSpacing = 0.5.sp
+)
 
 val shapes =
     Shapes(
