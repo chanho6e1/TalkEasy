@@ -1,6 +1,5 @@
 package com.talkeasy.server.dto.chat;
 
-import com.talkeasy.server.domain.Member;
 import com.talkeasy.server.domain.chat.LastChat;
 import lombok.Data;
 

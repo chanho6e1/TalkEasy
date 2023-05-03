@@ -1,7 +1,7 @@
 package com.talkeasy.server.controller.aac;
 
 import com.talkeasy.server.common.CommonResponse;
-import com.talkeasy.server.domain.Member;
+import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.aac.CustomAACDto;
 import com.talkeasy.server.dto.chat.ChatTextDto;
 import com.talkeasy.server.service.aac.AACService;

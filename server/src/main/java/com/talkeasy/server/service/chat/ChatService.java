@@ -2,7 +2,7 @@ package com.talkeasy.server.service.chat;
 
 import com.google.gson.Gson;
 import com.talkeasy.server.common.PagedResponse;
-import com.talkeasy.server.domain.Member;
+import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
 import com.talkeasy.server.domain.chat.LastChat;
