@@ -80,9 +80,6 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 
-    implementation(libs.glide)
-    kapt(libs.glide.compiler)
-
     implementation(libs.google.map)
     implementation(libs.google.map.location)
 
