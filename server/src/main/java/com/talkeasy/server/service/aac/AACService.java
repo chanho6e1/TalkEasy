@@ -150,7 +150,7 @@ public class AACService {
         OpenAiService service = new OpenAiService(apiKey);
 
 //        String inputText = "'" + text.getText() + " . this words rearrange and complete in korean please.'";
-        String inputText = "'" + text.getText() + " . 이 단어들을 어순 맞게 문장 완성해줘.'";
+        String inputText = "'" + text.getText() + " .' 이 단어들을 어순 맞게 문장 완성해줘.";
 
         CompletionRequest completionRequest = CompletionRequest.builder()
                 .prompt(inputText)
