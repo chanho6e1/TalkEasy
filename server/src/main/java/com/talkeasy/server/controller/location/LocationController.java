@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
-@RequestMapping("/api/location")
+@RequestMapping("/api/locations")
 @RequiredArgsConstructor
 @Slf4j
 @Api(tags = {"location 컨트롤러"})

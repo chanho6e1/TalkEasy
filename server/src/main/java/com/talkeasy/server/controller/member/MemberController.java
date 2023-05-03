@@ -26,7 +26,7 @@ import java.io.IOException;
 @Api(tags = {"Member 관련 API"})
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/member")
+@RequestMapping("/api/members")
 @Slf4j
 public class MemberController {
 
