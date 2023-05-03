@@ -1,9 +1,6 @@
 package com.ssafy.talkeasy.feature.auth
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.talkeasy.core.domain.Resource
@@ -14,48 +11,63 @@ import com.ssafy.talkeasy.core.domain.usecase.auth.LoginUseCase
 import com.ssafy.talkeasy.feature.common.SharedPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class LoginViewModel @Inject constructor(
+class AuthViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences,
     private val logInUseCase: LoginUseCase,
     private val joinUseCase: JoinUseCase,
 ) : ViewModel() {
 
-    private val _accessToken: MutableState<String?> = mutableStateOf("")
-    val accessToken: State<String?> = _accessToken
+    private val accessToken = MutableStateFlow("")
 
-    fun setAccessToken(accessToken: String) {
-        _accessToken.value = accessToken
-    }
+    private val _isNewMember = MutableStateFlow(false)
+    val isNewMember: StateFlow<Boolean> = _isNewMember
 
-    fun requestLogin(accessToken: String) = viewModelScope.launch {
+    private val profileImg = MutableStateFlow("")
+
+    private fun requestLogin(accessToken: String) = viewModelScope.launch {
         when (val value = logInUseCase(accessToken)) {
             is Resource.Success<Auth> -> {
                 if (value.code == 200) {
                     // login success
+                    _isNewMember.value = false
                     sharedPreferences.accessToken = value.data.data
                 } else if (value.code == 201) {
                     // no member
+                    _isNewMember.value = true
+                    Log.d("requestLogin", "requestLogin: ${value.data.message}")
                 }
             }
             is Resource.Error -> Log.e("requestLogin", "requestLogin: ${value.errorMessage}")
         }
     }
 
-    fun requestJoin(member: MemberRequestBody) = viewModelScope.launch {
-        when (val value = joinUseCase(member)) {
-            is Resource.Success<Auth> -> {
-                sharedPreferences.accessToken = value.data.data
+    fun requestJoin(nickname: String) = viewModelScope.launch {
+        val member = sharedPreferences.accessToken?.let {
+            MemberRequestBody(
+                accessToken = it,
+                name = nickname,
+                imageUrl = profileImg.value
+            )
+        }
+        member?.let {
+            when (val value = joinUseCase(member)) {
+                is Resource.Success<Auth> -> {
+                    sharedPreferences.accessToken = value.data.data
+                    _isNewMember.value = true
+                }
+                is Resource.Error ->
+                    Log.e("requestJoin", "requestJoin: ${value.errorMessage}")
             }
-            is Resource.Error ->
-                Log.e("requestJoin", "requestJoin: ${value.errorMessage}")
         }
     }
 
     fun onKakaoLoginSuccess(accessToken: String) {
-        setAccessToken(accessToken)
+        this.accessToken.value = accessToken
         requestLogin(accessToken)
     }
 }
