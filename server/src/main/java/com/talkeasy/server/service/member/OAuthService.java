@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.talkeasy.server.authentication.JwtTokenProvider;
 import com.talkeasy.server.common.exception.NotFoundException;
-import com.talkeasy.server.domain.Member;
+import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.user.MemberDetailRequest;
 import com.talkeasy.server.service.chat.ChatUserQueueService;
 import lombok.RequiredArgsConstructor;

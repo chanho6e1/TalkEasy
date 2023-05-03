@@ -1,7 +1,7 @@
 package com.talkeasy.server.service.member;
 
 import com.talkeasy.server.config.s3.S3Uploader;
-import com.talkeasy.server.domain.Member;
+import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.domain.aac.CustomAAC;
 import com.talkeasy.server.domain.app.UserAppToken;
 import com.talkeasy.server.domain.chat.ChatRoom;

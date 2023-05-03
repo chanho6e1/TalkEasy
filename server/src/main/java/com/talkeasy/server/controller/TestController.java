@@ -32,10 +32,11 @@ public class TestController {
     }
 
 
-    private Environment env;
+    private final Environment env;
 
     @GetMapping("/profile")
     public String getProfile() {
+//        System.out.println(env.getActiveProfiles());
         return Arrays.stream(env.getActiveProfiles())
                 .findFirst()
                 .orElse("");

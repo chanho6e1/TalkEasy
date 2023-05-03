@@ -24,6 +24,8 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -96,6 +98,8 @@ public class AACService {
                 .map(a-> new ResponseAACDto(a))
                 .collect(Collectors.toList());
 
+        Collections.sort(result, Comparator.comparing(ResponseAACDto::getTitle));
+
         return new PagedResponse<>(result, 1);
     }
 
@@ -150,7 +154,7 @@ public class AACService {
         OpenAiService service = new OpenAiService(apiKey);
 
 //        String inputText = "'" + text.getText() + " . this words rearrange and complete in korean please.'";
-        String inputText = "'" + text.getText() + " . 이 단어들을 어순 맞게 문장 완성해줘.'";
+        String inputText = "'" + text.getText() + " .' 이 단어들을 어순 맞게 문장 완성해줘.";
 
         CompletionRequest completionRequest = CompletionRequest.builder()
                 .prompt(inputText)
@@ -160,7 +164,7 @@ public class AACService {
                 .n(1)
                 .build();
 
-        return service.createCompletion(completionRequest).getChoices().get(0).getText().strip();
+        return service.createCompletion(completionRequest).getChoices().get(0).getText().strip().replace("\"", "");
     }
 
 }
