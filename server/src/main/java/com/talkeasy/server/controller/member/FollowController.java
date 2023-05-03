@@ -20,7 +20,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @Api(tags = {"Follow 컨트롤러"})
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/api/follow")
+@RequestMapping("/api/follows")
 @Slf4j
 public class FollowController {
 
