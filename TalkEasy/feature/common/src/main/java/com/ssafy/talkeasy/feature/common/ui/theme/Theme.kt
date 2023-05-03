@@ -105,7 +105,7 @@ fun TalkEasyTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography,
+        typography = typography,
         content = content,
         shapes = shapes
     )

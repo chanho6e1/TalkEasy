@@ -18,10 +18,10 @@ val welcomeFont =
         Font(R.font.welcome_bold, FontWeight.Bold, FontStyle.Normal)
     )
 
-val Typography =
+val typography =
     Typography(
         titleLarge = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = welcomeFont,
             fontWeight = FontWeight.Normal,
             fontSize = 24.sp,
             lineHeight = 28.sp,
