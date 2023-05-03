@@ -110,7 +110,7 @@ fun TalkEasyTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = typography,
+        typography = Typography,
         content = content,
         shapes = shapes
     )

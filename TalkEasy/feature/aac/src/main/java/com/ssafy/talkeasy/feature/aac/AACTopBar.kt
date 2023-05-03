@@ -34,7 +34,7 @@ import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold22
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleNormal22
-import com.ssafy.talkeasy.feature.common.ui.theme.typography
+import com.ssafy.talkeasy.feature.common.ui.theme.Typography
 
 @Composable
 fun AACTopBar(onRight: Boolean) {
@@ -118,7 +118,7 @@ fun ChatPartner(profileImageId: Int, name: String) {
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                 text = "변경",
                 color = delta,
-                style = typography.bodyLarge
+                style = Typography.bodyLarge
             )
         }
     }

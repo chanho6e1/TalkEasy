@@ -18,14 +18,14 @@ val welcomeFont =
         Font(R.font.welcome_bold, FontWeight.Bold, FontStyle.Normal)
     )
 
-val typography =
+val Typography =
     Typography(
         titleLarge = TextStyle(
             fontFamily = FontFamily.Default,
             fontWeight = FontWeight.Normal,
             fontSize = 24.sp,
-            lineHeight = 28.sp,
-            letterSpacing = 0.sp
+            lineHeight = 24.sp,
+            letterSpacing = 0.5.sp
         ),
         titleMedium = TextStyle(
             fontFamily = welcomeFont,
@@ -70,6 +70,14 @@ val typography =
             letterSpacing = 0.5.sp
         )
     )
+
+val textStyleBold24 = TextStyle(
+    fontFamily = welcomeFont,
+    fontWeight = FontWeight.Bold,
+    fontSize = 24.sp,
+    lineHeight = 24.sp,
+    letterSpacing = 0.5.sp
+)
 
 val textStyleBold22 = TextStyle(
     fontFamily = welcomeFont,

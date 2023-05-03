@@ -25,11 +25,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.feature.aac.R.string
 import com.ssafy.talkeasy.feature.common.R
+import com.ssafy.talkeasy.feature.common.ui.theme.Typography
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
 import com.ssafy.talkeasy.feature.common.ui.theme.harp
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
-import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
 @Composable
 fun AACChatBox(words: List<String>) {
@@ -95,7 +95,7 @@ fun AACChatCard(word: String) {
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
             text = word,
             color = md_theme_light_onBackground,
-            style = typography.titleMedium
+            style = Typography.titleMedium
         )
     }
 }
