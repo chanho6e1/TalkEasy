@@ -42,6 +42,8 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 
+    implementation(libs.glide.compose)
+
     implementation(project(":core:domain"))
 }
 

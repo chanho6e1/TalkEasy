@@ -24,6 +24,7 @@ hilt = "2.45"
 kakao = "2.13.0"
 
 glide = "4.15.1"
+glide-compose = "1.0.0-alpha.3"
 
 google-services = "4.3.15"
 google-map = "18.1.0"
@@ -81,8 +82,7 @@ hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hil
 kakao-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakao" }
 kakao-share = { module = "com.kakao.sdk:v2-share", version.ref = "kakao" }
 
-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
-glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
+glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "glide-compose" }
 
 google-map = { module = "com.google.android.gms:play-services-maps", version.ref = "google-map" }
 google-map-location = { module = "com.google.android.gms:play-services-location", version.ref = "google-map-location" }
