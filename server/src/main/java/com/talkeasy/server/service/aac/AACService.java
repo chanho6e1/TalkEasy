@@ -24,6 +24,8 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -95,6 +97,8 @@ public class AACService {
                 .map(a -> mongoTemplate.findOne(new Query(Criteria.where("id").is(a)), AAC.class))
                 .map(a-> new ResponseAACDto(a))
                 .collect(Collectors.toList());
+
+        Collections.sort(result, Comparator.comparing(ResponseAACDto::getTitle));
 
         return new PagedResponse<>(result, 1);
     }

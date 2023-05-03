@@ -36,6 +36,10 @@ public class CommonResponse<T>{
         return new CommonResponse<>(message);
     }
 
+    public static  <T>  CommonResponse<T> of(T data) {
+        return new CommonResponse<>(data);
+    }
+
     public static CommonResponse<Object> fail(String message) {
         return new CommonResponse<>(message, new Object());
     }
