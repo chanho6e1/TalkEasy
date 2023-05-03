@@ -34,7 +34,7 @@ public class FollowController {
                                     @RequestParam String userId
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                "팔로우 성공", followService.follow(userId, toUserId)));
+                followService.follow(userId, toUserId)));
 //        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
 //                 "팔로우 성공", followService.follow(oAuth2User.getId(), toUserId)));
     }
@@ -46,7 +46,7 @@ public class FollowController {
                                                    @PathVariable("toUserId") String toUserId,
                                                    @RequestParam String userId) {
         return ResponseEntity.ok().body(CommonResponse.of(
-                followService.deleteByFollowingIdAndFollowerId(userId, toUserId)));
+                followService.deleteByFollow(userId, toUserId)));
 //        return ResponseEntity.ok().body(CommonResponse.of(
 //                 followService.deleteByFollowingIdAndFollowerId(oAuth2User.getId(), toUserId)));
     }

@@ -1,6 +1,7 @@
 package com.talkeasy.server.service.member;
 
 import com.talkeasy.server.common.PagedResponse;
+import com.talkeasy.server.common.exception.ArgumentMismatchException;
 import com.talkeasy.server.common.exception.ResourceNotFoundException;
 import com.talkeasy.server.domain.member.Follow;
 import com.talkeasy.server.domain.member.Member;
@@ -29,27 +30,42 @@ public class FollowService {
 
     public String follow(String myId, String toUserId) {
 
-        Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(myId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("member", "userId", myId));
-        Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(toUserId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("member", "userId", toUserId));
+        followDetail(myId, toUserId);
+        followDetail(toUserId, myId);
 
-        Follow fromFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo(null).MainStatus(false).locationStatus(false).build();
-        Follow toFollow = Follow.builder().fromUserId(toUserId).toUserId(myId).memo(null).MainStatus(false).locationStatus(false).build();
-
-        Follow follow = mongoTemplate.insert(fromFollow);
-        Follow follow1 = mongoTemplate.insert(toFollow);
-
-        return follow.getId();
+        return "팔로우 성공";
     }
 
-    public String deleteByFollowingIdAndFollowerId(String myId, String toUserId) {
+    public void followDetail(String myId, String toUserId) {
 
-        Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class)).orElseThrow(() -> new ResourceNotFoundException("팔로우 없음"));
-        Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(toUserId).and("toUserId").is(myId)), Follow.class)).orElseThrow(() -> new ResourceNotFoundException("팔로우 없음"));
+        Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(myId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("member", "userId", myId));
 
-        mongoTemplate.remove(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class);
-        mongoTemplate.remove(Query.query(Criteria.where("fromUserId").is(toUserId).and("toUserId").is(myId)), Follow.class);
+        Optional followOptional = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class));
 
-        return "언팔로우";
+        if (followOptional.isPresent()) {
+            throw new ArgumentMismatchException("이미 팔로우되어 있습니다");
+        }
+
+        Follow toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo(null).MainStatus(false).locationStatus(false).build();
+
+        mongoTemplate.insert(toFollow);
+
+    }
+
+
+    public String deleteByFollow(String myId, String toUserId) {
+
+        deleteByFollowDetail(myId, toUserId);
+        deleteByFollowDetail(toUserId, myId);
+
+        return "언팔로우 성공";
+    }
+    public void deleteByFollowDetail(String myId, String toUserId) {
+
+        Follow user = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class)).orElseThrow(() -> new ResourceNotFoundException("이미 언팔로우 상태입니다"));
+
+        mongoTemplate.remove(user);
+
     }
 
     public PagedResponse<?> getfollow(String userId, int offset, int size) {
@@ -84,7 +100,7 @@ public class FollowService {
         Follow mainProtector = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("MainStatus").is(true)
                 .and("fromUserId").is(userId)), Follow.class)).orElse(null);
 
-        if (mainProtector != null){ // 기존에 등록된 주 보호자가 있을 경우, 해제
+        if (mainProtector != null) { // 기존에 등록된 주 보호자가 있을 경우, 해제
             mainProtector.setMainStatus(false);
             mongoTemplate.save(mainProtector);
 
@@ -110,7 +126,7 @@ public class FollowService {
     }
 
     /* 피보호자와 친구설정되어있는 보호자 정보 조회 */
-    private Follow getTargetUser(String userId, String targetId){
+    private Follow getTargetUser(String userId, String targetId) {
         return Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("toUserId").is(targetId)
                 .and("fromUserId").is(userId)), Follow.class)).orElseThrow(() -> new ResourceNotFoundException("친구목록에 존재하지 않는 사용자 입니다."));
     }
