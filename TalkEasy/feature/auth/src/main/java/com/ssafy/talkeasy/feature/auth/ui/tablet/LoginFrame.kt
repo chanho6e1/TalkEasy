@@ -2,19 +2,16 @@ package com.ssafy.talkeasy.feature.auth.ui.tablet
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -29,69 +26,62 @@ import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 @Composable
 @Preview(widthDp = 1429, heightDp = 857)
 fun LoginFrame() {
-    Surface(color = md_theme_light_background) {
-        Image(
-            modifier = Modifier.fillMaxWidth(),
-            alignment = Alignment.BottomCenter,
-            imageVector = ImageVector.vectorResource(id = drawable.bg_log_in_wave_for_tablet),
-            contentDescription = stringResource(R.string.image_bg_log_in_wave),
-            contentScale = ContentScale.FillWidth
-        )
-
-        Surface(
-            modifier = Modifier
-                .height(500.dp)
-                .padding(top = 9.dp, start = 836.dp),
-            color = Color.Transparent
-        ) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        Surface(color = md_theme_light_background) {
             Image(
-                alignment = Alignment.TopStart,
-                imageVector = ImageVector.vectorResource(
-                    id = drawable.bg_log_in_right_leaf_for_tablet
-                ),
-                contentDescription = stringResource(R.string.image_bg_right_leaf),
-                contentScale = ContentScale.FillHeight
+                modifier = Modifier.fillMaxSize(),
+                alignment = Alignment.BottomCenter,
+                imageVector = ImageVector.vectorResource(id = drawable.bg_log_in_wave_for_tablet),
+                contentDescription = stringResource(R.string.bg_main_wave_text),
+                contentScale = ContentScale.FillWidth
             )
-        }
+            Image(
+                painter = painterResource(id = drawable.bg_log_in_right_leaf_for_tablet),
+                contentDescription = stringResource(id = R.string.bg_main_leaf_big_text),
+                modifier = Modifier
+                    .size(450.dp)
+                    .align(Alignment.TopEnd)
+                    .padding(top = 9.dp, start = 155.dp),
+            )
 
-        Image(
-            modifier = Modifier.padding(top = 417.dp, end = 810.dp),
-            alignment = Alignment.TopStart,
-            imageVector = ImageVector.vectorResource(id = drawable.bg_log_in_left_leaf_for_tablet),
-            contentDescription = stringResource(R.string.image_bg_right_leaf),
-            contentScale = ContentScale.Fit
-        )
-
-        Column(
-            modifier = Modifier.wrapContentSize(align = Alignment.Center),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Surface(
-                modifier = Modifier.size(width = 478.dp, height = 218.82.dp),
-                color = Color.Transparent
+            Image(
+                painter = painterResource(id = drawable.bg_log_in_left_leaf_for_tablet),
+                contentDescription = stringResource(id = R.string.bg_main_leaf_big_text),
+                modifier = Modifier
+                    .size(450.dp)
+                    .align(Alignment.BottomStart)
+                    .padding(end = 128.dp, top = 95.dp),
+            )
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    imageVector = ImageVector.vectorResource(
-                        id = drawable.bg_talkeasy_logo_verticcal_trans
-                    ),
-                    contentDescription = stringResource(R.string.image_logo),
-                    contentScale = ContentScale.FillWidth
-                )
-            }
-
-            Spacer(modifier = Modifier.height(100.dp))
-
-            IconButton(
-                modifier = Modifier.size(width = 600.dp, height = 90.dp),
-                onClick = { }
-            ) {
-                Image(
-                    alignment = Alignment.TopCenter,
-                    painter = painterResource(drawable.ic_kakao_login),
-                    contentDescription = stringResource(R.string.image_log_in),
-                    contentScale = ContentScale.FillWidth
-                )
+                item {
+                    Image(
+                        painter = painterResource(id = drawable.bg_talkeasy_logo_verticcal_trans),
+                        contentDescription = stringResource(id = R.string.image_logo),
+                        modifier = Modifier
+                            .padding(bottom = 101.dp)
+                            .fillMaxSize()
+                            .size(200.dp)
+                    )
+                }
+                item {
+                    IconButton(
+                        onClick = { },
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .size(60.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(id = drawable.ic_kakao_login),
+                            contentDescription = stringResource(id = R.string.kakao_login_text),
+                            modifier = Modifier
+                                .fillMaxSize()
+                        )
+                    }
+                }
             }
         }
     }

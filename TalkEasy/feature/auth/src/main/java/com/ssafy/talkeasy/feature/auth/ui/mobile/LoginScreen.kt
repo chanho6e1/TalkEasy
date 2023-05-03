@@ -99,7 +99,7 @@ fun LoginContent(
         item {
             Image(
                 painter = painterResource(id = drawable.bg_talkeasy_logo_verticcal_trans),
-                contentDescription = stringResource(id = R.string.app_logo_text),
+                contentDescription = stringResource(id = R.string.image_logo),
                 modifier = modifier
                     .padding(bottom = 60.dp)
                     .fillMaxSize()

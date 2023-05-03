@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Tablet - Log In -->
-    <string name="image_bg_right_leaf">로그인 화면의 배경 중 오른쪽 상단 이파리 부분입니다</string>
-    <string name="image_log_in">카카오 로그인 버튼입니다</string>
     <string name="image_logo">앱 로고입니다</string>
-    <string name="image_bg_log_in_wave">로그인 화면의 우측 하단에 있는 물결무늬입니다</string>
+    <string name="kakao_login_text">카카오 로그인 버튼</string>
+    <string name="bg_main_wave_text">물결 모양 배경 요소</string>
+    <string name="bg_main_leaf_big_text">큰 나뭇잎 배경 요소</string>
+    <string name="bg_main_leaf_small_text">작은 나뭇잎 배경 요소</string>
 
     <!-- Tablet - Join -->
     <string name="title_sexual">성별</string>
