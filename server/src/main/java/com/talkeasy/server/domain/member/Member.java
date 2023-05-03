@@ -1,4 +1,4 @@
-package com.talkeasy.server.domain;
+package com.talkeasy.server.domain.member;
 
 import com.talkeasy.server.dto.user.MemberInfoUpdateRequest;
 import lombok.Builder;

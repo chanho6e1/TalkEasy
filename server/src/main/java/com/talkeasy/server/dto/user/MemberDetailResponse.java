@@ -1,6 +1,6 @@
 package com.talkeasy.server.dto.user;
 
-import com.talkeasy.server.domain.Member;
+import com.talkeasy.server.domain.member.Member;
 import lombok.*;
 
 @Getter

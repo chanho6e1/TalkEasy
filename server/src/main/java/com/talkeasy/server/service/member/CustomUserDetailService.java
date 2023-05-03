@@ -1,6 +1,6 @@
 package com.talkeasy.server.service.member;
 
-import com.talkeasy.server.domain.Member;
+import com.talkeasy.server.domain.member.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
