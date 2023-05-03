@@ -1,4 +1,4 @@
-package com.ssafy.talkeasy.navigation
+package com.ssafy.talkeasy.protector.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
