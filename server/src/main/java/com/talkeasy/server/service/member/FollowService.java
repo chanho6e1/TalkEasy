@@ -85,6 +85,7 @@ public class FollowService {
         Collections.sort(result, Comparator.comparing(FollowResponse::getUserName));
 
         return new PagedResponse<>(result, metaDataPage.getTotalPages());
+    }
 
     /* 주보호자 등록 */
     public String putProtector(String userId, String targetId) {
