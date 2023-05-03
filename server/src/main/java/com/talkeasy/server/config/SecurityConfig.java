@@ -39,6 +39,7 @@ public class SecurityConfig {
                         "/api/aac/**",
                         "/api/members/**",
                         "/api/follows/**",
+                        "/ws-stomp/**",
                         "/room.html"
                 ).permitAll()
                 .anyRequest().authenticated();

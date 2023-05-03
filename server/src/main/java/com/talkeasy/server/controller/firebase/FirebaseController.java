@@ -2,12 +2,15 @@ package com.talkeasy.server.controller.firebase;
 
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.service.firebase.FirebaseCloudMessageService;
+import com.talkeasy.server.service.member.OAuth2UserImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.IOException;
 
@@ -26,12 +29,14 @@ public class FirebaseController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/app-token")
-    @ApiOperation(value = "유저 앱 토큰 저장", notes = "(테스트용) 유저 로그인 시, 앱 토큰 저장 필요")
-    public ResponseEntity<?> saveAppToken(@RequestParam String userId, @RequestParam String appToken) {
+    @PutMapping("/app-token")
+    @ApiOperation(value = "유저 앱 토큰 저장", notes = "유저 로그인 시, 기기 앱 토큰 저장 필요")
+    public ResponseEntity<?> saveAppToken(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User, @RequestParam String appToken) {
 
+//        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+//                "유저 앱 토큰 저장 성공", firebaseCloudMessageService.saveAppToken(oAuth2User.getId(), appToken)));
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                "유저 앱 토큰 저장 성공", firebaseCloudMessageService.saveAppToken(userId, appToken)));
+                "유저 앱 토큰 저장 성공", firebaseCloudMessageService.saveAppToken("1", appToken)));
     }
 }
 

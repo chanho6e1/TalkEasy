@@ -11,10 +11,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -74,8 +77,16 @@ public class FirebaseCloudMessageService {
 
     public String saveAppToken(String userId, String appToken) {
 
-        UserAppToken userAppToken = mongoTemplate.save(new UserAppToken(userId, appToken));
+        UserAppToken userAppToken = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("userId").is(userId)), UserAppToken.class)).orElse(null);
 
-        return userAppToken.getAppToken();
+        if (userAppToken != null){
+            userAppToken.setAppToken(appToken);
+            mongoTemplate.save(userAppToken);
+            return userAppToken.getAppToken();
+        }
+
+        UserAppToken newUserAppToken = mongoTemplate.save(new UserAppToken(userId, appToken));
+
+        return newUserAppToken.getAppToken();
     }
 }
