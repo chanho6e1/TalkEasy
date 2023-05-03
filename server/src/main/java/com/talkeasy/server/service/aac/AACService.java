@@ -160,7 +160,7 @@ public class AACService {
                 .n(1)
                 .build();
 
-        return service.createCompletion(completionRequest).getChoices().get(0).getText().strip();
+        return service.createCompletion(completionRequest).getChoices().get(0).getText().strip().replace("\"", "");
     }
 
 }
