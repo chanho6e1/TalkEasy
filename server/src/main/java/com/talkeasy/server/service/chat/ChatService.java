@@ -216,7 +216,7 @@ public class ChatService {
     /*
         1. 남아 있는 사람이 2명일 때, 유저 목록 삭제 x
         2. leaveUser에 userId 저장하고, leaveTime 저장
-        3. 남아 있는 사람이 1명일 때, chat_room 완전 삭제 + last_chat도 완전삭제
+        3. 남아 있는 사람이 1명일 때, chat_room + chat_room_detail + last_chat도 완전삭제
     */
     public String deleteRoom(String roomId, String userId) throws IOException {
         Query query = new Query();
@@ -227,36 +227,47 @@ public class ChatService {
         deleteQueue("chat.queue", chatRoom.getId(), userId);
         deleteQueue("read.queue", chatRoom.getId(), userId);
 
-        if(chatRoom.getUsers().length == 1){
+        String toUserId = Arrays.stream(chatRoom.getUsers()).filter(a -> !a.equals(userId))
+                .toArray(String[]::new)[0];
+
+        if(!chatRoom.getChatUsers().get(toUserId).getNowIn()){ // 이전에 떠난 사용자와 현재 떠나려는 사용자의 아이디가 일치하지 않을 경우, 채팅방 폭파
             // 채팅방에 남은 인원이 1명인 경우만 삭제
             mongoTemplate.remove(query, ChatRoom.class); //채팅방 삭제
             mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)), ChatRoomDetail.class); //채팅 내역 삭제
-            mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)), LastChat.class); // lastChat 삭제
+            mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)), LastChat.class); // lastChat 모두 삭제
             return roomId;
         }
+
+        chatRoom.getChatUsers().get(userId).setNowIn(false);
+        chatRoom.getChatUsers().get(userId).setLeaveTime(LocalDateTime.now().toString());
+        mongoTemplate.save(chatRoom);
+
+        // '나'의 라스트 챗 삭제 => 채팅 목록에서 사라지도록
+        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)
+                .and("userId").is(userId)), LastChat.class);
 
 //        if (chatRoom == null) {
 //            throw new ResourceNotFoundException("없는 채팅방 번호입니다");
 //        }
 
-        String toUserId = Arrays.stream(chatRoom.getUsers()).filter(a -> !a.equals(userId))
-                .toArray(String[]::new)[0];
-
-        System.out.println("toUserId :: " + toUserId);
-
-        ChatRoomDetail chat = ChatRoomDetail.builder()
-                .roomId(chatRoom.getId())
-                .toUserId(toUserId)
-                .fromUserId("admin")
-                .msg("상대방이 나갔습니다.")
-                .created_dt(LocalDateTime.now().toString())
-                .readCnt(0)
-                .build();
-
-        doChat(chat);
-
-        chatRoom.setUsers(new String[]{toUserId});
-        mongoTemplate.save(chatRoom);
+//        String toUserId = Arrays.stream(chatRoom.getUsers()).filter(a -> !a.equals(userId))
+//                .toArray(String[]::new)[0];
+//
+//        System.out.println("toUserId :: " + toUserId);
+//
+//        ChatRoomDetail chat = ChatRoomDetail.builder()
+//                .roomId(chatRoom.getId())
+//                .toUserId(toUserId)
+//                .fromUserId("admin")
+//                .msg("상대방이 나갔습니다.")
+//                .created_dt(LocalDateTime.now().toString())
+//                .readCnt(0)
+//                .build();
+//
+//        doChat(chat);
+//
+//        chatRoom.setUsers(new String[]{toUserId});
+//        mongoTemplate.save(chatRoom);
 
         return roomId;
     }
