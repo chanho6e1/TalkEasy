@@ -150,11 +150,13 @@ public class ChatService {
         // 보낸 유저의 접속 정보 변경
         ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getRoomId())), ChatRoom.class);
         System.out.println(chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn());
+        System.out.println(chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn());
+
         if (!chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn()) {
             chatRoom.getChatUsers().get(chat.getFromUserId()).setNowIn(true);
         }
-        if (!chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn()){
-            chatRoom.getChatUsers().get(chat.getFromUserId()).setNowIn(true);
+        if (!chatRoom.getChatUsers().get(chat.getToUserId()).getNowIn()){
+            chatRoom.getChatUsers().get(chat.getToUserId()).setNowIn(true);
         }
         mongoTemplate.save(chatRoom);
 
