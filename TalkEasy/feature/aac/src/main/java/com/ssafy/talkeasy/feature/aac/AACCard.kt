@@ -31,7 +31,7 @@ fun AACCardWrap(word: String, color: Color) {
 @Composable
 fun AACCardSmall(word: String) {
     Surface(
-        modifier = Modifier.width(202.dp),
+        modifier = Modifier.width(225.dp),
         shape = shapes.extraSmall,
         color = md_theme_light_surfaceVariant
     ) {
