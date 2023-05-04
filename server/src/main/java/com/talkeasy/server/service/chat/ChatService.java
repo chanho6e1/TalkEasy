@@ -263,7 +263,6 @@ public class ChatService {
         saveLastChatDetail(chat, chat.getToUserId());
     }
 
-    ;
 
     public void saveLastChatDetail(ChatRoomDetail chat, String userId) {
 

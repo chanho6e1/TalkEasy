@@ -31,8 +31,7 @@ public class AACController {
     @ApiOperation(value = "카테고리 목록 조회", notes = "카테고리 목록을 조회한다.")
     public ResponseEntity<?> getCategory() {
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                HttpStatus.OK, aacService.getCategory()));
+        return ResponseEntity.status(HttpStatus.OK).body(aacService.getCategory());
     }
 
     @GetMapping("/categories/{categoryId}")
@@ -44,16 +43,14 @@ public class AACController {
                                                  @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                  @ApiIgnore @AuthenticationPrincipal Member member) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                HttpStatus.OK,aacService.getAacByCategory(member.getId(), categoryId, fixed,offset, size)));
+        return ResponseEntity.status(HttpStatus.OK).body(aacService.getAacByCategory(member.getId(), categoryId, fixed,offset, size));
     }
 
     @GetMapping("/relative-verb/{aacId}")
     @ApiOperation(value = "aac 연관 동사 조회", notes = "aac별 연관 동사 조회")
     public ResponseEntity<?> getRelativeVerb(@PathVariable String aacId) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                HttpStatus.OK, aacService.getRelativeVerb(aacId)));
+        return ResponseEntity.status(HttpStatus.OK).body(aacService.getRelativeVerb(aacId));
     }
 
 
