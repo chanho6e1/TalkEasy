@@ -2,6 +2,7 @@ package com.talkeasy.server.service.member;
 
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.common.exception.ArgumentMismatchException;
+import com.talkeasy.server.common.exception.ResourceAlreadyExistsException;
 import com.talkeasy.server.common.exception.ResourceNotFoundException;
 import com.talkeasy.server.domain.member.Follow;
 import com.talkeasy.server.domain.member.Member;
@@ -40,10 +41,10 @@ public class FollowService {
 
         Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(myId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("member", "userId", myId));
 
-        Optional followOptional = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class));
+        Optional followOptional = Optional.ofNullable( mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class));
 
         if (followOptional.isPresent()) {
-            throw new ArgumentMismatchException("이미 팔로우되어 있습니다");
+            throw new ResourceAlreadyExistsException("이미 팔로우되어 있습니다");
         }
 
         Follow toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo(null).MainStatus(false).locationStatus(false).build();
@@ -68,28 +69,23 @@ public class FollowService {
 
     }
 
-    public PagedResponse<?> getfollow(String userId, int offset, int size) {
+    public PagedResponse<?> getfollow(String userId) {
         /* userId -> id로 바꿔야함*/
 
-        Pageable pageable = PageRequest.of(offset - 1, size); // 가나다 순으로
-        Query query = new Query(Criteria.where("fromUserId").is(userId)).with(pageable);
+        Query query = new Query(Criteria.where("fromUserId").is(userId));
 
-        List<Follow> filteredMetaData = mongoTemplate.find(query, Follow.class);
-
-        Page<Follow> metaDataPage = PageableExecutionUtils.getPage(
-                filteredMetaData,
-                pageable,
-                () -> mongoTemplate.count(query.skip(-1).limit(-1), Follow.class)
+        List<Follow> filteredMetaData = Optional.ofNullable(mongoTemplate.find(query, Follow.class)).orElseThrow(
+                ()-> new ResourceNotFoundException("친구 목록이 비어있습니다.")
         );
-
-        List<FollowResponse> result = metaDataPage.getContent().stream()
+        
+        List<FollowResponse> result = filteredMetaData.stream()
                 .map((follow) ->
                         new FollowResponse(mongoTemplate.findOne(Query.query(Criteria.where("id").is(follow.getToUserId())), Member.class), follow))
                 .collect(Collectors.toList());
 
         Collections.sort(result, Comparator.comparing(FollowResponse::getUserName));
 
-        return new PagedResponse<>(result, metaDataPage.getTotalPages());
+        return new PagedResponse<>(result,1);
     }
 
     /* 주보호자 등록 */
