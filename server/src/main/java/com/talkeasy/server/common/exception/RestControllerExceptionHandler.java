@@ -92,15 +92,9 @@ public class RestControllerExceptionHandler {
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(errResponse);
     }
 
-    @ExceptionHandler(NullPointerException.class)
-    public ResponseEntity<ErrorResponse> resolveException(NullPointerException exception) {
-        ErrorResponse errResponse = new ErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage()+ " : "+"정보를 찾을 수 없습니다.");
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
-    }
-
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> resolveException(NotFoundException exception) {
-        ErrorResponse errResponse = new ErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage()+ " : "+"정보를 찾을 수 없습니다.");
+        ErrorResponse errResponse = new ErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage()+ " : "+ exception.getCause()+ " : "+" 정보를 찾을 수 없습니다.");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
     }
 

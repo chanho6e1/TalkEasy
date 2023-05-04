@@ -154,11 +154,11 @@ public class ChatService {
         ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getRoomId())), ChatRoom.class);
 
         boolean change = false;
-        if (chatRoom.getChatUsers()!=null && !chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn()) {
+        if (!chat.getFromUserId().equals("admin") && !chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn()) {
             chatRoom.getChatUsers().get(chat.getFromUserId()).setNowIn(true);
             change = true;
         }
-        if (chatRoom.getChatUsers()!=null && !chatRoom.getChatUsers().get(chat.getToUserId()).getNowIn()){
+        if (!chatRoom.getChatUsers().get(chat.getToUserId()).getNowIn()){
             chatRoom.getChatUsers().get(chat.getToUserId()).setNowIn(true);
             change = true;
         }
