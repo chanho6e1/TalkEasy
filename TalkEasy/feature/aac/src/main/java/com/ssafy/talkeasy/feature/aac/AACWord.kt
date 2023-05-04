@@ -6,11 +6,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.ui.theme.seed
 
 @Composable
@@ -44,6 +49,44 @@ fun AACSmallCards(words: List<String>) {
                 items(count = 5) { index ->
                     AACCardSmall(word = rowItems[index])
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun AACPaging() {
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        item {
+            IconButton(onClick = { }) {
+                Icon(
+                    painter = painterResource(id = drawable.ic_arrow_backward_hard),
+                    contentDescription = stringResource(R.string.image_backward_hard)
+                )
+            }
+        }
+        item {
+            IconButton(onClick = { }) {
+                Icon(
+                    painter = painterResource(id = drawable.ic_arrow_backward_soft),
+                    contentDescription = stringResource(R.string.image_backward_soft)
+                )
+            }
+        }
+        item {
+            IconButton(onClick = { }) {
+                Icon(
+                    painter = painterResource(id = drawable.ic_arrow_forward_soft),
+                    contentDescription = stringResource(R.string.image_forward_soft)
+                )
+            }
+        }
+        item {
+            IconButton(onClick = { }) {
+                Icon(
+                    painter = painterResource(id = drawable.ic_arrow_forward_hard),
+                    contentDescription = stringResource(R.string.image_forward_hard)
+                )
             }
         }
     }

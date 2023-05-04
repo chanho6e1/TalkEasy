@@ -55,4 +55,10 @@
         <item>교통 카테고리 버튼입니다</item>
         <item>사용자 지정 카테고리 버튼입니다</item>
     </string-array>
+
+    <!-- AAC Paging -->
+    <string name="image_backward_hard">맨 처음 페이지로 이동하는 버튼</string>
+    <string name="image_backward_soft">이전 페이지로 이동하는 버튼</string>
+    <string name="image_forward_soft">다음 페이지로 이동하는 버튼</string>
+    <string name="image_forward_hard">맨 마지막 페이지로 이동하는 버튼</string>
 </resources>
