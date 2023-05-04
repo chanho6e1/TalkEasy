@@ -53,7 +53,7 @@ public class ChatController {//producer
 //        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
 //                "채팅방 삭제 성공", chatService.deleteRoom(roomId, oAuth2User.getId())));
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                HttpStatus.NO_CONTENT, chatService.deleteRoom(roomId, oAuth2User.getId())));
+                HttpStatus.NO_CONTENT, chatService.deleteRoom(roomId, userId)));
     }
 
     @GetMapping("/{roomId}")

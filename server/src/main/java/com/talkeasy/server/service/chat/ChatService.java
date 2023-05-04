@@ -149,13 +149,11 @@ public class ChatService {
 
         // 보낸 유저의 접속 정보 변경
         ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getRoomId())), ChatRoom.class);
-        System.out.println(chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn());
-        System.out.println(chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn());
 
-        if (!chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn()) {
+        if (chatRoom.getChatUsers()!=null && !chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn()) {
             chatRoom.getChatUsers().get(chat.getFromUserId()).setNowIn(true);
         }
-        if (!chatRoom.getChatUsers().get(chat.getToUserId()).getNowIn()){
+        if (chatRoom.getChatUsers()!=null && !chatRoom.getChatUsers().get(chat.getToUserId()).getNowIn()){
             chatRoom.getChatUsers().get(chat.getToUserId()).setNowIn(true);
         }
         mongoTemplate.save(chatRoom);
@@ -262,7 +260,8 @@ public class ChatService {
 
     public void saveLastChatDetail(ChatRoomDetail chat, String userId) {
 
-        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(chat.getRoomId())), LastChat.class);
+        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(chat.getRoomId())
+                .and("userId").is(userId)), LastChat.class);
 
         LastChat lastChatDto = new LastChat(chat);
         lastChatDto.setUserId(userId);
