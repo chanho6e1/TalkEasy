@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
@@ -13,8 +14,9 @@ import java.io.Serializable;
 public class LocationDto implements Serializable {
     String email;
     String x, y;
+    LocalDateTime dateTime;
 
     public Location toEntity(){
-        return Location.builder().email(email).x(x).y(y).build();
+        return Location.builder().email(email).x(x).y(y).dateTime(dateTime).build();
     }
 }
