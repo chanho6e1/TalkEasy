@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.feature.aac.R.string
 import com.ssafy.talkeasy.feature.common.R
+import com.ssafy.talkeasy.feature.common.ui.theme.Typography
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_error
@@ -34,7 +35,6 @@ import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold22
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleNormal22
-import com.ssafy.talkeasy.feature.common.ui.theme.Typography
 
 @Composable
 fun AACTopBar(onRight: Boolean) {
