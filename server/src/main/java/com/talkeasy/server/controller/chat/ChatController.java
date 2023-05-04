@@ -3,6 +3,7 @@ package com.talkeasy.server.controller.chat;
 import com.google.api.Http;
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.common.PagedResponse;
+import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.chat.MakeChatRoomDto;
 import com.talkeasy.server.service.chat.ChatService;
 import com.talkeasy.server.service.chat.ChatTestService;
@@ -37,7 +38,7 @@ public class ChatController {//producer
 
     @PostMapping()
     @ApiOperation(value = "채팅방 생성", notes = "user1, user2 주면 채팅방 아이디를 반환")
-    public ResponseEntity<?> createRoom(@RequestBody MakeChatRoomDto dto) {
+    public ResponseEntity<?> createRoom(@RequestBody MakeChatRoomDto dto) throws IOException {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, chatService.createRoom(dto.getUser1(), dto.getUser2())));
@@ -46,8 +47,11 @@ public class ChatController {//producer
     @DeleteMapping("/{roomId}")
     @ApiOperation(value = "채팅방 삭제(나가기)", notes = "PathVariable로 roomId 주면 삭제한 roomId 아이디를 반환, '나가기'실행한 사용자만 삭제되고 남은 유저는 그대로 유지")
     public ResponseEntity<?> deleteRoom(@PathVariable String roomId,
-                                        @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
+                                        @RequestParam String userId,
+                                        @ApiIgnore @AuthenticationPrincipal Member oAuth2User) throws IOException {
 
+//        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+//                "채팅방 삭제 성공", chatService.deleteRoom(roomId, oAuth2User.getId())));
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
                 HttpStatus.NO_CONTENT, chatService.deleteRoom(roomId, oAuth2User.getId())));
     }
@@ -64,10 +68,13 @@ public class ChatController {//producer
     @GetMapping("/chat-history/{chatRoomId}")
     public ResponseEntity<PagedResponse> getChatHistory(@PathVariable String chatRoomId,
                                                         @RequestParam(required = false, defaultValue = "1") int offset,
-                                                        @RequestParam(value = "size", required = false, defaultValue = "10") int size
+                                                        @RequestParam(value = "size", required = false, defaultValue = "10") int size,
+                                                        @ApiIgnore @AuthenticationPrincipal Member oAuth2User,
+                                                        @RequestParam String userId
     ) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatHistory(chatRoomId, offset, size));
+//        return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatHistory(chatRoomId, offset, size, oAuth2User.getId()));
+        return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatHistory(chatRoomId, offset, size, userId));
     }
 
 

@@ -54,9 +54,7 @@ public class FollowController {
     @ApiOperation(value = "나의 팔로워 목록을 조회한다", notes = "나의 팔로우 목록을 조회한다")
     @GetMapping()
     public ResponseEntity<?> getfollow(@ApiIgnore @AuthenticationPrincipal Member oAuth2User,
-                                       @RequestParam String userId,
-                                       @RequestParam(required = false, defaultValue = "1") int offset,
-                                       @RequestParam(value = "size", required = false, defaultValue = "10") int size) {
+                                       @RequestParam String userId) {
 //        return ResponseEntity.ok().body(CommonResponse.of(
 //                followService.getfollow(oAuth2User.getId(), offset, size)));
         return ResponseEntity.ok().body(CommonResponse.of(
