@@ -9,12 +9,11 @@ import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @Api(tags = {"Oauth 로그인 관련 API"})
 @Controller
@@ -42,11 +41,12 @@ public class OAuthController {
     }
 
     @ApiOperation(value = "회원정보 등록하기", notes = "return : jwt 토큰 , role(0 : 보호자, 1 : 피보호자), gender(0 : 남자, 1 : 여자),  * email : 입력제외")
-    @PostMapping("/register")
-    ResponseEntity<CommonResponse> registerUser(@RequestBody MemberDetailRequest member) {
+    @PostMapping(value = "/register", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    ResponseEntity<CommonResponse> registerUser(@ApiParam(value = "사용자 등록 이미지") @RequestPart(value = "multipartFile", required = false) MultipartFile multipartFile,
+                                                @RequestPart(name = "value") MemberDetailRequest member) {
         log.info("========== /register registerUser name : {}, email : {}, imageUrl : {}", member.getName(), member.getEmail(), member.getImageUrl());
 
-        String token = oAuthService.registerUser(member);
+        String token = oAuthService.registerUser(multipartFile, member);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, token));
