@@ -36,7 +36,7 @@ public class LocationController {
         kafkaProducerService.sendMessage(locationDto);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                "카프카에 저장 성공"));
+                HttpStatus.CREATED,""));
     }
 
     @PostMapping("/consumer")
@@ -45,6 +45,6 @@ public class LocationController {
         kafkaConsumerService.consume();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                "consumer test"));
+                HttpStatus.CREATED,""));
     }
 }

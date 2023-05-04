@@ -9,39 +9,31 @@ import java.util.Optional;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-public class CommonResponse<T>{
+//@AllArgsConstructor
+public class CommonResponse<T> {
 
-    private String message;
+    private int status;
     private T data;
 
-    public CommonResponse(String message) {
-        this(message, null);
+    public CommonResponse(int status, T data) {
+        this.status = status;
+        this.data = data;
     }
 
     public CommonResponse(T data) {
-        this(null, data);
+        this.data = data;
     }
 
-//    public CommonResponse(String message, T data) {
-//        this.message = message;
-//        this.data = data;
-//    }
 
-    public static <T> CommonResponse<T> of(String message, T data) {
-        return new CommonResponse<>(message, data);
+    public static <T> CommonResponse<T> of(HttpStatus httpStatus, T data) {
+        int status = Optional.ofNullable(httpStatus)
+                .orElse(HttpStatus.OK)
+                .value();
+        return new CommonResponse<>(status, data);
     }
 
-    public static CommonResponse<Object> of(String message) {
-        return new CommonResponse<>(message);
-    }
-
-    public static  <T>  CommonResponse<T> of(T data) {
-        return new CommonResponse<>(data);
-    }
-
-    public static CommonResponse<Object> fail(String message) {
-        return new CommonResponse<>(message, new Object());
+    public static CommonResponse<?> fail(HttpStatus httpStatus) {
+        return new CommonResponse<>(httpStatus.value(), null);
     }
 
 

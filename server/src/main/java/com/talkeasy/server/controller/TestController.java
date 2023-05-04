@@ -28,7 +28,7 @@ public class TestController {
     @ApiOperation(value = "어떤 컨트롤러인지", notes = "자세한 설명(어떤 값을 입력하고 어떤 값을 반환하는지)")
     public ResponseEntity<CommonResponse> makeChatRoom() {
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "test 조회 성공", testService.getTests()));
+                HttpStatus.OK, testService.getTests()));
     }
 
 

@@ -34,7 +34,7 @@ public class FirebaseController {
     public ResponseEntity<?> saveAppToken(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User, @RequestParam String appToken) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                "유저 앱 토큰 저장 성공", firebaseCloudMessageService.saveAppToken(oAuth2User.getId(), appToken)));
+                HttpStatus.CREATED, firebaseCloudMessageService.saveAppToken(oAuth2User.getId(), appToken)));
 //        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
 //                "유저 앱 토큰 저장 성공", firebaseCloudMessageService.saveAppToken("1", appToken)));
     }
