@@ -24,9 +24,7 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(UnAuthorizedException.class)
     public ResponseEntity<ErrorResponse> resolveException(UnAuthorizedException exception) {
         ErrorResponse errResponse = exception.getErrResponse();
-//        return new ResponseEntity<>(errResponse, HttpStatus.UNAUTHORIZED);
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errResponse);
-//        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errResponse);
 
     }
 
@@ -34,7 +32,6 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(ResourceForbiddenException.class)
     public ResponseEntity<ErrorResponse> resolveException(ResourceForbiddenException exception) {
         ErrorResponse errResponse = exception.getErrResponse();
-//        return new ResponseEntity<>(errResponse, HttpStatus.FORBIDDEN);
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(errResponse);
 
     }
@@ -43,7 +40,6 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> resolveException(ResourceNotFoundException exception) {
         ErrorResponse errResponse = exception.getErrResponse();
-//        return new ResponseEntity<>(errResponse, HttpStatus.NOT_FOUND);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
 
     }
@@ -52,7 +48,6 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(ResourceAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> resolveException(ResourceAlreadyExistsException exception) {
         ErrorResponse errResponse = exception.getErrResponse();
-//        return new ResponseEntity<>(errResponse, HttpStatus.CONFLICT);
         return ResponseEntity.status(HttpStatus.CONFLICT).body(errResponse);
 
     }
@@ -61,7 +56,6 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(ArgumentMismatchException.class)
     public ResponseEntity<ErrorResponse> resolveException(ArgumentMismatchException exception) {
         ErrorResponse errResponse = exception.getErrResponse();
-//        return new ResponseEntity<>(errResponse, HttpStatus.BAD_REQUEST);
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errResponse);
 
     }
@@ -88,13 +82,18 @@ public class RestControllerExceptionHandler {
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
     public ResponseEntity<?> handleMaxUploadSizeExceptions(MaxUploadSizeExceededException exception) {
         ErrorResponse errResponse = new ErrorResponse(HttpStatus.PAYLOAD_TOO_LARGE,"파일 용량이 너무 큽니다.");
-//        return new ResponseEntity<>(errResponse, HttpStatus.PAYLOAD_TOO_LARGE);
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(errResponse);
     }
 
+//    @ExceptionHandler(NullPointerException.class)
+//    public ResponseEntity<ErrorResponse> resolveException(NullPointerException exception) {
+//        ErrorResponse errResponse = new ErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage()+ " : "+ exception.getCause());
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
+//    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> resolveException(NotFoundException exception) {
-        ErrorResponse errResponse = new ErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage()+ " : "+ exception.getCause()+ " : "+" 정보를 찾을 수 없습니다.");
+        ErrorResponse errResponse = new ErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage()+ " : "+ exception.getCause());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
     }
 

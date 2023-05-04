@@ -31,13 +31,13 @@ import java.util.concurrent.TimeoutException;
 public class ChatController {//producer
 
     private final ChatService chatService;
-//    private final SimpMessagingTemplate messagingTemplate;
+    //    private final SimpMessagingTemplate messagingTemplate;
     private final MongoTemplate mongoTemplate;
     private final ChatUserQueueService chatUserQueueService;
     private final ChatTestService chatTestService;
 
     @PostMapping()
-    @ApiOperation(value = "채팅방 생성", notes = "user1, user2 주면 채팅방 아이디를 반환, 채팅방이 이미 있다면 200/새로 만들어졌다면 201")
+    @ApiOperation(value = "채팅방 생성", notes = "user1, user2 주면 채팅방 아이디를 반환, status: 채팅방이 이미 있다면 200/새로 만들어졌다면 201")
     public ResponseEntity<?> createRoom(@RequestBody MakeChatRoomDto dto) throws IOException {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(chatService.createRoom(dto.getUser1(), dto.getUser2()));
@@ -59,8 +59,7 @@ public class ChatController {//producer
     @ApiOperation(value = "채팅방 참가자 정보 조회", notes = "PathVariable로 roomId 주면 채팅방 참가자 정보 반환")
     public ResponseEntity<?> getUserInfoByRoom(@PathVariable String roomId) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                HttpStatus.OK, chatService.getUserInfoByRoom(roomId)));
+        return ResponseEntity.status(HttpStatus.OK).body(chatService.getUserInfoByRoom(roomId));
     }
 
 
@@ -80,8 +79,8 @@ public class ChatController {//producer
     @GetMapping("/my")
     @ApiOperation(value = "채팅방 조회", notes = "내가 속한 채팅방 리스트를 반환")
     public ResponseEntity<?> getChatRoom(@RequestParam String userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                HttpStatus.OK, chatService.getChatRoomList(userId)));
+        return ResponseEntity.status(HttpStatus.OK).body(
+                chatService.getChatRoomList(userId));
     }
 
 
@@ -94,8 +93,8 @@ public class ChatController {//producer
     }
 
     @GetMapping("/test/receive")
-    @ApiOperation(value = "회원가입시 큐생성(테스트용)", notes = " chat/read")
-    public ResponseEntity<CommonResponse> createUserQueue(@RequestParam String roomId, String recieveUserId, String queueName) throws IOException, UnsupportedAudioFileException, TimeoutException {
+    @ApiOperation(value = "메시지 받기 테스트(테스트용)", notes = " chat/read")
+    public ResponseEntity<CommonResponse> receiveMessage(@RequestParam String roomId, String recieveUserId, String queueName) throws IOException, UnsupportedAudioFileException, TimeoutException {
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
                 HttpStatus.OK, chatTestService.receiveMessage(roomId, recieveUserId, queueName)));
     }
