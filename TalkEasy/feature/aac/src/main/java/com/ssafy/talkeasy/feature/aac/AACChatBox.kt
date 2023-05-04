@@ -19,6 +19,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -83,14 +84,14 @@ fun AACChatBox(words: List<String>) {
 fun AACChatCards(words: List<String>) {
     LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         items(words) { word ->
-            AACChatCard(word = word)
+            AACCardWrap(word = word, color = harp)
         }
     }
 }
 
 @Composable
-fun AACChatCard(word: String) {
-    Surface(shape = shapes.extraSmall, color = harp) {
+fun AACCardWrap(word: String, color: Color) {
+    Surface(shape = shapes.extraSmall, color = color) {
         Text(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
             text = word,
@@ -117,5 +118,5 @@ fun PreviewAACChatCards() {
 @Composable
 @Preview
 fun PreviewAACChatCard() {
-    AACChatCard(word = "감사합니다")
+    AACCardWrap(word = "감사합니다", color = harp)
 }

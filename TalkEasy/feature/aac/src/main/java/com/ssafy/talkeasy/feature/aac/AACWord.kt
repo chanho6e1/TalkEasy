@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -25,7 +24,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.ssafy.talkeasy.feature.common.ui.theme.Typography
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_surfaceVariant
 import com.ssafy.talkeasy.feature.common.ui.theme.seed
@@ -44,20 +42,8 @@ fun AACFixedCards() {
         horizontalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         items(fixedWords) { word ->
-            AACFixedCard(word = word)
+            AACCardWrap(word = word, color = seed)
         }
-    }
-}
-
-@Composable
-fun AACFixedCard(word: String) {
-    Surface(shape = shapes.extraSmall, color = seed) {
-        Text(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
-            text = word,
-            color = md_theme_light_onBackground,
-            style = Typography.titleMedium
-        )
     }
 }
 
@@ -149,7 +135,7 @@ fun AACCategoryCard(
 @Composable
 @Preview
 fun PreviewAACFixedCard() {
-    AACFixedCard(word = "안녕하세요")
+    AACCardWrap(word = "안녕하세요", color = seed)
 }
 
 @Composable
