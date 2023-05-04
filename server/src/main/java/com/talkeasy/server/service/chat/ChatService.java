@@ -198,14 +198,17 @@ public class ChatService {
 
     public void saveLastChat(ChatRoomDetail chat) {
 
+        saveLastChatDetail(chat, chat.getFromUserId());
+        saveLastChatDetail(chat, chat.getToUserId());
+    };
+
+    public void saveLastChatDetail(ChatRoomDetail chat, String userId) {
+
         mongoTemplate.remove(Query.query(Criteria.where("roomId").is(chat.getRoomId())), LastChat.class);
 
         LastChat lastChatDto = new LastChat(chat);
-        lastChatDto.setUserId(chat.getFromUserId());
-        mongoTemplate.save(lastChatDto, "last_chat");
-
-        lastChatDto.setUserId(chat.getToUserId());
-        mongoTemplate.save(lastChatDto, "last_chat");
+        lastChatDto.setUserId(userId);
+        mongoTemplate.insert(lastChatDto, "last_chat");
     }
 
     public List<LastChat> getLastChatList(String userId) {
