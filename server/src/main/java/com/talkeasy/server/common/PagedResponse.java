@@ -17,21 +17,6 @@ public class PagedResponse<T> {
     private int totalPages; //총 페이지 수
 //    private boolean last; //마지막인지 여부
 
-    public PagedResponse(int status, Object content, int totalPages) {
-        this.status = status;
-        this.data = content;
-//        this.page = page;
-//        this.size = size;
-//        this.totalElements = totalElements;
-        this.totalPages = totalPages;
-//        this.last = last;
-    }
-
-//    public PagedResponse(Object content, int totalPages) {
-//        this.data = content;
-//        this.totalPages = totalPages;
-//    }
-
 
     public PagedResponse(HttpStatus httpStatus, Object data, int totalPages) {
         int status = Optional.ofNullable(httpStatus)

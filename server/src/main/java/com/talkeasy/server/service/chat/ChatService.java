@@ -1,6 +1,7 @@
 package com.talkeasy.server.service.chat;
 
 import com.google.gson.Gson;
+import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.common.exception.ArgumentMismatchException;
 import com.talkeasy.server.common.exception.ResourceAlreadyExistsException;
@@ -47,7 +48,7 @@ public class ChatService {
     private final FirebaseCloudMessageService firebaseCloudMessageService;
     private final Gson gson;
 
-    public String createRoom(String user1, String user2) throws IOException {
+    public CommonResponse createRoom(String user1, String user2) throws IOException {
 
         //user1이 로그인한 사용자, user2가 대상자
 
@@ -60,7 +61,7 @@ public class ChatService {
             existRoom.getChatUsers().get(user1).setNowIn(true);
             mongoTemplate.save(existRoom);
 
-            return existRoom.getId();
+            return CommonResponse.of(HttpStatus.OK, existRoom.getId());
         }
 
         ChatRoom chatRoom = new ChatRoom(new String[]{user1, user2}, "hihi", LocalDateTime.now().toString());
@@ -71,7 +72,8 @@ public class ChatService {
         doCreateRoomChat(chatRoom, user1);
         doCreateRoomChat(chatRoom, user2);
 
-        return chatRoom.getId();
+        return CommonResponse.of(HttpStatus.CREATED, chatRoom.getId());
+
     }
 
 
@@ -150,16 +152,18 @@ public class ChatService {
 
         // 보낸 유저의 접속 정보 변경
         ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getRoomId())), ChatRoom.class);
-        System.out.println(chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn());
-        System.out.println(chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn());
 
-        if (!chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn()) {
+        boolean change = false;
+        if (chatRoom.getChatUsers()!=null && !chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn()) {
             chatRoom.getChatUsers().get(chat.getFromUserId()).setNowIn(true);
+            change = true;
         }
-        if (!chatRoom.getChatUsers().get(chat.getToUserId()).getNowIn()) {
+        if (chatRoom.getChatUsers()!=null && !chatRoom.getChatUsers().get(chat.getToUserId()).getNowIn()){
             chatRoom.getChatUsers().get(chat.getToUserId()).setNowIn(true);
+            change = true;
         }
-        mongoTemplate.save(chatRoom);
+        if (change)
+            mongoTemplate.save(chatRoom);
 
         rabbitTemplate.send("chat.exchange", sb.toString(), msg);
         PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
@@ -194,7 +198,7 @@ public class ChatService {
         Query query = new Query(Criteria.where("roomId").is(chatRoomId)
                 .and("created_dt").gte(leaveTime)).with(pageable);
 
-        List<ChatRoomDetail> filteredMetaData = Optional.ofNullable(mongoTemplate.find(query, ChatRoomDetail.class)).orElseThrow(
+        List<ChatRoomDetail> filteredMetaData =  Optional.ofNullable(mongoTemplate.find(query, ChatRoomDetail.class)).orElseThrow(
                 () -> new ResourceNotFoundException("채팅 내역이 없습니다")
         );
 
@@ -239,7 +243,6 @@ public class ChatService {
         }
 
         return new PagedResponse(HttpStatus.OK, chatRoomListDtoList, 1);
-
     }
 
 
@@ -264,7 +267,8 @@ public class ChatService {
 
     public void saveLastChatDetail(ChatRoomDetail chat, String userId) {
 
-        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(chat.getRoomId())), LastChat.class);
+        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(chat.getRoomId())
+                .and("userId").is(userId)), LastChat.class);
 
         LastChat lastChatDto = new LastChat(chat);
         lastChatDto.setUserId(userId);
@@ -366,6 +370,5 @@ public class ChatService {
                 .collect(Collectors.toList());
 
         return new PagedResponse(HttpStatus.OK, userInfos, 1);
-
     }
 }

@@ -37,11 +37,10 @@ public class ChatController {//producer
     private final ChatTestService chatTestService;
 
     @PostMapping()
-    @ApiOperation(value = "채팅방 생성", notes = "user1, user2 주면 채팅방 아이디를 반환")
+    @ApiOperation(value = "채팅방 생성", notes = "user1, user2 주면 채팅방 아이디를 반환, 채팅방이 이미 있다면 200/새로 만들어졌다면 201")
     public ResponseEntity<?> createRoom(@RequestBody MakeChatRoomDto dto) throws IOException {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                HttpStatus.CREATED, chatService.createRoom(dto.getUser1(), dto.getUser2())));
+        return ResponseEntity.status(HttpStatus.CREATED).body(chatService.createRoom(dto.getUser1(), dto.getUser2()));
     }
 
     @DeleteMapping("/{roomId}")
@@ -53,7 +52,7 @@ public class ChatController {//producer
 //        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
 //                "채팅방 삭제 성공", chatService.deleteRoom(roomId, oAuth2User.getId())));
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                HttpStatus.NO_CONTENT, chatService.deleteRoom(roomId, oAuth2User.getId())));
+                HttpStatus.NO_CONTENT, chatService.deleteRoom(roomId, userId)));
     }
 
     @GetMapping("/{roomId}")
