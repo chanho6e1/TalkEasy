@@ -7,17 +7,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ResourceAlreadyExistsException extends RuntimeException {
     private ErrorResponse errorResponse;
 
-    public ResourceAlreadyExistsException(String message) {
+    public ResourceAlreadyExistsException(Object data) {
         super();
-        setErrResponse(message);
+        setErrResponse(data);
     }
 
     public ErrorResponse getErrResponse() {
         return errorResponse;
     }
 
-    private void setErrResponse(String message) {
-        errorResponse = new ErrorResponse(message);
+    private void setErrResponse(Object data) {
+        errorResponse = new ErrorResponse(HttpStatus.CONFLICT, data);
     }
 
 

@@ -10,26 +10,18 @@ public class ArgumentMismatchException extends RuntimeException  {
 
     private ErrorResponse errorResponse;
 
-    public ArgumentMismatchException(String message,  Object data) {
+    public ArgumentMismatchException(Object data) {
         super();
-        setErrResponse(message, data);
-    }
-
-    public ArgumentMismatchException(String message) {
-        super();
-        setErrResponse(message);
+        setErrResponse(data);
     }
 
     public ErrorResponse getErrResponse() {
         return errorResponse;
     }
 
-    private void setErrResponse(String message) {
-        errorResponse = new ErrorResponse(message);
-    }
 
-     private void setErrResponse(String message, Object data) {
-        errorResponse = new ErrorResponse(message, data);
+     private void setErrResponse(Object data) {
+        errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, data);
     }
 
 }

@@ -20,9 +20,9 @@ public class ResourceNotFoundException extends RuntimeException {
         setErrResponse();
     }
 
-    public ResourceNotFoundException(String message) {
+    public ResourceNotFoundException(Object data) {
         super();
-        setErrResponse(message);
+        setErrResponse(data);
     }
 
     public ErrorResponse getErrResponse() {
@@ -32,11 +32,11 @@ public class ResourceNotFoundException extends RuntimeException {
     private void setErrResponse() {
         String message = String.format("%s가 '%s' 인 %s 가 존재하지 않습니다.", fieldName, fieldValue, resourceName);
 
-        errorResponse = new ErrorResponse(message);
+        errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND, message);
     }
 
-    private void setErrResponse(String message) {
-        errorResponse = new ErrorResponse(message);
+    private void setErrResponse(Object data) {
+        errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND, data);
     }
 
 

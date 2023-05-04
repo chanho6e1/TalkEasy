@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -41,7 +42,7 @@ public class FollowService {
 
         Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(myId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("member", "userId", myId));
 
-        Optional followOptional = Optional.ofNullable( mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class));
+        Optional followOptional = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class));
 
         if (followOptional.isPresent()) {
             throw new ResourceAlreadyExistsException("이미 팔로우되어 있습니다");
@@ -61,6 +62,7 @@ public class FollowService {
 
         return "언팔로우 성공";
     }
+
     public void deleteByFollowDetail(String myId, String toUserId) {
 
         Follow user = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class)).orElseThrow(() -> new ResourceNotFoundException("이미 언팔로우 상태입니다"));
@@ -72,12 +74,12 @@ public class FollowService {
     public PagedResponse<?> getfollow(String userId) {
         /* userId -> id로 바꿔야함*/
 
+        Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(userId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("member", "userId", userId));
+
         Query query = new Query(Criteria.where("fromUserId").is(userId));
 
-        List<Follow> filteredMetaData = Optional.ofNullable(mongoTemplate.find(query, Follow.class)).orElseThrow(
-                ()-> new ResourceNotFoundException("친구 목록이 비어있습니다.")
-        );
-        
+        List<Follow> filteredMetaData = mongoTemplate.find(query, Follow.class);
+
         List<FollowResponse> result = filteredMetaData.stream()
                 .map((follow) ->
                         new FollowResponse(mongoTemplate.findOne(Query.query(Criteria.where("id").is(follow.getToUserId())), Member.class), follow))
@@ -85,7 +87,7 @@ public class FollowService {
 
         Collections.sort(result, Comparator.comparing(FollowResponse::getUserName));
 
-        return new PagedResponse<>(result,1);
+        return new PagedResponse(HttpStatus.OK, result, 1);
     }
 
     /* 주보호자 등록 */

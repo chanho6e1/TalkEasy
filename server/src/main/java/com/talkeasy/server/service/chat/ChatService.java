@@ -1,6 +1,7 @@
 package com.talkeasy.server.service.chat;
 
 import com.google.gson.Gson;
+import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.common.exception.ArgumentMismatchException;
 import com.talkeasy.server.common.exception.ResourceAlreadyExistsException;
@@ -27,6 +28,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 
@@ -46,7 +48,7 @@ public class ChatService {
     private final FirebaseCloudMessageService firebaseCloudMessageService;
     private final Gson gson;
 
-    public String createRoom(String user1, String user2) throws IOException {
+    public CommonResponse createRoom(String user1, String user2) throws IOException {
 
         //user1이 로그인한 사용자, user2가 대상자
 
@@ -59,7 +61,7 @@ public class ChatService {
             existRoom.getChatUsers().get(user1).setNowIn(true);
             mongoTemplate.save(existRoom);
 
-            return existRoom.getId();
+            return CommonResponse.of(HttpStatus.OK, existRoom.getId());
         }
 
         ChatRoom chatRoom = new ChatRoom(new String[]{user1, user2}, "hihi", LocalDateTime.now().toString());
@@ -70,7 +72,8 @@ public class ChatService {
         doCreateRoomChat(chatRoom, user1);
         doCreateRoomChat(chatRoom, user2);
 
-        return chatRoom.getId();
+        return CommonResponse.of(HttpStatus.CREATED, chatRoom.getId());
+
     }
 
 
@@ -202,7 +205,7 @@ public class ChatService {
         Page<ChatRoomDetail> metaDataPage = PageableExecutionUtils.getPage(filteredMetaData, pageable, () -> mongoTemplate.count(query.skip(-1).limit(-1), ChatRoomDetail.class)
         );
 
-        return new PagedResponse<>(metaDataPage.getContent(), metaDataPage.getTotalPages());
+        return new PagedResponse(HttpStatus.OK, metaDataPage.getContent(), metaDataPage.getTotalPages());
 
     }
 
@@ -239,7 +242,7 @@ public class ChatService {
             }
         }
 
-        return new PagedResponse<>(chatRoomListDtoList, 1);
+        return new PagedResponse(HttpStatus.OK, chatRoomListDtoList, 1);
     }
 
 
@@ -366,6 +369,6 @@ public class ChatService {
                         .build())
                 .collect(Collectors.toList());
 
-        return new PagedResponse<>(userInfos, 1);
+        return new PagedResponse(HttpStatus.OK, userInfos, 1);
     }
 }

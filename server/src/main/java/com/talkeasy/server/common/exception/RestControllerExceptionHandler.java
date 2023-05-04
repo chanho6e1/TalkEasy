@@ -25,7 +25,7 @@ public class RestControllerExceptionHandler {
     public ResponseEntity<ErrorResponse> resolveException(UnAuthorizedException exception) {
         ErrorResponse errResponse = exception.getErrResponse();
 //        return new ResponseEntity<>(errResponse, HttpStatus.UNAUTHORIZED);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errResponse);
 //        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errResponse);
 
     }
@@ -70,7 +70,7 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<List<ErrorResponse>> handleValidationExceptions(BindingResult bindingResult) {
         List<ErrorResponse> list = new ArrayList<>();
-        bindingResult.getAllErrors().forEach(c -> list.add(new ErrorResponse(c.getDefaultMessage(), ((FieldError) c).getField())));
+        bindingResult.getAllErrors().forEach(c -> list.add(new ErrorResponse(HttpStatus.BAD_REQUEST, ((FieldError) c).getField() + " : " +c.getDefaultMessage())));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(list);
     }
 
@@ -78,7 +78,7 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(BindException.class)
     public ResponseEntity<List<ErrorResponse>> handleBindException(BindingResult bindingResult) {
         List<ErrorResponse> list = new ArrayList<>();
-        bindingResult.getAllErrors().forEach(c -> list.add(new ErrorResponse(c.getDefaultMessage(), ((FieldError) c).getField())));
+        bindingResult.getAllErrors().forEach(c -> list.add(new ErrorResponse(HttpStatus.BAD_REQUEST, ((FieldError) c).getField() + " : " + c.getDefaultMessage())));
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(list);
     }
 
@@ -87,20 +87,20 @@ public class RestControllerExceptionHandler {
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     @ResponseStatus(HttpStatus.PAYLOAD_TOO_LARGE)
     public ResponseEntity<?> handleMaxUploadSizeExceptions(MaxUploadSizeExceededException exception) {
-        ErrorResponse errResponse = new ErrorResponse("파일 용량이 너무 큽니다.");
+        ErrorResponse errResponse = new ErrorResponse(HttpStatus.PAYLOAD_TOO_LARGE,"파일 용량이 너무 큽니다.");
 //        return new ResponseEntity<>(errResponse, HttpStatus.PAYLOAD_TOO_LARGE);
         return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE).body(errResponse);
     }
 
     @ExceptionHandler(NullPointerException.class)
     public ResponseEntity<ErrorResponse> resolveException(NullPointerException exception) {
-        ErrorResponse errResponse = new ErrorResponse("정보를 찾을 수 없습니다.","");
+        ErrorResponse errResponse = new ErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage()+ " : "+"정보를 찾을 수 없습니다.");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
     }
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<ErrorResponse> resolveException(NotFoundException exception) {
-        ErrorResponse errResponse = new ErrorResponse("정보를 찾을 수 없습니다.");
+        ErrorResponse errResponse = new ErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage()+ " : "+"정보를 찾을 수 없습니다.");
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
     }
 

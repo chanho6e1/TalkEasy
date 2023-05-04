@@ -12,16 +12,16 @@ public class UnAuthorizedException extends RuntimeException {
         setErrResponse("로그인 해주세요.");
     }
 
-    public UnAuthorizedException(String message) {
+    public UnAuthorizedException(Object data) {
         super();
-        setErrResponse(message);
+        setErrResponse(data);
     }
 
     public ErrorResponse getErrResponse() {
         return errorResponse;
     }
 
-    private void setErrResponse(String message) {
-        errorResponse = new ErrorResponse(message);
+    private void setErrResponse(Object data) {
+        errorResponse = new ErrorResponse(HttpStatus.UNAUTHORIZED, data);
     }
 }
