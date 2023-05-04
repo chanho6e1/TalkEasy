@@ -1,7 +1,6 @@
 package com.talkeasy.server.controller.member;
 
 import com.talkeasy.server.common.CommonResponse;
-import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.service.member.FollowService;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
 import io.swagger.annotations.Api;
@@ -52,8 +51,7 @@ public class FollowController {
 
     @ApiOperation(value = "나의 팔로워 목록을 조회한다", notes = "나의 팔로우 목록을 조회한다")
     @GetMapping()
-    public ResponseEntity<?> getfollow(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User,
-                                       @RequestParam String userId) {
+    public ResponseEntity<?> getfollow(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) {
         return ResponseEntity.ok().body((
                 followService.getfollow(oAuth2User.getId())));
 //        return ResponseEntity.ok().body((

@@ -23,7 +23,9 @@ public class FirebaseController {
 
     @PostMapping
     @ApiOperation(value = "백엔드 테스트용", notes = "(테스트용)")
-    public ResponseEntity pushMessage(@RequestParam String token, @RequestParam String title, @RequestParam String body) throws IOException {
+    public ResponseEntity pushMessage(@RequestParam String token,
+                                      @RequestParam String title,
+                                      @RequestParam String body) throws IOException {
 
         firebaseCloudMessageService.sendMessageTo(token, title, body);
         return ResponseEntity.ok().build();
@@ -31,7 +33,8 @@ public class FirebaseController {
 
     @PutMapping("/app-token")
     @ApiOperation(value = "유저 앱 토큰 저장", notes = "유저 로그인 시, 기기 앱 토큰 저장 필요")
-    public ResponseEntity<?> saveAppToken(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User, @RequestParam String appToken) {
+    public ResponseEntity<?> saveAppToken(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User,
+                                          @RequestParam String appToken) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, firebaseCloudMessageService.saveAppToken(oAuth2User.getId(), appToken)));

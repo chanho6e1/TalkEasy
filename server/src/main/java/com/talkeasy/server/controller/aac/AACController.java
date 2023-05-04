@@ -59,7 +59,8 @@ public class AACController {
 
     @PostMapping("/custom")
     @ApiOperation(value = "사용자 지정 aac 추가", notes = "사용자가 저장할 text를 주면 생성된 aacId를 반환")
-    public ResponseEntity<?> postCustomAac(@RequestBody CustomAACDto customAac,  @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member){
+    public ResponseEntity<?> postCustomAac(@RequestBody CustomAACDto customAac,
+                                           @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member){
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, aacService.postCustomAac(customAac, member.getId())));
@@ -67,7 +68,9 @@ public class AACController {
 
     @PutMapping("/custom/{aac-id}")
     @ApiOperation(value = "사용자 지정 aac 수정", notes = "수정할 accId를 주면 수정된 accId를 반환")
-    public ResponseEntity<?> putCustomAac(@PathVariable(value = "aac-id") String aacId, @RequestBody CustomAACDto customAac, @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
+    public ResponseEntity<?> putCustomAac(@PathVariable(value = "aac-id") String aacId,
+                                          @RequestBody CustomAACDto customAac,
+                                          @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, aacService.putCustomAac(aacId, customAac, member.getId())));
@@ -75,7 +78,8 @@ public class AACController {
 
     @DeleteMapping("/custom/{aac-id}")
     @ApiOperation(value = "사용자 지정 aac 삭제", notes = "삭제할 accId를 주면 삭제된 accId를 반환")
-    public ResponseEntity<?> deleteCustomAac(@PathVariable(value = "aac-id") String aacId, @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
+    public ResponseEntity<?> deleteCustomAac(@PathVariable(value = "aac-id") String aacId,
+                                             @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, aacService.deleteCustomAac(aacId, member.getId())));
