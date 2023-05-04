@@ -75,9 +75,10 @@ public class FollowService {
         Query query = new Query(Criteria.where("fromUserId").is(userId));
 
         List<Follow> filteredMetaData = Optional.ofNullable(mongoTemplate.find(query, Follow.class)).orElseThrow(
-                ()-> new ResourceNotFoundException("친구 목록이 비어있습니다.")
+                ()-> new ResourceNotFoundException("팔로우한 ")
         );
-        
+
+
         List<FollowResponse> result = filteredMetaData.stream()
                 .map((follow) ->
                         new FollowResponse(mongoTemplate.findOne(Query.query(Criteria.where("id").is(follow.getToUserId())), Member.class), follow))
