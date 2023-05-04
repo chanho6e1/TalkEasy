@@ -58,7 +58,7 @@ public class FollowController {
 //        return ResponseEntity.ok().body(CommonResponse.of(
 //                followService.getfollow(oAuth2User.getId(), offset, size)));
         return ResponseEntity.ok().body(CommonResponse.of(
-                HttpStatus.OK, followService.getfollow(userId, offset, size)));
+                HttpStatus.OK, followService.getfollow(userId)));
     }
 
 
