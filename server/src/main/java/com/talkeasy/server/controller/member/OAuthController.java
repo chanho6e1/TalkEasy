@@ -34,7 +34,7 @@ public class OAuthController {
 
         if (token == null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                    HttpStatus.NO_CONTENT, ""));
+                    HttpStatus.CREATED, ""));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
