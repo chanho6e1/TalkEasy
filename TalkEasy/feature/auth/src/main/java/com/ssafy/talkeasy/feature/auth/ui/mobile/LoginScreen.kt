@@ -1,4 +1,4 @@
-package com.ssafy.talkeasy.feature.auth
+package com.ssafy.talkeasy.feature.auth.ui.mobile
 
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -21,6 +21,9 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.ssafy.talkeasy.feature.auth.LoginViewModel
+import com.ssafy.talkeasy.feature.auth.R
+import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_surface
 
 @Composable
@@ -95,8 +98,8 @@ fun LoginContent(
     ) {
         item {
             Image(
-                painter = painterResource(id = R.drawable.bg_talkeasy_logo_verticcal_trans),
-                contentDescription = stringResource(id = R.string.app_logo_text),
+                painter = painterResource(id = drawable.bg_talkeasy_logo_verticcal_trans),
+                contentDescription = stringResource(id = R.string.image_logo),
                 modifier = modifier
                     .padding(bottom = 60.dp)
                     .fillMaxSize()
@@ -108,7 +111,7 @@ fun LoginContent(
                 modifier = modifier.fillMaxSize()
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_kakao_login),
+                    painter = painterResource(id = drawable.ic_kakao_login),
                     contentDescription = stringResource(id = R.string.kakao_login_text)
                 )
             }
@@ -125,18 +128,18 @@ fun Background(
     ) {
         Surface(color = md_theme_light_surface) {
             Image(
-                painter = painterResource(id = R.drawable.bg_main_wave),
+                painter = painterResource(id = drawable.bg_main_wave),
                 contentDescription = stringResource(id = R.string.bg_main_wave_text),
                 modifier = modifier.fillMaxSize(),
                 alignment = Alignment.BottomCenter
             )
             Image(
-                painter = painterResource(id = R.drawable.bg_main_leaf_big),
+                painter = painterResource(id = drawable.bg_main_leaf_big),
                 contentDescription = stringResource(id = R.string.bg_main_leaf_big_text),
                 modifier = modifier.align(Alignment.TopEnd)
             )
             Image(
-                painter = painterResource(id = R.drawable.bg_main_leaf_small),
+                painter = painterResource(id = drawable.bg_main_leaf_small),
                 contentDescription = stringResource(id = R.string.bg_main_leaf_small_text),
                 modifier = modifier
                     .align(Alignment.BottomStart)
