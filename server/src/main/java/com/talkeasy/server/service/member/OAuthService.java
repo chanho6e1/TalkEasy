@@ -4,12 +4,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.talkeasy.server.authentication.JwtTokenProvider;
 import com.talkeasy.server.common.exception.NotFoundException;
+import com.talkeasy.server.config.s3.S3Uploader;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.user.MemberDetailRequest;
 import com.talkeasy.server.service.chat.ChatUserQueueService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.BufferedReader;
@@ -27,6 +29,7 @@ public class OAuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberService memberService;
     private final ChatUserQueueService chatUserQueueService;
+    private final S3Uploader s3Uploader;
 
     public String getToken(String accessToken) {
         log.info("========== AccessToken : {} ", accessToken);
@@ -87,16 +90,22 @@ public class OAuthService {
 
     }
 
-    public String registerUser(MemberDetailRequest member) {
+    public String registerUser(MultipartFile multipartFile, MemberDetailRequest member) {
 
         String email = null;
+        String saveFileName = "";
         try {
             email = getEmail(member.getAccessToken());
         } catch (IOException e) {
             log.info("========== exception 발생 : {}", e.getMessage());
         }
+        try {
+            log.info("============file: " + multipartFile);
+            saveFileName = s3Uploader.uploadFiles(multipartFile, "talkeasy");
+        } catch (Exception e) {
+        }
 
-        String userId = memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(member.getImageUrl()).role(member.getRole()).gender(member.getGender()).age(member.getAge()).birthDate(member.getBirthDate()).build());
+        String userId = memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(saveFileName).role(member.getRole()).gender(member.getGender()).age(member.getAge()).birthDate(member.getBirthDate()).build());
 
         //채팅에 사용할 유저별 큐 생성
         chatUserQueueService.createUserQueue(userId);
