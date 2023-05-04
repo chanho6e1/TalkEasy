@@ -12,7 +12,7 @@ import static java.time.LocalTime.now;
 @Setter
 @Builder
 @AllArgsConstructor
-//@NoArgsConstructor
+@NoArgsConstructor
 public class ChatRoomDetail {
 
     @Id

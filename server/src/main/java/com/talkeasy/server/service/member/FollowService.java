@@ -69,28 +69,23 @@ public class FollowService {
 
     }
 
-    public PagedResponse<?> getfollow(String userId, int offset, int size) {
+    public PagedResponse<?> getfollow(String userId) {
         /* userId -> id로 바꿔야함*/
 
-        Pageable pageable = PageRequest.of(offset - 1, size); // 가나다 순으로
-        Query query = new Query(Criteria.where("fromUserId").is(userId)).with(pageable);
+        Query query = new Query(Criteria.where("fromUserId").is(userId));
 
-        List<Follow> filteredMetaData = mongoTemplate.find(query, Follow.class);
-
-        Page<Follow> metaDataPage = PageableExecutionUtils.getPage(
-                filteredMetaData,
-                pageable,
-                () -> mongoTemplate.count(query.skip(-1).limit(-1), Follow.class)
+        List<Follow> filteredMetaData = Optional.ofNullable(mongoTemplate.find(query, Follow.class)).orElseThrow(
+                ()-> new ResourceNotFoundException("친구 목록이 비어있습니다.")
         );
-
-        List<FollowResponse> result = metaDataPage.getContent().stream()
+        
+        List<FollowResponse> result = filteredMetaData.stream()
                 .map((follow) ->
                         new FollowResponse(mongoTemplate.findOne(Query.query(Criteria.where("id").is(follow.getToUserId())), Member.class), follow))
                 .collect(Collectors.toList());
 
         Collections.sort(result, Comparator.comparing(FollowResponse::getUserName));
 
-        return new PagedResponse<>(result, metaDataPage.getTotalPages());
+        return new PagedResponse<>(result,1);
     }
 
     /* 주보호자 등록 */

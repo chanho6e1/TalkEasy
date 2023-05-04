@@ -158,15 +158,25 @@ public class ChatService {
 
     ///////////////////////////////////////
 
-    public PagedResponse<ChatRoomDetail> getChatHistory(String chatRoomId, int offset, int size) {
+    public PagedResponse<ChatRoomDetail> getChatHistory(String chatRoomId, int offset, int size, String userId) {
 
         Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "created_dt"));
-        Query query = new Query(Criteria.where("roomId").is(chatRoomId)).with(pageable);
 
-        List<ChatRoomDetail> filteredMetaData = mongoTemplate.find(query, ChatRoomDetail.class);
+        ChatRoom chatRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(chatRoomId)), ChatRoom.class)).orElseThrow(
+                () -> new ResourceNotFoundException("ChatRoom", "chatRoomId", chatRoomId)
+        );
+
+        String leaveTime = chatRoom.getChatUsers().get(userId).getNowIn() ? chatRoom.getDate() : chatRoom.getLeaveTime();
+
+
+        Query query = new Query(Criteria.where("roomId").is(chatRoomId)
+                .and("created_dt").gte(leaveTime)).with(pageable);
+
+        List<ChatRoomDetail> filteredMetaData =  Optional.ofNullable(mongoTemplate.find(query, ChatRoomDetail.class)).orElseThrow(
+                () -> new ResourceNotFoundException("채팅 내역이 없습니다")
+        );
 
         Page<ChatRoomDetail> metaDataPage = PageableExecutionUtils.getPage(filteredMetaData, pageable, () -> mongoTemplate.count(query.skip(-1).limit(-1), ChatRoomDetail.class)
-                // query.skip(-1).limit(-1)의 이유는 현재 쿼리가 페이징 하려고 하는 offset 까지만 보기에 이를 맨 처음부터 끝까지로 set 해줘 정확한 도큐먼트 개수를 구한다.
         );
 
         return new PagedResponse<>(metaDataPage.getContent(), metaDataPage.getTotalPages());
@@ -260,7 +270,7 @@ public class ChatService {
         String toUserId = Arrays.stream(chatRoom.getUsers()).filter(a -> !a.equals(userId))
                 .toArray(String[]::new)[0];
 
-        if(!chatRoom.getChatUsers().get(toUserId).getNowIn()){ // 이전에 떠난 사용자와 현재 떠나려는 사용자의 아이디가 일치하지 않을 경우, 채팅방 폭파
+        if (!chatRoom.getChatUsers().get(toUserId).getNowIn()) { // 이전에 떠난 사용자와 현재 떠나려는 사용자의 아이디가 일치하지 않을 경우, 채팅방 폭파
             // 채팅방에 남은 인원이 1명인 경우만 삭제
             mongoTemplate.remove(query, ChatRoom.class); //채팅방 삭제
             mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)), ChatRoomDetail.class); //채팅 내역 삭제
@@ -302,9 +312,10 @@ public class ChatService {
         return roomId;
     }
 
-    private void deleteQueue(String queueName, String roomId, String userId){
+    private void deleteQueue(String queueName, String roomId, String userId) {
         amqpAdmin.deleteQueue(queueName + "." + roomId + "." + userId);
     }
+
     public PagedResponse<UserInfo> getUserInfoByRoom(String roomId) {
 
         ChatRoom chatRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(roomId)), ChatRoom.class))
