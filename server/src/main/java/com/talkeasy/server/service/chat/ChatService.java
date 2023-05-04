@@ -50,7 +50,7 @@ public class ChatService {
 
         //user1이 로그인한 사용자, user2가 대상자
 
-        ChatRoom existRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("users").in(new String[]{user1, user2})), ChatRoom.class)).orElse(null);
+        ChatRoom existRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("users").all(new String[]{user1, user2})), ChatRoom.class)).orElse(null);
 
         if (existRoom != null) {
 //            throw new ResourceAlreadyExistsException("이미 생성된 채팅방 입니다");
@@ -153,7 +153,7 @@ public class ChatService {
         if (!chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn()) {
             chatRoom.getChatUsers().get(chat.getFromUserId()).setNowIn(true);
         }
-        if (!chatRoom.getChatUsers().get(chat.getToUserId()).getNowIn()){
+        if (!chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn()){
             chatRoom.getChatUsers().get(chat.getFromUserId()).setNowIn(true);
         }
         mongoTemplate.save(chatRoom);
@@ -215,7 +215,7 @@ public class ChatService {
 
             LastChat lastChat = lastChatList.get(i);
             String otherUserId = lastChat.getFromUserId().equals(userId) ? lastChat.getToUserId() : lastChat.getFromUserId();
-            
+
             Optional<Member> memberOptional = getMemberById(otherUserId);
             if (memberOptional.isPresent()) {
                 Member member = memberOptional.get();
@@ -350,7 +350,7 @@ public class ChatService {
 
         String[] userIds = chatRoom.getUsers();
 
-        List<Member> members = mongoTemplate.find(Query.query(Criteria.where("id").in(userIds)), Member.class);
+        List<Member> members = mongoTemplate.find(Query.query(Criteria.where("id").all(userIds)), Member.class);
 
         List<UserInfo> userInfos = members.stream()
                 .map(member -> UserInfo.builder()
