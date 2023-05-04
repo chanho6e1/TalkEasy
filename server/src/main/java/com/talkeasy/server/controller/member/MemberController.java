@@ -41,21 +41,24 @@ public class MemberController {
                                                   @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
         log.info("========== /update multipartFile : {}, memberInfoUpdateRequest : {}, member : {}", multipartFile, memberInfoUpdateRequest.getName(), oAuth2User.getMember().getName());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of("회원정보 수정 성공", new MemberDetailResponse(memberService.updateUserInfo(multipartFile, memberInfoUpdateRequest, oAuth2User.getMember().getId()))));
+        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+                HttpStatus.CREATED, new MemberDetailResponse(memberService.updateUserInfo(multipartFile, memberInfoUpdateRequest, oAuth2User.getMember().getId()))));
     }
 
     @ApiOperation(value = "유저 정보 조회", notes = "유저 정보 조회하기")
     @GetMapping
     public ResponseEntity<CommonResponse> getUserInfo(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("member 조회 성공", new MemberDetailResponse(oAuth2User.getMember())));
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+                HttpStatus.OK, new MemberDetailResponse(oAuth2User.getMember())));
     }
 
     @ApiOperation(value = "유저 탈퇴", notes = "유저 아이디 입력 시, 관련된 정보 삭제")
     @DeleteMapping
     public ResponseEntity<CommonResponse> deleteUserInfo(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("member 삭제 성공", memberService.deleteUserInfo(oAuth2User.getId())));
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+                HttpStatus.NO_CONTENT, memberService.deleteUserInfo(oAuth2User.getId())));
     }
 
 }

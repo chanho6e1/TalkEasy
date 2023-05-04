@@ -33,10 +33,12 @@ public class OAuthController {
         token = oAuthService.getToken(accessToken);
 
         if (token == null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of("정보가 없습니다.", ""));
+            return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+                    HttpStatus.NO_CONTENT, ""));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("로그인 성공", token));
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+                HttpStatus.OK, token));
     }
 
     @ApiOperation(value = "회원정보 등록하기", notes = "return : jwt 토큰 , role(0 : 보호자, 1 : 피보호자), gender(0 : 남자, 1 : 여자),  * email : 입력제외")
@@ -46,7 +48,8 @@ public class OAuthController {
 
         String token = oAuthService.registerUser(member);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of("회원가입 성공", token));
+        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+                HttpStatus.CREATED, token));
     }
 
 }

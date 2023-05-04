@@ -34,7 +34,7 @@ public class FollowController {
                                     @RequestParam String userId
     ) {
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                followService.follow(userId, toUserId)));
+                HttpStatus.CREATED, followService.follow(userId, toUserId)));
 //        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
 //                 "팔로우 성공", followService.follow(oAuth2User.getId(), toUserId)));
     }
@@ -46,7 +46,7 @@ public class FollowController {
                                                    @PathVariable("toUserId") String toUserId,
                                                    @RequestParam String userId) {
         return ResponseEntity.ok().body(CommonResponse.of(
-                followService.deleteByFollow(userId, toUserId)));
+                HttpStatus.OK, followService.deleteByFollow(userId, toUserId)));
 //        return ResponseEntity.ok().body(CommonResponse.of(
 //                 followService.deleteByFollowingIdAndFollowerId(oAuth2User.getId(), toUserId)));
     }
@@ -57,7 +57,8 @@ public class FollowController {
                                        @RequestParam String userId) {
 //        return ResponseEntity.ok().body(CommonResponse.of(
 //                followService.getfollow(oAuth2User.getId(), offset, size)));
-        return ResponseEntity.ok().body(followService.getfollow(userId));
+        return ResponseEntity.ok().body(CommonResponse.of(
+                HttpStatus.OK, followService.getfollow(userId, offset, size)));
     }
 
 
@@ -67,7 +68,7 @@ public class FollowController {
             "기존에 등록된 주보호자의 아이디 입력 시, 주보호자 해제")
     @PutMapping("/protector/{targetId}")
     public ResponseEntity<CommonResponse> putProtector(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User, @PathVariable String targetId){
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("주보호자 등록/변경 성공", followService.putProtector(oAuth2User.getId(), targetId)));
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(HttpStatus.OK, followService.putProtector(oAuth2User.getId(), targetId)));
 //        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("주보호자 등록/변경 성공", followService.putProtector("64475bb2970b4a6441e96c50", targetId)));
     }
 
@@ -75,7 +76,7 @@ public class FollowController {
     @ApiOperation(value = "위치정보 허용 변경", notes = "피보호자가 각각의 보호자에 대해 위치 정보 접근 여부에 대해 설정한다. 처음 초기 설정은 false")
     @PutMapping("/location/{targetId}")
     public ResponseEntity<CommonResponse> putLocationStatus(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User, @PathVariable String targetId){
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("위치정보 접근권한 변경 성공", followService.putLocationStatus(oAuth2User.getId(), targetId)));
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(HttpStatus.OK, followService.putLocationStatus(oAuth2User.getId(), targetId)));
 //        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("위치정보 접근권한 변경 성공", followService.putLocationStatus("64475bb2970b4a6441e96c50", targetId)));
     }
 }

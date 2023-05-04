@@ -30,7 +30,8 @@ public class AlarmController {
     public ResponseEntity<CommonResponse> stompAlarm(@PathVariable("userId") Long userId) {
         System.out.println("/sub/"+userId);
         messagingTemplate.convertAndSend("/sub/" + userId, "alarm socket connection completed.");
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("..."));
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(HttpStatus.OK, ""));
+
     }
 
 //    @MessageMapping("")
