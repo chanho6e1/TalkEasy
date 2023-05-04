@@ -1,5 +1,6 @@
 package com.talkeasy.server.controller.chat;
 
+import com.google.api.Http;
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.dto.chat.MakeChatRoomDto;
@@ -39,7 +40,7 @@ public class ChatController {//producer
     public ResponseEntity<?> createRoom(@RequestBody MakeChatRoomDto dto) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                "채팅방 생성 성공", chatService.createRoom(dto.getUser1(), dto.getUser2())));
+                HttpStatus.CREATED, chatService.createRoom(dto.getUser1(), dto.getUser2())));
     }
 
     @DeleteMapping("/{roomId}")
@@ -48,15 +49,15 @@ public class ChatController {//producer
                                         @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "채팅방 삭제 성공", chatService.deleteRoom(roomId, oAuth2User.getId())));
+                HttpStatus.NO_CONTENT, chatService.deleteRoom(roomId, oAuth2User.getId())));
     }
 
     @GetMapping("/{roomId}")
     @ApiOperation(value = "채팅방 참가자 정보 조회", notes = "PathVariable로 roomId 주면 채팅방 참가자 정보 반환")
     public ResponseEntity<?> getUserInfoByRoom(@PathVariable String roomId) {
 
-        return ResponseEntity.status(HttpStatus.OK).body(
-                chatService.getUserInfoByRoom(roomId));
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+                HttpStatus.OK, chatService.getUserInfoByRoom(roomId)));
     }
 
 
@@ -73,7 +74,8 @@ public class ChatController {//producer
     @GetMapping("/my")
     @ApiOperation(value = "채팅방 조회", notes = "내가 속한 채팅방 리스트를 반환")
     public ResponseEntity<?> getChatRoom(@RequestParam String userId) {
-        return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatRoomList(userId));
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+                HttpStatus.OK, chatService.getChatRoomList(userId)));
     }
 
 
@@ -82,14 +84,14 @@ public class ChatController {//producer
     @ApiOperation(value = "회원가입시 큐생성(테스트용)", notes = "쿼리스트링으로 userId를 주면 큐를 만듬")
     public ResponseEntity<CommonResponse> createUserQueue(@RequestParam String userId) throws IOException, UnsupportedAudioFileException {
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "큐 생성 성공", chatUserQueueService.createUserQueue(userId)));
+                HttpStatus.OK, chatUserQueueService.createUserQueue(userId)));
     }
 
     @GetMapping("/test/receive")
     @ApiOperation(value = "회원가입시 큐생성(테스트용)", notes = " chat/read")
     public ResponseEntity<CommonResponse> createUserQueue(@RequestParam String roomId, String recieveUserId, String queueName) throws IOException, UnsupportedAudioFileException, TimeoutException {
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "큐 생성 성공", chatTestService.receiveMessage(roomId, recieveUserId, queueName)));
+                HttpStatus.OK, chatTestService.receiveMessage(roomId, recieveUserId, queueName)));
     }
 
 
