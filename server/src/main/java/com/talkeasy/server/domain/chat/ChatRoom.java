@@ -1,7 +1,6 @@
 package com.talkeasy.server.domain.chat;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -10,6 +9,9 @@ import java.util.Optional;
 @Document("chat_room")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChatRoom {
 
     //id는 소문자로 설정해야함

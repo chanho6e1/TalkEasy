@@ -2,6 +2,7 @@ package com.talkeasy.server.service.member;
 
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.common.exception.ArgumentMismatchException;
+import com.talkeasy.server.common.exception.ResourceAlreadyExistsException;
 import com.talkeasy.server.common.exception.ResourceNotFoundException;
 import com.talkeasy.server.domain.member.Follow;
 import com.talkeasy.server.domain.member.Member;
@@ -40,10 +41,10 @@ public class FollowService {
 
         Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(myId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("member", "userId", myId));
 
-        Optional followOptional = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class));
+        Optional followOptional = Optional.ofNullable( mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class));
 
         if (followOptional.isPresent()) {
-            throw new ArgumentMismatchException("이미 팔로우되어 있습니다");
+            throw new ResourceAlreadyExistsException("이미 팔로우되어 있습니다");
         }
 
         Follow toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo(null).MainStatus(false).locationStatus(false).build();

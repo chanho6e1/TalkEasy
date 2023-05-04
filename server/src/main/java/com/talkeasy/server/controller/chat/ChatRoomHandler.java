@@ -57,13 +57,13 @@ public class ChatRoomHandler {
 
     }
 
-    @RabbitListener(queues = "room.queue")
-    public void makeRoom(Message message) {
-        log.info("room message : {}", message);
-
-        String str = new String(message.getBody());
-        MakeChatRoomDto dto = new Gson().fromJson(str, MakeChatRoomDto.class);
-        chatService.createRoom(dto.getUser1(), dto.getUser2());
-    }
+//    @RabbitListener(queues = "room.queue")
+//    public void makeRoom(Message message) throws IOException {
+//        log.info("room message : {}", message);
+//
+//        String str = new String(message.getBody());
+//        MakeChatRoomDto dto = new Gson().fromJson(str, MakeChatRoomDto.class);
+//        chatService.createRoom(dto.getUser1(), dto.getUser2());
+//    }
 
 }

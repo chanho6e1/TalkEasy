@@ -36,7 +36,7 @@ public class ChatController {//producer
 
     @PostMapping()
     @ApiOperation(value = "채팅방 생성", notes = "user1, user2 주면 채팅방 아이디를 반환")
-    public ResponseEntity<?> createRoom(@RequestBody MakeChatRoomDto dto) {
+    public ResponseEntity<?> createRoom(@RequestBody MakeChatRoomDto dto) throws IOException {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 "채팅방 생성 성공", chatService.createRoom(dto.getUser1(), dto.getUser2())));
