@@ -1,6 +1,6 @@
 package com.ssafy.talkeasy.core.data.remote.service
 
-import com.ssafy.talkeasy.core.data.remote.datasource.auth.AuthResponse
+import com.ssafy.talkeasy.core.data.remote.datasource.common.DefaultResponse
 import com.ssafy.talkeasy.core.domain.entity.request.MemberRequestBody
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -12,11 +12,11 @@ interface AuthApiService {
     suspend fun requestLogin(
         @Query("accessToken")
         accessToken: String,
-    ): AuthResponse
+    ): DefaultResponse<String>
 
     @POST("/api/oauth/register")
     suspend fun requestJoin(
         @Body
         member: MemberRequestBody,
-    ): AuthResponse
+    ): DefaultResponse<String>
 }

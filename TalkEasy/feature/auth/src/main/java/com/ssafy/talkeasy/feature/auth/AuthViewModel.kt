@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.talkeasy.core.domain.Resource
 import com.ssafy.talkeasy.core.domain.entity.request.MemberRequestBody
-import com.ssafy.talkeasy.core.domain.entity.response.Auth
+import com.ssafy.talkeasy.core.domain.entity.response.Default
 import com.ssafy.talkeasy.core.domain.usecase.auth.JoinUseCase
 import com.ssafy.talkeasy.core.domain.usecase.auth.LoginUseCase
 import com.ssafy.talkeasy.feature.common.SharedPreferences
@@ -31,15 +31,14 @@ class AuthViewModel @Inject constructor(
 
     private fun requestLogin(accessToken: String) = viewModelScope.launch {
         when (val value = logInUseCase(accessToken)) {
-            is Resource.Success<Auth> -> {
-                if (value.code == 200) {
+            is Resource.Success<Default<String>> -> {
+                if (value.data.status == 200) {
                     // login success
                     _isNewMember.value = false
                     sharedPreferences.accessToken = value.data.data
-                } else if (value.code == 201) {
+                } else if (value.data.status == 201) {
                     // no member
                     _isNewMember.value = true
-                    Log.d("requestLogin", "requestLogin: ${value.data.message}")
                 }
             }
             is Resource.Error -> Log.e("requestLogin", "requestLogin: ${value.errorMessage}")
@@ -56,9 +55,12 @@ class AuthViewModel @Inject constructor(
         }
         member?.let {
             when (val value = joinUseCase(member)) {
-                is Resource.Success<Auth> -> {
-                    sharedPreferences.accessToken = value.data.data
-                    _isNewMember.value = true
+                is Resource.Success<Default<String>> -> {
+                    if (value.data.status == 201) {
+                        // login success
+                        _isNewMember.value = false
+                        sharedPreferences.accessToken = value.data.data
+                    }
                 }
                 is Resource.Error ->
                     Log.e("requestJoin", "requestJoin: ${value.errorMessage}")
