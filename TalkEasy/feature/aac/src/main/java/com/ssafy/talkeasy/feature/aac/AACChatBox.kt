@@ -13,23 +13,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.feature.aac.R.string
 import com.ssafy.talkeasy.feature.common.R
-import com.ssafy.talkeasy.feature.common.ui.theme.Typography
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
 import com.ssafy.talkeasy.feature.common.ui.theme.harp
-import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 
 @Composable
@@ -86,18 +82,6 @@ fun AACChatCards(words: List<String>) {
         items(words) { word ->
             AACCardWrap(word = word, color = harp)
         }
-    }
-}
-
-@Composable
-fun AACCardWrap(word: String, color: Color) {
-    Surface(shape = shapes.extraSmall, color = color) {
-        Text(
-            modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
-            text = word,
-            color = md_theme_light_onBackground,
-            style = Typography.titleMedium
-        )
     }
 }
 

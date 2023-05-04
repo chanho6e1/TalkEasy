@@ -87,6 +87,14 @@ val textStyleBold22 = TextStyle(
     letterSpacing = 0.5.sp
 )
 
+val textStyleNormal30 = TextStyle(
+    fontFamily = welcomeFont,
+    fontWeight = FontWeight.Normal,
+    fontSize = 30.sp,
+    lineHeight = 24.sp,
+    letterSpacing = 0.5.sp
+)
+
 val textStyleNormal22 = TextStyle(
     fontFamily = welcomeFont,
     fontWeight = FontWeight.Normal,
