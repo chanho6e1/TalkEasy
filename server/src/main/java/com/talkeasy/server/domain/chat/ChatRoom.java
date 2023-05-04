@@ -4,6 +4,8 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Document("chat_room")
@@ -22,13 +24,16 @@ public class ChatRoom {
     private String date; // 생성 시간?
     private String leaveUserId; // 채팅방 떠난 사용자
     private String leaveTime; // 채팅방 떠난 시간
+    // 테스트용
+    private Map<String, UserData> chatUsers;
 
     public ChatRoom(String[] users, String title, String date) {
         this.users = users;
         this.title = title;
         this.date = date;
-        this.leaveUserId = null;
-        this.leaveTime = null;
+        chatUsers = new HashMap<>();
+        chatUsers.put(users[0], new UserData(true, null));
+        chatUsers.put(users[1], new UserData(true, null));
     }
 
 }

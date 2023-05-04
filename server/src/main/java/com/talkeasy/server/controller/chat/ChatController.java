@@ -45,10 +45,13 @@ public class ChatController {//producer
     @DeleteMapping("/{roomId}")
     @ApiOperation(value = "채팅방 삭제(나가기)", notes = "PathVariable로 roomId 주면 삭제한 roomId 아이디를 반환, '나가기'실행한 사용자만 삭제되고 남은 유저는 그대로 유지")
     public ResponseEntity<?> deleteRoom(@PathVariable String roomId,
+                                        @RequestParam String userId,
                                         @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
 
+//        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+//                "채팅방 삭제 성공", chatService.deleteRoom(roomId, oAuth2User.getId())));
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                "채팅방 삭제 성공", chatService.deleteRoom(roomId, oAuth2User.getId())));
+                "채팅방 삭제 성공", chatService.deleteRoom(roomId, userId)));
     }
 
     @GetMapping("/{roomId}")
