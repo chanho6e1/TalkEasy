@@ -27,18 +27,16 @@ import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun EditProfile(
+fun <T> EditProfile(
     modifier: Modifier = Modifier,
-    imageUrl: String = "",
+    profile: T? = null,
     size: Int = 110,
     textStyle: TextStyle = typography.titleLarge,
     onClick: () -> Unit,
 ) {
     Box(modifier = modifier.noRippleClickable { onClick() }, contentAlignment = Alignment.Center) {
         GlideImage(
-            model = imageUrl.ifEmpty {
-                R.drawable.ic_default_profile
-            },
+            model = profile ?: R.drawable.ic_default_profile,
             contentDescription = stringResource(id = R.string.ic_default_profile_text),
             contentScale = ContentScale.Crop,
             modifier = Modifier
