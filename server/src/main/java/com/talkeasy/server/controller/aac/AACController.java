@@ -6,6 +6,7 @@ import com.talkeasy.server.dto.aac.CustomAACDto;
 import com.talkeasy.server.dto.chat.ChatTextDto;
 import com.talkeasy.server.service.aac.AACService;
 import com.talkeasy.server.service.chat.TTSService;
+import com.talkeasy.server.service.member.OAuth2UserImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -41,7 +42,7 @@ public class AACController {
                                                  @RequestParam(required = false, defaultValue = "0") int fixed,
                                                  @RequestParam(required = false, defaultValue = "1") int offset,
                                                  @RequestParam(value = "size", required = false, defaultValue = "10") int size,
-                                                 @ApiIgnore @AuthenticationPrincipal Member member) {
+                                                 @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
 
         return ResponseEntity.status(HttpStatus.OK).body(aacService.getAacByCategory(member.getId(), categoryId, fixed,offset, size));
     }
@@ -58,26 +59,26 @@ public class AACController {
 
     @PostMapping("/custom")
     @ApiOperation(value = "사용자 지정 aac 추가", notes = "사용자가 저장할 text를 주면 생성된 aacId를 반환")
-    public ResponseEntity<?> postCustomAac(@RequestBody CustomAACDto customAac, String userId){
+    public ResponseEntity<?> postCustomAac(@RequestBody CustomAACDto customAac,  @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member){
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                HttpStatus.CREATED, aacService.postCustomAac(customAac, userId)));
+                HttpStatus.CREATED, aacService.postCustomAac(customAac, member.getId())));
     }
 
     @PutMapping("/custom/{aac-id}")
     @ApiOperation(value = "사용자 지정 aac 수정", notes = "수정할 accId를 주면 수정된 accId를 반환")
-    public ResponseEntity<?> putCustomAac(@PathVariable(value = "aac-id") String aacId, @RequestBody CustomAACDto customAac, @ApiIgnore @AuthenticationPrincipal Member member, String userId) {
+    public ResponseEntity<?> putCustomAac(@PathVariable(value = "aac-id") String aacId, @RequestBody CustomAACDto customAac, @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                HttpStatus.CREATED, aacService.putCustomAac(aacId, customAac, userId)));
+                HttpStatus.CREATED, aacService.putCustomAac(aacId, customAac, member.getId())));
     }
 
     @DeleteMapping("/custom/{aac-id}")
     @ApiOperation(value = "사용자 지정 aac 삭제", notes = "삭제할 accId를 주면 삭제된 accId를 반환")
-    public ResponseEntity<?> deleteCustomAac(@PathVariable(value = "aac-id") String aacId, @ApiIgnore @AuthenticationPrincipal Member member, String userId) {
+    public ResponseEntity<?> deleteCustomAac(@PathVariable(value = "aac-id") String aacId, @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                HttpStatus.CREATED, aacService.deleteCustomAac(aacId, userId)));
+                HttpStatus.CREATED, aacService.deleteCustomAac(aacId, member.getId())));
     }
 
     ////////////텍스트 관련
