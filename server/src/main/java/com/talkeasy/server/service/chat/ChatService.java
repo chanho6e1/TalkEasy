@@ -27,6 +27,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.support.PageableExecutionUtils;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 
@@ -155,7 +156,7 @@ public class ChatService {
         if (!chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn()) {
             chatRoom.getChatUsers().get(chat.getFromUserId()).setNowIn(true);
         }
-        if (!chatRoom.getChatUsers().get(chat.getToUserId()).getNowIn()){
+        if (!chatRoom.getChatUsers().get(chat.getToUserId()).getNowIn()) {
             chatRoom.getChatUsers().get(chat.getToUserId()).setNowIn(true);
         }
         mongoTemplate.save(chatRoom);
@@ -193,14 +194,14 @@ public class ChatService {
         Query query = new Query(Criteria.where("roomId").is(chatRoomId)
                 .and("created_dt").gte(leaveTime)).with(pageable);
 
-        List<ChatRoomDetail> filteredMetaData =  Optional.ofNullable(mongoTemplate.find(query, ChatRoomDetail.class)).orElseThrow(
+        List<ChatRoomDetail> filteredMetaData = Optional.ofNullable(mongoTemplate.find(query, ChatRoomDetail.class)).orElseThrow(
                 () -> new ResourceNotFoundException("채팅 내역이 없습니다")
         );
 
         Page<ChatRoomDetail> metaDataPage = PageableExecutionUtils.getPage(filteredMetaData, pageable, () -> mongoTemplate.count(query.skip(-1).limit(-1), ChatRoomDetail.class)
         );
 
-        return new PagedResponse<>(metaDataPage.getContent(), metaDataPage.getTotalPages());
+        return new PagedResponse(HttpStatus.OK, metaDataPage.getContent(), metaDataPage.getTotalPages());
 
     }
 
@@ -237,7 +238,8 @@ public class ChatService {
             }
         }
 
-        return new PagedResponse<>(chatRoomListDtoList, 1);
+        return new PagedResponse(HttpStatus.OK, chatRoomListDtoList, 1);
+
     }
 
 
@@ -363,6 +365,7 @@ public class ChatService {
                         .build())
                 .collect(Collectors.toList());
 
-        return new PagedResponse<>(userInfos, 1);
+        return new PagedResponse(HttpStatus.OK, userInfos, 1);
+
     }
 }
