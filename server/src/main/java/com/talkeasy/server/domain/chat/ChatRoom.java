@@ -18,11 +18,15 @@ public class ChatRoom {
     private String[] users;
     private String title; // 채팅방 이름
     private String date; // 생성 시간?
+    private String leaveUserId; // 채팅방 떠난 사용자
+    private String leaveTime; // 채팅방 떠난 시간
 
     public ChatRoom(String[] users, String title, String date) {
         this.users = users;
         this.title = title;
         this.date = date;
+        this.leaveUserId = null;
+        this.leaveTime = null;
     }
 
 }

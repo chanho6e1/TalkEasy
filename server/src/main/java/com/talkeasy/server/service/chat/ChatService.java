@@ -213,10 +213,15 @@ public class ChatService {
     }
 
 
+    /*
+        1. 남아 있는 사람이 2명일 때, 유저 목록 삭제 x
+        2. leaveUser에 userId 저장하고, leaveTime 저장
+        3. 남아 있는 사람이 1명일 때, chat_room 완전 삭제 + last_chat도 완전삭제
+    */
     public String deleteRoom(String roomId, String userId) throws IOException {
         Query query = new Query();
         query.addCriteria(Criteria.where("id").is(roomId));
-        ChatRoom chatRoom = mongoTemplate.findOne(query, ChatRoom.class);
+        ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(roomId)), ChatRoom.class);
 
         /* chat.queue, read.queue 삭제 */
         deleteQueue("chat.queue", chatRoom.getId(), userId);
@@ -226,6 +231,7 @@ public class ChatService {
             // 채팅방에 남은 인원이 1명인 경우만 삭제
             mongoTemplate.remove(query, ChatRoom.class); //채팅방 삭제
             mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)), ChatRoomDetail.class); //채팅 내역 삭제
+            mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)), LastChat.class); // lastChat 삭제
             return roomId;
         }
 
