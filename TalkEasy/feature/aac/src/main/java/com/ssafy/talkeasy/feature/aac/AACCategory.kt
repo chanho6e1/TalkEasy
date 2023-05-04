@@ -15,6 +15,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,8 +30,7 @@ import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold24
 
 @SuppressLint("DiscouragedApi")
 @Composable
-@Preview(showBackground = true, widthDp = 1429, heightDp = 857)
-fun AACCategory() {
+fun AACCategory(selectedCategory: MutableState<String>) {
     val categoryIndexArray =
         stringArrayResource(id = R.array.aac_category_index)
     val categoryValueArray = stringArrayResource(id = R.array.aac_category_word)
@@ -63,7 +63,9 @@ fun AACCategory() {
                         iconId = it.imageId,
                         contentDescription = it.contentDescription,
                         category = it.value
-                    ) {}
+                    ) {
+                        selectedCategory.value = it.value
+                    }
                 }
             }
         }
@@ -75,7 +77,9 @@ fun AACCategory() {
                         iconId = it.imageId,
                         contentDescription = it.contentDescription,
                         category = it.value
-                    ) {}
+                    ) {
+                        selectedCategory.value = it.value
+                    }
                 }
             }
         }

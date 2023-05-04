@@ -85,18 +85,16 @@ fun AACChatCards(words: List<String>) {
     }
 }
 
-val words = listOf("네", "119에 전화해주세요", "감사합니다", "안녕하세요", "좋아요", "싫어요", "그만해주세요")
-
 @Composable
 @Preview(showBackground = true)
 fun PreviewAACChatBox() {
-    AACChatBox(words = words)
+    AACChatBox(words = SampleData.string7)
 }
 
 @Composable
 @Preview(showBackground = true)
 fun PreviewAACChatCards() {
-    AACChatCards(words = words)
+    AACChatCards(words = SampleData.string7)
 }
 
 @Composable
