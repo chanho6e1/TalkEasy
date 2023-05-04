@@ -150,13 +150,17 @@ public class ChatService {
         // 보낸 유저의 접속 정보 변경
         ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getRoomId())), ChatRoom.class);
 
+        boolean change = false;
         if (chatRoom.getChatUsers()!=null && !chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn()) {
             chatRoom.getChatUsers().get(chat.getFromUserId()).setNowIn(true);
+            change = true;
         }
         if (chatRoom.getChatUsers()!=null && !chatRoom.getChatUsers().get(chat.getToUserId()).getNowIn()){
             chatRoom.getChatUsers().get(chat.getToUserId()).setNowIn(true);
+            change = true;
         }
-        mongoTemplate.save(chatRoom);
+        if (change)
+            mongoTemplate.save(chatRoom);
 
         rabbitTemplate.send("chat.exchange", sb.toString(), msg);
         PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
