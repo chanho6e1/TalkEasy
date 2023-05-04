@@ -13,6 +13,8 @@
     <string name="title_photo_picker">프로필 사진/앨범</string>
     <string name="content_gallery_select">앨범에서 선택</string>
     <string name="content_camera_select">사진 촬영으로 선택</string>
+    <string name="content_camera_failed_message">촬영을 실패하였습니다. 다시 시도해주세요.</string>
+    <string name="content_gallery_failed_message">앨범에서 사진 불러오기를 실패했습니다. 다시 시도해주세요.</string>
 
     <!-- Tablet - Log In -->
     <string name="image_bg_right_leaf">로그인 화면의 배경 중 오른쪽 상단 이파리 부분입니다</string>
