@@ -4,8 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.ssafy.talkeasy.feature.auth.navigation.joinScreen
 import com.ssafy.talkeasy.feature.auth.navigation.loginNavigationRoute
 import com.ssafy.talkeasy.feature.auth.navigation.loginScreen
+import com.ssafy.talkeasy.feature.auth.navigation.navigateToJoin
 
 @Composable
 fun AppNavHost(
@@ -18,6 +20,11 @@ fun AppNavHost(
         startDestination = startDestination,
         modifier = modifier
     ) {
-        loginScreen()
+        loginScreen(
+            onChangeIsMember = {
+                navController.navigateToJoin()
+            }
+        )
+        joinScreen()
     }
 }
