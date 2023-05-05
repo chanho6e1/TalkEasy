@@ -10,6 +10,8 @@
     <!-- Mobile - Join -->
     <string name="title_member_info_input">회원정보 입력</string>
     <string name="content_cancel">취소</string>
+    <string name="content_name">이름</string>
+    <string name="content_join">가입하기</string>
     <string name="title_photo_picker">프로필 사진/앨범</string>
     <string name="content_gallery_select">앨범에서 선택</string>
     <string name="content_camera_select">사진 촬영으로 선택</string>
