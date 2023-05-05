@@ -6,15 +6,19 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.kakao.sdk.auth.model.OAuthToken
@@ -26,21 +30,28 @@ import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_surface
 @Composable
 internal fun LoginRoute(
     modifier: Modifier = Modifier,
-    viewModel: LoginViewModel = hiltViewModel(),
+    viewModel: AuthViewModel = hiltViewModel(),
+    onChangeIsMember: () -> Unit,
 ) {
+    val isNewMember by viewModel.isNewMember.collectAsState()
+    if (isNewMember) {
+        onChangeIsMember()
+    }
+
     LoginScreen(
-        onSuccessEvent = viewModel::onKakaoLoginSuccess,
-        modifier = modifier
+        modifier = modifier,
+        onSuccessEvent = viewModel::onKakaoLoginSuccess
     )
 }
 
+@Preview(heightDp = 640, widthDp = 360)
 @Composable
 internal fun LoginScreen(
-    onSuccessEvent: (String) -> Unit,
     modifier: Modifier = Modifier,
+    onSuccessEvent: (String) -> Unit = {},
 ) {
     Box() {
-        Background(Modifier.fillMaxSize())
+        Background(modifier = modifier)
         LoginContent(
             modifier = modifier,
             onSuccessEvent = onSuccessEvent
@@ -100,16 +111,20 @@ fun LoginContent(
                 modifier = modifier
                     .padding(bottom = 60.dp)
                     .fillMaxSize()
+                    .size(233.dp, 107.dp)
             )
         }
         item {
             IconButton(
                 onClick = { onLoginButtonClicked() },
-                modifier = modifier.fillMaxSize()
+                modifier = modifier
+                    .fillMaxSize()
+                    .size(272.dp, 42.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_kakao_login),
-                    contentDescription = stringResource(id = R.string.kakao_login_text)
+                    contentDescription = stringResource(id = R.string.kakao_login_text),
+                    modifier = modifier.fillMaxSize()
                 )
             }
         }
@@ -120,10 +135,8 @@ fun LoginContent(
 fun Background(
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier.fillMaxSize()
-    ) {
-        Surface(color = md_theme_light_surface) {
+    Surface(modifier = modifier.fillMaxSize(), color = md_theme_light_surface) {
+        Box {
             Image(
                 painter = painterResource(id = R.drawable.bg_main_wave),
                 contentDescription = stringResource(id = R.string.bg_main_wave_text),
@@ -131,16 +144,21 @@ fun Background(
                 alignment = Alignment.BottomCenter
             )
             Image(
-                painter = painterResource(id = R.drawable.bg_main_leaf_big),
+                painter = painterResource(id = R.drawable.bg_main_leaf_big_mobile),
                 contentDescription = stringResource(id = R.string.bg_main_leaf_big_text),
-                modifier = modifier.align(Alignment.TopEnd)
+                modifier = modifier
+                    .size(187.dp)
+                    .align(Alignment.TopEnd)
+                    .padding(bottom = 6.dp)
             )
             Image(
-                painter = painterResource(id = R.drawable.bg_main_leaf_small),
+                painter = painterResource(id = R.drawable.bg_main_leaf_small_mobile),
                 contentDescription = stringResource(id = R.string.bg_main_leaf_small_text),
                 modifier = modifier
-                    .align(Alignment.BottomStart)
                     .padding(bottom = 51.dp)
+                    .size(166.dp)
+                    .align(Alignment.BottomStart)
+                    .padding(end = 40.dp)
             )
         }
     }
