@@ -141,22 +141,22 @@ fun Background(
     Surface(modifier = modifier.fillMaxSize(), color = md_theme_light_surface) {
         Box {
             Image(
-                painter = painterResource(id = drawable.bg_main_wave),
+                painter = painterResource(id = drawable.bg_log_in_wave_for_mobile),
                 contentDescription = stringResource(id = R.string.bg_main_wave_text),
                 modifier = modifier.fillMaxSize(),
                 alignment = Alignment.BottomCenter
             )
             Image(
-                painter = painterResource(id = drawable.bg_main_leaf_big),
-                contentDescription = stringResource(id = R.string.bg_main_leaf_big_text),
+                painter = painterResource(id = drawable.bg_log_in_left_leaf_for_mobile),
+                contentDescription = stringResource(id = R.string.bg_log_in_left_leaf_text),
                 modifier = modifier
                     .size(187.dp)
                     .align(Alignment.TopEnd)
                     .padding(bottom = 6.dp)
             )
             Image(
-                painter = painterResource(id = drawable.bg_main_leaf_small),
-                contentDescription = stringResource(id = R.string.bg_main_leaf_small_text),
+                painter = painterResource(id = drawable.bg_log_in_right_leaf_for_mobile),
+                contentDescription = stringResource(id = R.string.bg_log_in_right_leaf_text),
                 modifier = modifier
                     .padding(bottom = 51.dp)
                     .size(166.dp)

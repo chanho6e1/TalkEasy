@@ -27,10 +27,10 @@ import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.feature.auth.R
 import com.ssafy.talkeasy.feature.common.component.SegmentedButton
 import com.ssafy.talkeasy.feature.common.ui.theme.TalkEasyTheme
-import com.ssafy.talkeasy.feature.common.ui.theme.Typography
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_outline
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
+import com.ssafy.talkeasy.feature.common.ui.theme.typography
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.Date
@@ -60,7 +60,7 @@ fun SegmentedButtonSexual() {
         Text(
             modifier = Modifier.padding(start = 10.dp, bottom = 4.dp),
             text = stringResource(R.string.title_sexual),
-            style = Typography.titleMedium
+            style = typography.titleMedium
         )
 
         Row {
@@ -90,7 +90,7 @@ fun BirthPicker() {
         Text(
             modifier = Modifier.padding(start = 10.dp, bottom = 4.dp),
             text = stringResource(R.string.title_birth),
-            style = Typography.titleMedium
+            style = typography.titleMedium
         )
 
         Card(
@@ -102,7 +102,7 @@ fun BirthPicker() {
             Text(
                 modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
                 text = simpleDateFormat.format(Date(birth.value)),
-                style = Typography.titleMedium
+                style = typography.titleMedium
             )
         }
     }
@@ -119,7 +119,7 @@ fun ShowDatePickerDialog(setDatePickerState: (Boolean) -> Unit, birth: MutableSt
     val confirmEnabled = remember {
         derivedStateOf {
             datePickerState.selectedDateMillis != null &&
-                datePickerState.selectedDateMillis != System.currentTimeMillis()
+                    datePickerState.selectedDateMillis != System.currentTimeMillis()
         }
     }
 

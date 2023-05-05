@@ -4,8 +4,8 @@
     <string name="image_logo">앱 로고입니다</string>
     <string name="kakao_login_text">카카오 로그인 버튼</string>
     <string name="bg_main_wave_text">물결 모양 배경 요소</string>
-    <string name="bg_main_leaf_big_text">큰 나뭇잎 배경 요소</string>
-    <string name="bg_main_leaf_small_text">작은 나뭇잎 배경 요소</string>
+    <string name="bg_log_in_left_leaf_text">왼쪽 나뭇잎 배경 요소</string>
+    <string name="bg_log_in_right_leaf_text">오른쪽 나뭇잎 배경 요소</string>
 
     <!-- Tablet - Join -->
     <string name="title_sexual">성별</string>

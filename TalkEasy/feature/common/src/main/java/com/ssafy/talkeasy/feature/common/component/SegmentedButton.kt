@@ -16,10 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.feature.common.R
-import com.ssafy.talkeasy.feature.common.ui.theme.Typography
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onSecondaryContainer
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_secondaryContainer
+import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
 /**
  * @param position -1: Start, 0: Middle, 1: End
@@ -71,6 +71,6 @@ fun SegmentedButton(selectedValue: MutableState<String>, value: String, position
 
         Spacer(modifier = Modifier.width(9.dp))
 
-        Text(text = value, style = Typography.titleMedium)
+        Text(text = value, style = typography.titleMedium)
     }
 }

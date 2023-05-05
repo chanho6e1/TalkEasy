@@ -37,7 +37,7 @@ fun LoginFrame() {
             )
             Image(
                 painter = painterResource(id = drawable.bg_log_in_right_leaf_for_tablet),
-                contentDescription = stringResource(id = R.string.bg_main_leaf_big_text),
+                contentDescription = stringResource(id = R.string.bg_log_in_right_leaf_text),
                 modifier = Modifier
                     .size(450.dp)
                     .align(Alignment.TopEnd)
@@ -46,7 +46,7 @@ fun LoginFrame() {
 
             Image(
                 painter = painterResource(id = drawable.bg_log_in_left_leaf_for_tablet),
-                contentDescription = stringResource(id = R.string.bg_main_leaf_big_text),
+                contentDescription = stringResource(id = R.string.bg_log_in_left_leaf_text),
                 modifier = Modifier
                     .size(450.dp)
                     .align(Alignment.BottomStart)

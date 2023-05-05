@@ -62,7 +62,7 @@ internal fun JoinRoute(
 internal fun JoinScreen(
     modifier: Modifier = Modifier,
     onJoinButtonClick: (String) -> Unit = {},
-    onImagePicked: (Bitmap) -> Unit = {}
+    onImagePicked: (Bitmap) -> Unit = {},
 ) {
     val profileImage = remember { mutableStateOf<Bitmap?>(null) }
     val (dialogState: Boolean, setDialogState: (Boolean) -> Unit) = remember {
@@ -104,7 +104,7 @@ internal fun <T> JoinContent(
         containerColor = seed
     )
     val textFieldColors = TextFieldDefaults.textFieldColors(
-        textColor = md_theme_light_primary,
+        focusedTextColor = md_theme_light_primary,
         containerColor = green_white,
         focusedIndicatorColor = seed,
         focusedLabelColor = seed,
