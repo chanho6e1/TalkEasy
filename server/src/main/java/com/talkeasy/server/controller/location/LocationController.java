@@ -40,9 +40,10 @@ public class LocationController {
     }
 
     @PostMapping("/consumer")
-    public ResponseEntity<CommonResponse<Object>> consume() {
+    @ApiOperation(value = "위치정보", notes = "위치정보를 받아와서 카프카에 저장")
+    public ResponseEntity<CommonResponse<Object>> testConsume() {
 
-        kafkaConsumerService.consume();
+        kafkaConsumerService.consumeLocationEvent();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED,""));
