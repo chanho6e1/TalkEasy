@@ -1,7 +1,7 @@
 package com.talkeasy.server.controller.location;
 
 import com.talkeasy.server.common.CommonResponse;
-import com.talkeasy.server.dto.LocationDto;
+import com.talkeasy.server.dto.location.LocationDto;
 import com.talkeasy.server.service.location.KafkaConsumerService;
 import com.talkeasy.server.service.location.KafkaProducerService;
 import com.talkeasy.server.service.member.OAuth2UserImpl;

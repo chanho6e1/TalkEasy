@@ -1,6 +1,6 @@
 package com.talkeasy.server.service.location;
 
-import com.talkeasy.server.dto.LocationDto;
+import com.talkeasy.server.dto.location.LocationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;

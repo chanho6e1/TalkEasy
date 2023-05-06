@@ -1,4 +1,4 @@
-package com.talkeasy.server.domain;
+package com.talkeasy.server.domain.location;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

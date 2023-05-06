@@ -1,6 +1,6 @@
-package com.talkeasy.server.dto;
+package com.talkeasy.server.dto.location;
 
-import com.talkeasy.server.domain.Location;
+import com.talkeasy.server.domain.location.Location;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

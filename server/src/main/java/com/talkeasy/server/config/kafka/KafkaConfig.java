@@ -1,7 +1,7 @@
-package com.talkeasy.server.config;
+package com.talkeasy.server.config.kafka;
 
 
-import com.talkeasy.server.dto.LocationDto;
+import com.talkeasy.server.dto.location.LocationDto;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
