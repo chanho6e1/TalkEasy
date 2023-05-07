@@ -2,7 +2,6 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
-    id("androidx.navigation.safeargs.kotlin")
     id("kotlin-kapt")
 }
 
@@ -27,6 +26,12 @@ android {
             )
         }
     }
+    buildFeatures {
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.4.2"
+    }
 }
 
 dependencies {
@@ -47,6 +52,7 @@ dependencies {
     implementation(libs.glide.compose)
 
     implementation(project(":core:domain"))
+    implementation(project(":feature:common"))
 }
 
 kapt {
