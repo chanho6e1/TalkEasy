@@ -33,12 +33,15 @@ import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_surface
 @Composable
 internal fun LoginRoute(
     modifier: Modifier = Modifier,
+    onIsNotMember: () -> Unit,
+    onIsLoginMember: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel(),
-    onChangeIsMember: () -> Unit,
 ) {
-    val isNewMember by viewModel.isNewMember.collectAsState()
-    if (isNewMember) {
-        onChangeIsMember()
+    val memberState by viewModel.memberState.collectAsState()
+    if (memberState == "NOT_MEMBER") {
+        onIsNotMember()
+    } else if (memberState == "MEMBER") {
+        onIsLoginMember()
     }
 
     LoginScreen(
@@ -147,16 +150,16 @@ fun Background(
                 alignment = Alignment.BottomCenter
             )
             Image(
-                painter = painterResource(id = drawable.bg_log_in_left_leaf_for_mobile),
-                contentDescription = stringResource(id = R.string.bg_log_in_left_leaf_text),
+                painter = painterResource(id = drawable.bg_log_in_right_leaf_for_mobile),
+                contentDescription = stringResource(id = R.string.bg_log_in_right_leaf_text),
                 modifier = modifier
                     .size(187.dp)
                     .align(Alignment.TopEnd)
                     .padding(bottom = 6.dp)
             )
             Image(
-                painter = painterResource(id = drawable.bg_log_in_right_leaf_for_mobile),
-                contentDescription = stringResource(id = R.string.bg_log_in_right_leaf_text),
+                painter = painterResource(id = drawable.bg_log_in_left_leaf_for_mobile),
+                contentDescription = stringResource(id = R.string.bg_log_in_left_leaf_text),
                 modifier = modifier
                     .padding(bottom = 51.dp)
                     .size(166.dp)

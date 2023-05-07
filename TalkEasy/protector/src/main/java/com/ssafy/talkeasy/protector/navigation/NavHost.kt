@@ -8,6 +8,8 @@ import com.ssafy.talkeasy.feature.auth.navigation.joinScreen
 import com.ssafy.talkeasy.feature.auth.navigation.loginNavigationRoute
 import com.ssafy.talkeasy.feature.auth.navigation.loginScreen
 import com.ssafy.talkeasy.feature.auth.navigation.navigateToJoin
+import com.ssafy.talkeasy.feature.follow.navigation.followListScreen
+import com.ssafy.talkeasy.feature.follow.navigation.navigateToFollowList
 
 @Composable
 fun AppNavHost(
@@ -21,10 +23,19 @@ fun AppNavHost(
         modifier = modifier
     ) {
         loginScreen(
-            onChangeIsMember = {
+            onIsNotMember = {
                 navController.navigateToJoin()
+            },
+            onIsLoginMember = {
+                navController.navigateToFollowList()
             }
         )
-        joinScreen()
+        joinScreen(
+            navController = navController,
+            onJoinMember = {
+                navController.navigateToFollowList()
+            }
+        )
+        followListScreen()
     }
 }

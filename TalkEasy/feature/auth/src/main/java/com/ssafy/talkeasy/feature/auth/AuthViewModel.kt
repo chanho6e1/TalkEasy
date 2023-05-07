@@ -25,11 +25,11 @@ class AuthViewModel @Inject constructor(
     private val joinUseCase: JoinUseCase,
 ) : ViewModel() {
 
-    // Kakao Access Token
-    private val accessToken = MutableStateFlow("")
+    private val kakaoAccessToken = MutableStateFlow("")
 
-    private val _isNewMember = MutableStateFlow(false)
-    val isNewMember: StateFlow<Boolean> = _isNewMember
+    // MEMBER, NOT_MEMBER
+    private val _memberState = MutableStateFlow("")
+    val memberState: StateFlow<String> = _memberState
 
     private val profileImg = MutableStateFlow<File?>(null)
 
@@ -38,11 +38,11 @@ class AuthViewModel @Inject constructor(
             is Resource.Success<Default<String>> -> {
                 if (value.data.status == 200) {
                     // login success
-                    _isNewMember.value = false
+                    _memberState.value = "MEMBER"
                     sharedPreferences.accessToken = value.data.data
                 } else if (value.data.status == 201) {
                     // no member
-                    _isNewMember.value = true
+                    _memberState.value = "NOT_MEMBER"
                 }
             }
             is Resource.Error -> Log.e("requestLogin", "requestLogin: ${value.errorMessage}")
@@ -51,17 +51,16 @@ class AuthViewModel @Inject constructor(
 
     fun requestJoin(nickname: String) = viewModelScope.launch {
         val member = MemberRequestBody(
-            accessToken = accessToken.value,
+            accessToken = kakaoAccessToken.value,
             role = 0,
-            name = nickname,
-            image = profileImg.value
+            name = nickname
         )
         member.let {
-            when (val value = joinUseCase(member)) {
+            when (val value = joinUseCase(member, profileImg.value)) {
                 is Resource.Success<Default<String>> -> {
                     if (value.data.status == 201) {
                         // login success
-                        _isNewMember.value = false
+                        _memberState.value = "MEMBER"
                         sharedPreferences.accessToken = value.data.data
                     }
                 }
@@ -72,7 +71,7 @@ class AuthViewModel @Inject constructor(
     }
 
     fun onKakaoLoginSuccess(accessToken: String) {
-        this.accessToken.value = accessToken
+        kakaoAccessToken.value = accessToken
         requestLogin(accessToken)
     }
 

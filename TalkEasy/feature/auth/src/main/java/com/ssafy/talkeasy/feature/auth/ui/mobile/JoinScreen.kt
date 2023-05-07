@@ -1,4 +1,4 @@
-package com.ssafy.talkeasy.feature.auth
+package com.ssafy.talkeasy.feature.auth.ui.mobile
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +18,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -30,6 +32,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
+import com.ssafy.talkeasy.feature.auth.AuthViewModel
+import com.ssafy.talkeasy.feature.auth.R
 import com.ssafy.talkeasy.feature.common.component.EditProfile
 import com.ssafy.talkeasy.feature.common.component.ShowProfileDialog
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
@@ -43,9 +48,15 @@ import com.ssafy.talkeasy.feature.common.ui.theme.typography
 @Composable
 internal fun JoinRoute(
     modifier: Modifier = Modifier,
-    viewModel: AuthViewModel = hiltViewModel(),
+    navBackStackEntry: NavBackStackEntry,
+    viewModel: AuthViewModel = hiltViewModel(navBackStackEntry),
+    onJoinMember: () -> Unit,
 ) {
     val context = LocalContext.current
+    val memberState by viewModel.memberState.collectAsState()
+    if (memberState == "MEMBER") {
+        onJoinMember()
+    }
     JoinScreen(
         modifier = modifier,
         onJoinButtonClick = {
