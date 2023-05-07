@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ic_add_user_text">친구 추가 버튼입니다.</string>
+    <string name="ic_notification_text">알림함 버튼입니다.</string>
+    <string name="ic_settings_text">설정 버튼입니다.</string>
+    <string name="title_follow_list">친구목록</string>
+    <string name="image_follow_list_profile">프로필 이미지입니다.</string>
+</resources>
