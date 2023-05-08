@@ -61,4 +61,9 @@
     <string name="image_backward_soft">이전 페이지로 이동하는 버튼</string>
     <string name="image_forward_soft">다음 페이지로 이동하는 버튼</string>
     <string name="image_forward_hard">맨 마지막 페이지로 이동하는 버튼</string>
+
+    <!-- AAC Back To Category Button -->
+    <string name="image_back_to_category_select">카테고리 선택 화면으로 이동하는 버튼</string>
+    <string name="title_back_to_category_select">카테고리 선택으로</string>
+    <string name="content_back_to_category_select">현재 카테고리: %s</string>
 </resources>
