@@ -5,34 +5,82 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.ssafy.talkeasy.feature.auth.ui.mobile.JoinRoute
-import com.ssafy.talkeasy.feature.auth.ui.mobile.LoginRoute
+import com.ssafy.talkeasy.feature.auth.ui.mobile.JoinRouteProtector
+import com.ssafy.talkeasy.feature.auth.ui.mobile.LoginRouteProtector
+import com.ssafy.talkeasy.feature.auth.ui.tablet.JoinRouteWard
+import com.ssafy.talkeasy.feature.auth.ui.tablet.LoginRouteWard
+import com.ssafy.talkeasy.feature.auth.ui.tablet.WelcomeRoute
 
-const val loginNavigationRoute = "login_route"
-const val joinNavigationRoute = "join_route"
+const val loginRouteProtector = "login_route_protector"
+const val joinRouteProtector = "join_route_protector"
+const val loginRouteWard = "login_route_ward"
+const val joinRouteWard = "join_route_ward"
+const val welcomeRouteWard = "welcome_route_ward"
 
-fun NavController.navigateToLogin(navOptions: NavOptions? = null) {
-    this.navigate(loginNavigationRoute, navOptions)
+fun NavController.navigateToLogin(navOptions: NavOptions? = null, role: Int) {
+    if (role == 0) {
+        this.navigate(loginRouteProtector, navOptions)
+    } else {
+        this.navigate(loginRouteWard, navOptions)
+    }
 }
 
-fun NavController.navigateToJoin(navOptions: NavOptions? = null) {
-    this.navigate(joinNavigationRoute, navOptions)
+fun NavController.navigateToJoin(navOptions: NavOptions? = null, role: Int) {
+    if (role == 0) {
+        this.navigate(joinRouteProtector, navOptions)
+    } else {
+        this.navigate(joinRouteWard, navOptions)
+    }
+}
+
+fun NavController.navigateToWelcome(navOptions: NavOptions? = null) {
+    this.navigate(welcomeRouteWard, navOptions)
 }
 
 fun NavGraphBuilder.loginScreen(
     onIsNotMember: () -> Unit,
     onIsLoginMember: () -> Unit,
+    role: Int,
 ) {
-    composable(route = loginNavigationRoute) {
-        LoginRoute(onIsNotMember = onIsNotMember, onIsLoginMember = onIsLoginMember)
+    if (role == 0) {
+        composable(route = loginRouteProtector) {
+            LoginRouteProtector(
+                onIsNotMember = onIsNotMember,
+                onIsLoginMember = onIsLoginMember,
+                role = role
+            )
+        }
+    } else {
+        composable(route = loginRouteWard) {
+            LoginRouteWard(
+                onIsNotMember = onIsNotMember,
+                onIsLoginMember = onIsLoginMember,
+                role = role
+            )
+        }
     }
 }
 
-fun NavGraphBuilder.joinScreen(navController: NavController, onJoinMember: () -> Unit) {
-    composable(route = joinNavigationRoute) { navBackStackEntry ->
-        val loginEntry = remember(navBackStackEntry) {
-            navController.getBackStackEntry(loginNavigationRoute)
+fun NavGraphBuilder.joinScreen(navController: NavController, onJoinMember: () -> Unit, role: Int) {
+    if (role == 0) {
+        composable(route = joinRouteProtector) { navBackStackEntry ->
+            val loginEntry = remember(navBackStackEntry) {
+                navController.getBackStackEntry(loginRouteProtector)
+            }
+            JoinRouteProtector(navBackStackEntry = loginEntry, onJoinMember = onJoinMember)
         }
-        JoinRoute(navBackStackEntry = loginEntry, onJoinMember = onJoinMember)
+    } else {
+        composable(route = joinRouteWard) { navBackStackEntry ->
+            val loginEntry = remember(navBackStackEntry) {
+                navController.getBackStackEntry(loginRouteWard)
+            }
+            JoinRouteWard(navBackStackEntry = loginEntry, onJoinMember = onJoinMember)
+        }
+    }
+}
+
+fun NavGraphBuilder.welcomeScreen() {
+    composable(route = welcomeRouteWard) {
+        WelcomeRoute()
     }
 }
