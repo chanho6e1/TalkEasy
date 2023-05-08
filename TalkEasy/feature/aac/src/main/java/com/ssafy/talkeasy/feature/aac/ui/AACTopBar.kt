@@ -1,4 +1,4 @@
-package com.ssafy.talkeasy.feature.aac
+package com.ssafy.talkeasy.feature.aac.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement

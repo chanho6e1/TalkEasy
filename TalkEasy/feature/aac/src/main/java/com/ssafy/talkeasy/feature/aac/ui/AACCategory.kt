@@ -1,4 +1,4 @@
-package com.ssafy.talkeasy.feature.aac
+package com.ssafy.talkeasy.feature.aac.ui
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
@@ -23,6 +23,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ssafy.talkeasy.feature.aac.Category
+import com.ssafy.talkeasy.feature.aac.R
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_surfaceVariant
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes

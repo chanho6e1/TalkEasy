@@ -1,4 +1,4 @@
-package com.ssafy.talkeasy.feature.aac
+package com.ssafy.talkeasy.feature.aac.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,14 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ssafy.talkeasy.feature.aac.AACViewModel
+import com.ssafy.talkeasy.feature.aac.R
 import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.ui.theme.seed
 
 @Composable
-@Preview(showBackground = true)
-fun AACFixedCards() {
+fun AACFixedCards(aacViewModel: AACViewModel = viewModel()) {
     val fixedWords = stringArrayResource(id = R.array.aac_fixed_words)
 
     LazyRow(
@@ -30,14 +31,16 @@ fun AACFixedCards() {
         horizontalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         items(fixedWords) { word ->
-            AACCardWrap(word = word, color = seed)
+            AACCardWrap(word = word, color = seed) { it ->
+                aacViewModel.addCard(it)
+            }
         }
     }
 }
 
 @Composable
 fun AACSmallCards(words: List<String>) {
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(18.dp)) {
+    LazyColumn(verticalArrangement = Arrangement.spacedBy(15.dp)) {
         items(count = ((words.size - 1) / 5) + 1) { index ->
             LazyRow(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
                 val rowItems = if (words.size >= (index * 5) + 5) {
@@ -90,16 +93,4 @@ fun AACPaging() {
             }
         }
     }
-}
-
-@Composable
-@Preview
-fun PreviewAACFixedCard() {
-    AACCardWrap(word = "안녕하세요", color = seed)
-}
-
-@Composable
-@Preview(showBackground = true, widthDp = 1429, heightDp = 857)
-fun PreviewAACSmallCards() {
-    AACSmallCards(words = SampleData.string20)
 }
