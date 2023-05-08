@@ -33,8 +33,15 @@ class AuthViewModel @Inject constructor(
 
     private val profileImg = MutableStateFlow<File?>(null)
 
-    private fun requestLogin(accessToken: String) = viewModelScope.launch {
-        when (val value = logInUseCase(accessToken)) {
+    private val role = MutableStateFlow(0)
+
+    private val _gender = MutableStateFlow(0)
+
+    private val _birthDate = MutableStateFlow("")
+
+    private fun requestLogin(accessToken: String, role: Int) = viewModelScope.launch {
+        Log.d("TAG", "requestLogin: sharedPreferences.accessToken ${sharedPreferences.accessToken}")
+        when (val value = logInUseCase(accessToken, role)) {
             is Resource.Success<Default<String>> -> {
                 if (value.data.status == 200) {
                     // login success
@@ -52,9 +59,12 @@ class AuthViewModel @Inject constructor(
     fun requestJoin(nickname: String) = viewModelScope.launch {
         val member = MemberRequestBody(
             accessToken = kakaoAccessToken.value,
-            role = 0,
-            name = nickname
+            role = role.value,
+            name = nickname,
+            birthDate = _birthDate.value,
+            gender = _gender.value
         )
+        Log.d("TAG", "requestJoin: member : $member")
         member.let {
             when (val value = joinUseCase(member, profileImg.value)) {
                 is Resource.Success<Default<String>> -> {
@@ -70,13 +80,33 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun onKakaoLoginSuccess(accessToken: String) {
+    fun onKakaoLoginSuccess(accessToken: String, role: Int) {
         kakaoAccessToken.value = accessToken
-        requestLogin(accessToken)
+        requestLogin(accessToken, role)
+        this.role.value = role
     }
 
     fun setProfileImg(profile: Bitmap, strFilePath: String) {
         bitmapConvertFile(profile, strFilePath)
+    }
+
+    fun setGender(mGender: String) {
+        when (mGender) {
+            "여성" -> _gender.value = 0
+            "남성" -> _gender.value = 1
+        }
+        val member = MemberRequestBody(
+            accessToken = kakaoAccessToken.value,
+            role = 1,
+            name = "",
+            birthDate = _birthDate.value,
+            gender = _gender.value
+        )
+        Log.d("TAG", "setGender: member:$member")
+    }
+
+    fun setBirthDate(mBirthDate: String) {
+        _birthDate.value = mBirthDate
     }
 
     private fun bitmapConvertFile(bitmap: Bitmap, strFilePath: String) {

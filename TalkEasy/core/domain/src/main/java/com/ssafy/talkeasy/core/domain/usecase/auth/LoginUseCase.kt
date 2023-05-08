@@ -11,8 +11,8 @@ class LoginUseCase @Inject constructor(
     private val authRepository: AuthRepository,
 ) {
 
-    suspend operator fun invoke(accessToken: String): Resource<Default<String>> =
+    suspend operator fun invoke(accessToken: String, role: Int): Resource<Default<String>> =
         withContext(Dispatchers.IO) {
-            authRepository.requestLogin(accessToken)
+            authRepository.requestLogin(accessToken, role)
         }
 }

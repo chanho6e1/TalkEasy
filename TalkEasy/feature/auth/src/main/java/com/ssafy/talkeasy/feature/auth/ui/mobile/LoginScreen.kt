@@ -31,22 +31,24 @@ import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_surface
 
 @Composable
-internal fun LoginRoute(
+internal fun LoginRouteProtector(
     modifier: Modifier = Modifier,
     onIsNotMember: () -> Unit,
     onIsLoginMember: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel(),
+    role: Int,
 ) {
     val memberState by viewModel.memberState.collectAsState()
+
     if (memberState == "NOT_MEMBER") {
         onIsNotMember()
     } else if (memberState == "MEMBER") {
         onIsLoginMember()
     }
-
     LoginScreen(
         modifier = modifier,
-        onSuccessEvent = viewModel::onKakaoLoginSuccess
+        onSuccessEvent = viewModel::onKakaoLoginSuccess,
+        role = role
     )
 }
 
@@ -54,13 +56,15 @@ internal fun LoginRoute(
 @Composable
 internal fun LoginScreen(
     modifier: Modifier = Modifier,
-    onSuccessEvent: (String) -> Unit = {},
+    onSuccessEvent: (String, Int) -> Unit = { _, _ -> },
+    role: Int = 0,
 ) {
     Box() {
         Background(modifier = modifier)
         LoginContent(
             modifier = modifier,
-            onSuccessEvent = onSuccessEvent
+            onSuccessEvent = onSuccessEvent,
+            role = role
         )
     }
 }
@@ -68,10 +72,11 @@ internal fun LoginScreen(
 @Composable
 fun LoginContent(
     modifier: Modifier = Modifier,
-    onSuccessEvent: (String) -> Unit,
+    onSuccessEvent: (String, Int) -> Unit,
+    role: Int,
 ) {
     val context = LocalContext.current
-    val TAG = "KaKao-Login"
+    val TAG = "KaKao-Login-Protector"
 
     fun onLoginButtonClicked() {
         val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
@@ -79,7 +84,7 @@ fun LoginContent(
                 Log.e(TAG, "카카오계정으로 로그인 실패", error)
             } else if (token != null) {
                 Log.i(TAG, "카카오계정으로 로그인 성공 ${token.accessToken}")
-                onSuccessEvent(token.accessToken)
+                onSuccessEvent(token.accessToken, role)
             }
         }
         // 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
