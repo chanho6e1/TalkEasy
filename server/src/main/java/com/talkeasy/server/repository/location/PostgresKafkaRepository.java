@@ -1,6 +1,6 @@
 package com.talkeasy.server.repository.location;
 
-import com.talkeasy.server.domain.Location;
+import com.talkeasy.server.domain.location.Location;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

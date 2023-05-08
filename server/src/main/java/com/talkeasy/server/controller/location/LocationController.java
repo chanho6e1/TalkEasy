@@ -1,7 +1,7 @@
 package com.talkeasy.server.controller.location;
 
 import com.talkeasy.server.common.CommonResponse;
-import com.talkeasy.server.dto.LocationDto;
+import com.talkeasy.server.dto.location.LocationDto;
 import com.talkeasy.server.service.location.KafkaConsumerService;
 import com.talkeasy.server.service.location.KafkaProducerService;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
@@ -40,9 +40,10 @@ public class LocationController {
     }
 
     @PostMapping("/consumer")
-    public ResponseEntity<CommonResponse<Object>> consume() {
+    @ApiOperation(value = "위치정보", notes = "위치정보를 받아와서 카프카에 저장")
+    public ResponseEntity<CommonResponse<Object>> testConsume() {
 
-        kafkaConsumerService.consume();
+        kafkaConsumerService.consumeLocationEvent();
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED,""));

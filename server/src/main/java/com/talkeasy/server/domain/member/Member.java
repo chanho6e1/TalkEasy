@@ -35,6 +35,10 @@ public class Member {
         this.gender = null;
         this.birthDate = null;
         this.imageUrl = null;
+        this.email = null;
+        this.role = null;
+
+
 
     }
 }

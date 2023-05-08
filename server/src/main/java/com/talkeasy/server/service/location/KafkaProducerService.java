@@ -1,6 +1,6 @@
 package com.talkeasy.server.service.location;
 
-import com.talkeasy.server.dto.LocationDto;
+import com.talkeasy.server.dto.location.LocationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -19,18 +19,19 @@ public class KafkaProducerService {
 
     public void sendMessage(LocationDto message) {
 
-        String topicName = "topic-test-02";
+        String topicName = "location-event";
+
         ListenableFuture<SendResult<String, LocationDto>> kafka = kafkaTemplate.send(topicName, message);
 
         kafka.addCallback(new ListenableFutureCallback<>() {
             @Override
             public void onSuccess(SendResult<String, LocationDto> result) {
-                log.info("========== [send success] message : {} record : {}", message, result.getProducerRecord());
+                log.info("========== [Produced message] record : {}", result.getProducerRecord());
             }
 
             @Override
             public void onFailure(@NotNull Throwable ex) {
-                log.warn("========== [send fail] message : {} ", message);
+                log.warn("========== [Produced fail] message : {} ", message);
             }
         });
     }
