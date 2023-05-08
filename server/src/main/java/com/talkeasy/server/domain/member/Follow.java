@@ -2,8 +2,13 @@ package com.talkeasy.server.domain.member;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.LocalDateTime;
 
 @Data
 @Document(collection = "follow")
@@ -16,5 +21,10 @@ public class Follow {
     private String memo;
     private Boolean MainStatus;
     private Boolean locationStatus;
-
+    @Field("createdTime")
+    @CreatedDate
+    private LocalDateTime createdTime;
+    @Field("updatedTime")
+    @LastModifiedDate
+    private LocalDateTime updatedTime;
 }
