@@ -142,8 +142,10 @@ fun FollowListItem(
     ) {
         GlideImage(
             modifier = modifier.size(56.dp),
-            model = profileUrl.ifEmpty { painterResource(id = Common.drawable.ic_default_profile) },
-            contentDescription = stringResource(id = R.string.image_follow_list_profile)
+            model = profileUrl.ifEmpty { Common.drawable.ic_default_profile },
+            contentDescription = stringResource(
+                id = R.string.image_follow_list_profile
+            )
         )
         Column(
             modifier = modifier
