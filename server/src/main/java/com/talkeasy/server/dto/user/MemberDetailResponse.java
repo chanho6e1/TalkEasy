@@ -10,6 +10,7 @@ import lombok.*;
 @Builder
 public class MemberDetailResponse {
 
+    private String id;
     private String userName;
     private String email;
     private String imageUrl;
@@ -19,6 +20,7 @@ public class MemberDetailResponse {
     private String birthDate;
 
     public MemberDetailResponse(Member member) {
+        this.id = member.getId();
         this.userName = member.getName();
         this.email = member.getEmail();
         this.imageUrl = member.getImageUrl();
