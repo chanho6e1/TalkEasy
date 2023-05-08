@@ -42,9 +42,9 @@ import java.io.InputStream
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun <T> EditProfile(
+fun EditProfile(
     modifier: Modifier = Modifier,
-    profile: T? = null,
+    profile: Bitmap? = null,
     size: Int = 110,
     textStyle: TextStyle = typography.titleLarge,
     onClick: () -> Unit,
@@ -109,7 +109,7 @@ fun ShowProfileDialog(
                 onImagePicked(bitmap)
             }
         } else {
-            context.toast(context.getString(R.string.content_camera_failed_message))
+            context.toast(context.getString(R.string.content_gallery_failed_message))
         }
     }
     if (visible) {
