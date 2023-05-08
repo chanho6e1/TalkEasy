@@ -33,6 +33,7 @@
         <activity
             android:name="com.ssafy.talkeasy.protector.MainActivity"
             android:exported="true"
+            android:screenOrientation="fullSensor"
             android:theme="@style/Theme.TalkEasy">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
