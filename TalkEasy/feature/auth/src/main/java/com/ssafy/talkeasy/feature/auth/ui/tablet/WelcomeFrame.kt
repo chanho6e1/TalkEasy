@@ -2,11 +2,13 @@ package com.ssafy.talkeasy.feature.auth.ui.tablet
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -19,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieClipSpec
@@ -33,17 +36,25 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@Preview(showBackground = true)
 @Composable
-fun WelcomeFrame(memberName: String) {
+fun WelcomeRoute(modifier: Modifier = Modifier) {
+    WelcomeFrame(modifier = modifier, memberName = "일이삼사오육칠팔구")
+}
+
+@Composable
+internal fun WelcomeFrame(modifier: Modifier = Modifier, memberName: String) {
     val isLoading = remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
 
-    Box(modifier = Modifier.wrapContentSize(align = Alignment.Center)) {
-        if (isLoading.value) {
-            LoadingAnimation(isLoading)
-        } else {
-            WelcomeAnimation(memberName)
+    Surface(modifier = modifier.fillMaxSize()) {
+        Box(modifier = modifier.wrapContentSize(align = Alignment.Center)) {
+            if (isLoading.value) {
+                LoadingAnimation(isLoading)
+            } else {
+                WelcomeAnimation(memberName)
+            }
         }
     }
 }
@@ -66,7 +77,7 @@ fun LoadingAnimation(isLoading: MutableState<Boolean>) {
         )
     }
 
-    Column {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         LottieAnimation(
             modifier = Modifier.size(120.dp),
             composition = composition,
