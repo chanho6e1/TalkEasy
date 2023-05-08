@@ -16,21 +16,25 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,7 +56,7 @@ class AACControllerTest {
     }
 
     @Test
-    @DisplayName("[GET] Category")
+    @DisplayName("[GET] Category_List")
     void getCategory() throws Exception {
 
         AACCategory aacCategory1 = AACCategory.builder().id("1").title("고정").build();
@@ -70,7 +74,7 @@ class AACControllerTest {
     }
 
     @Test
-    @DisplayName("[GET] 카테고리별 내용 조회")
+    @DisplayName("[GET] AAC_By_Category")
     void getCategoryContents() throws Exception {
 
         OAuth2UserImpl member = new OAuth2UserImpl(Member.builder().id("1").build());
@@ -97,8 +101,25 @@ class AACControllerTest {
     }
 
     @Test
-    @DisplayName("[GET]연관 동사 리스트")
+    @DisplayName("[GET] RelativeVerb_By_aacId")
     void getRelativeVerb() {
+        String aacId = "22";
+
+        ResponseAACDto aac1 = ResponseAACDto.builder().id("112").title("매워요").build();
+        ResponseAACDto aac2 = ResponseAACDto.builder().id("113").title("짜요").build();
+
+        List<ResponseAACDto> aacList = List.of(aac1, aac2);
+
+        PagedResponse<AAC> serviceReturnList = new PagedResponse(HttpStatus.OK, aacList, 1);
+
+        when(aacService.getRelativeVerb(anyString())).thenReturn(serviceReturnList);
+
+        ResponseEntity<?> response = aacController.getRelativeVerb(aacId);
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(serviceReturnList, response.getBody());
+
+        verify(aacService).getRelativeVerb(aacId);
     }
 
     @Test

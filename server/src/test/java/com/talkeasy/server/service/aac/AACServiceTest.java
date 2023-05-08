@@ -35,7 +35,7 @@ class AACServiceTest {
     private MongoTemplate mongoTemplate;
 
     @Test
-    @DisplayName("[GET] Category")
+    @DisplayName("[GET] Category_List")
     void getCategory() {
 
         AACCategory aacCategory1 = AACCategory.builder().id("1").title("고정").build();
@@ -59,6 +59,7 @@ class AACServiceTest {
     }
 
     @Test
+    @DisplayName("[GET] AAC_By_Category")
     void getAacByCategory() {
 
         OAuth2UserImpl member = new OAuth2UserImpl(Member.builder().id("1").build());
