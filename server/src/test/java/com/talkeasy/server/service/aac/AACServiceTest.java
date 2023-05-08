@@ -14,18 +14,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -63,6 +60,7 @@ class AACServiceTest {
 
     @Test
     void getAacByCategory() {
+
         OAuth2UserImpl member = new OAuth2UserImpl(Member.builder().id("1").build());
         String categoryId = "1";
         int fixed = 0;
@@ -81,7 +79,6 @@ class AACServiceTest {
         PagedResponse<?> testResult = aacService.getAacByCategory(member.getId(), categoryId, fixed, offset, size);
 
         // 결과 비교
-
         List<ResponseAACDto> result = (List<ResponseAACDto>) testResult.getData();
 
         assertEquals(200, testResult.getStatus());
@@ -90,6 +87,7 @@ class AACServiceTest {
 
         // mongoTemplate의 findAll 메서드가 호출되었는지 확인
         Mockito.verify(mongoTemplate, Mockito.times(1)).find(query, AAC.class);
+
     }
 
     @Test
