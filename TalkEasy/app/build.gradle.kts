@@ -4,7 +4,6 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs.kotlin")
     id("kotlin-kapt")
-    id("org.jlleitschuh.gradle.ktlint")
 }
 
 android {
@@ -25,11 +24,11 @@ android {
     }
 
     buildTypes {
-        debug {
+        release {
             isMinifyEnabled = true
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
-        release {
+        debug {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -79,6 +78,8 @@ dependencies {
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.okhttp3)
 
+    implementation(libs.bundles.kakao)
+
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 
@@ -96,6 +97,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":feature:aac"))
     implementation(project(":feature:common"))
+    implementation(project(":feature:auth"))
 }
 
 kapt {

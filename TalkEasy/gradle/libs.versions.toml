@@ -1,5 +1,4 @@
 [versions]
-
 # build.gradle.kts - Project
 kotlin = "1.8.10"
 android-application = "7.3.1"

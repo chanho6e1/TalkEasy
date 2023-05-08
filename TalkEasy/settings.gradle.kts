@@ -10,6 +10,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven { setUrl("https://devrepo.kakao.com/nexus/content/groups/public/") }
     }
 }
 rootProject.name = "TalkEasy"
@@ -19,3 +20,5 @@ include(":core:data")
 include(":core:domain")
 include(":feature:common")
 include(":feature:aac")
+include(":feature:auth")
+include(":core:di")
