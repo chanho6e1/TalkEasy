@@ -9,13 +9,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -30,6 +34,7 @@ import com.ssafy.talkeasy.feature.common.component.ShowProfileDialog
 import com.ssafy.talkeasy.feature.common.component.WideSeedButton
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 internal fun JoinRouteProtector(
     modifier: Modifier = Modifier,
@@ -37,10 +42,15 @@ internal fun JoinRouteProtector(
     viewModel: AuthViewModel = hiltViewModel(navBackStackEntry),
     onJoinMember: () -> Unit,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
-    val memberState by viewModel.memberState.collectAsState()
-    if (memberState == "MEMBER") {
-        onJoinMember()
+    val memberState by rememberUpdatedState(newValue = viewModel.memberState.collectAsState().value)
+
+    LaunchedEffect(memberState) {
+        if (memberState == "MEMBER") {
+            keyboardController?.hide()
+            onJoinMember()
+        }
     }
     JoinScreen(
         modifier = modifier,
