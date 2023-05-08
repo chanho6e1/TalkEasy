@@ -15,13 +15,15 @@ public class CustomUserDetailService implements UserDetailsService {
     private final MemberService userService;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = userService.findUserByEmail(username);
+    public UserDetails loadUserByUsername(String id) throws UsernameNotFoundException {
+        Member member = userService.findUserById(id);
 
         if (member == null) {
-            throw new UsernameNotFoundException(String.format("No user found with username '%s'.", username));
+            throw new UsernameNotFoundException(String.format("No user found with userId '%s'.", id));
         } else {
             return new OAuth2UserImpl(member);
         }
     }
+
+
 }
