@@ -3,8 +3,13 @@ package com.talkeasy.server.domain.member;
 import com.talkeasy.server.dto.user.MemberInfoUpdateRequest;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.LocalDateTime;
 
 @Data
 @Document(collection = "member")
@@ -20,8 +25,14 @@ public class Member {
     private Integer age;
     private String birthDate;
     private Boolean deleteStatus; // true:탈퇴, false:미탈퇴
+    @Field("createdTime")
+    @CreatedDate
+    private LocalDateTime createdTime;
+    @Field("updatedTime")
+    @LastModifiedDate
+    private LocalDateTime updatedTime;
 
-    public Member setUserInfo(MemberInfoUpdateRequest request, String imageUrl){
+    public Member setUserInfo(MemberInfoUpdateRequest request, String imageUrl) {
         this.name = request.getName();
         this.gender = request.getGender();
         this.birthDate = request.getBirthDate();
@@ -37,7 +48,6 @@ public class Member {
         this.imageUrl = null;
         this.email = null;
         this.role = null;
-
 
 
     }

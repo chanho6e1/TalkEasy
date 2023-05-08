@@ -63,7 +63,7 @@ public class KafkaConsumerService {
     }
 
     // 카프카 리스너
-    @KafkaListener(topics = "location-event", groupId = "group-test", containerFactory = "kafkaListenerContainerFactory", properties = {"auto.offset.reset:earliest"})
+//    @KafkaListener(topics = "location-event", groupId = "group-test", containerFactory = "kafkaListenerContainerFactory", properties = {"auto.offset.reset:earliest"})
     public void consumeLocationEvent(ConsumerRecord<String, LocationDto> record) {
         log.info("========== [Consumed message] value : {}, topic : {}, partition : {}, offset : {}, timestamp : {}, key : {}", record.value().toString(), record.topic(), record.partition(), record.offset(), convertTimestampToLocalDateTime(record.timestamp()), record.key());
     }
