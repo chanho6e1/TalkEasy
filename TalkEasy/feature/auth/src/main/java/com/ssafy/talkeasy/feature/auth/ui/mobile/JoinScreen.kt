@@ -4,19 +4,10 @@ import android.graphics.Bitmap
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,29 +15,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.ssafy.talkeasy.feature.auth.AuthViewModel
 import com.ssafy.talkeasy.feature.auth.R
+import com.ssafy.talkeasy.feature.common.component.CustomTextField
 import com.ssafy.talkeasy.feature.common.component.EditProfile
 import com.ssafy.talkeasy.feature.common.component.ShowProfileDialog
-import com.ssafy.talkeasy.feature.common.ui.theme.delta
-import com.ssafy.talkeasy.feature.common.ui.theme.green_white
-import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_error
-import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
-import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_primary
-import com.ssafy.talkeasy.feature.common.ui.theme.seed
+import com.ssafy.talkeasy.feature.common.component.WideSeedButton
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
 @Composable
-internal fun JoinRoute(
+internal fun JoinRouteProtector(
     modifier: Modifier = Modifier,
     navBackStackEntry: NavBackStackEntry,
     viewModel: AuthViewModel = hiltViewModel(navBackStackEntry),
@@ -102,30 +87,13 @@ internal fun JoinScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun <T> JoinContent(
+internal fun JoinContent(
     modifier: Modifier = Modifier,
     onJoinButtonClick: (String) -> Unit,
     onProfileClick: () -> Unit,
-    profile: T,
+    profile: Bitmap?,
 ) {
-    val mainButtonColor = ButtonDefaults.buttonColors(
-        contentColor = md_theme_light_onBackground,
-        containerColor = seed
-    )
-    val textFieldColors = TextFieldDefaults.textFieldColors(
-        focusedTextColor = md_theme_light_primary,
-        containerColor = green_white,
-        focusedIndicatorColor = seed,
-        focusedLabelColor = seed,
-        unfocusedIndicatorColor = Color.Transparent,
-        unfocusedLabelColor = delta,
-        cursorColor = seed,
-        errorCursorColor = md_theme_light_error,
-        errorLabelColor = md_theme_light_error,
-        errorIndicatorColor = md_theme_light_error
-    )
     val (nickName: String, setNickName: (String) -> Unit) = remember {
         mutableStateOf("")
     }
@@ -148,28 +116,19 @@ internal fun <T> JoinContent(
             EditProfile(
                 size = 110,
                 profile = profile,
-                textStyle = typography.titleLarge,
-                onClick = { onProfileClick() }
-            )
-            OutlinedTextField(
-                value = nickName,
+                textStyle = typography.titleLarge
+            ) { onProfileClick() }
+            CustomTextField(
+                nickName = nickName,
                 onValueChange = setNickName,
-                modifier = modifier.fillMaxWidth(),
-                textStyle = typography.bodyLarge,
-                label = { Text(text = "이름") },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-                colors = textFieldColors,
-                singleLine = true
+                label = stringResource(id = R.string.content_name),
+                textStyle = typography.bodyLarge
             )
-            Button(
-                modifier = modifier.fillMaxWidth(),
-                onClick = { onJoinButtonClick(nickName) },
-                colors = mainButtonColor,
-                shape = RoundedCornerShape(5.dp),
-                contentPadding = PaddingValues(0.dp, 14.dp)
-            ) {
-                Text(text = "가입하기", style = typography.bodyLarge)
-            }
+            WideSeedButton(
+                onClicked = { onJoinButtonClick(nickName) },
+                text = stringResource(id = R.string.content_join),
+                textStyle = typography.bodyLarge
+            )
         }
     }
 }
