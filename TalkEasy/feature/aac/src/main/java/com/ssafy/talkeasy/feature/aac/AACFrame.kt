@@ -3,6 +3,7 @@ package com.ssafy.talkeasy.feature.aac
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,13 +34,18 @@ fun AACFrame() {
                 AACCategory(category)
             }
         } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 30.dp, start = 36.dp, end = 36.dp),
-                contentAlignment = Alignment.TopEnd
-            ) {
-                AACSmallCards(words = SampleData.string20)
+            Column {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 36.dp, vertical = 30.dp),
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    AACSmallCards(words = SampleData.string20)
+                }
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.BottomCenter) {
+                    AACPaging()
+                }
             }
         }
     }
