@@ -71,7 +71,7 @@ val Typography =
         )
     )
 
-val welcomeBold40 = TextStyle(
+val textStyleBold40 = TextStyle(
     fontFamily = welcomeFont,
     fontWeight = FontWeight.Bold,
     fontSize = 40.sp,

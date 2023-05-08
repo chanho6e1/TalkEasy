@@ -28,7 +28,7 @@ import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.ssafy.talkeasy.feature.auth.R
 import com.ssafy.talkeasy.feature.common.R.raw
-import com.ssafy.talkeasy.feature.common.ui.theme.welcomeBold40
+import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold40
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -114,7 +114,7 @@ fun WelcomeAnimation(memberName: String) {
                 .padding(bottom = 150.dp),
             textAlign = TextAlign.Center,
             text = String.format(stringResource(id = R.string.title_welcome), memberName),
-            style = welcomeBold40
+            style = textStyleBold40
         )
     }
 }
