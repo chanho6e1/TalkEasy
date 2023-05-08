@@ -22,7 +22,11 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -97,6 +101,27 @@ class AACServiceTest {
 
     @Test
     void getRelativeVerb() {
+        String aacId = "22";
+
+        AAC aac = AAC.builder().id("22").title("돈까스").relative_verb("112 113").build();
+
+        Query query = new Query(Criteria.where("id").is(aacId));
+//        Mockito.when(mongoTemplate.findOne(query, AAC.class)).thenReturn(aac);
+
+        AAC aac1 = AAC.builder().id("112").title("매워요").build();
+        AAC aac2 = AAC.builder().id("113").title("짜요").build();
+
+        Mockito.when(mongoTemplate.findOne(Mockito.any(Query.class), Mockito.eq(AAC.class))).thenReturn(aac, aac1, aac2);
+
+        PagedResponse<AAC> result = aacService.getRelativeVerb(aacId);
+        List<ResponseAACDto> responseAACList = (List<ResponseAACDto>) result.getData();
+
+        // 결과 검증
+        assertEquals(2, responseAACList.size());
+        assertEquals("매워요", responseAACList.get(0).getTitle());
+        assertEquals("짜요", responseAACList.get(1).getTitle());
+
+        Mockito.verify(mongoTemplate, Mockito.times(3)).findOne(Mockito.any(Query.class), Mockito.eq(AAC.class));
     }
 
     @Test
