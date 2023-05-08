@@ -66,4 +66,7 @@
     <string name="image_back_to_category_select">카테고리 선택 화면으로 이동하는 버튼</string>
     <string name="title_back_to_category_select">카테고리 선택으로</string>
     <string name="content_back_to_category_select">현재 카테고리: %s</string>
+
+    <!-- AAC Snack Bar -->
+    <string name="content_browse_location">%s님이 위치 정보를 열람중입니다. 중단 버튼을 누르시면 열람이 즉시 중단됩니다.</string>
 </resources>

@@ -2,6 +2,7 @@ package com.ssafy.talkeasy.feature.aac.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +25,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import com.ssafy.talkeasy.feature.aac.R.string
 import com.ssafy.talkeasy.feature.common.R
 import com.ssafy.talkeasy.feature.common.ui.theme.Typography
@@ -43,19 +46,32 @@ fun AACTopBar(onRight: Boolean) {
     }
 
     if (onRight) {
-        Row(
+        ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 24.dp, bottom = 21.dp, start = 24.dp, end = 36.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(top = 24.dp, bottom = 21.dp, start = 24.dp, end = 36.dp)
         ) {
-            if (chatMode) {
-                PreviewProfile()
-            } else {
-                DefaultProfile()
+            val (profile, snackBar, buttons) = createRefs()
+
+            Box(modifier = Modifier.constrainAs(profile) { start.linkTo(parent.start) }) {
+                if (chatMode) {
+                    PreviewProfile()
+                } else {
+                    DefaultProfile()
+                }
             }
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+            Box(
+                modifier = Modifier.constrainAs(snackBar) {
+                    start.linkTo(profile.end)
+                    end.linkTo(buttons.start)
+                    width = Dimension.fillToConstraints
+                }
+            ) {
+                BrowseLocation("이름이왕왕긴강은선")
+            }
+
+            Row(modifier = Modifier.constrainAs(buttons) { end.linkTo(parent.end) }) {
                 ButtonSOS()
 
                 Spacer(modifier = Modifier.width(20.dp))
