@@ -6,7 +6,7 @@ import java.io.File
 
 interface AuthRemoteDataSource {
 
-    suspend fun requestLogin(accessToken: String): DefaultResponse<String>
+    suspend fun requestLogin(accessToken: String, role: Int): DefaultResponse<String>
 
     suspend fun requestJoin(member: MemberRequestBody, image: File?): DefaultResponse<String>
 }

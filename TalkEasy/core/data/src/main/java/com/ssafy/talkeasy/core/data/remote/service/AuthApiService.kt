@@ -14,6 +14,8 @@ interface AuthApiService {
     suspend fun requestLogin(
         @Query("accessToken")
         accessToken: String,
+        @Query("role")
+        role: Int,
     ): DefaultResponse<String>
 
     @Multipart

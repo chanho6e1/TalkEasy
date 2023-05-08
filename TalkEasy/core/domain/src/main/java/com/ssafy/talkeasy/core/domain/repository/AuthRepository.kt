@@ -7,7 +7,7 @@ import java.io.File
 
 interface AuthRepository {
 
-    suspend fun requestLogin(accessToken: String): Resource<Default<String>>
+    suspend fun requestLogin(accessToken: String, role: Int): Resource<Default<String>>
 
     suspend fun requestJoin(member: MemberRequestBody, image: File?): Resource<Default<String>>
 }

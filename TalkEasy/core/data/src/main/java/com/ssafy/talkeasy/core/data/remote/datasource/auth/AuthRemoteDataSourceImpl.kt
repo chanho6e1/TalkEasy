@@ -15,8 +15,8 @@ class AuthRemoteDataSourceImpl @Inject constructor(
     private val authApiService: AuthApiService,
 ) : AuthRemoteDataSource {
 
-    override suspend fun requestLogin(accessToken: String): DefaultResponse<String> =
-        authApiService.requestLogin(accessToken)
+    override suspend fun requestLogin(accessToken: String, role: Int): DefaultResponse<String> =
+        authApiService.requestLogin(accessToken, role)
 
     override suspend fun requestJoin(
         member: MemberRequestBody,
