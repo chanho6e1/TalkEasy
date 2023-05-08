@@ -31,7 +31,7 @@ public class OAuthService {
     private final ChatUserQueueService chatUserQueueService;
     private final S3Uploader s3Uploader;
 
-    public String getToken(String accessToken) {
+    public String getToken(String accessToken, int role) {
         log.info("========== AccessToken : {} ", accessToken);
 
         String email = null;
@@ -42,8 +42,8 @@ public class OAuthService {
         } catch (IOException e) {
             log.info("========== exception 발생 : {} ", e.getMessage());
         }
-
-        if (memberService.findUserByEmail(email) == null) {
+        Member member = memberService.findUserByEmail(email);
+        if (member == null || member.getRole() != role) {
             log.info("========== 데이터 베이스에 아이디(login_id)가 없다.");
             return null;
         }

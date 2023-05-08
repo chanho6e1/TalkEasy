@@ -25,11 +25,11 @@ public class OAuthController {
 
     @ApiOperation(value = "로그인 하기", notes = "access token 을 보내면 유저정보 반환")
     @PostMapping("/login")
-    public ResponseEntity<CommonResponse> login(@ApiParam("") @RequestParam(value = "accessToken") String accessToken) { // 인가 코드
+    public ResponseEntity<CommonResponse> login(@ApiParam("") @RequestParam(value = "accessToken") String accessToken, @RequestParam(value = "role") int role) { // 인가 코드
         log.info("========== /login/oauth accessToken : {}", accessToken);
 
         String token = null;
-        token = oAuthService.getToken(accessToken);
+        token = oAuthService.getToken(accessToken, role);
 
         if (token == null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
