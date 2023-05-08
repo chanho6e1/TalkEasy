@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -40,10 +41,21 @@ internal fun LoginRouteProtector(
 ) {
     val memberState by viewModel.memberState.collectAsState()
 
-    if (memberState == "NOT_MEMBER") {
-        onIsNotMember()
-    } else if (memberState == "MEMBER") {
-        onIsLoginMember()
+    SideEffect {
+        if (memberState == "MEMBER") {
+            viewModel.resetMemberState()
+        }
+    }
+
+    when (memberState) {
+        "NOT_MEMBER" -> {
+            Log.d("TAG", "LoginRouteProtector: login not member")
+            onIsNotMember()
+        }
+        "MEMBER" -> {
+            Log.d("TAG", "LoginRouteProtector: login member")
+            onIsLoginMember()
+        }
     }
     LoginScreen(
         modifier = modifier,

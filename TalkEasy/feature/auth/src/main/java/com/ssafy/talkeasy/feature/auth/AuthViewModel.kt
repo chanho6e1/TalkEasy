@@ -39,6 +39,10 @@ class AuthViewModel @Inject constructor(
 
     private val _birthDate = MutableStateFlow("")
 
+    fun resetMemberState() {
+        _memberState.value = ""
+    }
+
     private fun requestLogin(accessToken: String, role: Int) = viewModelScope.launch {
         Log.d("TAG", "requestLogin: sharedPreferences.accessToken ${sharedPreferences.accessToken}")
         when (val value = logInUseCase(accessToken, role)) {
