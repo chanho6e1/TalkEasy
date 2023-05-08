@@ -76,8 +76,11 @@ public class MemberService {
 
         // Member 테이블에서 삭제
         Member member =  mongoTemplate.findOne(Query.query(Criteria.where("id").is(userId)), Member.class);
-        member.setDelete();
-        mongoTemplate.save(member);
+
+        mongoTemplate.remove(member);
+
+//        member.setDelete();
+//        mongoTemplate.save(member);
 
         // 커스텀 AAC 삭제
         mongoTemplate.remove(Query.query(Criteria.where("userId").is(userId)), CustomAAC.class);
