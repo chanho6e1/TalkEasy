@@ -21,6 +21,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -109,13 +111,26 @@ public class OAuthService {
         } catch (Exception e) {
             log.info("========== exception 발생 : {}", e.getMessage());
         }
-
-        String userId = memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(saveFileName).role(member.getRole()).gender(member.getGender()).age(member.getAge()).birthDate(member.getBirthDate()).build());
+        String userId = null;
+        if(member.getRole() == 0){
+            userId = memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(saveFileName).role(member.getRole()).build());
+        }else {
+            userId = memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(saveFileName).role(member.getRole()).gender(member.getGender()).age(calcAge(member.getBirthDate())).birthDate(member.getBirthDate()).build());
+        }
 
         //채팅에 사용할 유저별 큐 생성
         chatUserQueueService.createUserQueue(userId);
 
         return jwtTokenProvider.createAccessToken(userId);
     }
+    private int calcAge(String birthDate){
+        LocalDate now = LocalDate.now();
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy");
+
+        int nowYear = Integer.parseInt(now.format(formatter));
+        int birthYear = Integer.parseInt(birthDate.substring(0,4));
+
+        return nowYear-birthYear+1;
+    }
 }

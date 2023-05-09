@@ -32,7 +32,7 @@ public class OAuthController {
 
         LoginResponse response = oAuthService.getToken(accessToken, role);
 
-        if (response.getToken() == null) {
+        if (response == null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                     HttpStatus.CREATED, ""));
         }
