@@ -5,22 +5,45 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.ssafy.talkeasy.feature.common.component.LoadingAnimation
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
+import com.ssafy.talkeasy.feature.auth.AuthViewModel
 import com.ssafy.talkeasy.feature.common.component.WelcomeAnimation
 import com.ssafy.talkeasy.feature.common.ui.theme.welcomeBold40
+import com.ssafy.talkeasy.feature.follow.FollowViewModel
 
-@Preview(showBackground = true, widthDp = 1429, heightDp = 857)
 @Composable
-fun WelcomeRouteWard(modifier: Modifier = Modifier, onFinishedLoading: () -> Unit = {}) {
+fun WelcomeRouteWard(
+    modifier: Modifier = Modifier,
+    onFinishedLoading: () -> Unit = {},
+    navBackStackEntry: NavBackStackEntry,
+    authViewModel: AuthViewModel = hiltViewModel(navBackStackEntry),
+    followViewModel: FollowViewModel = hiltViewModel(),
+) {
+    val memberInfo by followViewModel.memberInfo.collectAsState()
+    val memberName by authViewModel.name.collectAsState()
+
+    SideEffect {
+        if (memberInfo == null) {
+            followViewModel.requestMemberInfo()
+        }
+    }
+
+    LaunchedEffect(memberInfo) {
+        if (memberInfo != null) {
+            onFinishedLoading()
+        }
+    }
+
     WelcomeFrame(
         modifier = modifier,
-        memberName = "일이삼사오육칠팔구",
-        onFinishedLoading = onFinishedLoading
+        memberName = memberName
     )
 }
 
@@ -28,24 +51,15 @@ fun WelcomeRouteWard(modifier: Modifier = Modifier, onFinishedLoading: () -> Uni
 internal fun WelcomeFrame(
     modifier: Modifier = Modifier,
     memberName: String,
-    onFinishedLoading: () -> Unit = {},
 ) {
-    val isLoading = remember {
-        mutableStateOf(false)
-    }
-
     Surface(modifier = modifier.fillMaxSize()) {
         Box(modifier = modifier.wrapContentSize(align = Alignment.Center)) {
-            if (isLoading.value) {
-                LoadingAnimation(isLoading = isLoading, size = 120)
-            } else {
-                WelcomeAnimation(
-                    memberName = memberName,
-                    size = 570,
-                    textStyle = welcomeBold40,
-                    bottomPadding = 80
-                )
-            }
+            WelcomeAnimation(
+                memberName = memberName,
+                size = 570,
+                textStyle = welcomeBold40,
+                bottomPadding = 80
+            )
         }
     }
 }

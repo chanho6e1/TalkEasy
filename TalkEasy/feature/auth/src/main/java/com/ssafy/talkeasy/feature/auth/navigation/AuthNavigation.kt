@@ -85,14 +85,27 @@ fun NavGraphBuilder.joinScreen(navController: NavController, onJoinMember: () ->
     }
 }
 
-fun NavGraphBuilder.welcomeScreen(onFinishedLoading: () -> Unit, role: Int) {
+fun NavGraphBuilder.welcomeScreen(
+    navController: NavController,
+    onFinishedLoading: () -> Unit,
+    role: Int
+) {
     if (role == 0) {
-        composable(route = welcomeRouteProtector) {
-            WelcomeRouteProtector(onFinishedLoading = onFinishedLoading)
+        composable(route = welcomeRouteProtector) { navBackStackEntry ->
+            val loginEntry = remember(navBackStackEntry) {
+                navController.getBackStackEntry(loginRouteProtector)
+            }
+            WelcomeRouteProtector(
+                navBackStackEntry = loginEntry,
+                onFinishedLoading = onFinishedLoading
+            )
         }
     } else {
-        composable(route = welcomeRouteWard) {
-            WelcomeRouteWard(onFinishedLoading = onFinishedLoading)
+        composable(route = welcomeRouteWard) { navBackStackEntry ->
+            val loginEntry = remember(navBackStackEntry) {
+                navController.getBackStackEntry(loginRouteWard)
+            }
+            WelcomeRouteWard(navBackStackEntry = loginEntry, onFinishedLoading = onFinishedLoading)
         }
     }
 }

@@ -41,6 +41,7 @@ fun AppNavHost(
             role = ROLE
         )
         welcomeScreen(
+            navController = navController,
             onFinishedLoading = {
                 // aac로 이동
             },
