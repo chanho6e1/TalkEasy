@@ -37,14 +37,14 @@ public class JwtTokenProvider {
         this.SECRET_KEY = Base64.getEncoder().encodeToString(SECRET_KEY.getBytes());
     }
 
-    public String createAccessToken(String email) {
+    public String createAccessToken(String id) {
 
-        return createToken(email, ACCESS_TOKEN_EXPIRE_LENGTH);
+        return createToken(id, ACCESS_TOKEN_EXPIRE_LENGTH);
     }
 
-    public String createToken(String email, long expireLength) {
-        Claims claims = Jwts.claims().setSubject(email); // payload부분에 들어갈 정보 조각
-        claims.put("email", email);
+    public String createToken(String id, long expireLength) {
+        Claims claims = Jwts.claims().setSubject(id); // payload부분에 들어갈 정보 조각
+        claims.put("id", id);
         Date now = new Date();
 
         Date validity = new Date(now.getTime() + expireLength);

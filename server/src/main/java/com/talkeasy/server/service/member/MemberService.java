@@ -1,10 +1,10 @@
 package com.talkeasy.server.service.member;
 
 import com.talkeasy.server.config.s3.S3Uploader;
-import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.domain.aac.CustomAAC;
 import com.talkeasy.server.domain.app.UserAppToken;
 import com.talkeasy.server.domain.chat.ChatRoom;
+import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.user.MemberInfoUpdateRequest;
 import com.talkeasy.server.repository.member.MembersRepository;
 import com.talkeasy.server.service.chat.ChatService;
@@ -37,9 +37,14 @@ public class MemberService {
         return memberRepository.findByEmail(email);
     }
 
-    public Member findUserByEmail(String email) {
+    public Member findUserByEmailAndRole(String email, int role) {
         return mongoTemplate.findOne(
-                Query.query(Criteria.where("email").is(email)), Member.class);
+                Query.query(Criteria.where("email").is(email).and("role").is(role)), Member.class);
+    }
+
+    public Member findUserById(String id) {
+        return mongoTemplate.findOne(
+                Query.query(Criteria.where("id").is(id)), Member.class);
     }
 
     public Member updateUserInfo(MultipartFile multipartFile, MemberInfoUpdateRequest request, String memberId) {
@@ -50,6 +55,7 @@ public class MemberService {
             String saveFileName = s3Uploader.uploadFiles(multipartFile, "talkeasy");
             member.setUserInfo(request, saveFileName);
         } catch (Exception e) {
+            log.info("========== exception 발생 : {}", e.getMessage());
         }
         return memberRepository.save(member);
 
@@ -68,14 +74,14 @@ public class MemberService {
 
         // 채팅 큐 삭제
         List<ChatRoom> chatRoomList = mongoTemplate.find(Query.query(Criteria.where("users").in(userId)), ChatRoom.class);
-        for (ChatRoom chatRoom : chatRoomList){
+        for (ChatRoom chatRoom : chatRoomList) {
             chatService.deleteRoom(chatRoom.getId(), userId);
 //            deleteQueue("chat.queue", chatRoom.getId(), userId);
 //            deleteQueue("read.queue", chatRoom.getId(), userId);
         }
 
         // Member 테이블에서 삭제
-        Member member =  mongoTemplate.findOne(Query.query(Criteria.where("id").is(userId)), Member.class);
+        Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(userId)), Member.class);
 
         mongoTemplate.remove(member);
 
@@ -91,11 +97,13 @@ public class MemberService {
         return userId;
     }
 
-    private void deleteQueue(String queueName, String roomId, String userId){
-        if(roomId == null) {
+    private void deleteQueue(String queueName, String roomId, String userId) {
+        if (roomId == null) {
             amqpAdmin.deleteQueue(queueName + "." + userId);
             return;
         }
         amqpAdmin.deleteQueue(queueName + "." + roomId + "." + userId);
     }
+
+
 }
