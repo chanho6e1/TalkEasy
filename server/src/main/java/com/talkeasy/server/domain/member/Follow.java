@@ -19,7 +19,7 @@ public class Follow {
     private String fromUserId; // 팔로워
     private String toUserId; // 팔로잉
     private String memo;
-    private Boolean MainStatus;
+    private Boolean mainStatus;
     private Boolean locationStatus;
     @Field("createdTime")
     @CreatedDate

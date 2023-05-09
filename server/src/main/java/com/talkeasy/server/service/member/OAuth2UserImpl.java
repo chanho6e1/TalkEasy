@@ -1,6 +1,7 @@
 package com.talkeasy.server.service.member;
 
 
+import com.fasterxml.jackson.core.JsonToken;
 import com.talkeasy.server.authentication.OAuthUserInfo;
 import com.talkeasy.server.domain.member.Member;
 import org.springframework.security.core.GrantedAuthority;
