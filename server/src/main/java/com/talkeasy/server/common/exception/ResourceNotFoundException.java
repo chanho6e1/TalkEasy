@@ -13,15 +13,15 @@ public class ResourceNotFoundException extends RuntimeException {
     private Object fieldValue;
 
     public ResourceNotFoundException(String resourceName, String fieldName, Object fieldValue) {
-        super();
+        super("정보를 찾을 수 없습니다");
         this.resourceName = resourceName;
         this.fieldName = fieldName;
         this.fieldValue = fieldValue;
         setErrResponse();
     }
 
-    public ResourceNotFoundException(Object data) {
-        super();
+    public ResourceNotFoundException(String data) {
+        super(data);
         setErrResponse(data);
     }
 
@@ -35,7 +35,7 @@ public class ResourceNotFoundException extends RuntimeException {
         errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND, message);
     }
 
-    private void setErrResponse(Object data) {
+    private void setErrResponse(String data) {
         errorResponse = new ErrorResponse(HttpStatus.NOT_FOUND, data);
     }
 

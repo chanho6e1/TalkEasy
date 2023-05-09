@@ -57,6 +57,9 @@ public class FollowService {
 
     public String deleteByFollow(String myId, String toUserId) {
 
+        Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(myId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("없는 유저입니다"));
+        Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(toUserId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("없는 유저입니다"));
+
         deleteByFollowDetail(myId, toUserId);
         deleteByFollowDetail(toUserId, myId);
 
@@ -65,13 +68,13 @@ public class FollowService {
 
     public void deleteByFollowDetail(String myId, String toUserId) {
 
-        Follow user = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class)).orElseThrow(() -> new ResourceNotFoundException("이미 언팔로우 상태입니다"));
+        Follow follow = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class)).orElseThrow(() -> new ResourceNotFoundException("이미 언팔로우 상태입니다"));
 
-        mongoTemplate.remove(user);
+        mongoTemplate.remove(follow);
 
     }
 
-    public PagedResponse<?> getfollow(String userId) {
+    public PagedResponse<FollowResponse> getfollow(String userId) {
         /* userId -> id로 바꿔야함*/
 
         Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(userId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("member", "userId", userId));

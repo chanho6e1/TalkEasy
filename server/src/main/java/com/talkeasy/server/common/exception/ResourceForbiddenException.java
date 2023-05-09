@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 public class ResourceForbiddenException extends RuntimeException {
     private ErrorResponse errorResponse;
 
-    public ResourceForbiddenException(Object data) {
-        super();
+        public ResourceForbiddenException(String data) {
+        super(data);
         setErrResponse(data);
     }
 
@@ -17,7 +17,7 @@ public class ResourceForbiddenException extends RuntimeException {
         return errorResponse;
     }
 
-    private void setErrResponse(Object data) {
+    private void setErrResponse(String data) {
         errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, data);
     }
 }

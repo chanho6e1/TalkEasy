@@ -38,6 +38,7 @@ dependencies {
 //스프링 시큐리티를 사용하기 위한 스타터 라이브러리
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    testImplementation 'org.projectlombok:lombok:1.18.22'
 
 //lombok설정
     compileOnly 'org.projectlombok:lombok'
