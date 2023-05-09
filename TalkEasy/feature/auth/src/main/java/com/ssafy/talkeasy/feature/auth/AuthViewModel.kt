@@ -44,7 +44,6 @@ class AuthViewModel @Inject constructor(
     }
 
     private fun requestLogin(accessToken: String, role: Int) = viewModelScope.launch {
-        Log.d("TAG", "requestLogin: sharedPreferences.accessToken ${sharedPreferences.accessToken}")
         when (val value = logInUseCase(accessToken, role)) {
             is Resource.Success<Default<String>> -> {
                 if (value.data.status == 200) {
@@ -58,6 +57,7 @@ class AuthViewModel @Inject constructor(
             }
             is Resource.Error -> Log.e("requestLogin", "requestLogin: ${value.errorMessage}")
         }
+        Log.d("requestLogin", "requestLogin-JWT : ${sharedPreferences.accessToken}")
     }
 
     fun requestJoin(nickname: String) = viewModelScope.launch {
@@ -68,7 +68,6 @@ class AuthViewModel @Inject constructor(
             birthDate = _birthDate.value,
             gender = _gender.value
         )
-        Log.d("TAG", "requestJoin: member : $member")
         member.let {
             when (val value = joinUseCase(member, profileImg.value)) {
                 is Resource.Success<Default<String>> -> {
@@ -99,14 +98,6 @@ class AuthViewModel @Inject constructor(
             "여성" -> _gender.value = 0
             "남성" -> _gender.value = 1
         }
-        val member = MemberRequestBody(
-            accessToken = kakaoAccessToken.value,
-            role = 1,
-            name = "",
-            birthDate = _birthDate.value,
-            gender = _gender.value
-        )
-        Log.d("TAG", "setGender: member:$member")
     }
 
     fun setBirthDate(mBirthDate: String) {

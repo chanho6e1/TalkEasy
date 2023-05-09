@@ -49,11 +49,9 @@ internal fun LoginRouteProtector(
 
     when (memberState) {
         "NOT_MEMBER" -> {
-            Log.d("TAG", "LoginRouteProtector: login not member")
             onIsNotMember()
         }
         "MEMBER" -> {
-            Log.d("TAG", "LoginRouteProtector: login member")
             onIsLoginMember()
         }
     }
