@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.talkeasy.core.domain.Resource
 import com.ssafy.talkeasy.core.domain.entity.request.MemberRequestBody
+import com.ssafy.talkeasy.core.domain.entity.response.Auth
 import com.ssafy.talkeasy.core.domain.entity.response.Default
 import com.ssafy.talkeasy.core.domain.usecase.auth.JoinUseCase
 import com.ssafy.talkeasy.core.domain.usecase.auth.LoginUseCase
@@ -39,17 +40,21 @@ class AuthViewModel @Inject constructor(
 
     private val birthDate = MutableStateFlow("")
 
+    private val _name = MutableStateFlow("")
+    val name: StateFlow<String> = _name
+
     fun resetMemberState() {
         _memberState.value = ""
     }
 
     private fun requestLogin(accessToken: String, role: Int) = viewModelScope.launch {
         when (val value = logInUseCase(accessToken, role)) {
-            is Resource.Success<Default<String>> -> {
+            is Resource.Success<Default<Auth>> -> {
                 if (value.data.status == 200) {
                     // login success
                     _memberState.value = "MEMBER"
-                    sharedPreferences.accessToken = value.data.data
+                    sharedPreferences.accessToken = value.data.data.jwt
+                    _name.value = value.data.data.name
                     Log.d("requestLogin", "requestLogin-JWT : ${sharedPreferences.accessToken}")
                 } else if (value.data.status == 201) {
                     // no member
