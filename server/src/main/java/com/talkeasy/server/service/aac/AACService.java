@@ -49,11 +49,11 @@ public class AACService {
     }
 
     // 카테고리별 aac 조회
-    public PagedResponse<?> getAacByCategory(String userId, String categoryId, int fixed, int offset, int size) {
+    public PagedResponse<ResponseAACDto> getAacByCategory(String userId, String categoryId, int fixed, int offset, int size) {
 
-        if (categoryId.equals("9")) {
-            return getAacByCustom(userId, offset, size);
-        }
+//        if (categoryId.equals("9")) {
+//            return getAacByCustom(userId, offset, size);
+//        }
 
         Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "title")); // 가나다 순으로
         Query query = new Query(Criteria.where("category").is(categoryId).and("fixed").is(fixed)).with(pageable);
@@ -90,7 +90,7 @@ public class AACService {
     }
 
     // aac 연관 동사 조회
-    public PagedResponse<AAC> getRelativeVerb(String aacId) {
+    public PagedResponse<ResponseAACDto> getRelativeVerb(String aacId) {
 
         Query query = new Query(Criteria.where("id").is(aacId));
         AAC aac = mongoTemplate.findOne(query, AAC.class);
@@ -159,6 +159,10 @@ public class AACService {
         OpenAiService service = new OpenAiService(apiKey);
 
 //        String inputText = "'" + text.getText() + " . this words rearrange and complete in korean please.'";
+
+        if (text == null)
+            throw new NullPointerException("입력된 데이터가 없습니다.");
+
         String inputText = "'" + text.getText() + " .' 이 단어들을 어순 맞게 문장 완성해줘.";
 
         CompletionRequest completionRequest = CompletionRequest.builder()
