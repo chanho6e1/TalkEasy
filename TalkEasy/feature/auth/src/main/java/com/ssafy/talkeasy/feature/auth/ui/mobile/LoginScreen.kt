@@ -55,6 +55,7 @@ internal fun LoginRouteProtector(
             onIsLoginMember()
         }
     }
+
     LoginScreen(
         modifier = modifier,
         onSuccessEvent = viewModel::onKakaoLoginSuccess,
@@ -71,6 +72,7 @@ internal fun LoginScreen(
 ) {
     Box() {
         Background(modifier = modifier)
+
         LoginContent(
             modifier = modifier,
             onSuccessEvent = onSuccessEvent,
@@ -135,6 +137,7 @@ fun LoginContent(
                     .size(233.dp, 107.dp)
             )
         }
+
         item {
             IconButton(
                 onClick = { onLoginButtonClicked() },
@@ -164,6 +167,7 @@ fun Background(
                 modifier = modifier.fillMaxSize(),
                 alignment = Alignment.BottomCenter
             )
+
             Image(
                 painter = painterResource(id = drawable.bg_log_in_right_leaf_for_mobile),
                 contentDescription = stringResource(id = R.string.bg_log_in_right_leaf_text),
@@ -172,6 +176,7 @@ fun Background(
                     .align(Alignment.TopEnd)
                     .padding(bottom = 6.dp)
             )
+
             Image(
                 painter = painterResource(id = drawable.bg_log_in_left_leaf_for_mobile),
                 contentDescription = stringResource(id = R.string.bg_log_in_left_leaf_text),

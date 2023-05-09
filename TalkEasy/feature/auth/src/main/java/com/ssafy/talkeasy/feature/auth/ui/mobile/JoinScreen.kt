@@ -52,6 +52,7 @@ internal fun JoinRouteProtector(
             onJoinMember()
         }
     }
+
     JoinScreen(
         modifier = modifier,
         onJoinButtonClick = {
@@ -86,6 +87,7 @@ internal fun JoinScreen(
                 setDialogState(false)
             }
         )
+
         JoinContent(
             modifier = modifier,
             onJoinButtonClick = onJoinButtonClick,
@@ -123,17 +125,20 @@ internal fun JoinContent(
                 style = typography.titleLarge,
                 fontWeight = FontWeight.Bold
             )
+
             EditProfile(
                 size = 110,
                 profile = profile,
                 textStyle = typography.titleLarge
             ) { onProfileClick() }
+
             CustomTextField(
                 nickName = nickName,
                 onValueChange = setNickName,
                 label = stringResource(id = R.string.content_name),
                 textStyle = typography.bodyLarge
             )
+
             WideSeedButton(
                 onClicked = { onJoinButtonClick(nickName) },
                 text = stringResource(id = R.string.content_join),

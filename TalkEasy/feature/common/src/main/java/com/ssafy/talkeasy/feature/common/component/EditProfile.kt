@@ -58,12 +58,14 @@ fun EditProfile(
                 .size(size.dp)
                 .clip(CircleShape)
         )
+
         Box(
             modifier = Modifier
                 .size(size.dp)
                 .clip(CircleShape)
                 .background(dimens)
         )
+
         Text(
             text = stringResource(id = R.string.content_select),
             color = md_theme_light_background,
@@ -112,6 +114,7 @@ fun ShowProfileDialog(
             context.toast(context.getString(R.string.content_gallery_failed_message))
         }
     }
+
     if (visible) {
         CustomAlertDialog(
             onDismissRequest = { onDismissRequest() },
@@ -136,6 +139,7 @@ fun ShowProfileDialog(
                                 fontWeight = FontWeight.Bold
                             )
                         }
+
                         item {
                             Text(
                                 text = stringResource(id = R.string.content_camera_select),
@@ -148,6 +152,7 @@ fun ShowProfileDialog(
                                     }
                             )
                         }
+
                         item {
                             Text(
                                 text = stringResource(id = R.string.content_gallery_select),

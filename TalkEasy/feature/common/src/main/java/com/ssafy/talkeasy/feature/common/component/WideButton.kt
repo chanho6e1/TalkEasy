@@ -24,6 +24,7 @@ fun WideSeedButton(
         contentColor = md_theme_light_onBackground,
         containerColor = seed
     )
+
     Button(
         modifier = modifier.fillMaxWidth(),
         onClick = onClicked,

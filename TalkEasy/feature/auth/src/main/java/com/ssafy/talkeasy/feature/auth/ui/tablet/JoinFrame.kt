@@ -87,6 +87,7 @@ internal fun JoinRouteWard(
             onJoinMember()
         }
     }
+
     JoinFrame(
         modifier = modifier,
         onJoinButtonClick = {
@@ -117,6 +118,7 @@ fun JoinFrame(
     val (dialogState: Boolean, setDialogState: (Boolean) -> Unit) = remember {
         mutableStateOf(false)
     }
+
     Box() {
         ShowProfileDialog(
             modifier = modifier,
@@ -128,6 +130,7 @@ fun JoinFrame(
                 setDialogState(false)
             }
         )
+
         JoinContent(
             modifier = modifier,
             onJoinButtonClick = onJoinButtonClick,
@@ -169,11 +172,13 @@ internal fun JoinContent(
                 style = welcomeBold32,
                 fontWeight = FontWeight.Bold
             )
+
             EditProfile(
                 size = 150,
                 profile = profile,
                 textStyle = welcomeBold30
             ) { onProfileClick() }
+
             Column(
                 modifier = modifier,
                 verticalArrangement = Arrangement.spacedBy(20.dp)
@@ -182,6 +187,7 @@ internal fun JoinContent(
                 SegmentedButtonSexual(onChangeGender = onChangeGender)
                 BirthPicker(onChangeBirthDate = onChangeBirthDate)
             }
+
             WideSeedButton(
                 onClicked = { onJoinButtonClick(nickName) },
                 text = stringResource(id = R.string.content_join),
@@ -210,12 +216,15 @@ fun NameTextField(
         errorLabelColor = md_theme_light_error,
         errorIndicatorColor = md_theme_light_error
     )
+
     Column {
         Text(
             text = stringResource(R.string.content_name),
             style = typography.titleMedium
         )
+
         Spacer(modifier = modifier.height(4.dp))
+
         TextField(
             modifier = modifier.fillMaxWidth(),
             value = nickName,

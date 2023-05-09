@@ -33,6 +33,7 @@ fun MessageCount(modifier: Modifier = Modifier, contentText: Int = 55) {
                     .clip(CircleShape)
                     .background(sunset_orange)
             )
+
             Text(
                 modifier = modifier,
                 color = md_theme_light_background,

@@ -49,6 +49,7 @@ internal fun LoginRouteWard(
             viewModel.resetMemberState()
         }
     }
+
     when (memberState) {
         "NOT_MEMBER" -> {
             onIsNotMember()
@@ -57,6 +58,7 @@ internal fun LoginRouteWard(
             onIsLoginMember()
         }
     }
+
     LoginFrame(
         modifier = modifier,
         onSuccessEvent = viewModel::onKakaoLoginSuccess,
@@ -115,6 +117,7 @@ fun LoginFrame(
                 contentDescription = stringResource(R.string.bg_main_wave_text),
                 contentScale = ContentScale.FillWidth
             )
+
             Image(
                 painter = painterResource(id = drawable.bg_log_in_right_leaf_for_tablet),
                 contentDescription = stringResource(id = R.string.bg_log_in_right_leaf_text),
@@ -132,6 +135,7 @@ fun LoginFrame(
                     .align(Alignment.BottomStart)
                     .padding(end = 128.dp, top = 95.dp)
             )
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
@@ -147,6 +151,7 @@ fun LoginFrame(
                             .size(200.dp)
                     )
                 }
+
                 item {
                     IconButton(
                         onClick = { onLoginButtonClicked() },

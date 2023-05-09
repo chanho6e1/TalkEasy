@@ -54,6 +54,7 @@ internal fun WelcomeScreen(
                     textStyle = typography.titleMedium,
                     bottomPadding = 50
                 )
+
                 Image(
                     painter = painterResource(id = Common.bg_log_in_wave_for_mobile),
                     contentDescription = stringResource(id = R.string.bg_main_wave_text),

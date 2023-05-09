@@ -38,6 +38,7 @@ fun CustomTextField(
         errorLabelColor = md_theme_light_error,
         errorIndicatorColor = md_theme_light_error
     )
+
     OutlinedTextField(
         value = nickName,
         onValueChange = onValueChange,
