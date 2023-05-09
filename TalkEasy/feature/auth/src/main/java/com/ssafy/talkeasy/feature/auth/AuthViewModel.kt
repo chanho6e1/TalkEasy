@@ -53,7 +53,7 @@ class AuthViewModel @Inject constructor(
                 if (value.data.status == 200) {
                     // login success
                     _memberState.value = "MEMBER"
-                    sharedPreferences.accessToken = value.data.data.jwt
+                    sharedPreferences.accessToken = value.data.data.token
                     _name.value = value.data.data.name
                     Log.d("requestLogin", "requestLogin-JWT : ${sharedPreferences.accessToken}")
                 } else if (value.data.status == 201) {
