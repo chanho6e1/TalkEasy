@@ -51,8 +51,6 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 
-    implementation(libs.lottie.compose)
-
     implementation(project(":core:domain"))
     implementation(project(":feature:common"))
 }

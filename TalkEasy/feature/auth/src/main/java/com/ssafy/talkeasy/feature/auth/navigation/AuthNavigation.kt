@@ -9,7 +9,7 @@ import com.ssafy.talkeasy.feature.auth.ui.mobile.JoinRouteProtector
 import com.ssafy.talkeasy.feature.auth.ui.mobile.LoginRouteProtector
 import com.ssafy.talkeasy.feature.auth.ui.tablet.JoinRouteWard
 import com.ssafy.talkeasy.feature.auth.ui.tablet.LoginRouteWard
-import com.ssafy.talkeasy.feature.auth.ui.tablet.WelcomeRoute
+import com.ssafy.talkeasy.feature.auth.ui.tablet.WelcomeRouteWard
 
 const val loginRouteProtector = "login_route_protector"
 const val joinRouteProtector = "join_route_protector"
@@ -81,6 +81,6 @@ fun NavGraphBuilder.joinScreen(navController: NavController, onJoinMember: () ->
 
 fun NavGraphBuilder.welcomeScreen() {
     composable(route = welcomeRouteWard) {
-        WelcomeRoute()
+        WelcomeRouteWard()
     }
 }

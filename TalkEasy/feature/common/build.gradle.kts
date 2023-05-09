@@ -44,6 +44,8 @@ dependencies {
 
     implementation(libs.glide.compose)
 
+    implementation(libs.lottie.compose)
+
     implementation(project(":core:domain"))
 }
 
