@@ -6,14 +6,12 @@ import com.talkeasy.server.common.exception.ResourceNotFoundException;
 import com.talkeasy.server.domain.aac.AAC;
 import com.talkeasy.server.domain.aac.AACCategory;
 import com.talkeasy.server.domain.aac.CustomAAC;
-import com.talkeasy.server.domain.member.Follow;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.aac.CustomAACDto;
 import com.talkeasy.server.dto.aac.ResponseAACDto;
 import com.talkeasy.server.dto.chat.ChatTextDto;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
 import com.theokanning.openai.OpenAiService;
-import com.theokanning.openai.completion.CompletionChoice;
 import com.theokanning.openai.completion.CompletionRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
@@ -25,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -33,11 +32,9 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static com.mongodb.client.model.Filters.eq;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,6 +48,8 @@ class AACServiceTest {
     private AACService aacService;
     @Mock
     private MongoTemplate mongoTemplate;
+    @Value("${openAI.api.key}")
+    private String apiKey;
 
     @Test
     @DisplayName("[GET] 카테고리 목록")
@@ -334,9 +333,26 @@ class AACServiceTest {
     }
 
     @Test
-    @DisplayName("[GET] 문장 생성")
+    @DisplayName("[GET] 문장생성")
     @Disabled
     void getGenereteText() {
+
+//        OpenAiService service = new OpenAiService(apiKey);
+//
+//        ChatTextDto input = new ChatTextDto();
+//        input.setText("Input text");
+//
+//        String inputText = "'" + input.getText() + " .' 이 단어들을 어순 맞게 문장 완성해줘.";
+//
+//        CompletionRequest completionRequest = CompletionRequest.builder()
+//                .prompt(inputText)
+//                .model("text-davinci-003")
+//                .maxTokens(100) // 원하는 출력 길이 조정 (선택사항)
+//                .temperature(0.5) // 다양성 조절 (선택사항)
+//                .n(1)
+//                .build();
+//
+//        String result = service.createCompletion(completionRequest).getChoices().get(0).getText().strip().replace("\"", "");
 
     }
 
