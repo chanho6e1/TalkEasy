@@ -1,6 +1,7 @@
 package com.talkeasy.server.controller.member;
 
 import com.talkeasy.server.common.CommonResponse;
+import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.service.member.FollowService;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
 import io.swagger.annotations.Api;
@@ -28,12 +29,10 @@ public class FollowController {
 
     @ApiOperation(value = "팔로우", notes = "팔로우 한다")
     @PostMapping("/{toUserId}")
-    public ResponseEntity<?> follow(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User,
+    public ResponseEntity<CommonResponse> follow(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User,
                                     @PathVariable("toUserId") String toUserId) {
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, followService.follow(oAuth2User.getId(), toUserId)));
-//        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-//                HttpStatus.CREATED, followService.follow(userId, toUserId)));
 
     }
 
@@ -44,18 +43,15 @@ public class FollowController {
                                                    @PathVariable("toUserId") String toUserId) {
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, followService.deleteByFollow(oAuth2User.getId(), toUserId)));
-//        return ResponseEntity.ok().body(CommonResponse.of(
-//                HttpStatus.OK, followService.deleteByFollow(userId, toUserId)));
+
 
     }
 
     @ApiOperation(value = "나의 팔로워 목록을 조회한다", notes = "나의 팔로우 목록을 조회한다")
     @GetMapping()
-    public ResponseEntity<?> getfollow(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) {
+    public ResponseEntity<PagedResponse> getfollow(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) {
         return ResponseEntity.ok().body((
                 followService.getfollow(oAuth2User.getId())));
-//        return ResponseEntity.ok().body((
-//                followService.getfollow(userId)));
     }
 
 
@@ -66,7 +62,6 @@ public class FollowController {
     @PutMapping("/protector/{targetId}")
     public ResponseEntity<CommonResponse> putProtector(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User, @PathVariable String targetId) {
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(HttpStatus.OK, followService.putProtector(oAuth2User.getId(), targetId)));
-//        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("주보호자 등록/변경 성공", followService.putProtector("64475bb2970b4a6441e96c50", targetId)));
     }
 
     // 위치정보 토글
@@ -74,6 +69,5 @@ public class FollowController {
     @PutMapping("/location/{targetId}")
     public ResponseEntity<CommonResponse> putLocationStatus(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User, @PathVariable String targetId) {
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(HttpStatus.OK, followService.putLocationStatus(oAuth2User.getId(), targetId)));
-//        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of("위치정보 접근권한 변경 성공", followService.putLocationStatus("64475bb2970b4a6441e96c50", targetId)));
     }
 }

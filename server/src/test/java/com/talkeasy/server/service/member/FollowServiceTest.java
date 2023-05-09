@@ -25,6 +25,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 class FollowServiceTest {
@@ -57,7 +58,7 @@ class FollowServiceTest {
         Member fromUser = Member.builder().id("1").name("unfollowTest").age(10).deleteStatus(false).build();
         Mockito.when(mongoTemplate.findOne(any(Query.class), eq(Member.class))).thenReturn(fromUser);
 
-        Follow existFollow = Follow.builder().id("3").fromUserId("1").toUserId("2").memo(null).MainStatus(false).locationStatus(false).build();
+        Follow existFollow = Follow.builder().id("3").fromUserId("1").toUserId("2").memo(null).mainStatus(false).locationStatus(false).build();
 
         Mockito.when(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is("1").and("toUserId").is("2")), Follow.class)).thenReturn(existFollow);
 
@@ -104,7 +105,7 @@ class FollowServiceTest {
 
     @Test
     @DisplayName("언팔로우 하기 - 언팔로우할 유저가 없는 경우(fromUser가 없는 경우)")
-    void deleteByFollowCaseNoFromUser() {
+    void deleteByFollowCaseNotExistFromUser() {
 
         Mockito.when(mongoTemplate.findOne(any(Query.class), eq(Member.class))).thenReturn(null);
 
@@ -189,10 +190,83 @@ class FollowServiceTest {
     }
 
     @Test
-    void putProtector() {
+    @DisplayName("주보호자 등록 - 성공(targetUser가 기존 주보호자일 경우)")
+    void putProtectorCaseTargetUserisAlreadyMainStatus() {
+
+        Follow TargetUserfollow = Follow.builder().id("3").fromUserId("1").toUserId("2").mainStatus(true).build();
+        Mockito.when(mongoTemplate.findOne(any(Query.class), eq(Follow.class))).thenReturn(TargetUserfollow);
+
+        String result = followService.putProtector("1", "2");
+
+        TargetUserfollow.setMainStatus(false);
+
+        verify(mongoTemplate, times(2)).findOne(any(Query.class), eq(Follow.class));
+        verify(mongoTemplate, times(1)).save(eq(TargetUserfollow));
+        verify(mongoTemplate, times(1)).save(any(Follow.class));
+
+        assertThat(TargetUserfollow.getToUserId().equals(result));
+
     }
 
     @Test
+    @DisplayName("주보호자 등록 - 성공(주보호자 설정이 아직 되어있지 않은 경우)")
+    void putProtectorCaseTargetUserisNotMainStatus() {
+
+        Follow follow = Follow.builder().id("3").fromUserId("1").toUserId("2").mainStatus(false).build();
+        Mockito.when(mongoTemplate.findOne(eq(Query.query(Criteria.where("toUserId").is("2")
+                .and("fromUserId").is("1"))), eq(Follow.class))).thenReturn(follow);
+
+        Mockito.when(mongoTemplate.findOne(eq(Query.query(Criteria.where("mainStatus").is(true)
+                .and("fromUserId").is("1"))), eq(Follow.class))).thenReturn(null);
+
+        followService.putProtector("1", "2");
+
+        verify(mongoTemplate, times(1)).findOne(eq(Query.query(Criteria.where("toUserId").is("2")
+                .and("fromUserId").is("1"))), eq(Follow.class));
+        verify(mongoTemplate, times(1)).findOne(eq(Query.query(Criteria.where("mainStatus").is(true)
+                .and("fromUserId").is("1"))), eq(Follow.class));
+        verify(mongoTemplate, times(1)).save(any(Follow.class));
+
+    }
+
+    @Test
+    @DisplayName("주보호자 등록 - targetUser가 팔로우 목록에 없는 유저일 경우")
+    void putProtectorCaseNoTargetUser() {
+
+        Mockito.when(mongoTemplate.findOne(any(Query.class), eq(Follow.class))).thenReturn(null);
+
+        assertThatThrownBy(() -> followService.putProtector("1", "2"))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("친구목록에 존재하지 않는 사용자 입니다.");
+
+        verify(mongoTemplate, times(1)).findOne(any(Query.class), eq(Follow.class));
+
+    }
+
+    @Test
+    @DisplayName("위치정보 접근권한 설정 - 정상")
     void putLocationStatus() {
+
+        Follow follow = Follow.builder().id("3").fromUserId("1").toUserId("2").mainStatus(false).locationStatus(false).build();
+        Mockito.when(mongoTemplate.findOne(any(Query.class), eq(Follow.class))).thenReturn(follow);
+
+        followService.putLocationStatus("1", "2");
+
+        verify(mongoTemplate, times(1)).findOne(any(Query.class), eq(Follow.class));
+        verify(mongoTemplate, times(1)).save(any(Follow.class));
+    }
+
+    @Test
+    @DisplayName("위치정보 접근권한 설정 - targetUser를 팔로우 하지 않은 경우")
+    void putLocationStatusCaseNotFollow() {
+
+        Mockito.when(mongoTemplate.findOne(any(Query.class), eq(Follow.class))).thenReturn(null);
+
+        assertThatThrownBy(() -> followService.putLocationStatus("1", "2"))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessageContaining("친구목록에 존재하지 않는 사용자 입니다.");
+
+        verify(mongoTemplate, times(1)).findOne(any(Query.class), eq(Follow.class));
+        verify(mongoTemplate, never()).save(any(Follow.class));
     }
 }
