@@ -50,7 +50,7 @@ public class OAuthService {
         Member member = memberService.findUserByEmailAndRole(email, role);
         if (member == null || member.getRole() != role) {
             log.info("========== 데이터 베이스에 아이디(login_id)가 없다.");
-            return null;
+            return new LoginResponse(null, null);
         }
         token = jwtTokenProvider.createAccessToken(member.getId());
 
