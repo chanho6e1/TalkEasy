@@ -35,9 +35,9 @@ class AuthViewModel @Inject constructor(
 
     private val role = MutableStateFlow(0)
 
-    private val _gender = MutableStateFlow(0)
+    private val gender = MutableStateFlow(0)
 
-    private val _birthDate = MutableStateFlow("")
+    private val birthDate = MutableStateFlow("")
 
     fun resetMemberState() {
         _memberState.value = ""
@@ -50,6 +50,7 @@ class AuthViewModel @Inject constructor(
                     // login success
                     _memberState.value = "MEMBER"
                     sharedPreferences.accessToken = value.data.data
+                    Log.d("requestLogin", "requestLogin-JWT : ${sharedPreferences.accessToken}")
                 } else if (value.data.status == 201) {
                     // no member
                     _memberState.value = "NOT_MEMBER"
@@ -57,7 +58,6 @@ class AuthViewModel @Inject constructor(
             }
             is Resource.Error -> Log.e("requestLogin", "requestLogin: ${value.errorMessage}")
         }
-        Log.d("requestLogin", "requestLogin-JWT : ${sharedPreferences.accessToken}")
     }
 
     fun requestJoin(nickname: String) = viewModelScope.launch {
@@ -65,8 +65,8 @@ class AuthViewModel @Inject constructor(
             accessToken = kakaoAccessToken.value,
             role = role.value,
             name = nickname,
-            birthDate = _birthDate.value,
-            gender = _gender.value
+            birthDate = birthDate.value,
+            gender = gender.value
         )
         member.let {
             when (val value = joinUseCase(member, profileImg.value)) {
@@ -95,13 +95,13 @@ class AuthViewModel @Inject constructor(
 
     fun setGender(mGender: String) {
         when (mGender) {
-            "여성" -> _gender.value = 0
-            "남성" -> _gender.value = 1
+            "여성" -> gender.value = 0
+            "남성" -> gender.value = 1
         }
     }
 
     fun setBirthDate(mBirthDate: String) {
-        _birthDate.value = mBirthDate
+        birthDate.value = mBirthDate
     }
 
     private fun bitmapConvertFile(bitmap: Bitmap, strFilePath: String) {
