@@ -32,10 +32,19 @@ public class Member {
     @LastModifiedDate
     private LocalDateTime updatedTime;
 
-    public Member setUserInfo(MemberInfoUpdateRequest request, String imageUrl) {
+    public Member setUserInfo(int age, MemberInfoUpdateRequest request, String imageUrl) {
+        this.age = age;
         this.name = request.getName();
         this.gender = request.getGender();
         this.birthDate = request.getBirthDate();
+        this.imageUrl = imageUrl != null ? imageUrl : "";
+        return this;
+    }
+    public Member setUserInfo(MemberInfoUpdateRequest request, String imageUrl) {
+        this.age = null;
+        this.name = request.getName();
+        this.gender = null;
+        this.birthDate = null;
         this.imageUrl = imageUrl != null ? imageUrl : "";
         return this;
     }
