@@ -20,14 +20,25 @@ import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
-internal fun WelcomeRouteProtector(modifier: Modifier = Modifier) {
+internal fun WelcomeRouteProtector(
+    modifier: Modifier = Modifier,
+    onFinishedLoading: () -> Unit = {},
+) {
     Box() {
-        WelcomeScreen(modifier = Modifier, memberName = "일이삼사오육칠팔")
+        WelcomeScreen(
+            modifier = Modifier,
+            memberName = "일이삼사오육칠팔",
+            onFinishedLoading = onFinishedLoading
+        )
     }
 }
 
 @Composable
-internal fun WelcomeScreen(modifier: Modifier = Modifier, memberName: String) {
+internal fun WelcomeScreen(
+    modifier: Modifier = Modifier,
+    memberName: String,
+    onFinishedLoading: () -> Unit = {},
+) {
     val isLoading = remember {
         mutableStateOf(false)
     }

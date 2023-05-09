@@ -11,6 +11,8 @@ import com.ssafy.talkeasy.feature.auth.navigation.navigateToJoin
 import com.ssafy.talkeasy.feature.auth.navigation.navigateToWelcome
 import com.ssafy.talkeasy.feature.auth.navigation.welcomeScreen
 
+private const val ROLE = 1
+
 @Composable
 fun AppNavHost(
     navController: NavHostController,
@@ -24,20 +26,25 @@ fun AppNavHost(
     ) {
         loginScreen(
             onIsNotMember = {
-                navController.navigateToJoin(role = 1)
+                navController.navigateToJoin(role = ROLE)
             },
             onIsLoginMember = {
-                navController.navigateToWelcome()
+                navController.navigateToWelcome(role = ROLE)
             },
-            role = 1
+            role = ROLE
         )
         joinScreen(
             navController = navController,
             onJoinMember = {
-                navController.navigateToWelcome()
+                navController.navigateToWelcome(role = ROLE)
             },
-            role = 1
+            role = ROLE
         )
-        welcomeScreen()
+        welcomeScreen(
+            onFinishedLoading = {
+                // aac로 이동
+            },
+            role = ROLE
+        )
     }
 }

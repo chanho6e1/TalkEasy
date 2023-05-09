@@ -7,6 +7,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.ssafy.talkeasy.feature.auth.ui.mobile.JoinRouteProtector
 import com.ssafy.talkeasy.feature.auth.ui.mobile.LoginRouteProtector
+import com.ssafy.talkeasy.feature.auth.ui.mobile.WelcomeRouteProtector
 import com.ssafy.talkeasy.feature.auth.ui.tablet.JoinRouteWard
 import com.ssafy.talkeasy.feature.auth.ui.tablet.LoginRouteWard
 import com.ssafy.talkeasy.feature.auth.ui.tablet.WelcomeRouteWard
@@ -16,6 +17,7 @@ const val joinRouteProtector = "join_route_protector"
 const val loginRouteWard = "login_route_ward"
 const val joinRouteWard = "join_route_ward"
 const val welcomeRouteWard = "welcome_route_ward"
+const val welcomeRouteProtector = "welcome_route_protector"
 
 fun NavController.navigateToLogin(navOptions: NavOptions? = null, role: Int) {
     if (role == 0) {
@@ -33,8 +35,12 @@ fun NavController.navigateToJoin(navOptions: NavOptions? = null, role: Int) {
     }
 }
 
-fun NavController.navigateToWelcome(navOptions: NavOptions? = null) {
-    this.navigate(welcomeRouteWard, navOptions)
+fun NavController.navigateToWelcome(navOptions: NavOptions? = null, role: Int) {
+    if (role == 0) {
+        this.navigate(welcomeRouteProtector, navOptions)
+    } else {
+        this.navigate(welcomeRouteWard, navOptions)
+    }
 }
 
 fun NavGraphBuilder.loginScreen(
@@ -79,8 +85,14 @@ fun NavGraphBuilder.joinScreen(navController: NavController, onJoinMember: () ->
     }
 }
 
-fun NavGraphBuilder.welcomeScreen() {
-    composable(route = welcomeRouteWard) {
-        WelcomeRouteWard()
+fun NavGraphBuilder.welcomeScreen(onFinishedLoading: () -> Unit, role: Int) {
+    if (role == 0) {
+        composable(route = welcomeRouteProtector) {
+            WelcomeRouteProtector(onFinishedLoading = onFinishedLoading)
+        }
+    } else {
+        composable(route = welcomeRouteWard) {
+            WelcomeRouteWard(onFinishedLoading = onFinishedLoading)
+        }
     }
 }

@@ -16,12 +16,20 @@ import com.ssafy.talkeasy.feature.common.ui.theme.welcomeBold40
 
 @Preview(showBackground = true, widthDp = 1429, heightDp = 857)
 @Composable
-fun WelcomeRouteWard(modifier: Modifier = Modifier) {
-    WelcomeFrame(modifier = modifier, memberName = "일이삼사오육칠팔구")
+fun WelcomeRouteWard(modifier: Modifier = Modifier, onFinishedLoading: () -> Unit = {}) {
+    WelcomeFrame(
+        modifier = modifier,
+        memberName = "일이삼사오육칠팔구",
+        onFinishedLoading = onFinishedLoading
+    )
 }
 
 @Composable
-internal fun WelcomeFrame(modifier: Modifier = Modifier, memberName: String) {
+internal fun WelcomeFrame(
+    modifier: Modifier = Modifier,
+    memberName: String,
+    onFinishedLoading: () -> Unit = {},
+) {
     val isLoading = remember {
         mutableStateOf(false)
     }

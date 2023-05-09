@@ -8,8 +8,12 @@ import com.ssafy.talkeasy.feature.auth.navigation.joinScreen
 import com.ssafy.talkeasy.feature.auth.navigation.loginRouteProtector
 import com.ssafy.talkeasy.feature.auth.navigation.loginScreen
 import com.ssafy.talkeasy.feature.auth.navigation.navigateToJoin
+import com.ssafy.talkeasy.feature.auth.navigation.navigateToWelcome
+import com.ssafy.talkeasy.feature.auth.navigation.welcomeScreen
 import com.ssafy.talkeasy.feature.follow.navigation.followListScreen
 import com.ssafy.talkeasy.feature.follow.navigation.navigateToFollowList
+
+private const val ROLE = 0
 
 @Composable
 fun AppNavHost(
@@ -24,19 +28,25 @@ fun AppNavHost(
     ) {
         loginScreen(
             onIsNotMember = {
-                navController.navigateToJoin(role = 0)
+                navController.navigateToJoin(role = ROLE)
             },
             onIsLoginMember = {
-                navController.navigateToFollowList()
+                navController.navigateToWelcome(role = ROLE)
             },
-            role = 0
+            role = ROLE
         )
         joinScreen(
             navController = navController,
             onJoinMember = {
+                navController.navigateToWelcome(role = ROLE)
+            },
+            role = ROLE
+        )
+        welcomeScreen(
+            onFinishedLoading = {
                 navController.navigateToFollowList()
             },
-            role = 0
+            role = ROLE
         )
         followListScreen()
     }
