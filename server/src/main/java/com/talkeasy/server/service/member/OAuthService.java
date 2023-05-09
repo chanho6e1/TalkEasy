@@ -6,6 +6,7 @@ import com.talkeasy.server.authentication.JwtTokenProvider;
 import com.talkeasy.server.common.exception.NotFoundException;
 import com.talkeasy.server.config.s3.S3Uploader;
 import com.talkeasy.server.domain.member.Member;
+import com.talkeasy.server.dto.user.LoginResponse;
 import com.talkeasy.server.dto.user.MemberDetailRequest;
 import com.talkeasy.server.service.chat.ChatUserQueueService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +32,7 @@ public class OAuthService {
     private final ChatUserQueueService chatUserQueueService;
     private final S3Uploader s3Uploader;
 
-    public String getToken(String accessToken, int role) {
+    public LoginResponse getToken(String accessToken, int role) {
         log.info("========== AccessToken : {} ", accessToken);
 
         String email = null;
@@ -50,7 +51,8 @@ public class OAuthService {
             return null;
         }
         token = jwtTokenProvider.createAccessToken(member.getId());
-        return token;
+
+        return new LoginResponse(member.getName(), token);
     }
 
     public String getEmail(String token) throws IOException {
