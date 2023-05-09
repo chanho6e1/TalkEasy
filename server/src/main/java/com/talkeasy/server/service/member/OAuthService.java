@@ -39,15 +39,17 @@ public class OAuthService {
 
         try {
             email = getEmail(accessToken);
+            log.info("========== email : {} ", email);
+
         } catch (IOException e) {
             log.info("========== exception 발생 : {} ", e.getMessage());
         }
-        Member member = memberService.findUserByEmail(email);
+        Member member = memberService.findUserByEmailAndRole(email, role);
         if (member == null || member.getRole() != role) {
             log.info("========== 데이터 베이스에 아이디(login_id)가 없다.");
             return null;
         }
-        token = jwtTokenProvider.createAccessToken(email);
+        token = jwtTokenProvider.createAccessToken(member.getId());
         return token;
     }
 
@@ -103,6 +105,7 @@ public class OAuthService {
             log.info("============file: " + multipartFile);
             saveFileName = s3Uploader.uploadFiles(multipartFile, "talkeasy");
         } catch (Exception e) {
+            log.info("========== exception 발생 : {}", e.getMessage());
         }
 
         String userId = memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(saveFileName).role(member.getRole()).gender(member.getGender()).age(member.getAge()).birthDate(member.getBirthDate()).build());
@@ -110,7 +113,7 @@ public class OAuthService {
         //채팅에 사용할 유저별 큐 생성
         chatUserQueueService.createUserQueue(userId);
 
-        return jwtTokenProvider.createAccessToken(email);
+        return jwtTokenProvider.createAccessToken(userId);
     }
 
 }
