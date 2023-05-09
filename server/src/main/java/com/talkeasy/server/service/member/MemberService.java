@@ -1,5 +1,5 @@
 package com.talkeasy.server.service.member;
-
+import java.time.LocalDate;
 import com.talkeasy.server.config.s3.S3Uploader;
 import com.talkeasy.server.domain.aac.CustomAAC;
 import com.talkeasy.server.domain.app.UserAppToken;
@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
@@ -53,7 +54,11 @@ public class MemberService {
         try {
             log.info("============file: " + multipartFile);
             String saveFileName = s3Uploader.uploadFiles(multipartFile, "talkeasy");
-            member.setUserInfo(request, saveFileName);
+            if(member.getRole() == 0){ // 보호자의 경우
+                member.setUserInfo(request, saveFileName);
+            }else{  // 피보호자의 경우
+                member.setUserInfo(calcAge(request.getBirthDate()), request, saveFileName);
+            }
         } catch (Exception e) {
             log.info("========== exception 발생 : {}", e.getMessage());
         }
@@ -104,6 +109,14 @@ public class MemberService {
         }
         amqpAdmin.deleteQueue(queueName + "." + roomId + "." + userId);
     }
+    private int calcAge(String birthDate){
+        LocalDate now = LocalDate.now();
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy");
 
+        int nowYear = Integer.parseInt(now.format(formatter));
+        int birthYear = Integer.parseInt(birthDate.substring(0,4));
+
+        return nowYear-birthYear+1;
+    }
 }

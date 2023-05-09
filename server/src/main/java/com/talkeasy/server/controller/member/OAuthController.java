@@ -1,6 +1,7 @@
 package com.talkeasy.server.controller.member;
 
 import com.talkeasy.server.common.CommonResponse;
+import com.talkeasy.server.dto.user.LoginResponse;
 import com.talkeasy.server.dto.user.MemberDetailRequest;
 import com.talkeasy.server.service.member.OAuthService;
 import io.swagger.annotations.Api;
@@ -28,16 +29,16 @@ public class OAuthController {
     public ResponseEntity<CommonResponse> login(@ApiParam("") @RequestParam(value = "accessToken") String accessToken, @RequestParam(value = "role") int role) { // 인가 코드
         log.info("========== /login/oauth accessToken : {}", accessToken);
 
-        String token = null;
-        token = oAuthService.getToken(accessToken, role);
 
-        if (token == null) {
+        LoginResponse response = oAuthService.getToken(accessToken, role);
+
+        if (response == null) {
             return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                     HttpStatus.CREATED, ""));
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                HttpStatus.OK, token));
+                HttpStatus.OK, response));
     }
 
     @ApiOperation(value = "회원정보 등록하기", notes = "return : jwt 토큰 , role(0 : 보호자, 1 : 피보호자), gender(0 : 남자, 1 : 여자),  * email : 입력제외")
