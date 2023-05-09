@@ -10,8 +10,8 @@ public class ArgumentMismatchException extends RuntimeException  {
 
     private ErrorResponse errorResponse;
 
-    public ArgumentMismatchException(Object data) {
-        super();
+    public ArgumentMismatchException(String data) {
+        super(data);
         setErrResponse(data);
     }
 
