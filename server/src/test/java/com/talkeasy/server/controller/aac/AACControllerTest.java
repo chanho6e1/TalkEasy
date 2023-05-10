@@ -30,6 +30,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,7 +44,7 @@ class AACControllerTest {
     private AACService aacService;
     @Mock
     private TTSService ttsService;
-    
+
     private MockMvc mockMvc;
 
     @BeforeEach
@@ -91,7 +92,8 @@ class AACControllerTest {
                         .param("fixed", String.valueOf(fixed))
                         .param("offset", String.valueOf(offset))
                         .param("size", String.valueOf(size))
-                        .param("member", String.valueOf(member)))
+                        .with(csrf()))
+//                        .param("member", String.valueOf(member)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data[0].id").value("1"))
                 .andExpect(jsonPath("$.data[0].title").value("안녕하세요"))
@@ -129,6 +131,8 @@ class AACControllerTest {
 
         when(aacService.getAacByCustom(anyString(), anyInt(), anyInt())).thenReturn(result);
 
+
+
         ResponseEntity<?> response = aacController.getCategoryContents(categoryId, fixed, offset, size, member);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -140,11 +144,11 @@ class AACControllerTest {
 
     @Test
     @DisplayName("[GET] RelativeVerb_By_aacId")
-    void getRelativeVerb() {
+    void getRelativeVerb() throws Exception {
         String aacId = "22";
 
-        ResponseAACDto aac1 = ResponseAACDto.builder().id("112").title("매워요").build();
-        ResponseAACDto aac2 = ResponseAACDto.builder().id("113").title("짜요").build();
+        ResponseAACDto aac1 = ResponseAACDto.builder().id("112").title("매워요").category("1").build();
+        ResponseAACDto aac2 = ResponseAACDto.builder().id("113").title("짜요").category("1").build();
 
         List<ResponseAACDto> aacList = List.of(aac1, aac2);
 
@@ -152,17 +156,40 @@ class AACControllerTest {
 
         when(aacService.getRelativeVerb(anyString())).thenReturn(serviceReturnList);
 
-        ResponseEntity<?> response = aacController.getRelativeVerb(aacId);
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/aac/relative-verb/{aacId}", aacId))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data[0].id").value("112"))
+                .andExpect(jsonPath("$.data[0].title").value("매워요"))
+                .andExpect(jsonPath("$.data[0].category").value("1"))
+                .andExpect(jsonPath("$.data[1].id").value("113"))
+                .andExpect(jsonPath("$.data[1].title").value("짜요"))
+                .andExpect(jsonPath("$.data[1].category").value("1"))
+                .andReturn();;
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(serviceReturnList, response.getBody());
-
-        verify(aacService).getRelativeVerb(aacId);
+//        ResponseEntity<?> response = aacController.getRelativeVerb(aacId);
+//
+//        assertEquals(HttpStatus.OK, response.getStatusCode());
+//        assertEquals(serviceReturnList, response.getBody());
+//
+//        verify(aacService).getRelativeVerb(aacId);
     }
 
     @Test
     @DisplayName("[POST]커스텀 aac 등록")
     void postCustomAac() {
+
+//        mockMvc.perform(MockMvcRequestBuilders.get("/api/aac/relative-verb/{aacId}", aacId))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.data[0].id").value("112"))
+//                .andExpect(jsonPath("$.data[0].title").value("매워요"))
+//                .andExpect(jsonPath("$.data[0].category").value("1"))
+//                .andExpect(jsonPath("$.data[1].id").value("113"))
+//                .andExpect(jsonPath("$.data[1].title").value("짜요"))
+//                .andExpect(jsonPath("$.data[1].category").value("1"))
+//                .andReturn();;
+//
+//        mockMvc.perform(MockMvcRequestBuilders.post("/api/aac/custom")
+//                .pa)
     }
 
     @Test
