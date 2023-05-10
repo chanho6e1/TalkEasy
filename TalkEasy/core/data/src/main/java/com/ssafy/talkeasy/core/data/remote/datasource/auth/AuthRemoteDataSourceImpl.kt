@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import com.ssafy.talkeasy.core.data.remote.datasource.common.DefaultResponse
 import com.ssafy.talkeasy.core.data.remote.service.AuthApiService
 import com.ssafy.talkeasy.core.domain.entity.request.MemberRequestBody
-import com.ssafy.talkeasy.core.domain.entity.response.Auth
 import java.io.File
 import javax.inject.Inject
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
@@ -16,7 +15,10 @@ class AuthRemoteDataSourceImpl @Inject constructor(
     private val authApiService: AuthApiService,
 ) : AuthRemoteDataSource {
 
-    override suspend fun requestLogin(accessToken: String, role: Int): DefaultResponse<Auth> =
+    override suspend fun requestLogin(
+        accessToken: String,
+        role: Int
+    ): DefaultResponse<AuthResponse> =
         authApiService.requestLogin(accessToken, role)
 
     override suspend fun requestJoin(
