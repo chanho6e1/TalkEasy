@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class KafkaConsumerService {
-    private final PostgresKafkaService postgresKafkaService;
+    private final LocationService locationService;
     private final ConsumerFactory<String, LocationDto> consumerFactory;
 
     public LocalDateTime convertTimestampToLocalDateTime(long timeStamp) {
@@ -51,7 +51,7 @@ public class KafkaConsumerService {
             }
             try {
                 if (!locationDtos.isEmpty()) {
-                    postgresKafkaService.bulk(locationDtos);
+                    locationService.bulk(locationDtos);
                 }
             } catch (Exception e) {
                 log.error("error : {}", e.getMessage());
