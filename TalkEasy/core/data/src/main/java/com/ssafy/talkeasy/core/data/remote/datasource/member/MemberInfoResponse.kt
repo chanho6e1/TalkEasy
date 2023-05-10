@@ -23,15 +23,14 @@ data class MemberInfoResponse(
     val birthDate: String?,
 ) : DataToDomainMapper<MemberInfo> {
 
-    override fun toDomainModel(): MemberInfo =
-        MemberInfo(
-            userId = id,
-            userName = userName,
-            email = email,
-            imageUrl = imageUrl,
-            role = role,
-            age = age,
-            gender = gender,
-            birthDate = birthDate
-        )
+    override fun toDomainModel(): MemberInfo = MemberInfo(
+        userId = id,
+        userName = userName,
+        email = email,
+        imageUrl = imageUrl,
+        role = role,
+        age = age,
+        gender = gender,
+        birthDate = birthDate
+    )
 }

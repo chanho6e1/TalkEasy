@@ -7,6 +7,8 @@ import com.ssafy.talkeasy.core.domain.entity.response.Follow
 data class FollowResponse(
     @SerializedName("userId")
     val userId: String,
+    @SerializedName("followId")
+    val followId: String,
     @SerializedName("userName")
     val userName: String,
     @SerializedName("imageUrl")
@@ -17,6 +19,8 @@ data class FollowResponse(
     val mainStatus: Boolean,
     @SerializedName("age")
     val age: Int?,
+    @SerializedName("gender")
+    val gender: Int?,
     @SerializedName("birthDate")
     val birthDate: String?,
     @SerializedName("locationStatus")
@@ -26,12 +30,14 @@ data class FollowResponse(
     override fun toDomainModel(): Follow =
         Follow(
             userId = userId,
+            followId = followId,
             userName = userName,
             imageUrl = imageUrl,
             memo = memo,
             mainStatus = mainStatus,
             age = age,
             birthDate = birthDate,
-            locationStatus = locationStatus
+            locationStatus = locationStatus,
+            gender = gender
         )
 }

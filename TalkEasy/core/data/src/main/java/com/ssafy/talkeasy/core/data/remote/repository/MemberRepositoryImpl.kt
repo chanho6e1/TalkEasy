@@ -15,6 +15,8 @@ class MemberRepositoryImpl @Inject constructor(
 
     override suspend fun requestMemberInfo(): Resource<Default<MemberInfo>> =
         wrapToResource(Dispatchers.IO) {
-            memberRemoteDataSource.requestMemberInfo().toDomainModel()
+            val defaultResponse = memberRemoteDataSource.requestMemberInfo()
+            val memberInfo = defaultResponse.data.toDomainModel()
+            Default(status = defaultResponse.status, data = memberInfo)
         }
 }

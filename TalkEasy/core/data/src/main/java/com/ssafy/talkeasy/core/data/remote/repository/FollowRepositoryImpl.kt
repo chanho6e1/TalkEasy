@@ -15,6 +15,12 @@ class FollowRepositoryImpl @Inject constructor(
 
     override suspend fun requestFollowList(): Resource<PagingDefault<List<Follow>>> =
         wrapToResource(Dispatchers.IO) {
-            followRemoteDataSource.requestFollowList().toDomainModel()
+            val pagingDefaultResponse = followRemoteDataSource.requestFollowList()
+            val follow = pagingDefaultResponse.data.map { it.toDomainModel() }
+            PagingDefault(
+                status = pagingDefaultResponse.status,
+                data = follow,
+                totalPages = pagingDefaultResponse.totalPages
+            )
         }
 }
