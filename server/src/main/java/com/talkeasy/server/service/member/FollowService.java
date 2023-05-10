@@ -55,9 +55,9 @@ public class FollowService {
 
         Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(myId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("member", "userId", myId));
 
-        Optional followOptional = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class));
+        Follow follow = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class)).orElse(null);
 
-        if (followOptional.isPresent()) {
+        if (follow!= null) {
             throw new ResourceAlreadyExistsException("이미 팔로우되어 있습니다");
         }
 
@@ -76,9 +76,11 @@ public class FollowService {
         deleteByFollowDetail(myId, toUserId);
         deleteByFollowDetail(toUserId, myId);
 
-        ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("users").all(toUserId, myId)), ChatRoom.class);
-        chatService.deleteRoom(chatRoom.getId(), myId);
+        ChatRoom chatRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("users").all(toUserId, myId)), ChatRoom.class)).orElse(null);
 
+        if(chatRoom!=null) {
+            chatService.deleteRoom(chatRoom.getId(), myId);
+        }
         return "언팔로우 성공";
     }
 
