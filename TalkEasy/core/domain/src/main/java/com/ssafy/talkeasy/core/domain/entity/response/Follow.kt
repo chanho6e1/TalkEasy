@@ -6,5 +6,7 @@ data class Follow(
     val imageUrl: String,
     val memo: String,
     val mainStatus: Boolean,
+    val age: Int?,
+    val birthDate: String?,
     val locationStatus: Boolean,
 )
