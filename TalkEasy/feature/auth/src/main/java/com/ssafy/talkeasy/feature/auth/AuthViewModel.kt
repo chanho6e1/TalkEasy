@@ -114,7 +114,7 @@ class AuthViewModel @Inject constructor(
         try {
             file.createNewFile()
             FileOutputStream(file).use { out ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, out)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out)
                 profileImg.value = file
             }
         } catch (e: Exception) {
