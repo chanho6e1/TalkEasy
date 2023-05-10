@@ -1,4 +1,4 @@
-package com.ssafy.talkeasy.feature.setting.ward
+package com.ssafy.talkeasy.feature.setting.ui.tablet
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
