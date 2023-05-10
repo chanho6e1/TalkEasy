@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 
-public interface PostgresKafkaRepository extends JpaRepository<Location, Long> {
+public interface LocationRepository extends JpaRepository<Location, Long> {
+
 
 }

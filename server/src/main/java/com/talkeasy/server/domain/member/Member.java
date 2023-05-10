@@ -24,6 +24,7 @@ public class Member {
     private Integer gender; //0:남/1:여
     private Integer age;
     private String birthDate;
+    private Boolean locationStatus; // 위치정보 제공 동의 여부 설정 :: 피보호자만 사용
     private Boolean deleteStatus; // true:탈퇴, false:미탈퇴
     @Field("createdTime")
     @CreatedDate

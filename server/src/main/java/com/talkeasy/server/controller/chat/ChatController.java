@@ -36,13 +36,15 @@ public class ChatController {//producer
     private final ChatUserQueueService chatUserQueueService;
     private final ChatTestService chatTestService;
 
+    @ApiIgnore
     @PostMapping()
-    @ApiOperation(value = "채팅방 생성", notes = "user1, user2 주면 채팅방 아이디를 반환, status: 채팅방이 이미 있다면 200/새로 만들어졌다면 201")
+    @ApiOperation(value = "채팅방 생성(팔로우 하면 자동 채팅방 생성)", notes = "user1, user2 주면 채팅방 아이디를 반환, status: 채팅방이 이미 있다면 200/새로 만들어졌다면 201")
     public ResponseEntity<?> createRoom(@RequestBody MakeChatRoomDto dto) throws IOException {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(chatService.createRoom(dto.getUser1(), dto.getUser2()));
     }
 
+    @ApiIgnore
     @DeleteMapping("/{roomId}")
     @ApiOperation(value = "채팅방 삭제(나가기)", notes = "PathVariable로 roomId 주면 삭제한 roomId 아이디를 반환, '나가기'실행한 사용자만 삭제되고 남은 유저는 그대로 유지")
     public ResponseEntity<?> deleteRoom(@PathVariable String roomId,
@@ -50,8 +52,6 @@ public class ChatController {//producer
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
                 HttpStatus.NO_CONTENT, chatService.deleteRoom(roomId, oAuth2User.getId())));
-//        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-//                HttpStatus.NO_CONTENT, chatService.deleteRoom(roomId, userId)));
     }
 
     @GetMapping("/{roomId}")
@@ -69,13 +69,13 @@ public class ChatController {//producer
                                                         @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User
     ) {
 
-//        return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatHistory(chatRoomId, offset, size, oAuth2User.getId()));
+//        return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatHistory(chatRoomId, offset, size, "64461f5457831975f4dfd753"));
         return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatHistory(chatRoomId, offset, size, oAuth2User.getId()));
     }
 
 
     @GetMapping("/my")
-    @ApiOperation(value = "채팅방 조회", notes = "내가 속한 채팅방 리스트를 반환")
+    @ApiOperation(value = "채팅방 조회(테스트용)", notes = "내가 속한 채팅방 리스트를 반환")
     public ResponseEntity<?> getChatRoom(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 chatService.getChatRoomList(oAuth2User.getId()));

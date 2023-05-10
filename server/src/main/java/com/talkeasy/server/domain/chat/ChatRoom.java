@@ -25,7 +25,7 @@ public class ChatRoom {
     private String leaveUserId; // 채팅방 떠난 사용자
     private String leaveTime; // 채팅방 떠난 시간
     // 테스트용
-    private Map<String, UserData> chatUsers = new HashMap<>();;
+    private Map<String, UserData> chatUsers = new HashMap<>();
 
     public ChatRoom(String[] users, String title, String date) {
         this.users = users;

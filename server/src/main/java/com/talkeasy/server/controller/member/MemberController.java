@@ -61,4 +61,12 @@ public class MemberController {
                 HttpStatus.NO_CONTENT, memberService.deleteUserInfo(oAuth2User.getId())));
     }
 
+    @ApiOperation(value = "위치정보 제공 일괄 동의/비동의", notes = "api 요청 시, 토글 처리")
+    @PutMapping(value = "/locations")
+    public ResponseEntity<CommonResponse> putLocationStatus(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+                HttpStatus.CREATED, memberService.putLocationStatus(oAuth2User.getId())));
+    }
+
 }

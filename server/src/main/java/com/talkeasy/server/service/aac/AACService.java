@@ -9,6 +9,7 @@ import com.talkeasy.server.domain.aac.CustomAAC;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.aac.CustomAACDto;
 import com.talkeasy.server.dto.aac.ResponseAACDto;
+import com.talkeasy.server.dto.aac.ResponseAACListDto;
 import com.talkeasy.server.dto.chat.ChatTextDto;
 import com.theokanning.openai.OpenAiService;
 import com.theokanning.openai.completion.CompletionRequest;
@@ -49,14 +50,18 @@ public class AACService {
     }
 
     // 카테고리별 aac 조회
-    public PagedResponse<ResponseAACDto> getAacByCategory(String userId, String categoryId, int fixed, int offset, int size) {
+    public PagedResponse<ResponseAACListDto> getAacByCategory(String categoryId, int offset, int size) {
 
-//        if (categoryId.equals("9")) {
-//            return getAacByCustom(userId, offset, size);
-//        }
+        // 카테고리별 고정 내용 출력
+        List<ResponseAACDto> fixedResult = mongoTemplate.find(Query.query(Criteria.where("category").is(categoryId)
+                .and("fixed").is(1)), AAC.class)
+                .stream()
+                .map(ResponseAACDto::new)
+                .collect(Collectors.toList());
 
+        // 카테고리별 일반 내용 출력 - 페이지네이션
         Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "title")); // 가나다 순으로
-        Query query = new Query(Criteria.where("category").is(categoryId).and("fixed").is(fixed)).with(pageable);
+        Query query = new Query(Criteria.where("category").is(categoryId).and("fixed").is(0)).with(pageable);
 
         List<AAC> filteredMetaData = mongoTemplate.find(query, AAC.class);
 
@@ -66,12 +71,16 @@ public class AACService {
                 () -> mongoTemplate.count(query.skip(-1).limit(-1), AAC.class)
         );
 
-        List<ResponseAACDto> result = metaDataPage.getContent().stream().map((a) -> new ResponseAACDto(a)).collect(Collectors.toList());
-        return new PagedResponse(HttpStatus.OK, result, metaDataPage.getTotalPages());
+        List<ResponseAACDto> aacList = metaDataPage.getContent().stream().map((a) -> new ResponseAACDto(a)).collect(Collectors.toList());
+
+        // 고정/일반 내용 한번에 출력
+        ResponseAACListDto categoryList = ResponseAACListDto.builder().fixedList(fixedResult).aacList(aacList).build();
+
+        return new PagedResponse(HttpStatus.OK, categoryList, metaDataPage.getTotalPages());
 
     }
 
-    public PagedResponse<CustomAAC> getAacByCustom(String userId, int offset, int size) {
+    public PagedResponse<ResponseAACListDto> getAacByCustom(String userId, int offset, int size) {
 
         Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "text")); // 가나다 순으로
         Query query = new Query(Criteria.where("userId").is(userId)).with(pageable);
@@ -84,8 +93,11 @@ public class AACService {
                 () -> mongoTemplate.count(query.skip(-1).limit(-1), CustomAAC.class)
         );
 
-        List<ResponseAACDto> result = metaDataPage.getContent().stream().map((a) -> new ResponseAACDto(a)).collect(Collectors.toList());
-        return new PagedResponse(HttpStatus.OK, result, metaDataPage.getTotalPages());
+        List<ResponseAACDto> aacList = metaDataPage.getContent().stream().map((a) -> new ResponseAACDto(a)).collect(Collectors.toList());
+
+        ResponseAACListDto categoryList = ResponseAACListDto.builder().fixedList(new ArrayList<>()).aacList(aacList).build();
+
+        return new PagedResponse(HttpStatus.OK, categoryList, metaDataPage.getTotalPages());
 
     }
 
