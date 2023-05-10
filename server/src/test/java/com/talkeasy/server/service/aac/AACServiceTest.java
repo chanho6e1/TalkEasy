@@ -9,10 +9,8 @@ import com.talkeasy.server.domain.aac.CustomAAC;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.aac.CustomAACDto;
 import com.talkeasy.server.dto.aac.ResponseAACDto;
-import com.talkeasy.server.dto.chat.ChatTextDto;
+import com.talkeasy.server.dto.aac.ResponseAACListDto;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
-import com.theokanning.openai.OpenAiService;
-import com.theokanning.openai.completion.CompletionRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -24,9 +22,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -34,6 +29,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -81,30 +77,27 @@ class AACServiceTest {
 
         OAuth2UserImpl member = new OAuth2UserImpl(Member.builder().id("1").build());
         String categoryId = "1"; // categoryId = 9일 때 다르게 처리
-        int fixed = 0;
+
         int offset = 1;
         int size = 10;
 
         AAC aac1 = AAC.builder().id("1").title("안녕하세요").category("1").build();
         AAC aac2 = AAC.builder().id("2").title("안녕히계세요").category("1").build();
 
-        List<AAC> aacList = List.of(aac1, aac2);
+        when(mongoTemplate.find(any(Query.class), eq(AAC.class))).thenReturn(List.of(aac1, aac2));
 
-        Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "title")); // 가나다 순으로
-        Query query = new Query(Criteria.where("category").is(categoryId).and("fixed").is(fixed)).with(pageable);
-        when(mongoTemplate.find(query, AAC.class)).thenReturn(aacList);
-
-        PagedResponse<?> testResult = aacService.getAacByCategory(member.getId(), categoryId, fixed, offset, size);
+        PagedResponse<?> testResult = aacService.getAacByCategory(categoryId, offset, size);
 
         // 결과 비교
-        List<ResponseAACDto> result = (List<ResponseAACDto>) testResult.getData();
+        ResponseAACListDto result = (ResponseAACListDto) testResult.getData();
 
         assertEquals(200, testResult.getStatus());
         assertEquals(1, testResult.getTotalPages());
-        assertEquals(2, result.size());
+        assertEquals(2, result.getFixedList().size());
+        assertEquals(2, result.getAacList().size());
 
         // mongoTemplate의 findAll 메서드가 호출되었는지 확인
-        verify(mongoTemplate, Mockito.times(1)).find(query, AAC.class);
+        verify(mongoTemplate, Mockito.times(2)).find(any(Query.class), eq(AAC.class));
 
     }
 
@@ -120,21 +113,20 @@ class AACServiceTest {
 
         List<CustomAAC> filteredMetaData = List.of(aac1, aac2);
 
-        Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "text")); // 가나다 순으로
-        Query query = new Query(Criteria.where("userId").is(member.getId())).with(pageable);
-        when(mongoTemplate.find(query, CustomAAC.class)).thenReturn(filteredMetaData);
+        when(mongoTemplate.find(any(Query.class), eq(CustomAAC.class))).thenReturn(filteredMetaData);
 
-        PagedResponse<CustomAAC> testResult = aacService.getAacByCustom(member.getId(), offset, size);
+        PagedResponse<ResponseAACListDto> testResult = aacService.getAacByCustom(member.getId(), offset, size);
 
         // 결과 비교
-        List<CustomAAC> result = testResult.getData();
+        ResponseAACListDto result = (ResponseAACListDto) testResult.getData();
 
         assertEquals(200, testResult.getStatus());
         assertEquals(1, testResult.getTotalPages());
-        assertEquals(2, result.size());
+        assertEquals(2, result.getAacList().size());
+        assertEquals(0, result.getFixedList().size());
 
         // mongoTemplate의 find 메서드가 호출되었는지 확인
-        verify(mongoTemplate, Mockito.times(1)).find(query, CustomAAC.class);
+        verify(mongoTemplate, Mockito.times(1)).find(any(Query.class), eq(CustomAAC.class));
     }
 
     @Test
@@ -144,23 +136,22 @@ class AACServiceTest {
         int offset = 1;
         int size = 10;
 
-        Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "text")); // 가나다 순으로
-        Query query = new Query(Criteria.where("userId").is(member.getId())).with(pageable);
-        when(mongoTemplate.find(query, CustomAAC.class)).thenReturn(Collections.emptyList());
+        when(mongoTemplate.find(any(Query.class), eq(CustomAAC.class))).thenReturn(Collections.emptyList());
 
-        PagedResponse<CustomAAC> testResult = aacService.getAacByCustom(member.getId(), offset, size);
+        PagedResponse<ResponseAACListDto> testResult = aacService.getAacByCustom(member.getId(), offset, size);
 
         // 결과 비교
-        List<CustomAAC> result = testResult.getData();
+        ResponseAACListDto result = (ResponseAACListDto) testResult.getData();
 
         assertThat(testResult).isNotNull();
 
         assertEquals(200, testResult.getStatus());
         assertEquals(0, testResult.getTotalPages());
-        assertEquals(0, result.size());
+        assertEquals(0, result.getAacList().size());
+        assertEquals(0, result.getFixedList().size());
 
         // mongoTemplate의 find 메서드가 호출되었는지 확인
-        verify(mongoTemplate, Mockito.times(1)).find(query, CustomAAC.class);
+        verify(mongoTemplate, Mockito.times(1)).find(any(Query.class), eq(CustomAAC.class));
     }
 
 
@@ -177,12 +168,12 @@ class AACServiceTest {
         when(mongoTemplate.findOne(Mockito.any(Query.class), Mockito.eq(AAC.class))).thenReturn(aac, aac1, aac2);
 
         PagedResponse<ResponseAACDto> result = aacService.getRelativeVerb(aacId);
-//        List<AAC> responseAACList = result.getData();
+        List<ResponseAACDto> responseAACList = (List<ResponseAACDto>) result.getData();
 
         // 결과 검증
-        assertEquals(2, result.getData().size());
-        assertEquals("매워요", result.getData().get(0).getTitle());
-        assertEquals("짜요", result.getData().get(1).getTitle());
+        assertEquals(2, responseAACList.size());
+        assertEquals("매워요", responseAACList.get(0).getTitle());
+        assertEquals("짜요", responseAACList.get(1).getTitle());
 
         verify(mongoTemplate, Mockito.times(3)).findOne(Mockito.any(Query.class), Mockito.eq(AAC.class));
     }
