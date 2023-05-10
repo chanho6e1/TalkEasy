@@ -26,7 +26,7 @@ def get_location():
     cur = db.cursor()
     id = request.args.get('id')
 
-    sql = "select * from location where id=%s"
+    sql = "select * from location where user_id=%s"
     cur.execute(sql, (id,))
     rows = cur.fetchall()
 
