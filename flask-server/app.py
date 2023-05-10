@@ -24,10 +24,10 @@ def get_location():
 
 
     cur = db.cursor()
-    email = request.args.get('email')
-    print(type(email))
-    sql = "select * from location where email=%s"
-    cur.execute(sql, (email,))
+    id = request.args.get('id')
+
+    sql = "select * from location where id=%s"
+    cur.execute(sql, (id,))
     rows = cur.fetchall()
 
     result = []
