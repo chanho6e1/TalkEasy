@@ -1,4 +1,4 @@
-package com.talkeasy.server.config.kafka;
+package com.talkeasy.server.config.scheduler;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.AsyncConfigurer;

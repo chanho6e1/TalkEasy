@@ -18,7 +18,9 @@ public class Location {
 
     // TODO : Geometry로 변경
     @Column
-    String email;
+    String userId;
+    @Column
+    String name;
     @Column
     String x;
     @Column
