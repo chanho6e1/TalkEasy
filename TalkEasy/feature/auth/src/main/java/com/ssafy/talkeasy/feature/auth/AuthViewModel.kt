@@ -100,8 +100,8 @@ class AuthViewModel @Inject constructor(
 
     fun setGender(mGender: String) {
         when (mGender) {
-            "여성" -> gender.value = 0
-            "남성" -> gender.value = 1
+            "남성" -> gender.value = 0
+            "여성" -> gender.value = 1
         }
     }
 
