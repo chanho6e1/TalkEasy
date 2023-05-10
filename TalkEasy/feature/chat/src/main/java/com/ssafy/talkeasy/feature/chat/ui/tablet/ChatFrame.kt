@@ -1,0 +1,1 @@
+package com.ssafy.talkeasy.feature.chat.ui.tablet
