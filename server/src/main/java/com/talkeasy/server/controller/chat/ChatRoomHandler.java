@@ -22,6 +22,7 @@ public class ChatRoomHandler {
 
     private final ChatService chatService;
     private final ChatReadService chatReadService;
+    private final Gson gson;
 
     //서버로 들어오는 채팅값
     @RabbitListener(queues = "chat.queue")
@@ -30,7 +31,7 @@ public class ChatRoomHandler {
 
         log.info(" message : {}", message);
         System.out.println("hihihihhihi");
-        ChatRoomDetail chat = chatService.convertChat(message);
+        ChatRoomDetail chat = chatService.convertChat(gson, message);
         if(chat.getRoomId().equals("0")) {
             return;
         }
@@ -38,7 +39,7 @@ public class ChatRoomHandler {
         String roomId = chatService.saveChat(chat);
         chat.setRoomId(roomId);
 
-        chatService.doChat(chat);
+        chatService.doChat(gson, chat);
 
     }
 

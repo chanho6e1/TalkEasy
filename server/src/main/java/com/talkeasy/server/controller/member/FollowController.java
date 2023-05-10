@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.io.IOException;
+
 @Api(tags = {"Follow 컨트롤러"})
 @Controller
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class FollowController {
     @ApiOperation(value = "팔로우", notes = "팔로우 한다")
     @PostMapping("/{toUserId}")
     public ResponseEntity<CommonResponse> follow(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User,
-                                    @PathVariable("toUserId") String toUserId) {
+                                    @PathVariable("toUserId") String toUserId) throws IOException {
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, followService.follow(oAuth2User.getId(), toUserId)));
 

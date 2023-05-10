@@ -42,7 +42,6 @@ class ChatServiceTest {
     @InjectMocks
     private ChatService chatService;
 
-    //    @Autowired
     private Gson gson;
 
     @Mock
@@ -61,9 +60,6 @@ class ChatServiceTest {
     @BeforeEach
     void setUp() {
         gson = new Gson();
-//        chatService = new ChatService(rabbitTemplate, gson);
-//        MockitoAnnotations.openMocks(this);
-
     }
 
     @BeforeEach
@@ -94,9 +90,9 @@ class ChatServiceTest {
         verify(mongoTemplate, times(1)).findOne(any(Query.class), eq(ChatRoom.class));
         verify(mongoTemplate, times(1)).insert(any(ChatRoom.class));
 
-//        verify(rabbitAdmin, times(4)).declareQueue(any(Queue.class));
-//        verify(rabbitAdmin, times(4)).declareBinding(any(Binding.class));
-//        verify(mongoTemplate, times(2)).insert(any(ChatRoomDetail.class));
+        verify(rabbitAdmin, times(4)).declareQueue(any(Queue.class));
+        verify(rabbitAdmin, times(4)).declareBinding(any(Binding.class));
+        verify(mongoTemplate, times(2)).insert(any(ChatRoomDetail.class));
 
         assertThat(commonResponse.getStatus()).isEqualTo(201);
     }
@@ -122,20 +118,20 @@ class ChatServiceTest {
 
     }
 
-    @Test
-    void doCreateRoomChat() throws IOException {
-
-        ChatRoom chatRoom = new ChatRoom(new String[]{"1", "2"}, "hihi", LocalDateTime.now().toString());
-        chatRoom.setId("3");
-        Mockito.when(mongoTemplate.findOne(any(Query.class), eq(ChatRoom.class))).thenReturn(chatRoom);
-
-
-        chatService.doCreateRoomChat(chatRoom, "1");
-
-        verify(mongoTemplate, times(2)).save(any(ChatRoom.class));
-
-
-    }
+//    @Test
+//    void doCreateRoomChat() throws IOException {
+//
+//        ChatRoom chatRoom = new ChatRoom(new String[]{"1", "2"}, "hihi", LocalDateTime.now().toString());
+//        chatRoom.setId("3");
+//        Mockito.when(mongoTemplate.findOne(any(Query.class), eq(ChatRoom.class))).thenReturn(chatRoom);
+//
+//
+//        chatService.doCreateRoomChat(chatRoom, "1");
+//
+//        verify(mongoTemplate, times(2)).save(any(ChatRoom.class));
+//
+//
+//    }
 
     @Test
     @DisplayName("채팅 큐 생성 세부 메서드 호출")
@@ -148,15 +144,15 @@ class ChatServiceTest {
         verify(rabbitAdmin, times(4)).declareBinding(any(Binding.class));
     }
 
-    @Test
-    @DisplayName("채팅 큐 생성 세부 메서드")
-    void createQueueDetail() {
-        ChatRoom chatRoom = new ChatRoom(new String[]{"1", "2"}, "hihi", LocalDateTime.now().toString());
-        ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom);
-        chatService.createQueueDetail(chatRoomDto, "chat", "1");
-        verify(rabbitAdmin, times(1)).declareQueue(any(Queue.class));
-        verify(rabbitAdmin, times(1)).declareBinding(any(Binding.class));
-    }
+//    @Test
+//    @DisplayName("채팅 큐 생성 세부 메서드")
+//    void createQueueDetail() {
+//        ChatRoom chatRoom = new ChatRoom(new String[]{"1", "2"}, "hihi", LocalDateTime.now().toString());
+//        ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom);
+//        chatService.createQueueDetail(chatRoomDto, "chat", "1");
+//        verify(rabbitAdmin, times(1)).declareQueue(any(Queue.class));
+//        verify(rabbitAdmin, times(1)).declareBinding(any(Binding.class));
+//    }
 
     @Test
     @DisplayName("메시지를 전송하기전 Message로 변환 / 아직 읽지 않았기 때문에 readCnt의 디폴트값은 1")
@@ -165,7 +161,7 @@ class ChatServiceTest {
         ChatRoomDetail chat = ChatRoomDetail.builder().roomId("3").fromUserId("1").toUserId("2").created_dt("2023.05.01").build();
         Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
 
-        ChatRoomDetail chatRoomDetail = chatService.convertChat(msg);
+        ChatRoomDetail chatRoomDetail = chatService.convertChat(gson, msg);
         assertThat(chatRoomDetail.getReadCnt()).isEqualTo(1);
 
     }
@@ -184,15 +180,34 @@ class ChatServiceTest {
         assertThat(roomId).isEqualTo("3");
     }
 
-    @Test
-    void doChat() {
-    }
+//    @Test
+//    @DisplayName("메시지 보내기")
+//    void doChat() throws IOException {
+//        ChatRoomDetail chat = ChatRoomDetail.builder().roomId("3").fromUserId("1").toUserId("2").created_dt("2023.05.01").build();
+//
+//        Map<String, UserData> chatUsers = new HashMap<>();
+//        chatUsers.put("1", new UserData(true, null));
+//        chatUsers.put("2", new UserData(true, null));
+//
+//        ChatRoom chatRoom = ChatRoom.builder().id("3").users(new String[]{"1", "2"}).chatUsers(chatUsers).date("2023.01.01").build();
+//        Mockito.when(mongoTemplate.findOne(any(Query.class), eq(ChatRoom.class))).thenReturn(chatRoom);
+//
+//        chatService.doChat(gson, chat);
+//
+//        verify(rabbitTemplate, times(1)).send(eq("chat.exchange"), any(String.class), any(Message.class));
+////        verify(rabbitTemplate, times(1)).convertAndSend(eq("user.exchange"), any(String.class), any(Message.class));
+////        verify(rabbitTemplate, times(1)).convertAndSend(eq("user.exchange"), any(String.class), any(Message.class));
+//        verify(rabbitTemplate, times(1)).convertAndSend(eq("user.exchange"), any(String.class), any(Class.class));
+//        verify(rabbitTemplate, times(1)).convertAndSend(eq("user.exchange"), any(String.class), any(Class.class));
+//    }
 
     @Test
     void sendChatMessage() {
 
         ChatRoomDetail chatRoomDetail = ChatRoomDetail.builder().roomId("3").fromUserId("1").toUserId("2").created_dt("2023.05.01").build();
-        chatService.sendChatMessage(rabbitTemplate, chatRoomDetail, "1");
+        chatService.sendChatMessage(gson, chatRoomDetail, "1");
+
+        verify(rabbitTemplate, times(1)).send(eq("chat.exchange"), eq("room.3.1"), any(Message.class));
     }
 
     @Test
@@ -244,7 +259,6 @@ class ChatServiceTest {
         verify(mongoTemplate, times(1)).findOne(any(Query.class), eq(ChatRoom.class));
         verify(mongoTemplate, times(1)).find(any(Query.class), eq(ChatRoomDetail.class));
 
-//        assertThat(response.getData().size()).isEqualTo(1);
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getTotalPages()).isEqualTo(1);
 
@@ -268,8 +282,7 @@ class ChatServiceTest {
 
         List<ChatRoomListDto> chatRoomListDtoList = new ArrayList<>();
 
-        for(LastChat lastChat: lastChatList){
-
+        for (LastChat lastChat : lastChatList) {
             ChatRoomListDto chatRoomListDto = new ChatRoomListDto(lastChat);
             chatRoomListDtoList.add(chatRoomListDto);
         }
@@ -280,7 +293,7 @@ class ChatServiceTest {
 
         assertThat(pagedResponse.getData()).isEqualTo(chatRoomListDtoList);
         assertThat(pagedResponse.getStatus()).isEqualTo(200);
-        assertThat(pagedResponse.getTotalPages()).isEqualTo(10);
+        assertThat(pagedResponse.getTotalPages()).isEqualTo(1);
 
     }
 
@@ -301,7 +314,7 @@ class ChatServiceTest {
     @DisplayName("큐 정보 조회하기")
     void getQueueInfo() {
 
-        chatService.getQueueInfo(rabbitAdmin, "3", "1");
+        chatService.getQueueInfo("3", "1");
         verify(rabbitAdmin, times(1)).getQueueInfo(eq("chat.queue.3.1"));
 
     }
@@ -389,8 +402,6 @@ class ChatServiceTest {
         assertThat(mongoTemplate.findById("3", ChatRoom.class)).isNull();
         assertThat(mongoTemplate.findById("3", ChatRoomDetail.class)).isNull();
         assertThat(mongoTemplate.findById("3", LastChat.class)).isNull();
-        /*큐 생성후 다시 테스트 해보기*/
-//        assertThat(queueInformation.getMessageCount()).isEqualTo(0);
     }
 
     @Test

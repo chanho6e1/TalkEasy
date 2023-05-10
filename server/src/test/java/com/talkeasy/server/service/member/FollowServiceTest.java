@@ -165,7 +165,7 @@ class FollowServiceTest {
                 .imageUrl(toUser.getImageUrl())
                 .build();
 
-        assertThat(result.getData()).isEqualTo(expectedFollowResponse);
+        assertThat(result.getData().equals(Collections.singletonList(expectedFollowResponse))).isTrue();
     }
 
     @Test

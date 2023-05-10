@@ -37,7 +37,7 @@ public class ChatController {//producer
     private final ChatTestService chatTestService;
 
     @PostMapping()
-    @ApiOperation(value = "채팅방 생성", notes = "user1, user2 주면 채팅방 아이디를 반환, status: 채팅방이 이미 있다면 200/새로 만들어졌다면 201")
+    @ApiOperation(value = "채팅방 생성(팔로우 하면 자동 채팅방 생성)", notes = "user1, user2 주면 채팅방 아이디를 반환, status: 채팅방이 이미 있다면 200/새로 만들어졌다면 201")
     public ResponseEntity<?> createRoom(@RequestBody MakeChatRoomDto dto) throws IOException {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(chatService.createRoom(dto.getUser1(), dto.getUser2()));
@@ -75,7 +75,7 @@ public class ChatController {//producer
 
 
     @GetMapping("/my")
-    @ApiOperation(value = "채팅방 조회", notes = "내가 속한 채팅방 리스트를 반환")
+    @ApiOperation(value = "채팅방 조회(테스트용)", notes = "내가 속한 채팅방 리스트를 반환")
     public ResponseEntity<?> getChatRoom(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) {
         return ResponseEntity.status(HttpStatus.OK).body(
                 chatService.getChatRoomList(oAuth2User.getId()));

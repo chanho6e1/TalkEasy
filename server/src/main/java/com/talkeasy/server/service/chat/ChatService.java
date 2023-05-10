@@ -44,6 +44,7 @@ public class ChatService {
 
     private final MongoTemplate mongoTemplate;
     private final RabbitTemplate rabbitTemplate;
+    private final RabbitAdmin rabbitAdmin;
     private final AmqpAdmin amqpAdmin;
     private final FirebaseCloudMessageService firebaseCloudMessageService;
     private final Gson gson;
@@ -81,7 +82,7 @@ public class ChatService {
 
         ChatRoomDetail chat = ChatRoomDetail.builder().roomId(chatRoom.getId()).toUserId(userId).fromUserId("admin").msg("채팅방이 생성되었습니다.").created_dt(LocalDateTime.now().toString()).readCnt(0).build();
 
-        doChat(chat);
+        doChat(gson, chat);
 
     }
 
@@ -114,9 +115,8 @@ public class ChatService {
     }
 
 
-    public ChatRoomDetail convertChat(Message message) {
+    public ChatRoomDetail convertChat(Gson gson, Message message) {
         String str = new String(message.getBody());
-
         ChatRoomDetail chat = gson.fromJson(str, ChatRoomDetail.class);
 
         chat.setCreated_dt(LocalDateTime.now().toString());
@@ -135,13 +135,13 @@ public class ChatService {
         return chatRoomDetail.getRoomId();
     }
 
-    public void doChat(ChatRoomDetail chat) throws IOException {
+    public void doChat(Gson gson, ChatRoomDetail chat) throws IOException {
         ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getRoomId())), ChatRoom.class);
 
         updateUserInChatRoom(chatRoom, chat.getFromUserId());
         updateUserInChatRoom(chatRoom, chat.getToUserId());
 
-        sendChatMessage(rabbitTemplate, chat, chat.getToUserId());
+        sendChatMessage(gson, chat, chat.getToUserId());
 
         PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
         PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
@@ -157,7 +157,7 @@ public class ChatService {
     }
 
 
-    public void sendChatMessage(RabbitTemplate rabbitTemplate, ChatRoomDetail chat, String toUserId) {
+    public void sendChatMessage(Gson gson, ChatRoomDetail chat, String toUserId) {
         String routingKey = String.format("room.%s.%s", chat.getRoomId(), toUserId);
 
         Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
@@ -201,7 +201,7 @@ public class ChatService {
         List<LastChat> lastChatList = getLastChatList(userId);
         lastChatList.sort((c1, c2) -> c2.getCreated_dt().compareTo(c1.getCreated_dt())); // 최신순으로 정렬
 
-        RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate);
+//        RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate);
 
         for (LastChat lastChat : lastChatList) {
             String otherUserId = lastChat.getFromUserId().equals(userId) ? lastChat.getToUserId() : lastChat.getFromUserId();
@@ -212,7 +212,7 @@ public class ChatService {
                 chatRoomListDto.setProfile(member.getImageUrl());
                 chatRoomListDto.setName(member.getName());
 
-                QueueInformation queueInformation = getQueueInfo(rabbitAdmin, lastChat.getRoomId(), userId);
+                QueueInformation queueInformation = getQueueInfo(lastChat.getRoomId(), userId);
                 if (queueInformation != null) {
                     log.info("queueInfo cnt : {}", queueInformation.getMessageCount());
                     chatRoomListDto.setNoReadCnt(queueInformation.getMessageCount());
@@ -233,7 +233,7 @@ public class ChatService {
         return Optional.ofNullable(mongoTemplate.findOne(query, Member.class));
     }
 
-    public QueueInformation getQueueInfo(RabbitAdmin rabbitAdmin, String roomId, String userId) {
+    public QueueInformation getQueueInfo(String roomId, String userId) {
         String queueName = String.format("chat.queue.%s.%s", roomId, userId);
         return rabbitAdmin.getQueueInfo(queueName);
     }
