@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ic_default_profile_text">기본 프로필 이미지</string>
+    <string name="content_select">선택</string>
+    <string name="title_photo_picker">프로필 사진/앨범</string>
+    <string name="content_gallery_select">앨범에서 선택</string>
+    <string name="content_camera_select">사진 촬영으로 선택</string>
+    <string name="content_camera_failed_message">촬영을 실패하였습니다. 다시 시도해주세요.</string>
+    <string name="content_gallery_failed_message">앨범에서 사진 불러오기를 실패했습니다. 다시 시도해주세요.</string>
+    <string name="image_icon_check">체크 아이콘입니다</string>
+
+    <!-- Welcome -->
+    <string name="title_welcome">%s 님\n환영합니다!</string>
+
+    <!-- Profile -->
+    <string name="image_follow_list_profile">프로필 이미지입니다.</string>
+</resources>

@@ -18,14 +18,14 @@ val welcomeFont =
         Font(R.font.welcome_bold, FontWeight.Bold, FontStyle.Normal)
     )
 
-val Typography =
+val typography =
     Typography(
         titleLarge = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = welcomeFont,
             fontWeight = FontWeight.Normal,
             fontSize = 24.sp,
-            lineHeight = 28.sp,
-            letterSpacing = 0.sp
+            lineHeight = 24.sp,
+            letterSpacing = 0.5.sp
         ),
         titleMedium = TextStyle(
             fontFamily = welcomeFont,
@@ -71,10 +71,66 @@ val Typography =
         )
     )
 
+val textStyleBold40 = TextStyle(
+    fontFamily = welcomeFont,
+    fontWeight = FontWeight.Bold,
+    fontSize = 40.sp,
+    lineHeight = 44.sp,
+    letterSpacing = 0.5.sp
+)
+
 val textStyleBold32 = TextStyle(
     fontFamily = welcomeFont,
     fontWeight = FontWeight.Bold,
     fontSize = 32.sp,
+    lineHeight = 24.sp,
+    letterSpacing = 0.5.sp
+)
+
+val textStyleBold24 = TextStyle(
+    fontFamily = welcomeFont,
+    fontWeight = FontWeight.Bold,
+    fontSize = 24.sp,
+    lineHeight = 24.sp,
+    letterSpacing = 0.5.sp
+)
+
+val textStyleBold22 = TextStyle(
+    fontFamily = welcomeFont,
+    fontWeight = FontWeight.Bold,
+    fontSize = 22.sp,
+    lineHeight = 24.sp,
+    letterSpacing = 0.5.sp
+)
+
+val textStyleNormal30 = TextStyle(
+    fontFamily = welcomeFont,
+    fontWeight = FontWeight.Normal,
+    fontSize = 30.sp,
+    lineHeight = 24.sp,
+    letterSpacing = 0.5.sp
+)
+
+val textStyleNormal22 = TextStyle(
+    fontFamily = welcomeFont,
+    fontWeight = FontWeight.Normal,
+    fontSize = 22.sp,
+    lineHeight = 24.sp,
+    letterSpacing = 0.5.sp
+)
+
+val textStyleBold32 = TextStyle(
+    fontFamily = welcomeFont,
+    fontWeight = FontWeight.Bold,
+    fontSize = 32.sp,
+    lineHeight = 24.sp,
+    letterSpacing = 0.5.sp
+)
+
+val textStyleBold30 = TextStyle(
+    fontFamily = welcomeFont,
+    fontWeight = FontWeight.Bold,
+    fontSize = 30.sp,
     lineHeight = 24.sp,
     letterSpacing = 0.5.sp
 )
