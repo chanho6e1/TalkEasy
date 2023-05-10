@@ -32,6 +32,7 @@ def get_location():
     for row in rows:
         result.append(row)
 
+
     return jsonify(result)
 
 
