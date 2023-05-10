@@ -12,11 +12,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LocationDto implements Serializable {
-    String email;
-    String x, y;
+    String userId;
+    String name;
+    String x;
+    String y;
     LocalDateTime dateTime;
 
     public Location toEntity(){
-        return Location.builder().email(email).x(x).y(y).dateTime(dateTime).build();
+        return Location.builder().userId(userId).name(name).x(x).y(y).dateTime(dateTime).build();
     }
 }
