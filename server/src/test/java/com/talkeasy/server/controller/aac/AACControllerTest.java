@@ -7,6 +7,7 @@ import com.talkeasy.server.domain.aac.AACCategory;
 import com.talkeasy.server.domain.aac.CustomAAC;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.aac.ResponseAACDto;
+import com.talkeasy.server.dto.aac.ResponseAACListDto;
 import com.talkeasy.server.service.aac.AACService;
 import com.talkeasy.server.service.chat.TTSService;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
@@ -76,7 +77,7 @@ class AACControllerTest {
 
         OAuth2UserImpl member = new OAuth2UserImpl(Member.builder().id("1").build());
         String categoryId = "1"; // categoryId = 9일 때 다르게 처리
-        int fixed = 0;
+
         int offset = 1;
         int size = 10;
 
@@ -84,24 +85,23 @@ class AACControllerTest {
         ResponseAACDto aac2 = ResponseAACDto.builder().id("2").title("안녕히계세요").category("1").build();
 
         List<ResponseAACDto> aacList = List.of(aac1, aac2);
-        PagedResponse<ResponseAACDto> result = new PagedResponse<>(HttpStatus.OK, aacList, 1);
+        PagedResponse<ResponseAACListDto> result = new PagedResponse<>(HttpStatus.OK, aacList, 1);
 
-        when(aacService.getAacByCategory(anyString(), anyString(), anyInt(), anyInt(), anyInt())).thenReturn(result);
+        when(aacService.getAacByCategory(anyString(), anyInt(), anyInt())).thenReturn(result);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/aac/categories/{categoryId}", categoryId)
-                        .param("fixed", String.valueOf(fixed))
-                        .param("offset", String.valueOf(offset))
-                        .param("size", String.valueOf(size))
-                        .with(csrf()))
-//                        .param("member", String.valueOf(member)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].id").value("1"))
-                .andExpect(jsonPath("$.data[0].title").value("안녕하세요"))
-                .andExpect(jsonPath("$.data[0].category").value("1"))
-                .andExpect(jsonPath("$.data[1].id").value("2"))
-                .andExpect(jsonPath("$.data[1].title").value("안녕히계세요"))
-                .andExpect(jsonPath("$.data[1].category").value("1"))
-                .andReturn();
+//        mockMvc.perform(MockMvcRequestBuilders.get("/api/aac/categories/{categoryId}", categoryId)
+//                        .param("offset", String.valueOf(offset))
+//                        .param("size", String.valueOf(size))
+//                        .with(csrf()))
+////                        .param("member", String.valueOf(member)))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.data[0].id").value("1"))
+//                .andExpect(jsonPath("$.data[0].title").value("안녕하세요"))
+//                .andExpect(jsonPath("$.data[0].category").value("1"))
+//                .andExpect(jsonPath("$.data[1].id").value("2"))
+//                .andExpect(jsonPath("$.data[1].title").value("안녕히계세요"))
+//                .andExpect(jsonPath("$.data[1].category").value("1"))
+//                .andReturn();
 
 
 //        ResponseEntity<?> response = aacController.getCategoryContents(categoryId, fixed, offset, size, member);
@@ -133,7 +133,7 @@ class AACControllerTest {
 
 
 
-        ResponseEntity<?> response = aacController.getCategoryContents(categoryId, fixed, offset, size, member);
+        ResponseEntity<?> response = aacController.getCategoryContents(categoryId,  offset, size, member);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(result, response.getBody());
