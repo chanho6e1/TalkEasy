@@ -5,7 +5,9 @@ import com.ssafy.talkeasy.core.data.remote.datasource.auth.AuthRemoteDataSource
 import com.ssafy.talkeasy.core.domain.Resource
 import com.ssafy.talkeasy.core.domain.entity.request.MemberRequestBody
 import com.ssafy.talkeasy.core.domain.entity.response.Auth
+import com.ssafy.talkeasy.core.domain.entity.response.Default
 import com.ssafy.talkeasy.core.domain.repository.AuthRepository
+import java.io.File
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 
@@ -13,13 +15,16 @@ class AuthRepositoryImpl @Inject constructor(
     private val authRemoteDataSource: AuthRemoteDataSource,
 ) : AuthRepository {
 
-    override suspend fun requestLogin(accessToken: String): Resource<Auth> =
+    override suspend fun requestLogin(accessToken: String, role: Int): Resource<Default<Auth>> =
         wrapToResource(Dispatchers.IO) {
-            authRemoteDataSource.requestLogin(accessToken).toDomainModel()
+            authRemoteDataSource.requestLogin(accessToken, role).toDomainModel()
         }
 
-    override suspend fun requestJoin(member: MemberRequestBody): Resource<Auth> =
+    override suspend fun requestJoin(
+        member: MemberRequestBody,
+        image: File?,
+    ): Resource<Default<String>> =
         wrapToResource(Dispatchers.IO) {
-            authRemoteDataSource.requestJoin(member).toDomainModel()
+            authRemoteDataSource.requestJoin(member, image).toDomainModel()
         }
 }

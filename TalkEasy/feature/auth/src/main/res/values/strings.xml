@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Tablet - Log In -->
+    <!-- Log In -->
     <string name="image_logo">앱 로고입니다</string>
     <string name="kakao_login_text">카카오 로그인 버튼</string>
     <string name="bg_main_wave_text">물결 모양 배경 요소</string>
-    <string name="bg_main_leaf_big_text">큰 나뭇잎 배경 요소</string>
-    <string name="bg_main_leaf_small_text">작은 나뭇잎 배경 요소</string>
+    <string name="bg_log_in_left_leaf_text">왼쪽 나뭇잎 배경 요소</string>
+    <string name="bg_log_in_right_leaf_text">오른쪽 나뭇잎 배경 요소</string>
 
     <!-- Tablet - Join -->
     <string name="title_sexual">성별</string>
     <string name="title_birth">생년월일</string>
+    <string name="content_woman">여성</string>
+    <string name="content_man">남성</string>
 
-    <!-- Tablet - Welcome -->
-    <string name="title_welcome">%s 님\n환영합니다!</string>
+    <!-- Mobile - Join -->
+    <string name="title_member_info_input">회원정보 입력</string>
+    <string name="content_cancel">취소</string>
+    <string name="content_ok">확인</string>
+    <string name="content_name">이름</string>
+    <string name="content_join">가입하기</string>
+
 </resources>

@@ -31,12 +31,12 @@ import com.ssafy.talkeasy.feature.aac.AACViewModel
 import com.ssafy.talkeasy.feature.aac.Category
 import com.ssafy.talkeasy.feature.aac.R
 import com.ssafy.talkeasy.feature.common.R.drawable
-import com.ssafy.talkeasy.feature.common.ui.theme.Typography
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_outline
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_surfaceVariant
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold24
+import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
 @SuppressLint("DiscouragedApi")
 @Composable
@@ -137,7 +137,7 @@ fun BackToCategory(category: String = "음식", aacViewModel: AACViewModel = vie
             Text(
                 text = stringResource(R.string.title_back_to_category_select),
                 color = md_theme_light_onBackground,
-                style = Typography.bodyLarge
+                style = typography.bodyLarge
             )
             Text(
                 text = String.format(
@@ -145,7 +145,7 @@ fun BackToCategory(category: String = "음식", aacViewModel: AACViewModel = vie
                     category
                 ),
                 color = md_theme_light_outline,
-                style = Typography.bodyLarge
+                style = typography.bodyLarge
             )
         }
 

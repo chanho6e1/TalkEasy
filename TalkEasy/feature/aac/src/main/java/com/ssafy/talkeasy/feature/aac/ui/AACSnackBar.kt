@@ -19,12 +19,12 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.ssafy.talkeasy.feature.aac.R
-import com.ssafy.talkeasy.feature.common.ui.theme.Typography
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onSecondaryContainer
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_secondaryContainer
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleNormal22
+import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -68,7 +68,7 @@ fun BrowseLocation(name: String = "") {
             ) {
                 Text(
                     color = md_theme_light_onSecondaryContainer,
-                    style = Typography.bodyLarge,
+                    style = typography.bodyLarge,
                     text = stringResource(R.string.content_stop_browse)
                 )
             }

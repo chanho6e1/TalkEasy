@@ -80,10 +80,6 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 
-    // Glide
-    implementation(libs.glide.compose)
-
-    // GoogleMap
     implementation(libs.google.map)
     implementation(libs.google.map.location)
 
@@ -94,6 +90,7 @@ dependencies {
     implementation(project(":core:domain"))
     implementation(project(":feature:common"))
     implementation(project(":feature:auth"))
+    implementation(project(":feature:follow"))
 }
 
 kapt {

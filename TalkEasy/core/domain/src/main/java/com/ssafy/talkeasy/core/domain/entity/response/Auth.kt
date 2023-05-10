@@ -1,6 +1,6 @@
 package com.ssafy.talkeasy.core.domain.entity.response
 
 data class Auth(
-    val message: String,
-    val data: String,
+    val token: String,
+    val name: String,
 )

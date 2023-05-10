@@ -42,6 +42,10 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 
+    implementation(libs.glide.compose)
+
+    implementation(libs.lottie.compose)
+
     implementation(project(":core:domain"))
 }
 
