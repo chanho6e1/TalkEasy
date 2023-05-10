@@ -44,6 +44,7 @@ public class ChatService {
 
     private final MongoTemplate mongoTemplate;
     private final RabbitTemplate rabbitTemplate;
+    private final RabbitAdmin rabbitAdmin;
     private final AmqpAdmin amqpAdmin;
     private final FirebaseCloudMessageService firebaseCloudMessageService;
     private final Gson gson;
@@ -69,8 +70,8 @@ public class ChatService {
 
         createQueue(new ChatRoomDto(chatRoomDto));
 
-        doCreateRoomChat(chatRoom, user1);
-        doCreateRoomChat(chatRoom, user2);
+        doCreateRoomChat(chatRoomDto, user1);
+        doCreateRoomChat(chatRoomDto, user2);
 
         return CommonResponse.of(HttpStatus.CREATED, chatRoom.getId());
 
@@ -79,16 +80,9 @@ public class ChatService {
 
     public void doCreateRoomChat(ChatRoom chatRoom, String userId) throws IOException {
 
-        ChatRoomDetail chat = ChatRoomDetail.builder()
-                .roomId(chatRoom.getId())
-                .toUserId(userId)
-                .fromUserId("admin")
-                .msg("채팅방이 생성되었습니다.")
-                .created_dt(LocalDateTime.now().toString())
-                .readCnt(0)
-                .build();
+        ChatRoomDetail chat = ChatRoomDetail.builder().roomId(chatRoom.getId()).toUserId(userId).fromUserId("admin").msg("채팅방이 생성되었습니다.").created_dt(LocalDateTime.now().toString()).readCnt(0).build();
 
-        doChat(chat);
+        doChat(gson, chat);
 
     }
 
@@ -106,23 +100,23 @@ public class ChatService {
 
     //queueName: read/chat
     public void createQueueDetail(ChatRoomDto chatRoomDto, String queueName, String userId) {
+        String roomId = chatRoomDto.getRoomId();
+        String queueId = String.format("%s.queue.%s.%s", queueName, roomId, userId);
+        String routingKey = String.format("room.%s.%s", roomId, userId);
 
-        StringBuilder sb = new StringBuilder()
-                .append("room.")
-                .append(chatRoomDto.getRoomId())
-                .append(".")
-                .append(userId);
-
-        Queue queue = QueueBuilder.durable(queueName + ".queue." + chatRoomDto.getRoomId() + "." + userId).build();
+        Queue queue = QueueBuilder.durable(queueId).build();
         amqpAdmin.declareQueue(queue);
-        Binding binding = BindingBuilder.bind(queue).to(new TopicExchange(queueName + ".exchange")).with(sb.toString());
+
+        Binding binding = BindingBuilder
+                .bind(queue)
+                .to(new TopicExchange(queueName + ".exchange"))
+                .with(routingKey);
         amqpAdmin.declareBinding(binding);
     }
 
 
-    public ChatRoomDetail convertChat(Message message) {
+    public ChatRoomDetail convertChat(Gson gson, Message message) {
         String str = new String(message.getBody());
-
         ChatRoomDetail chat = gson.fromJson(str, ChatRoomDetail.class);
 
         chat.setCreated_dt(LocalDateTime.now().toString());
@@ -141,46 +135,44 @@ public class ChatService {
         return chatRoomDetail.getRoomId();
     }
 
-    public void doChat(ChatRoomDetail chat) throws IOException {
-        StringBuilder sb = new StringBuilder()
-                .append("room.")
-                .append(chat.getRoomId())
-                .append(".")
-                .append(chat.getToUserId());
-
-        Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
-
-        // 보낸 유저의 접속 정보 변경
+    public void doChat(Gson gson, ChatRoomDetail chat) throws IOException {
         ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getRoomId())), ChatRoom.class);
 
-        boolean change = false;
-        if (!chat.getFromUserId().equals("admin") && !chatRoom.getChatUsers().get(chat.getFromUserId()).getNowIn()) {
-            chatRoom.getChatUsers().get(chat.getFromUserId()).setNowIn(true);
-            change = true;
-        }
-        if (!chatRoom.getChatUsers().get(chat.getToUserId()).getNowIn()){
-            chatRoom.getChatUsers().get(chat.getToUserId()).setNowIn(true);
-            change = true;
-        }
-        if (change)
-            mongoTemplate.save(chatRoom);
+        updateUserInChatRoom(chatRoom, chat.getFromUserId());
+        updateUserInChatRoom(chatRoom, chat.getToUserId());
 
-        rabbitTemplate.send("chat.exchange", sb.toString(), msg);
+        sendChatMessage(gson, chat, chat.getToUserId());
+
         PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
         PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
 
         rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getToUserId(), gson.toJson(toUserList));
-
         rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
 
         /* FCM 알림 - 안드로이드 FCM 연결 시, 주석 풀 것. */
 //        Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getFromUserId())), Member.class);
-//        UserAppToken userAppToken = mongoTemplate.findOne(Query.query(Criteria.where("userId").is(chat.getToUserId())), UserAppToken.class);
-//        firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), chat.getMsg());
-
+//      UserAppToken userAppToken = mongoTemplate.findOne(Query.query(Criteria.where("userId").is(chat.getToUserId())), UserAppToken.class);
+//      firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member
 
     }
 
+
+    public void sendChatMessage(Gson gson, ChatRoomDetail chat, String toUserId) {
+        String routingKey = String.format("room.%s.%s", chat.getRoomId(), toUserId);
+
+        Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
+        rabbitTemplate.send("chat.exchange", routingKey, msg);
+    }
+
+
+    public void updateUserInChatRoom(ChatRoom chatRoom, String userId) {
+        boolean change = false;
+        if (!userId.equals("admin") && !chatRoom.getChatUsers().get(userId).getNowIn()) {
+            chatRoom.getChatUsers().get(userId).setNowIn(true);
+            change = true;
+        }
+        if (change) mongoTemplate.save(chatRoom);
+    }
 
     ///////////////////////////////////////
 
@@ -188,22 +180,15 @@ public class ChatService {
 
         Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "created_dt"));
 
-        ChatRoom chatRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(chatRoomId)), ChatRoom.class)).orElseThrow(
-                () -> new ResourceNotFoundException("ChatRoom", "chatRoomId", chatRoomId)
-        );
+        ChatRoom chatRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(chatRoomId)), ChatRoom.class)).orElseThrow(() -> new ResourceNotFoundException("ChatRoom", "chatRoomId", chatRoomId));
 
-        String leaveTime = chatRoom.getChatUsers().get(userId).getNowIn() ? chatRoom.getDate() : chatRoom.getLeaveTime();
+        String leaveTime = chatRoom.getChatUsers().get(userId).getLeaveTime() == null ? chatRoom.getDate() : chatRoom.getLeaveTime();
 
+        Query query = new Query(Criteria.where("roomId").is(chatRoomId).and("created_dt").gte(leaveTime)).with(pageable);
 
-        Query query = new Query(Criteria.where("roomId").is(chatRoomId)
-                .and("created_dt").gte(leaveTime)).with(pageable);
+        List<ChatRoomDetail> filteredMetaData = Optional.ofNullable(mongoTemplate.find(query, ChatRoomDetail.class)).orElse(Collections.emptyList());
 
-        List<ChatRoomDetail> filteredMetaData =  Optional.ofNullable(mongoTemplate.find(query, ChatRoomDetail.class)).orElseThrow(
-                () -> new ResourceNotFoundException("채팅 내역이 없습니다")
-        );
-
-        Page<ChatRoomDetail> metaDataPage = PageableExecutionUtils.getPage(filteredMetaData, pageable, () -> mongoTemplate.count(query.skip(-1).limit(-1), ChatRoomDetail.class)
-        );
+        Page<ChatRoomDetail> metaDataPage = PageableExecutionUtils.getPage(filteredMetaData, pageable, () -> mongoTemplate.count(query.skip(-1).limit(-1), ChatRoomDetail.class));
 
         return new PagedResponse(HttpStatus.OK, metaDataPage.getContent(), metaDataPage.getTotalPages());
 
@@ -214,15 +199,12 @@ public class ChatService {
         List<ChatRoomListDto> chatRoomListDtoList = new ArrayList<>();
 
         List<LastChat> lastChatList = getLastChatList(userId);
-        int size = lastChatList.size();
+        lastChatList.sort((c1, c2) -> c2.getCreated_dt().compareTo(c1.getCreated_dt())); // 최신순으로 정렬
 
-        RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate);
+//        RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate);
 
-        for (int i = size - 1; i >= 0; i--) {
-
-            LastChat lastChat = lastChatList.get(i);
+        for (LastChat lastChat : lastChatList) {
             String otherUserId = lastChat.getFromUserId().equals(userId) ? lastChat.getToUserId() : lastChat.getFromUserId();
-
             Optional<Member> memberOptional = getMemberById(otherUserId);
             if (memberOptional.isPresent()) {
                 Member member = memberOptional.get();
@@ -230,12 +212,12 @@ public class ChatService {
                 chatRoomListDto.setProfile(member.getImageUrl());
                 chatRoomListDto.setName(member.getName());
 
-                QueueInformation queueInformation = getQueueInfo(rabbitAdmin, lastChat.getRoomId(), userId);
+                QueueInformation queueInformation = getQueueInfo(lastChat.getRoomId(), userId);
                 if (queueInformation != null) {
                     log.info("queueInfo cnt : {}", queueInformation.getMessageCount());
                     chatRoomListDto.setNoReadCnt(queueInformation.getMessageCount());
                 } else {
-                    System.out.println("queueInformation is null");
+                    log.warn("queueInformation is null");
                 }
 
                 chatRoomListDtoList.add(chatRoomListDto);
@@ -246,12 +228,12 @@ public class ChatService {
     }
 
 
-    private Optional<Member> getMemberById(String id) {
+    public Optional<Member> getMemberById(String id) {
         Query query = Query.query(Criteria.where("id").is(id));
         return Optional.ofNullable(mongoTemplate.findOne(query, Member.class));
     }
 
-    private QueueInformation getQueueInfo(RabbitAdmin rabbitAdmin, String roomId, String userId) {
+    public QueueInformation getQueueInfo(String roomId, String userId) {
         String queueName = String.format("chat.queue.%s.%s", roomId, userId);
         return rabbitAdmin.getQueueInfo(queueName);
     }
@@ -266,8 +248,7 @@ public class ChatService {
 
     public void saveLastChatDetail(ChatRoomDetail chat, String userId) {
 
-        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(chat.getRoomId())
-                .and("userId").is(userId)), LastChat.class);
+        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(chat.getRoomId()).and("userId").is(userId)), LastChat.class);
 
         LastChat lastChatDto = new LastChat(chat);
         lastChatDto.setUserId(userId);
@@ -285,16 +266,15 @@ public class ChatService {
         3. 남아 있는 사람이 1명일 때, chat_room + chat_room_detail + last_chat도 완전삭제
     */
     public String deleteRoom(String roomId, String userId) throws IOException {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("id").is(roomId));
+
+        Query query = new Query().addCriteria(Criteria.where("id").is(roomId));
         ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(roomId)), ChatRoom.class);
 
 //        /* chat.queue, read.queue 삭제 */
 //        deleteQueue("chat.queue", chatRoom.getId(), userId);
 //        deleteQueue("read.queue", chatRoom.getId(), userId);
 
-        String toUserId = Arrays.stream(chatRoom.getUsers()).filter(a -> !a.equals(userId))
-                .toArray(String[]::new)[0];
+        String toUserId = Arrays.stream(chatRoom.getUsers()).filter(a -> !a.equals(userId)).toArray(String[]::new)[0];
 
         if (!chatRoom.getChatUsers().get(toUserId).getNowIn()) { // 이전에 떠난 사용자와 현재 떠나려는 사용자의 아이디가 일치하지 않을 경우, 채팅방 폭파
             // 채팅방에 남은 인원이 1명인 경우만 삭제
@@ -317,31 +297,7 @@ public class ChatService {
         mongoTemplate.save(chatRoom);
 
         // '나'의 라스트 챗 삭제 => 채팅 목록에서 사라지도록
-        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)
-                .and("userId").is(userId)), LastChat.class);
-
-//        if (chatRoom == null) {
-//            throw new ResourceNotFoundException("없는 채팅방 번호입니다");
-//        }
-
-//        String toUserId = Arrays.stream(chatRoom.getUsers()).filter(a -> !a.equals(userId))
-//                .toArray(String[]::new)[0];
-//
-//        System.out.println("toUserId :: " + toUserId);
-//
-//        ChatRoomDetail chat = ChatRoomDetail.builder()
-//                .roomId(chatRoom.getId())
-//                .toUserId(toUserId)
-//                .fromUserId("admin")
-//                .msg("상대방이 나갔습니다.")
-//                .created_dt(LocalDateTime.now().toString())
-//                .readCnt(0)
-//                .build();
-//
-//        doChat(chat);
-//
-//        chatRoom.setUsers(new String[]{toUserId});
-//        mongoTemplate.save(chatRoom);
+        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId).and("userId").is(userId)), LastChat.class);
 
         return roomId;
     }
@@ -352,21 +308,13 @@ public class ChatService {
 
     public PagedResponse<UserInfo> getUserInfoByRoom(String roomId) {
 
-        ChatRoom chatRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(roomId)), ChatRoom.class))
-                .orElseThrow(() -> new ResourceNotFoundException("없는 채팅방 입니다"));
+        ChatRoom chatRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(roomId)), ChatRoom.class)).orElseThrow(() -> new ResourceNotFoundException("없는 채팅방 입니다"));
 
         String[] userIds = chatRoom.getUsers();
 
         List<Member> members = mongoTemplate.find(Query.query(Criteria.where("id").all(userIds)), Member.class);
 
-        List<UserInfo> userInfos = members.stream()
-                .map(member -> UserInfo.builder()
-                        .userId(member.getId())
-                        .userName(member.getName())
-                        .profileImg(member.getImageUrl())
-                        .deleteStatus(member.getDeleteStatus())
-                        .build())
-                .collect(Collectors.toList());
+        List<UserInfo> userInfos = members.stream().map(member -> UserInfo.builder().userId(member.getId()).userName(member.getName()).profileImg(member.getImageUrl()).deleteStatus(member.getDeleteStatus()).build()).collect(Collectors.toList());
 
         return new PagedResponse(HttpStatus.OK, userInfos, 1);
     }

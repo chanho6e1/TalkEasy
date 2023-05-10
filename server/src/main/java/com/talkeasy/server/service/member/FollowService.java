@@ -7,6 +7,7 @@ import com.talkeasy.server.common.exception.ResourceNotFoundException;
 import com.talkeasy.server.domain.member.Follow;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.user.FollowResponse;
+import com.talkeasy.server.service.chat.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,6 +19,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -29,12 +31,13 @@ import java.util.stream.Collectors;
 public class FollowService {
 
     private final MongoTemplate mongoTemplate;
+    private final ChatService chatService;
 
-    public String follow(String myId, String toUserId) {
+    public String follow(String myId, String toUserId) throws IOException {
 
         followDetail(myId, toUserId);
         followDetail(toUserId, myId);
-
+        chatService.createRoom(myId, toUserId);
         return "팔로우 성공";
     }
 
@@ -69,7 +72,6 @@ public class FollowService {
     public void deleteByFollowDetail(String myId, String toUserId) {
 
         Follow follow = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class)).orElseThrow(() -> new ResourceNotFoundException("이미 언팔로우 상태입니다"));
-
         mongoTemplate.remove(follow);
 
     }
