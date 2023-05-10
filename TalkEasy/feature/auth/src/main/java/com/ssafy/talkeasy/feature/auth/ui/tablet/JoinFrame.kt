@@ -255,8 +255,18 @@ fun SegmentedButtonSexual(
         )
 
         Row {
-            SegmentedButton(sexual, "여성", -1, onChangeGender = onChangeGender)
-            SegmentedButton(sexual, "남성", 1, onChangeGender = onChangeGender)
+            SegmentedButton(
+                sexual,
+                stringResource(id = R.string.content_woman),
+                -1,
+                onChangeGender = onChangeGender
+            )
+            SegmentedButton(
+                sexual,
+                stringResource(id = R.string.content_man),
+                1,
+                onChangeGender = onChangeGender
+            )
         }
     }
 }
@@ -320,7 +330,7 @@ fun ShowDatePickerDialog(
     val confirmEnabled = remember {
         derivedStateOf {
             datePickerState.selectedDateMillis != null &&
-                    datePickerState.selectedDateMillis != System.currentTimeMillis()
+                datePickerState.selectedDateMillis != System.currentTimeMillis()
         }
     }
 
