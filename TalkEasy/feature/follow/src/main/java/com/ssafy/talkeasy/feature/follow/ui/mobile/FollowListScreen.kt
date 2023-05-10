@@ -23,9 +23,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.bumptech.glide.integration.compose.GlideImage
-import com.ssafy.talkeasy.feature.common.R as Common
 import com.ssafy.talkeasy.feature.common.component.MessageCount
+import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
@@ -140,13 +139,8 @@ fun FollowListItem(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        GlideImage(
-            modifier = modifier.size(56.dp),
-            model = profileUrl.ifEmpty { Common.drawable.ic_default_profile },
-            contentDescription = stringResource(
-                id = R.string.image_follow_list_profile
-            )
-        )
+        Profile(profileUrl, 56)
+
         Column(
             modifier = modifier
                 .fillMaxWidth()

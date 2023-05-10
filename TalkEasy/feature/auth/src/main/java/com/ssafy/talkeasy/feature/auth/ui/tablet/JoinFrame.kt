@@ -320,7 +320,7 @@ fun ShowDatePickerDialog(
     val confirmEnabled = remember {
         derivedStateOf {
             datePickerState.selectedDateMillis != null &&
-                    datePickerState.selectedDateMillis != System.currentTimeMillis()
+                datePickerState.selectedDateMillis != System.currentTimeMillis()
         }
     }
 

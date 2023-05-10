@@ -70,4 +70,7 @@
     <!-- AAC Snack Bar -->
     <string name="content_browse_location">%s님이 위치 정보를 열람중입니다. 중단 버튼을 누르시면 열람이 즉시 중단됩니다.</string>
     <string name="content_stop_browse">중단</string>
+    <string name="content_request_browse"> 님이 위치 정보 열람을 요청합니다</string>
+    <string name="content_reject">거절</string>
+    <string name="content_approve_with_time">수락(%d)</string>
 </resources>
