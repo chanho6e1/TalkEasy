@@ -39,11 +39,10 @@ class FollowServiceTest {
     @DisplayName("팔로우 - 정상 팔로우")
     void followDetailCaseSuccess() {
 
-        Member fromUser = Member.builder().id("1").name("unfollowTest").age(10).deleteStatus(false).build();
+        Member fromUser = Member.builder().id("1").name("followTest").age(10).deleteStatus(false).build();
         Mockito.when(mongoTemplate.findOne(any(Query.class), eq(Member.class))).thenReturn(fromUser);
 
         Mockito.when(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is("1").and("toUserId").is("2")), Follow.class)).thenReturn(null);
-
         followService.followDetail("1", "2");
 
         verify(mongoTemplate, times(1)).findOne(Query.query(Criteria.where("id").is("1")), Member.class);
@@ -55,11 +54,10 @@ class FollowServiceTest {
     @DisplayName("팔로우 - 이미 팔로우 상태인 경우")
     void followCaseAlreadyFollow() {
 
-        Member fromUser = Member.builder().id("1").name("unfollowTest").age(10).deleteStatus(false).build();
+        Member fromUser = Member.builder().id("1").name("followTest").age(10).deleteStatus(false).build();
         Mockito.when(mongoTemplate.findOne(any(Query.class), eq(Member.class))).thenReturn(fromUser);
 
         Follow existFollow = Follow.builder().id("3").fromUserId("1").toUserId("2").memo(null).mainStatus(false).locationStatus(false).build();
-
         Mockito.when(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is("1").and("toUserId").is("2")), Follow.class)).thenReturn(existFollow);
 
         assertThatThrownBy(() -> followService.followDetail("1", "2"))
@@ -68,7 +66,6 @@ class FollowServiceTest {
 
         verify(mongoTemplate, times(1)).findOne(Query.query(Criteria.where("id").is("1")), Member.class);
         verify(mongoTemplate, times(1)).findOne(Query.query(Criteria.where("fromUserId").is("1").and("toUserId").is("2")), Follow.class);
-
         verify(mongoTemplate, never()).insert(any(Follow.class));
 
     }
@@ -200,8 +197,6 @@ class FollowServiceTest {
         Mockito.when(mongoTemplate.findOne(any(Query.class), eq(Follow.class))).thenReturn(TargetUserfollow);
 
         Boolean result = followService.putProtector("1", "3");
-
-        TargetUserfollow.setMainStatus(false);
 
         verify(mongoTemplate, times(2)).findOne(any(Query.class), eq(Follow.class));
         verify(mongoTemplate, times(1)).save(eq(TargetUserfollow));
