@@ -127,7 +127,6 @@ val textStyleNormal22 = TextStyle(
     letterSpacing = 0.5.sp
 )
 
-
 val shapes =
     Shapes(
         extraSmall = RoundedCornerShape(5.dp),
