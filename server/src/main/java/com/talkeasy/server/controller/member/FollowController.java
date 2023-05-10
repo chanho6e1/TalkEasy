@@ -42,7 +42,7 @@ public class FollowController {
     @ApiOperation(value = "언팔로우", notes = "언팔로우 한다")
     @DeleteMapping("/{toUserId}")
     public ResponseEntity<CommonResponse> unfollow(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User,
-                                                   @PathVariable("toUserId") String toUserId) {
+                                                   @PathVariable("toUserId") String toUserId) throws IOException {
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, followService.deleteByFollow(oAuth2User.getId(), toUserId)));
 

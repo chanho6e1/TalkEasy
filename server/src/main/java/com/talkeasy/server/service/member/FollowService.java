@@ -1,21 +1,17 @@
 package com.talkeasy.server.service.member;
 
 import com.talkeasy.server.common.PagedResponse;
-import com.talkeasy.server.common.exception.ArgumentMismatchException;
 import com.talkeasy.server.common.exception.ResourceAlreadyExistsException;
 import com.talkeasy.server.common.exception.ResourceNotFoundException;
+import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.member.Follow;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.user.FollowResponse;
 import com.talkeasy.server.service.chat.ChatService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -58,13 +54,16 @@ public class FollowService {
     }
 
 
-    public String deleteByFollow(String myId, String toUserId) {
+    public String deleteByFollow(String myId, String toUserId) throws IOException {
 
         Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(myId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("없는 유저입니다"));
         Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(toUserId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("없는 유저입니다"));
 
         deleteByFollowDetail(myId, toUserId);
         deleteByFollowDetail(toUserId, myId);
+
+        ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("users").all(toUserId, myId)), ChatRoom.class);
+        chatService.deleteRoom(chatRoom.getId() ,myId);
 
         return "언팔로우 성공";
     }

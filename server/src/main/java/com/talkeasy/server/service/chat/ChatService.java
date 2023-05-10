@@ -6,6 +6,7 @@ import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.common.exception.ArgumentMismatchException;
 import com.talkeasy.server.common.exception.ResourceAlreadyExistsException;
 import com.talkeasy.server.common.exception.ResourceNotFoundException;
+import com.talkeasy.server.domain.app.UserAppToken;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
@@ -151,8 +152,8 @@ public class ChatService {
 
         /* FCM 알림 - 안드로이드 FCM 연결 시, 주석 풀 것. */
 //        Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getFromUserId())), Member.class);
-//      UserAppToken userAppToken = mongoTemplate.findOne(Query.query(Criteria.where("userId").is(chat.getToUserId())), UserAppToken.class);
-//      firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member
+//        UserAppToken userAppToken = mongoTemplate.findOne(Query.query(Criteria.where("userId").is(chat.getToUserId())), UserAppToken.class);
+//        firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), chat.getMsg()); // String targetToken, String title, String body
 
     }
 
@@ -200,8 +201,6 @@ public class ChatService {
 
         List<LastChat> lastChatList = getLastChatList(userId);
         lastChatList.sort((c1, c2) -> c2.getCreated_dt().compareTo(c1.getCreated_dt())); // 최신순으로 정렬
-
-//        RabbitAdmin rabbitAdmin = new RabbitAdmin(rabbitTemplate);
 
         for (LastChat lastChat : lastChatList) {
             String otherUserId = lastChat.getFromUserId().equals(userId) ? lastChat.getToUserId() : lastChat.getFromUserId();
@@ -261,45 +260,31 @@ public class ChatService {
 
 
     /*
-        1. 남아 있는 사람이 2명일 때, 유저 목록 삭제 x
-        2. leaveUser에 userId 저장하고, leaveTime 저장
-        3. 남아 있는 사람이 1명일 때, chat_room + chat_room_detail + last_chat도 완전삭제
+        1. 언팔로우 or 회원탈퇴 시 채팅방 폭파
     */
     public String deleteRoom(String roomId, String userId) throws IOException {
 
         Query query = new Query().addCriteria(Criteria.where("id").is(roomId));
         ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(roomId)), ChatRoom.class);
 
-//        /* chat.queue, read.queue 삭제 */
-//        deleteQueue("chat.queue", chatRoom.getId(), userId);
-//        deleteQueue("read.queue", chatRoom.getId(), userId);
+        /* chat.queue, read.queue 삭제 */
 
         String toUserId = Arrays.stream(chatRoom.getUsers()).filter(a -> !a.equals(userId)).toArray(String[]::new)[0];
 
-        if (!chatRoom.getChatUsers().get(toUserId).getNowIn()) { // 이전에 떠난 사용자와 현재 떠나려는 사용자의 아이디가 일치하지 않을 경우, 채팅방 폭파
-            // 채팅방에 남은 인원이 1명인 경우만 삭제
-            mongoTemplate.remove(query, ChatRoom.class); //채팅방 삭제
-            mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)), ChatRoomDetail.class); //채팅 내역 삭제
-            mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)), LastChat.class); // lastChat 모두 삭제
+        // 채팅방에 남은 인원이 1명인 경우만 삭제
+        mongoTemplate.remove(query, ChatRoom.class); //채팅방 삭제
+        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)), ChatRoomDetail.class); //채팅 내역 삭제
+        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId)), LastChat.class); // lastChat 모두 삭제
 
-            /* chat.queue, read.queue 삭제 */
-            deleteQueue("chat.queue", chatRoom.getId(), userId);
-            deleteQueue("read.queue", chatRoom.getId(), userId);
+        /* chat.queue, read.queue 삭제 */
+        deleteQueue("chat.queue", chatRoom.getId(), userId);
+        deleteQueue("read.queue", chatRoom.getId(), userId);
 
-            deleteQueue("chat.queue", chatRoom.getId(), toUserId);
-            deleteQueue("read.queue", chatRoom.getId(), toUserId);
-
-            return roomId;
-        }
-
-        chatRoom.getChatUsers().get(userId).setNowIn(false);
-        chatRoom.getChatUsers().get(userId).setLeaveTime(LocalDateTime.now().toString());
-        mongoTemplate.save(chatRoom);
-
-        // '나'의 라스트 챗 삭제 => 채팅 목록에서 사라지도록
-        mongoTemplate.remove(Query.query(Criteria.where("roomId").is(roomId).and("userId").is(userId)), LastChat.class);
+        deleteQueue("chat.queue", chatRoom.getId(), toUserId);
+        deleteQueue("read.queue", chatRoom.getId(), toUserId);
 
         return roomId;
+
     }
 
     private void deleteQueue(String queueName, String roomId, String userId) {
