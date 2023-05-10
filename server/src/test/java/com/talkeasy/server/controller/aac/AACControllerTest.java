@@ -177,6 +177,19 @@ class AACControllerTest {
     @Test
     @DisplayName("[POST]커스텀 aac 등록")
     void postCustomAac() {
+
+//        mockMvc.perform(MockMvcRequestBuilders.get("/api/aac/relative-verb/{aacId}", aacId))
+//                .andExpect(status().isOk())
+//                .andExpect(jsonPath("$.data[0].id").value("112"))
+//                .andExpect(jsonPath("$.data[0].title").value("매워요"))
+//                .andExpect(jsonPath("$.data[0].category").value("1"))
+//                .andExpect(jsonPath("$.data[1].id").value("113"))
+//                .andExpect(jsonPath("$.data[1].title").value("짜요"))
+//                .andExpect(jsonPath("$.data[1].category").value("1"))
+//                .andReturn();;
+//
+//        mockMvc.perform(MockMvcRequestBuilders.post("/api/aac/custom")
+//                .pa)
     }
 
     @Test
