@@ -1,9 +1,11 @@
 package com.ssafy.talkeasy.core.network.di
 
 import com.ssafy.talkeasy.core.domain.repository.AuthRepository
+import com.ssafy.talkeasy.core.domain.repository.FollowRepository
 import com.ssafy.talkeasy.core.domain.repository.MemberRepository
 import com.ssafy.talkeasy.core.domain.usecase.auth.JoinUseCase
 import com.ssafy.talkeasy.core.domain.usecase.auth.LoginUseCase
+import com.ssafy.talkeasy.core.domain.usecase.follow.FollowListUseCase
 import com.ssafy.talkeasy.core.domain.usecase.member.MemberInfoUseCase
 import dagger.Module
 import dagger.Provides
@@ -29,4 +31,9 @@ object UseCaseModule {
     @Provides
     fun provideMemberInfoUseCase(memberRepository: MemberRepository): MemberInfoUseCase =
         MemberInfoUseCase(memberRepository)
+
+    @Singleton
+    @Provides
+    fun provideFollowListUseCase(followRepository: FollowRepository): FollowListUseCase =
+        FollowListUseCase(followRepository)
 }
