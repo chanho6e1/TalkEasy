@@ -27,8 +27,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ssafy.talkeasy.feature.aac.AACViewModel
 import com.ssafy.talkeasy.core.domain.entity.Category
+import com.ssafy.talkeasy.feature.aac.AACViewModel
 import com.ssafy.talkeasy.feature.aac.R
 import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
