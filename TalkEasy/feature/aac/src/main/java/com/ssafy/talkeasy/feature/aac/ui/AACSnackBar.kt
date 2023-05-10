@@ -69,7 +69,7 @@ fun BrowseLocation(name: String = "") {
                 Text(
                     color = md_theme_light_onSecondaryContainer,
                     style = Typography.bodyLarge,
-                    text = "중단"
+                    text = stringResource(R.string.content_stop_browse)
                 )
             }
         }

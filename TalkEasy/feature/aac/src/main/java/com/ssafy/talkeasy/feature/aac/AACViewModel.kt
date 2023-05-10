@@ -26,7 +26,6 @@ class AACViewModel @Inject constructor() : ViewModel() {
             }
         mutableList.add(word)
         _selectedCard.value = mutableList
-        Log.d("selectedCard", "[ADD] " + selectedCard.value.toString())
     }
 
     fun deleteCard(word: String) {
@@ -38,7 +37,6 @@ class AACViewModel @Inject constructor() : ViewModel() {
             }
         mutableList.remove(word)
         _selectedCard.value = mutableList
-        Log.d("selectedCard", "[DELETE] " + selectedCard.value.toString())
     }
 
     fun setCategory(category: String = "") {

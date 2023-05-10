@@ -69,4 +69,5 @@
 
     <!-- AAC Snack Bar -->
     <string name="content_browse_location">%s님이 위치 정보를 열람중입니다. 중단 버튼을 누르시면 열람이 즉시 중단됩니다.</string>
+    <string name="content_stop_browse">중단</string>
 </resources>
