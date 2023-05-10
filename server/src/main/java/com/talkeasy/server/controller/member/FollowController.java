@@ -36,6 +36,8 @@ public class FollowController {
                                                  @PathVariable("toUserId") String toUserId,
                                                  @RequestBody FollowRequestDto followRequestDto) throws IOException {
 
+//        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+//                HttpStatus.CREATED, followService.follow("645a0420c5b2c82e3afaf9e4", "6459dfcf393c266aa80f5710", followRequestDto)));
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, followService.follow(oAuth2User.getId(), toUserId, followRequestDto)));
 
@@ -69,6 +71,8 @@ public class FollowController {
                                                    @PathVariable("toUserId") String toUserId) throws IOException {
         return ResponseEntity.ok().body(CommonResponse.of(
                 HttpStatus.OK, followService.deleteByFollow(oAuth2User.getId(), toUserId)));
+//   return ResponseEntity.ok().body(CommonResponse.of(
+//                HttpStatus.OK, followService.deleteByFollow("645a0420c5b2c82e3afaf9e4", "6459dfcf393c266aa80f5710")));
 
 
     }
