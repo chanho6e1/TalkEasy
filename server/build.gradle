@@ -139,6 +139,9 @@ dependencies {
     // junit5 테스트
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.mockito:mockito-core'
+
+    implementation 'org.hibernate:hibernate-spatial:5.6.11.Final'
+
 }
 
 tasks.named('test') {
@@ -160,11 +163,11 @@ compileQuerydsl {
 }
 
 task copyPrivate(type: Copy) {
-    copy {
-        from '../talkeasy'
-        include "application.yml"
-        into 'src/main/resources'
-    }
+//    copy {
+//        from '../talkeasy'
+//        include "application.yml"
+//        into 'src/main/resources'
+//    }
     copy {
         from '../talkeasy'
         include "talkeasy-384300-3d129ed9d54d.json"

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import org.locationtech.jts.geom.Point;
 
 @Data
 @AllArgsConstructor
@@ -18,18 +19,22 @@ public class Location {
 
     // TODO : Geometry로 변경
     @Column
-    String userId;
+    private String userId;
     @Column
-    String name;
+    private String name;
+
+    @Column(columnDefinition = "geometry(Point, 4326)")
+    private Point geom;
+
     @Column
-    String x;
+    private String x;
     @Column
-    String y;
+    private String y;
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "LOCATION_GENERATOR")
     private Long id;
     @Column
-    LocalDateTime dateTime;
+    private LocalDateTime dateTime;
 
 
 }
