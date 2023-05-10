@@ -44,6 +44,8 @@ public class AACController {
                                                  @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                  @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
 
+        if (categoryId.equals("9"))
+            return ResponseEntity.status(HttpStatus.OK).body(aacService.getAacByCustom(member.getId(), offset, size));
         return ResponseEntity.status(HttpStatus.OK).body(aacService.getAacByCategory(member.getId(), categoryId, fixed,offset, size));
     }
 

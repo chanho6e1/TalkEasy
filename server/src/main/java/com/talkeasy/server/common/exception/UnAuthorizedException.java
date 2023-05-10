@@ -8,7 +8,7 @@ public class UnAuthorizedException extends RuntimeException {
     private ErrorResponse errorResponse;
 
     public UnAuthorizedException() {
-        super();
+        super("로그인 해주세요.");
         setErrResponse("로그인 해주세요.");
     }
 
