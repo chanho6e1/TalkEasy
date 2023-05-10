@@ -6,8 +6,6 @@ class SampleData {
 
         const val memberName = "강은선"
 
-        const val time = 30
-
         val string25 = listOf(
             "네",
             "119에 전화해주세요",

@@ -17,6 +17,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -26,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.ssafy.talkeasy.feature.aac.R
-import com.ssafy.talkeasy.feature.aac.SampleData.Companion.time
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
@@ -37,6 +41,9 @@ import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold24
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleNormal22
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -90,6 +97,17 @@ fun BrowseLocation(name: String = "") {
 
 @Composable
 fun RequestBrowse(profileUrl: String = "", memberName: String) {
+    var remainingSeconds by remember { mutableStateOf(30) }
+
+    LaunchedEffect(Unit) {
+        withContext(Dispatchers.Default) {
+            repeat(30) {
+                delay(1000) // 1초 대기
+                remainingSeconds--
+            }
+        }
+    }
+
     Surface(modifier = Modifier.fillMaxWidth(), color = md_theme_light_outline) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Box(
@@ -136,7 +154,10 @@ fun RequestBrowse(profileUrl: String = "", memberName: String) {
                 Text(
                     modifier = Modifier.padding(vertical = 8.dp),
                     style = typography.bodyLarge,
-                    text = String.format(stringResource(R.string.content_approve_with_time), time)
+                    text = String.format(
+                        stringResource(R.string.content_approve_with_time),
+                        remainingSeconds
+                    )
                 )
             }
         }
