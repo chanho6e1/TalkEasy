@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Setting - Top Bar -->
+    <string name="image_arrow_back">뒤로가기 버튼입니다</string>
+</resources>

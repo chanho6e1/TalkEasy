@@ -11,4 +11,7 @@
 
     <!-- Welcome -->
     <string name="title_welcome">%s 님\n환영합니다!</string>
+
+    <!-- Profile -->
+    <string name="image_follow_list_profile">프로필 이미지입니다.</string>
 </resources>
