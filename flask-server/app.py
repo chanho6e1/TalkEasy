@@ -22,7 +22,6 @@ def get_location():
                           password=os.getenv('DB_PASSWORD'),
                           port=5432)
 
-    
     cur = db.cursor()
     email = request.args.get('email')
     print(type(email))
