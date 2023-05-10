@@ -1,4 +1,4 @@
-package com.ssafy.talkeasy.feature.aac
+package com.ssafy.talkeasy.core.domain.entity
 
 data class Category(
     val index: String,
