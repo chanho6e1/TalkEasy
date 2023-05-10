@@ -75,14 +75,12 @@ public class MemberService {
     public String deleteUserInfo(String userId) throws IOException {
 
         // 유저 큐 삭제
-        deleteQueue("user.queue", null, userId);
+        deleteUserQueue("user.queue", userId);
 
         // 채팅 큐 삭제
         List<ChatRoom> chatRoomList = mongoTemplate.find(Query.query(Criteria.where("users").in(userId)), ChatRoom.class);
         for (ChatRoom chatRoom : chatRoomList) {
             chatService.deleteRoom(chatRoom.getId(), userId);
-//            deleteQueue("chat.queue", chatRoom.getId(), userId);
-//            deleteQueue("read.queue", chatRoom.getId(), userId);
         }
 
         // Member 테이블에서 삭제
@@ -102,12 +100,8 @@ public class MemberService {
         return userId;
     }
 
-    private void deleteQueue(String queueName, String roomId, String userId) {
-        if (roomId == null) {
-            amqpAdmin.deleteQueue(queueName + "." + userId);
-            return;
-        }
-        amqpAdmin.deleteQueue(queueName + "." + roomId + "." + userId);
+    private void deleteUserQueue(String queueName, String userId) {
+        amqpAdmin.deleteQueue(queueName + "." + userId);
     }
     private int calcAge(String birthDate){
         LocalDate now = LocalDate.now();
