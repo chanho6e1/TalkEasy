@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -76,5 +77,22 @@ fun ChatPartnerChatBalloonHead(start: Int = 0, top: Int = 0, message: String) {
                 text = message
             )
         }
+    }
+}
+
+@Composable
+fun ChatPartnerChatBalloonTail(message: String = "") {
+    Card(
+        modifier = Modifier.wrapContentSize(),
+        shape = shapes.extraSmall,
+        colors = CardDefaults.cardColors(md_theme_light_secondaryContainer)
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(horizontal = 18.dp, vertical = 10.dp)
+                .widthIn(max = 242.dp),
+            style = typography.bodyMedium,
+            text = message
+        )
     }
 }
