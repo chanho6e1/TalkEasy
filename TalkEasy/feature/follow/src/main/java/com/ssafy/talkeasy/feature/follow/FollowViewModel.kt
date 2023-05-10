@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.ssafy.talkeasy.core.domain.Resource
 import com.ssafy.talkeasy.core.domain.entity.response.Default
 import com.ssafy.talkeasy.core.domain.entity.response.MemberInfo
-import com.ssafy.talkeasy.core.domain.usecase.follow.FollowListUseCase
 import com.ssafy.talkeasy.core.domain.usecase.member.MemberInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -17,7 +16,6 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class FollowViewModel @Inject constructor(
     private val memberInfoUseCase: MemberInfoUseCase,
-    private val followListUseCase: FollowListUseCase,
 ) : ViewModel() {
 
     private val _memberInfo = MutableStateFlow<MemberInfo?>(null)

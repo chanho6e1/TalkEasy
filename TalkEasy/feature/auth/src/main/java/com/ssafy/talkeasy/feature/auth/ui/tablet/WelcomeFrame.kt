@@ -15,7 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.ssafy.talkeasy.feature.auth.AuthViewModel
 import com.ssafy.talkeasy.feature.common.component.WelcomeAnimation
-import com.ssafy.talkeasy.feature.common.ui.theme.welcomeBold40
+import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold40
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
 
 @Composable
@@ -57,7 +57,7 @@ internal fun WelcomeFrame(
             WelcomeAnimation(
                 memberName = memberName,
                 size = 570,
-                textStyle = welcomeBold40,
+                textStyle = textStyleBold40,
                 bottomPadding = 80
             )
         }

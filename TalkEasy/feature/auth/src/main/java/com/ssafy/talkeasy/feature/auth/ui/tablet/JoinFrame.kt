@@ -61,9 +61,9 @@ import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_outline
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_primary
 import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
+import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold30
+import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold32
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
-import com.ssafy.talkeasy.feature.common.ui.theme.welcomeBold30
-import com.ssafy.talkeasy.feature.common.ui.theme.welcomeBold32
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.Date
@@ -169,14 +169,14 @@ internal fun JoinContent(
         ) {
             Text(
                 text = stringResource(R.string.title_member_info_input),
-                style = welcomeBold32,
+                style = textStyleBold32,
                 fontWeight = FontWeight.Bold
             )
 
             EditProfile(
                 size = 150,
                 profile = profile,
-                textStyle = welcomeBold30
+                textStyle = textStyleBold30
             ) { onProfileClick() }
 
             Column(

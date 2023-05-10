@@ -88,7 +88,7 @@ fun NavGraphBuilder.joinScreen(navController: NavController, onJoinMember: () ->
 fun NavGraphBuilder.welcomeScreen(
     navController: NavController,
     onFinishedLoading: () -> Unit,
-    role: Int
+    role: Int,
 ) {
     if (role == 0) {
         composable(route = welcomeRouteProtector) { navBackStackEntry ->
