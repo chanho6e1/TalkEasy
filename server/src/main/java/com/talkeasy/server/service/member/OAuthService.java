@@ -112,10 +112,13 @@ public class OAuthService {
             log.info("========== exception 발생 : {}", e.getMessage());
         }
         String userId = null;
-        if(member.getRole() == 0){
+        if (member.getRole() == 0) {
             userId = memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(saveFileName).role(member.getRole()).build());
-        }else {
-            userId = memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(saveFileName).role(member.getRole()).gender(member.getGender()).age(calcAge(member.getBirthDate())).birthDate(member.getBirthDate()).build());
+        } else { // 피보호자용
+            userId = memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(saveFileName)
+                    .role(member.getRole()).gender(member.getGender()).age(calcAge(member.getBirthDate())).birthDate(member.getBirthDate())
+                    .locationStatus(true)
+                    .build());
         }
 
         //채팅에 사용할 유저별 큐 생성
@@ -123,14 +126,15 @@ public class OAuthService {
 
         return jwtTokenProvider.createAccessToken(userId);
     }
-    private int calcAge(String birthDate){
+
+    private int calcAge(String birthDate) {
         LocalDate now = LocalDate.now();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy");
 
         int nowYear = Integer.parseInt(now.format(formatter));
-        int birthYear = Integer.parseInt(birthDate.substring(0,4));
+        int birthYear = Integer.parseInt(birthDate.substring(0, 4));
 
-        return nowYear-birthYear+1;
+        return nowYear - birthYear + 1;
     }
 }

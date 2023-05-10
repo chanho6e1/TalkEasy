@@ -1,9 +1,12 @@
 package com.talkeasy.server.service.member;
+
 import java.time.LocalDate;
+
 import com.talkeasy.server.config.s3.S3Uploader;
 import com.talkeasy.server.domain.aac.CustomAAC;
 import com.talkeasy.server.domain.app.UserAppToken;
 import com.talkeasy.server.domain.chat.ChatRoom;
+import com.talkeasy.server.domain.member.Follow;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.user.MemberInfoUpdateRequest;
 import com.talkeasy.server.repository.member.MembersRepository;
@@ -33,6 +36,7 @@ public class MemberService {
     private final S3Uploader s3Uploader;
     private final AmqpAdmin amqpAdmin;
     private final ChatService chatService;
+    private final FollowService followService;
 
     public Member getUserInfo(String email) {
         return memberRepository.findByEmail(email);
@@ -54,9 +58,9 @@ public class MemberService {
         try {
             log.info("============file: " + multipartFile);
             String saveFileName = s3Uploader.uploadFiles(multipartFile, "talkeasy");
-            if(member.getRole() == 0){ // 보호자의 경우
+            if (member.getRole() == 0) { // 보호자의 경우
                 member.setUserInfo(request, saveFileName);
-            }else{  // 피보호자의 경우
+            } else {  // 피보호자의 경우
                 member.setUserInfo(calcAge(request.getBirthDate()), request, saveFileName);
             }
         } catch (Exception e) {
@@ -103,14 +107,28 @@ public class MemberService {
     private void deleteUserQueue(String queueName, String userId) {
         amqpAdmin.deleteQueue(queueName + "." + userId);
     }
-    private int calcAge(String birthDate){
+
+    private int calcAge(String birthDate) {
         LocalDate now = LocalDate.now();
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy");
 
         int nowYear = Integer.parseInt(now.format(formatter));
-        int birthYear = Integer.parseInt(birthDate.substring(0,4));
+        int birthYear = Integer.parseInt(birthDate.substring(0, 4));
 
-        return nowYear-birthYear+1;
+        return nowYear - birthYear + 1;
     }
+
+
+    /* 일괄 위치 정보 동의/비동의 */
+    public boolean putLocationStatus(String userId) {
+
+        Member member = findUserById(userId);
+
+        member.setLocationStatus(!member.getLocationStatus());
+        mongoTemplate.save(member);
+
+        return member.getLocationStatus();
+    }
+
 }

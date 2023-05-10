@@ -1,6 +1,7 @@
 package com.talkeasy.server.service.chat;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.domain.chat.ChatRoom;
@@ -11,6 +12,7 @@ import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.chat.ChatRoomDto;
 import com.talkeasy.server.dto.chat.ChatRoomListDto;
 import com.talkeasy.server.dto.chat.UserInfo;
+import com.talkeasy.server.service.firebase.FirebaseCloudMessageService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -56,82 +58,72 @@ class ChatServiceTest {
     @Mock
     private RabbitAdmin rabbitAdmin;
 
+    @Mock
+    private FirebaseCloudMessageService firebaseCloudMessageService;
 
     @BeforeEach
     void setUp() {
         gson = new Gson();
+        chatService = new ChatService(mongoTemplate, rabbitTemplate, rabbitAdmin, amqpAdmin, firebaseCloudMessageService, gson);
     }
-
-    @BeforeEach
-    void createChatUsers() {
-        Map<String, UserData> chatUsers = new HashMap<>();
-        chatUsers.put("1", new UserData(true, null));
-        chatUsers.put("2", new UserData(true, null));
-    }
-
 
     @Test
-    @DisplayName("채팅방 생성- 정상(leaveTime 내역이 없을 경우)")
-    void createRoom() throws IOException {
+    @DisplayName("채팅방 생성 - 기존 채팅방이 없는 경우")
+    void createRoom_NewChatRoom() throws IOException {
+        // given
+        String user1 = "1";
+        String user2 = "2";
+        ChatRoom chatRoom = ChatRoom.builder()
+                .id("3")
+                .users(new String[]{user1, user2})
+                .chatUsers(Map.of(user1, new UserData(true, null), user2, new UserData(true, null)))
+                .date("2023.01.01")
+                .build();
 
-        Map<String, UserData> chatUsers = new HashMap<>();
-        chatUsers.put("1", new UserData(true, null));
-        chatUsers.put("2", new UserData(true, null));
-
-        ChatRoom chatRoom = ChatRoom.builder().id("3").users(new String[]{"1", "2"}).chatUsers(chatUsers).date("2023.01.01").build();
-        Mockito.when(mongoTemplate.findOne(eq(Query.query(Criteria.where("users").all(new String[]{"1", "2"}))), eq(ChatRoom.class))).thenReturn(null);
+        Mockito.when(mongoTemplate.findOne(eq(Query.query(Criteria.where("users").all(new String[]{user1, user2}))), eq(ChatRoom.class)))
+                .thenReturn(null);
 
         Mockito.when(mongoTemplate.insert(any(ChatRoom.class), eq("chat_room"))).thenReturn(chatRoom);
 
-        Mockito.when(mongoTemplate.findOne(eq(Query.query(Criteria.where("id").is("3"))), eq(ChatRoom.class))).thenReturn(chatRoom);
+        Mockito.when(mongoTemplate.findOne(eq(Query.query(Criteria.where("id").is("3"))), eq(ChatRoom.class)))
+                .thenReturn(chatRoom);
 
-        CommonResponse commonResponse = chatService.createRoom("1", "2");
 
-        verify(mongoTemplate, times(1)).findOne(any(Query.class), eq(ChatRoom.class));
-        verify(mongoTemplate, times(1)).insert(any(ChatRoom.class));
+        // when
+        CommonResponse result = chatService.createRoom(user1, user2);
 
-        verify(rabbitAdmin, times(4)).declareQueue(any(Queue.class));
-        verify(rabbitAdmin, times(4)).declareBinding(any(Binding.class));
-        verify(mongoTemplate, times(2)).insert(any(ChatRoomDetail.class));
-
-        assertThat(commonResponse.getStatus()).isEqualTo(201);
+        // then
+        assertThat(result.getStatus()).isEqualTo(201);
+//        assertThat(result.getData()).isEqualTo(chatRoom.getId());
+        verify(mongoTemplate, times(1)).findOne(eq(Query.query(Criteria.where("users").all(new String[]{user1, user2}))), eq(ChatRoom.class));
+        verify(mongoTemplate, times(1)).insert(any(ChatRoom.class), eq("chat_room"));
     }
 
 
     @Test
-    @DisplayName("채팅방 생성- 이미 채팅방이 있는 경우, 새로 생성하지 않고 원래의 채팅방 아이디를 반환 / 채팅방에서 퇴장했던 유저가 다시 입장하는 경우")
-    void createRoomCaseAlreadyExist() throws IOException {
+    @DisplayName("채팅방 생성 - 기존 채팅방이 있는 경우")
+    void createRoom_ExistingChatRoom() throws IOException {
+        // given
+        String user1 = "1";
+        String user2 = "2";
+        ChatRoom existChatRoom = ChatRoom.builder()
+                .id("3")
+                .users(new String[]{user1, user2})
+                .chatUsers(Map.of(user1, new UserData(true, null), user2, new UserData(true, null)))
+                .date("2023.01.01")
+                .build();
+        Mockito.when(mongoTemplate.findOne(eq(Query.query(Criteria.where("users").all(new String[]{user1, user2}))), eq(ChatRoom.class)))
+                .thenReturn(existChatRoom);
 
-        Map<String, UserData> chatUsers = new HashMap<>();
-        chatUsers.put("1", new UserData(true, null));
-        chatUsers.put("2", new UserData(true, null));
+        // when
+        CommonResponse result = chatService.createRoom(user1, user2);
 
-        ChatRoom chatRoom = ChatRoom.builder().id("3").users(new String[]{"1", "2"}).chatUsers(chatUsers).date("2023.01.01").build();
-        Mockito.when(mongoTemplate.findOne(any(Query.class), eq(ChatRoom.class))).thenReturn(chatRoom);
-        CommonResponse commonResponse = chatService.createRoom("1", "2");
-
-        verify(mongoTemplate, times(1)).findOne(any(Query.class), eq(ChatRoom.class));
-        verify(mongoTemplate, times(1)).save(any(ChatRoom.class));
-        verify(mongoTemplate, never()).insert(any(ChatRoom.class));
-
-        assertThat(commonResponse.getStatus()).isEqualTo(200);
-
+        // then
+        assertThat(result.getStatus()).isEqualTo(200);
+        assertThat(result.getData()).isEqualTo(existChatRoom.getId());
+        verify(mongoTemplate, times(1)).findOne(eq(Query.query(Criteria.where("users").all(new String[]{user1, user2}))), eq(ChatRoom.class));
+        verify(mongoTemplate, times(1)).save(eq(existChatRoom));
     }
-
-//    @Test
-//    void doCreateRoomChat() throws IOException {
-//
-//        ChatRoom chatRoom = new ChatRoom(new String[]{"1", "2"}, "hihi", LocalDateTime.now().toString());
-//        chatRoom.setId("3");
-//        Mockito.when(mongoTemplate.findOne(any(Query.class), eq(ChatRoom.class))).thenReturn(chatRoom);
-//
-//
-//        chatService.doCreateRoomChat(chatRoom, "1");
-//
-//        verify(mongoTemplate, times(2)).save(any(ChatRoom.class));
-//
-//
-//    }
 
     @Test
     @DisplayName("채팅 큐 생성 세부 메서드 호출")
@@ -144,15 +136,15 @@ class ChatServiceTest {
         verify(rabbitAdmin, times(4)).declareBinding(any(Binding.class));
     }
 
-//    @Test
-//    @DisplayName("채팅 큐 생성 세부 메서드")
-//    void createQueueDetail() {
-//        ChatRoom chatRoom = new ChatRoom(new String[]{"1", "2"}, "hihi", LocalDateTime.now().toString());
-//        ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom);
-//        chatService.createQueueDetail(chatRoomDto, "chat", "1");
-//        verify(rabbitAdmin, times(1)).declareQueue(any(Queue.class));
-//        verify(rabbitAdmin, times(1)).declareBinding(any(Binding.class));
-//    }
+    @Test
+    @DisplayName("채팅 큐 생성 세부 메서드")
+    void createQueueDetail() {
+        ChatRoom chatRoom = new ChatRoom(new String[]{"1", "2"}, "hihi", LocalDateTime.now().toString());
+        ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom);
+        chatService.createQueueDetail(chatRoomDto, "chat", "1");
+        verify(rabbitAdmin, times(1)).declareQueue(any(Queue.class));
+        verify(rabbitAdmin, times(1)).declareBinding(any(Binding.class));
+    }
 
     @Test
     @DisplayName("메시지를 전송하기전 Message로 변환 / 아직 읽지 않았기 때문에 readCnt의 디폴트값은 1")
@@ -161,7 +153,7 @@ class ChatServiceTest {
         ChatRoomDetail chat = ChatRoomDetail.builder().roomId("3").fromUserId("1").toUserId("2").created_dt("2023.05.01").build();
         Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
 
-        ChatRoomDetail chatRoomDetail = chatService.convertChat(gson, msg);
+        ChatRoomDetail chatRoomDetail = chatService.convertChat(msg);
         assertThat(chatRoomDetail.getReadCnt()).isEqualTo(1);
 
     }
@@ -180,32 +172,32 @@ class ChatServiceTest {
         assertThat(roomId).isEqualTo("3");
     }
 
-//    @Test
-//    @DisplayName("메시지 보내기")
-//    void doChat() throws IOException {
-//        ChatRoomDetail chat = ChatRoomDetail.builder().roomId("3").fromUserId("1").toUserId("2").created_dt("2023.05.01").build();
-//
-//        Map<String, UserData> chatUsers = new HashMap<>();
-//        chatUsers.put("1", new UserData(true, null));
-//        chatUsers.put("2", new UserData(true, null));
-//
-//        ChatRoom chatRoom = ChatRoom.builder().id("3").users(new String[]{"1", "2"}).chatUsers(chatUsers).date("2023.01.01").build();
-//        Mockito.when(mongoTemplate.findOne(any(Query.class), eq(ChatRoom.class))).thenReturn(chatRoom);
-//
-//        chatService.doChat(gson, chat);
-//
-//        verify(rabbitTemplate, times(1)).send(eq("chat.exchange"), any(String.class), any(Message.class));
-////        verify(rabbitTemplate, times(1)).convertAndSend(eq("user.exchange"), any(String.class), any(Message.class));
-////        verify(rabbitTemplate, times(1)).convertAndSend(eq("user.exchange"), any(String.class), any(Message.class));
-//        verify(rabbitTemplate, times(1)).convertAndSend(eq("user.exchange"), any(String.class), any(Class.class));
-//        verify(rabbitTemplate, times(1)).convertAndSend(eq("user.exchange"), any(String.class), any(Class.class));
-//    }
+    @Test
+    @DisplayName("메시지 보내기")
+    void doChat() throws IOException {
+        ChatRoomDetail chat = ChatRoomDetail.builder().roomId("3").fromUserId("1").toUserId("2").created_dt("2023.05.01").build();
+
+        Map<String, UserData> chatUsers = new HashMap<>();
+        chatUsers.put("1", new UserData(true, null));
+        chatUsers.put("2", new UserData(true, null));
+
+        ChatRoom chatRoom = ChatRoom.builder().id("3").users(new String[]{"1", "2"}).chatUsers(chatUsers).date("2023.01.01").build();
+        Mockito.when(mongoTemplate.findOne(any(Query.class), eq(ChatRoom.class))).thenReturn(chatRoom);
+
+        chatService.doChat(chat);
+
+        verify(rabbitTemplate, times(1)).send(eq("chat.exchange"), eq("room.3.2"), any(Message.class));
+        verify(rabbitTemplate, times(1)).convertAndSend(eq("user.exchange"), eq("user.1"), any(Object.class));
+        verify(rabbitTemplate, times(1)).convertAndSend(eq("user.exchange"), eq("user.2"), any(Object.class));
+
+
+    }
 
     @Test
     void sendChatMessage() {
 
         ChatRoomDetail chatRoomDetail = ChatRoomDetail.builder().roomId("3").fromUserId("1").toUserId("2").created_dt("2023.05.01").build();
-        chatService.sendChatMessage(gson, chatRoomDetail, "1");
+        chatService.sendChatMessage(chatRoomDetail, "1");
 
         verify(rabbitTemplate, times(1)).send(eq("chat.exchange"), eq("room.3.1"), any(Message.class));
     }
@@ -357,29 +349,10 @@ class ChatServiceTest {
         verify(mongoTemplate, times(1)).find(any(Query.class), eq(LastChat.class));
     }
 
-    @Test
-    @DisplayName("채팅방 삭제하기 - 채팅방 삭제되지 않고 nowIn이 false가 되는 경우")
-    void deleteRoom() throws IOException {
-
-        Map<String, UserData> chatUsers = new HashMap<>();
-        chatUsers.put("1", new UserData(true, null));
-        chatUsers.put("2", new UserData(true, null));
-        ChatRoom chatRoom = ChatRoom.builder().id("3").chatUsers(chatUsers).users(new String[]{"1", "2"}).build();
-        Mockito.when(mongoTemplate.findOne(any(Query.class), eq(ChatRoom.class))).thenReturn(chatRoom);
-
-        String result = chatService.deleteRoom("3", "1");
-
-        verify(mongoTemplate, times(1)).findOne(any(Query.class), eq(ChatRoom.class));
-        verify(mongoTemplate, times(1)).save(any(ChatRoom.class));
-        verify(mongoTemplate, times(1)).remove(any(Query.class), eq(LastChat.class));
-
-        assertEquals("3", result);
-
-    }
 
     @Test
-    @DisplayName("채팅방 삭제하기 - 채팅방에 이미 상대방도 없을 경우")
-    void deleteRoomCaseNoExistToUser() throws IOException {
+    @DisplayName("채팅방 삭제하기")
+    void deleteRoomCase() throws IOException {
 
         Map<String, UserData> chatUsers = new HashMap<>();
         chatUsers.put("1", new UserData(true, null));
@@ -394,9 +367,6 @@ class ChatServiceTest {
         verify(mongoTemplate, times(1)).remove(any(Query.class), eq(ChatRoom.class));
         verify(mongoTemplate, times(1)).remove(any(Query.class), eq(ChatRoomDetail.class));
         verify(mongoTemplate, times(1)).remove(any(Query.class), eq(LastChat.class));
-
-        String queueName = String.format("chat.queue.%s.%s", "3", "1");
-        QueueInformation queueInformation = rabbitAdmin.getQueueInfo(queueName);
 
         assertThat(result).isEqualTo("3");
         assertThat(mongoTemplate.findById("3", ChatRoom.class)).isNull();

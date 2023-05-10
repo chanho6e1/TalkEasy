@@ -83,7 +83,7 @@ public class ChatService {
 
         ChatRoomDetail chat = ChatRoomDetail.builder().roomId(chatRoom.getId()).toUserId(userId).fromUserId("admin").msg("채팅방이 생성되었습니다.").created_dt(LocalDateTime.now().toString()).readCnt(0).build();
 
-        doChat(gson, chat);
+        doChat(chat);
 
     }
 
@@ -116,7 +116,7 @@ public class ChatService {
     }
 
 
-    public ChatRoomDetail convertChat(Gson gson, Message message) {
+    public ChatRoomDetail convertChat(Message message) {
         String str = new String(message.getBody());
         ChatRoomDetail chat = gson.fromJson(str, ChatRoomDetail.class);
 
@@ -136,13 +136,16 @@ public class ChatService {
         return chatRoomDetail.getRoomId();
     }
 
-    public void doChat(Gson gson, ChatRoomDetail chat) throws IOException {
+    public void doChat(ChatRoomDetail chat) throws IOException {
         ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getRoomId())), ChatRoom.class);
 
         updateUserInChatRoom(chatRoom, chat.getFromUserId());
         updateUserInChatRoom(chatRoom, chat.getToUserId());
 
-        sendChatMessage(gson, chat, chat.getToUserId());
+        sendChatMessage(chat, chat.getToUserId());
+
+        /*전송한 채팅을 디비에 저장*/
+        saveChatDetail(chat);
 
         PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
         PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
@@ -158,7 +161,7 @@ public class ChatService {
     }
 
 
-    public void sendChatMessage(Gson gson, ChatRoomDetail chat, String toUserId) {
+    public void sendChatMessage(ChatRoomDetail chat, String toUserId) {
         String routingKey = String.format("room.%s.%s", chat.getRoomId(), toUserId);
 
         Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
@@ -252,6 +255,10 @@ public class ChatService {
         LastChat lastChatDto = new LastChat(chat);
         lastChatDto.setUserId(userId);
         mongoTemplate.insert(lastChatDto, "last_chat");
+    }
+
+    public void saveChatDetail(ChatRoomDetail chat) {
+       mongoTemplate.insert(chat, "chat_room_detail");
     }
 
     public List<LastChat> getLastChatList(String userId) {
