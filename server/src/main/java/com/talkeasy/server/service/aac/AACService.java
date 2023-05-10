@@ -80,7 +80,7 @@ public class AACService {
 
     }
 
-    public PagedResponse<CustomAAC> getAacByCustom(String userId, int offset, int size) {
+    public PagedResponse<ResponseAACListDto> getAacByCustom(String userId, int offset, int size) {
 
         Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "text")); // 가나다 순으로
         Query query = new Query(Criteria.where("userId").is(userId)).with(pageable);

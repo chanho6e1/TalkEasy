@@ -1,16 +1,20 @@
 package com.talkeasy.server.controller.aac;
 
 
+import com.google.gson.Gson;
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.domain.aac.AAC;
 import com.talkeasy.server.domain.aac.AACCategory;
 import com.talkeasy.server.domain.aac.CustomAAC;
 import com.talkeasy.server.domain.member.Member;
+import com.talkeasy.server.dto.aac.CustomAACDto;
 import com.talkeasy.server.dto.aac.ResponseAACDto;
 import com.talkeasy.server.dto.aac.ResponseAACListDto;
+import com.talkeasy.server.dto.chat.ChatTextDto;
 import com.talkeasy.server.service.aac.AACService;
 import com.talkeasy.server.service.chat.TTSService;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,18 +23,21 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,7 +61,7 @@ class AACControllerTest {
     }
 
     @Test
-    @DisplayName("[GET] Category_List")
+    @DisplayName("[GET] 카테고리 목록")
     void getCategory() throws Exception {
 
         AACCategory aacCategory1 = AACCategory.builder().id("1").title("고정").build();
@@ -72,7 +79,7 @@ class AACControllerTest {
     }
 
     @Test
-    @DisplayName("[GET] AAC_By_Category")
+    @DisplayName("[GET] 카테고리별 AAC")
     void getCategoryContents() throws Exception {
 
         OAuth2UserImpl member = new OAuth2UserImpl(Member.builder().id("1").build());
@@ -85,9 +92,12 @@ class AACControllerTest {
         ResponseAACDto aac2 = ResponseAACDto.builder().id("2").title("안녕히계세요").category("1").build();
 
         List<ResponseAACDto> aacList = List.of(aac1, aac2);
-        PagedResponse<ResponseAACListDto> result = new PagedResponse<>(HttpStatus.OK, aacList, 1);
 
-        when(aacService.getAacByCategory(anyString(), anyInt(), anyInt())).thenReturn(result);
+        ResponseAACListDto lists = ResponseAACListDto.builder().fixedList(aacList).aacList(aacList).build();
+
+        PagedResponse<ResponseAACListDto> result = new PagedResponse<>(HttpStatus.OK, lists, 1);
+
+//        when(aacService.getAacByCategory(anyString(), anyInt(), anyInt())).thenReturn(result);
 
 //        mockMvc.perform(MockMvcRequestBuilders.get("/api/aac/categories/{categoryId}", categoryId)
 //                        .param("offset", String.valueOf(offset))
@@ -114,12 +124,11 @@ class AACControllerTest {
     }
 
     @Test
-    @DisplayName("[GET] AAC_By_Custom")
+    @DisplayName("[GET] 커스텀 AAC")
     void getCategoryContentsByCustom() throws Exception {
 
         OAuth2UserImpl member = new OAuth2UserImpl(Member.builder().id("6447cb89dade8b8f866e8f34").build());
         String categoryId = "9";
-        int fixed = 0;
         int offset = 1;
         int size = 10;
 
@@ -127,7 +136,9 @@ class AACControllerTest {
         CustomAAC aac2 = CustomAAC.builder().id("6449bcad36204f5f1b7770d1").text("히히").userId("6447cb89dade8b8f866e8f34").build();
 
         List<CustomAAC> aacList = List.of(aac1, aac2);
-        PagedResponse<CustomAAC> result = new PagedResponse<>(HttpStatus.OK, aacList, 1);
+
+
+        PagedResponse<ResponseAACListDto> result = new PagedResponse<>(HttpStatus.OK, aacList, 1);
 
         when(aacService.getAacByCustom(anyString(), anyInt(), anyInt())).thenReturn(result);
 
@@ -143,7 +154,7 @@ class AACControllerTest {
     }
 
     @Test
-    @DisplayName("[GET] RelativeVerb_By_aacId")
+    @DisplayName("[GET] 연관동사 리스트")
     void getRelativeVerb() throws Exception {
         String aacId = "22";
 
@@ -175,40 +186,54 @@ class AACControllerTest {
     }
 
     @Test
-    @DisplayName("[POST]커스텀 aac 등록")
-    void postCustomAac() {
+    @DisplayName("[POST] 커스텀 aac 등록")
+    void postCustomAac() throws Exception {
 
-//        mockMvc.perform(MockMvcRequestBuilders.get("/api/aac/relative-verb/{aacId}", aacId))
-//                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.data[0].id").value("112"))
-//                .andExpect(jsonPath("$.data[0].title").value("매워요"))
-//                .andExpect(jsonPath("$.data[0].category").value("1"))
-//                .andExpect(jsonPath("$.data[1].id").value("113"))
-//                .andExpect(jsonPath("$.data[1].title").value("짜요"))
-//                .andExpect(jsonPath("$.data[1].category").value("1"))
-//                .andReturn();;
-//
-//        mockMvc.perform(MockMvcRequestBuilders.post("/api/aac/custom")
-//                .pa)
+        CustomAACDto customAACDto = new CustomAACDto();
+        customAACDto.setTitle("스불재");
+
+        String requestJson = new Gson().toJson(customAACDto);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/aac/custom")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson)
+                        .with(csrf()))
+                .andExpect(status().isCreated())
+                .andDo(MockMvcResultHandlers.print());
+
     }
 
     @Test
-    @DisplayName("[PUT]커스텀 aac 수정")
+    @DisplayName("[PUT] 커스텀 aac 수정")
     void putCustomAac() {
     }
 
     @Test
-    @DisplayName("[DELETE]커스텀 aac 삭제")
+    @DisplayName("[DELETE] 커스텀 aac 삭제")
     void deleteCustomAac() {
     }
 
     @Test
-    @DisplayName("[GET]OpenAI 문장 생성")
-    void getGenereteText() {
+    @DisplayName("[POST] OpenAI 문장 생성")
+    void getGenereteText() throws Exception {
+        String text = "배고프다 밥";
+        ChatTextDto textDto = new ChatTextDto();
+        textDto.setText(text);
+
+        String requestJson = new Gson().toJson(textDto);
+
+//        when(aacService.getGenereteText(textDto)).thenReturn("배고파요 밥 먹고싶어요");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/aac/generate")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson))
+                .andExpect(status().isCreated())
+//                .andExpect(jsonPath("$.data").value("배고파요 밥 먹고싶어요"))
+                .andDo(MockMvcResultHandlers.print());
     }
 
     @Test
-    @DisplayName("[GET]TTS 음성 파일 반환")
+    @DisplayName("[GET] TTS 음성 파일 반환")
     void getTTS() {
     }
 }
