@@ -1,2 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <!-- Chat Balloon -->
+    <string name="content_name_and_nickname">%s (%s)</string>
+    <string name="image_the_person_chat_balloon_head">상대방의 첫번째 채팅 배경</string>
+</resources>
