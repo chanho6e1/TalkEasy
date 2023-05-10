@@ -163,6 +163,11 @@ class FollowServiceTest {
                 .userId(follow.getToUserId())
                 .userName(toUser.getName())
                 .imageUrl(toUser.getImageUrl())
+                .followId("3")
+                .age(toUser.getAge())
+                .birthDate(toUser.getBirthDate())
+                .gender(toUser.getGender())
+                .locationStatus(follow.getLocationStatus())
                 .build();
 
         assertThat(result.getData().equals(Collections.singletonList(expectedFollowResponse))).isTrue();
@@ -194,7 +199,7 @@ class FollowServiceTest {
         Follow TargetUserfollow = Follow.builder().id("3").fromUserId("1").toUserId("2").mainStatus(true).build();
         Mockito.when(mongoTemplate.findOne(any(Query.class), eq(Follow.class))).thenReturn(TargetUserfollow);
 
-//        String result = followService.putProtector("1", "2");
+        Boolean result = followService.putProtector("1", "3");
 
         TargetUserfollow.setMainStatus(false);
 
@@ -202,7 +207,8 @@ class FollowServiceTest {
         verify(mongoTemplate, times(1)).save(eq(TargetUserfollow));
         verify(mongoTemplate, times(1)).save(any(Follow.class));
 
-//        assertThat(TargetUserfollow.getToUserId().equals(result));
+        assertThat(TargetUserfollow.getMainStatus().equals(result));
+        assertThat(result.equals(false)).isTrue();
 
     }
 
@@ -211,20 +217,21 @@ class FollowServiceTest {
     void putProtectorCaseTargetUserisNotMainStatus() {
 
         Follow follow = Follow.builder().id("3").fromUserId("1").toUserId("2").mainStatus(false).build();
-        Mockito.when(mongoTemplate.findOne(eq(Query.query(Criteria.where("toUserId").is("2")
-                .and("fromUserId").is("1"))), eq(Follow.class))).thenReturn(follow);
+        Mockito.when(mongoTemplate.findOne(eq(Query.query(Criteria.where("id").is("3")))
+                , eq(Follow.class))).thenReturn(follow);
 
         Mockito.when(mongoTemplate.findOne(eq(Query.query(Criteria.where("mainStatus").is(true)
                 .and("fromUserId").is("1"))), eq(Follow.class))).thenReturn(null);
 
-        followService.putProtector("1", "2");
+        Boolean result = followService.putProtector("1", "3");
 
-        verify(mongoTemplate, times(1)).findOne(eq(Query.query(Criteria.where("toUserId").is("2")
-                .and("fromUserId").is("1"))), eq(Follow.class));
+        verify(mongoTemplate, times(1)).findOne(eq(Query.query(Criteria.where("id").is("3")
+        )), eq(Follow.class));
         verify(mongoTemplate, times(1)).findOne(eq(Query.query(Criteria.where("mainStatus").is(true)
                 .and("fromUserId").is("1"))), eq(Follow.class));
         verify(mongoTemplate, times(1)).save(any(Follow.class));
 
+        assertThat(result.equals(true)).isTrue();
     }
 
     @Test
@@ -239,6 +246,7 @@ class FollowServiceTest {
 
         verify(mongoTemplate, times(1)).findOne(any(Query.class), eq(Follow.class));
 
+
     }
 
     @Test
@@ -248,10 +256,13 @@ class FollowServiceTest {
         Follow follow = Follow.builder().id("3").fromUserId("1").toUserId("2").mainStatus(false).locationStatus(false).build();
         Mockito.when(mongoTemplate.findOne(any(Query.class), eq(Follow.class))).thenReturn(follow);
 
-        followService.putLocationStatus("1", "2");
+        Boolean result = followService.putLocationStatus("1", "2");
 
         verify(mongoTemplate, times(1)).findOne(any(Query.class), eq(Follow.class));
         verify(mongoTemplate, times(1)).save(any(Follow.class));
+
+        assertThat(result.equals(true)).isTrue();
+
     }
 
     @Test
@@ -266,5 +277,15 @@ class FollowServiceTest {
 
         verify(mongoTemplate, times(1)).findOne(any(Query.class), eq(Follow.class));
         verify(mongoTemplate, never()).save(any(Follow.class));
+    }
+
+    @Test
+    @DisplayName("followId를 주면 follow를 검색")
+    void getTargetUser() {
+        Follow follow = Follow.builder().id("3").fromUserId("1").toUserId("2").mainStatus(false).locationStatus(false).build();
+        Mockito.when(mongoTemplate.findOne(any(Query.class), eq(Follow.class))).thenReturn(follow);
+        Follow followRespone = followService.getTargetUser("3");
+
+        assertThat(followRespone.getId().equals("3"));
     }
 }

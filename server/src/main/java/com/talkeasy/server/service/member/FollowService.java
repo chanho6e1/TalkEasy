@@ -109,7 +109,7 @@ public class FollowService {
     public String putMemo(String myId, String followId, FollowRequestDto followRequestDto) {
 
         Follow follow = getTargetUser(followId);
-        
+
         isMine(myId, follow.getFromUserId());
 
         follow.setMemo(followRequestDto.getMemo());
