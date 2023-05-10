@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.ssafy.talkeasy.feature.aac.R.string
+import com.ssafy.talkeasy.feature.aac.SampleData.Companion.memberName
 import com.ssafy.talkeasy.feature.common.R
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
@@ -59,7 +60,7 @@ fun AACTopBar(onRight: Boolean) {
                 }
             ) {
                 if (chatMode) {
-                    ChatPartner(name = "강은선인데이름이왕왕길어욥")
+                    ChatPartner(name = memberName)
                 } else {
                     DefaultProfile()
                 }
@@ -72,7 +73,7 @@ fun AACTopBar(onRight: Boolean) {
                     width = Dimension.fillToConstraints
                 }
             ) {
-                BrowseLocation("이름이왕왕긴강은선")
+                BrowseLocation(memberName)
             }
 
             Row(
@@ -104,7 +105,7 @@ fun AACTopBar(onRight: Boolean) {
                 Spacer(modifier = Modifier.width(20.dp))
 
                 if (chatMode) {
-                    ChatPartner(name = "강은선인데이름이왕왕길어욥")
+                    ChatPartner(name = memberName)
                 } else {
                     DefaultProfile()
                 }
