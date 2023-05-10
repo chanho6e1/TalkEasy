@@ -14,6 +14,8 @@ public class FollowResponse {
     private String userId;
     private String userName;
     private String imageUrl;
+    private Integer gender; //0:남/1:여
+    private Integer age;
     private String memo;
     private Boolean MainStatus;
     private Boolean locationStatus;
@@ -25,5 +27,7 @@ public class FollowResponse {
         this.memo = follow.getMemo();
         this.MainStatus = follow.getMainStatus();
         this.locationStatus = follow.getLocationStatus();
+        this.age = member.getAge();
+        this.gender = member.getGender();
     }
 }

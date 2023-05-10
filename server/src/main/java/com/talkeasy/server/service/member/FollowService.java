@@ -1,5 +1,6 @@
 package com.talkeasy.server.service.member;
 
+import com.google.gson.Gson;
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.common.exception.ResourceAlreadyExistsException;
 import com.talkeasy.server.common.exception.ResourceNotFoundException;
@@ -28,6 +29,7 @@ public class FollowService {
 
     private final MongoTemplate mongoTemplate;
     private final ChatService chatService;
+    private final Gson gson;
 
     public String follow(String myId, String toUserId) throws IOException {
 
