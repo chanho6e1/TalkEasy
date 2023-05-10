@@ -53,8 +53,11 @@ public class AACService {
     public PagedResponse<ResponseAACListDto> getAacByCategory(String categoryId, int offset, int size) {
 
         // 카테고리별 고정 내용 출력
-        List<AAC> fixedAAC = mongoTemplate.find(Query.query(Criteria.where("category").is(categoryId).and("fixed").is(1)), AAC.class);
-        List<ResponseAACDto> fixedResult = fixedAAC.stream().map((a) -> new ResponseAACDto(a)).collect(Collectors.toList());
+        List<ResponseAACDto> fixedResult = mongoTemplate.find(Query.query(Criteria.where("category").is(categoryId)
+                .and("fixed").is(1)), AAC.class)
+                .stream()
+                .map(ResponseAACDto::new)
+                .collect(Collectors.toList());
 
         // 카테고리별 일반 내용 출력 - 페이지네이션
         Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "title")); // 가나다 순으로
@@ -72,8 +75,6 @@ public class AACService {
 
         // 고정/일반 내용 한번에 출력
         ResponseAACListDto categoryList = ResponseAACListDto.builder().fixedList(fixedResult).aacList(aacList).build();
-//        categoryList.setFixedList(fixedResult);
-//        categoryList.setAacList(result);
 
         return new PagedResponse(HttpStatus.OK, categoryList, metaDataPage.getTotalPages());
 
