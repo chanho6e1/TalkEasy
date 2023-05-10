@@ -1,5 +1,3 @@
-@file:Suppress("DSL_SCOPE_VIOLATION")
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -93,6 +91,7 @@ dependencies {
 
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
+    implementation(project(":feature:aac"))
     implementation(project(":feature:common"))
     implementation(project(":feature:auth"))
     implementation(project(":feature:follow"))
