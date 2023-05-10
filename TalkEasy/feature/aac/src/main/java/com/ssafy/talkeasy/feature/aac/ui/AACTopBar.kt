@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -20,7 +19,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,6 +27,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.ssafy.talkeasy.feature.aac.R.string
 import com.ssafy.talkeasy.feature.common.R
+import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_error
@@ -42,20 +41,25 @@ import com.ssafy.talkeasy.feature.common.ui.theme.typography
 @Composable
 fun AACTopBar(onRight: Boolean) {
     val chatMode by remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
 
     if (onRight) {
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 24.dp, bottom = 21.dp, start = 24.dp, end = 36.dp)
+                .padding(top = 16.dp, bottom = 16.dp, start = 24.dp, end = 36.dp)
         ) {
             val (profile, snackBar, buttons) = createRefs()
 
-            Box(modifier = Modifier.constrainAs(profile) { start.linkTo(parent.start) }) {
+            Box(
+                modifier = Modifier.constrainAs(profile) {
+                    start.linkTo(parent.start)
+                    top.linkTo(parent.top, margin = 10.dp)
+                }
+            ) {
                 if (chatMode) {
-                    PreviewProfile()
+                    ChatPartner(name = "강은선인데이름이왕왕길어욥")
                 } else {
                     DefaultProfile()
                 }
@@ -71,7 +75,12 @@ fun AACTopBar(onRight: Boolean) {
                 BrowseLocation("이름이왕왕긴강은선")
             }
 
-            Row(modifier = Modifier.constrainAs(buttons) { end.linkTo(parent.end) }) {
+            Row(
+                modifier = Modifier.constrainAs(buttons) {
+                    end.linkTo(parent.end)
+                    top.linkTo(parent.top, margin = 8.dp)
+                }
+            ) {
                 ButtonSOS()
 
                 Spacer(modifier = Modifier.width(20.dp))
@@ -95,7 +104,7 @@ fun AACTopBar(onRight: Boolean) {
                 Spacer(modifier = Modifier.width(20.dp))
 
                 if (chatMode) {
-                    PreviewProfile()
+                    ChatPartner(name = "강은선인데이름이왕왕길어욥")
                 } else {
                     DefaultProfile()
                 }
@@ -105,15 +114,9 @@ fun AACTopBar(onRight: Boolean) {
 }
 
 @Composable
-fun ChatPartner(profileImageId: Int, name: String) {
+fun ChatPartner(profileUrl: String = "", name: String) {
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Image(
-            modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape),
-            painter = painterResource(id = profileImageId),
-            contentDescription = stringResource(string.image_profile_default)
-        )
+        Profile(profileUrl, 48)
 
         Spacer(modifier = Modifier.width(14.dp))
 
@@ -191,17 +194,5 @@ fun ButtonAlarmAndSetting() {
 @Composable
 @Preview(showBackground = true)
 fun DefaultProfile() {
-    ChatPartner(
-        R.drawable.ic_chat_tts,
-        stringResource(string.content_chat_mode_tts)
-    )
-}
-
-@Composable
-@Preview(showBackground = true)
-fun PreviewProfile() {
-    ChatPartner(
-        profileImageId = R.drawable.ic_profile_default,
-        name = "일이삼사오육칠팔구십일이삼사오육칠"
-    )
+    ChatPartner(name = stringResource(string.content_chat_mode_tts))
 }
