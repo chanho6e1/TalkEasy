@@ -96,6 +96,7 @@ dependencies {
     implementation(project(":feature:auth"))
     implementation(project(":feature:follow"))
     implementation(project(":feature:chat"))
+    implementation(project(":feature:location"))
 }
 
 kapt {
