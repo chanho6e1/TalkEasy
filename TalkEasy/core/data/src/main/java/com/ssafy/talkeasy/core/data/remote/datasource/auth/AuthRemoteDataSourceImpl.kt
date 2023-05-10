@@ -17,7 +17,7 @@ class AuthRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun requestLogin(
         accessToken: String,
-        role: Int
+        role: Int,
     ): DefaultResponse<AuthResponse> =
         authApiService.requestLogin(accessToken, role)
 
