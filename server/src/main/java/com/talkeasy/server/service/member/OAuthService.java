@@ -6,6 +6,7 @@ import com.talkeasy.server.authentication.JwtTokenProvider;
 import com.talkeasy.server.common.exception.NotFoundException;
 import com.talkeasy.server.config.s3.S3Uploader;
 import com.talkeasy.server.domain.member.Member;
+import com.talkeasy.server.dto.user.LoginResponse;
 import com.talkeasy.server.dto.user.MemberDetailRequest;
 import com.talkeasy.server.service.chat.ChatUserQueueService;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +34,7 @@ public class OAuthService {
     private final ChatUserQueueService chatUserQueueService;
     private final S3Uploader s3Uploader;
 
-    public String getToken(String accessToken, int role) {
+    public LoginResponse getToken(String accessToken, int role) {
         log.info("========== AccessToken : {} ", accessToken);
 
         String email = null;
@@ -47,10 +50,11 @@ public class OAuthService {
         Member member = memberService.findUserByEmailAndRole(email, role);
         if (member == null || member.getRole() != role) {
             log.info("========== 데이터 베이스에 아이디(login_id)가 없다.");
-            return null;
+            return new LoginResponse(null, null);
         }
         token = jwtTokenProvider.createAccessToken(member.getId());
-        return token;
+
+        return new LoginResponse(member.getName(), token);
     }
 
     public String getEmail(String token) throws IOException {
@@ -107,13 +111,26 @@ public class OAuthService {
         } catch (Exception e) {
             log.info("========== exception 발생 : {}", e.getMessage());
         }
-
-        String userId = memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(saveFileName).role(member.getRole()).gender(member.getGender()).age(member.getAge()).birthDate(member.getBirthDate()).build());
+        String userId = null;
+        if(member.getRole() == 0){
+            userId = memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(saveFileName).role(member.getRole()).build());
+        }else {
+            userId = memberService.saveUser(Member.builder().name(member.getName()).email(email).imageUrl(saveFileName).role(member.getRole()).gender(member.getGender()).age(calcAge(member.getBirthDate())).birthDate(member.getBirthDate()).build());
+        }
 
         //채팅에 사용할 유저별 큐 생성
         chatUserQueueService.createUserQueue(userId);
 
         return jwtTokenProvider.createAccessToken(userId);
     }
+    private int calcAge(String birthDate){
+        LocalDate now = LocalDate.now();
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy");
+
+        int nowYear = Integer.parseInt(now.format(formatter));
+        int birthYear = Integer.parseInt(birthDate.substring(0,4));
+
+        return nowYear-birthYear+1;
+    }
 }

@@ -228,12 +228,12 @@ public class ChatService {
     }
 
 
-    private Optional<Member> getMemberById(String id) {
+    public Optional<Member> getMemberById(String id) {
         Query query = Query.query(Criteria.where("id").is(id));
         return Optional.ofNullable(mongoTemplate.findOne(query, Member.class));
     }
 
-    private QueueInformation getQueueInfo(RabbitAdmin rabbitAdmin, String roomId, String userId) {
+    public QueueInformation getQueueInfo(RabbitAdmin rabbitAdmin, String roomId, String userId) {
         String queueName = String.format("chat.queue.%s.%s", roomId, userId);
         return rabbitAdmin.getQueueInfo(queueName);
     }
