@@ -24,6 +24,7 @@ import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_secondaryContainer
+import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
@@ -54,14 +55,49 @@ fun PartnerChat(memberName: String, nickname: String, messages: List<Chat>) {
                 }
 
                 items(messages.size - 2) { index ->
-                    Box(modifier = Modifier.padding(horizontal = 47.dp)) {
+                    Box(modifier = Modifier.padding(start = 47.dp)) {
                         PartnerChatBalloonTail(chat = messages[index + 1], isLastMessage = false)
                     }
                 }
 
                 item {
-                    Box(modifier = Modifier.padding(horizontal = 47.dp)) {
+                    Box(modifier = Modifier.padding(start = 47.dp)) {
                         PartnerChatBalloonTail(chat = messages.last(), isLastMessage = true)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun MyChat(messages: List<Chat>) {
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalAlignment = Alignment.End
+    ) {
+        when (messages.size) {
+            0 -> {}
+            1 -> {
+                item {
+                    MyChatBalloonHead(chat = messages[0], isLastMessage = true)
+                }
+            }
+
+            else -> {
+                item {
+                    MyChatBalloonHead(chat = messages[0], isLastMessage = false)
+                }
+
+                items(messages.size - 2) { index ->
+                    Box(modifier = Modifier.padding(end = 10.dp)) {
+                        MyChatBalloonTail(chat = messages[index + 1], isLastMessage = false)
+                    }
+                }
+
+                item {
+                    Box(modifier = Modifier.padding(end = 10.dp)) {
+                        MyChatBalloonTail(chat = messages.last(), isLastMessage = true)
                     }
                 }
             }
@@ -165,6 +201,75 @@ fun PartnerChatBalloonTail(chat: Chat, isLastMessage: Boolean) {
                 color = cabbage_pont,
                 style = typography.labelMedium,
                 text = chat.time
+            )
+        }
+    }
+}
+
+@Composable
+fun MyChatBalloonHead(end: Int = 0, top: Int = 0, chat: Chat, isLastMessage: Boolean) {
+    Row(modifier = Modifier.wrapContentSize(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        if (isLastMessage) {
+            Text(
+                modifier = Modifier.align(Alignment.Bottom),
+                color = cabbage_pont,
+                style = typography.labelMedium,
+                text = chat.time
+            )
+        }
+
+        Box(modifier = Modifier.padding(end = end.dp, top = top.dp)) {
+            Icon(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 5.dp),
+                painter = painterResource(id = drawable.bg_chat_balloon_right_head),
+                contentDescription = stringResource(R.string.image_the_person_chat_balloon_head),
+                tint = seed
+            )
+
+            Card(
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(end = 10.dp),
+                shape = shapes.extraSmall,
+                colors = CardDefaults.cardColors(seed)
+            ) {
+                Text(
+                    modifier = Modifier
+                        .padding(horizontal = 18.dp, vertical = 10.dp)
+                        .widthIn(max = 214.dp),
+                    style = typography.bodyMedium,
+                    text = chat.message
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MyChatBalloonTail(chat: Chat, isLastMessage: Boolean) {
+    Row(modifier = Modifier.wrapContentSize(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        if (isLastMessage) {
+            Text(
+                modifier = Modifier.align(Alignment.Bottom),
+                color = cabbage_pont,
+                style = typography.labelMedium,
+                text = chat.time
+            )
+        }
+
+        Card(
+            modifier = Modifier.wrapContentSize(),
+            shape = shapes.extraSmall,
+            colors = CardDefaults.cardColors(seed)
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 18.dp, vertical = 10.dp)
+                    .widthIn(max = 214.dp),
+                style = typography.bodyMedium,
+                text = chat.message
             )
         }
     }
