@@ -1,7 +1,7 @@
 package com.ssafy.talkeasy.core.data.remote.service
 
+import com.ssafy.talkeasy.core.data.remote.datasource.auth.AuthResponse
 import com.ssafy.talkeasy.core.data.remote.datasource.common.DefaultResponse
-import com.ssafy.talkeasy.core.domain.entity.response.Auth
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.http.Multipart
@@ -17,7 +17,7 @@ interface AuthApiService {
         accessToken: String,
         @Query("role")
         role: Int,
-    ): DefaultResponse<Auth>
+    ): DefaultResponse<AuthResponse>
 
     @Multipart
     @POST("/api/oauth/register")

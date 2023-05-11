@@ -31,16 +31,20 @@ internal fun WelcomeRouteProtector(
     followViewModel: FollowViewModel = hiltViewModel(),
 ) {
     val memberInfo by followViewModel.memberInfo.collectAsState()
+    val followList by followViewModel.followList.collectAsState()
     val memberName by authViewModel.name.collectAsState()
 
     SideEffect {
         if (memberInfo == null) {
             followViewModel.requestMemberInfo()
         }
+        if (followList == null) {
+            followViewModel.requestFollowList()
+        }
     }
 
-    LaunchedEffect(memberInfo) {
-        if (memberInfo != null) {
+    LaunchedEffect(key1 = memberInfo, key2 = followList) {
+        if (memberInfo != null && followList != null) {
             onFinishedLoading()
         }
     }
