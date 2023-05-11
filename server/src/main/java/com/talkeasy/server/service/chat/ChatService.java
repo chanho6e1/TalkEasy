@@ -116,16 +116,16 @@ public class ChatService {
 
         String newMsg = chat.getMsg();
 
-        if (chat.getType() == 1) { // location :: msg:: 요청 or 결과 or 실패 (request, result, reject)
+        if (chat.getType() == 1) { // location :: msg:: 요청 or 결과 or 실패 (REQUEST, RESULT, REJECT)
             String[] nowMsg = newMsg.split(" ");
-            if (nowMsg[0].equals("request"))
-                newMsg = "위치 정보 열람을 요청합니다.";
-            else if (nowMsg[0].equals("result"))
-                newMsg = nowMsg[1] + "분 동안 위치정보를 열람했습니다.";
-            else if (nowMsg[0].equals("reject"))
-                newMsg = "위치 정보 열람에 실패했습니다.";
+            if (nowMsg[0].equals("REQUEST"))
+                newMsg = "위치 열람 요청";
+            else if (nowMsg[0].equals("RESULT"))
+                newMsg = nowMsg[1]; // HH:MM
+            else if (nowMsg[0].equals("REJECT"))
+                newMsg = "요청 응답 없음";
         } else if (chat.getType() == 2){ // sos
-            newMsg = "[긴급] SOS 요청이 있습니다!!!";
+            newMsg = "긴급 도움 요청";
         }
 
         chat.setMsg(newMsg);
