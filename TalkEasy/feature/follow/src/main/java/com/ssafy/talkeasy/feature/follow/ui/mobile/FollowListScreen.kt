@@ -63,7 +63,9 @@ internal fun FollowListRoute(
     FollowLisScreen(
         modifier = modifier,
         followList = followList ?: arrayListOf(),
-        onClickedAddFollow = onClickedAddFollow
+        onClickedAddFollow = onClickedAddFollow,
+        onClickedNotification = onClickedNotification,
+        onClickedSettings = onClickedSettings
     )
 }
 
