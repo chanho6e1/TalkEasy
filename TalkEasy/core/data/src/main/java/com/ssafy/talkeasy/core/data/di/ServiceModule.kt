@@ -3,6 +3,7 @@ package com.ssafy.talkeasy.core.data.di
 import com.ssafy.talkeasy.core.data.common.util.AuthInterceptorClient
 import com.ssafy.talkeasy.core.data.common.util.NoAuthInterceptorClient
 import com.ssafy.talkeasy.core.data.remote.service.AuthApiService
+import com.ssafy.talkeasy.core.data.remote.service.FollowApiService
 import com.ssafy.talkeasy.core.data.remote.service.MemberApiService
 import dagger.Module
 import dagger.Provides
@@ -28,4 +29,11 @@ object ServiceModule {
         @AuthInterceptorClient
         retrofit: Retrofit,
     ): MemberApiService = retrofit.create(MemberApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideFollowApiService(
+        @AuthInterceptorClient
+        retrofit: Retrofit,
+    ): FollowApiService = retrofit.create(FollowApiService::class.java)
 }

@@ -13,6 +13,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -22,8 +25,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
-import com.ssafy.talkeasy.feature.common.component.MessageCount
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
@@ -34,13 +37,16 @@ import com.ssafy.talkeasy.feature.follow.R
 @Composable
 internal fun FollowListRoute(
     modifier: Modifier = Modifier,
-    viewModel: FollowViewModel = hiltViewModel(),
+    navBackStackEntry: NavBackStackEntry,
+    viewModel: FollowViewModel = hiltViewModel(navBackStackEntry),
     onClickedAddFollow: () -> Unit = {},
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
 ) {
+    val followList by rememberUpdatedState(newValue = viewModel.followList.collectAsState().value)
     FollowLisScreen(
         modifier = modifier,
+        followList = followList ?: arrayListOf(),
         onClickedAddFollow = onClickedAddFollow
     )
 }
@@ -52,6 +58,7 @@ internal fun FollowLisScreen(
     onClickedAddFollow: () -> Unit = {},
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
+    followList: List<Follow> = arrayListOf(),
 ) {
     Column() {
         FollowListHeader(
@@ -60,7 +67,8 @@ internal fun FollowLisScreen(
             onClickedNotification = onClickedNotification,
             onClickedSettings = onClickedSettings
         )
-        FollowListContent(modifier = modifier)
+
+        FollowListContent(modifier = modifier, followList = followList)
     }
 }
 
@@ -85,6 +93,7 @@ fun FollowListHeader(
                 fontWeight = FontWeight.Bold
             )
         }
+
         item {
             Row(modifier = modifier.padding(end = 18.dp)) {
                 IconButton(modifier = modifier, onClick = onClickedAddFollow) {
@@ -96,6 +105,7 @@ fun FollowListHeader(
                         modifier = modifier.size(24.dp)
                     )
                 }
+
                 IconButton(modifier = modifier, onClick = onClickedNotification) {
                     Icon(
                         painter = painterResource(R.drawable.ic_notification_off),
@@ -105,6 +115,7 @@ fun FollowListHeader(
                         modifier = modifier.size(24.dp)
                     )
                 }
+
                 IconButton(modifier = modifier, onClick = onClickedSettings) {
                     Icon(
                         painter = painterResource(R.drawable.ic_settings),
@@ -119,27 +130,75 @@ fun FollowListHeader(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 fun FollowListContent(
     modifier: Modifier = Modifier,
+    followList: List<Follow> = arrayListOf(),
 ) {
-    LazyColumn(
-        contentPadding = PaddingValues(horizontal = 18.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
-    ) {
-        items(count = 5) {
-            FollowListItem()
+    if (followList.isNotEmpty()) {
+        LazyColumn(
+            contentPadding = PaddingValues(horizontal = 18.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
+        ) {
+            itemsIndexed(items = followList) { index, item ->
+                FollowListItem(
+                    profileUrl = item.imageUrl,
+                    name = item.userName,
+                    age = item.age ?: 0,
+                    time = "2023-05-04T09:28:32.296943",
+                    newMessageCount = 0,
+                    gender = if (item.gender == 0) {
+                        stringResource(id = R.string.content_man)
+                    } else {
+                        stringResource(id = R.string.content_woman)
+                    }
+                )
+            }
+        }
+    } else {
+        NoFollowContent(modifier = modifier)
+    }
+}
+
+@Composable
+fun NoFollowContent(
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(20.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                modifier = modifier,
+                painter = painterResource(id = Common.drawable.bg_talkeasy_logo_verticcal_trans),
+                contentDescription = stringResource(
+                    id = R.string.image_logo
+                ),
+                colorFilter = tint(harp)
+            )
+            Text(
+                text = stringResource(id = R.string.content_no_follow_content),
+                style = typography.titleMedium,
+                color = harp,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
 
-@OptIn(ExperimentalGlideComposeApi::class)
 @Preview(showBackground = true)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun FollowListItem(
     modifier: Modifier = Modifier,
     profileUrl: String = "",
+    name: String = "",
+    gender: String = "여성",
+    age: Int = 0,
+    time: String = "",
+    newMessageCount: Int = 99,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -160,30 +219,60 @@ fun FollowListItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "일이삼사오육칠팔구",
+                    modifier = Modifier.weight(1f),
+                    text = name,
                     style = typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
                 )
-                Row(modifier = modifier, horizontalArrangement = Arrangement.Center) {
-                    Text(text = "오전", style = typography.bodySmall, color = delta)
-                    Text(text = "11", style = typography.bodySmall, color = delta)
-                    Text(text = ":", style = typography.bodySmall, color = delta)
-                    Text(text = "56", style = typography.bodySmall, color = delta)
+
+                Spacer(modifier = modifier.width(10.dp))
+
+                if (time.isNotEmpty()) {
+                    Row(modifier = modifier, horizontalArrangement = Arrangement.Center) {
+                        Text(
+                            text = time.toTimeString(),
+                            style = typography.bodySmall,
+                            color = delta
+                        )
+                    }
                 }
             }
+
             Row(
                 modifier = modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row() {
-                    Text(text = "여성", style = typography.bodyLarge, color = cabbage_pont)
-                    Text(text = " | ", style = typography.bodyLarge, color = cabbage_pont)
-                    Text(text = "23", style = typography.bodyLarge, color = cabbage_pont)
-                    Text(text = "세", style = typography.bodyLarge, color = cabbage_pont)
+                    Text(
+                        text = String.format(
+                            stringResource(
+                                id = R.string.content_gender_age,
+                                gender,
+                                age
+                            )
+                        ),
+                        style = typography.bodyLarge,
+                        color = cabbage_pont
+                    )
                 }
-                MessageCount()
+
+                if (newMessageCount > 0) {
+                    Badge(
+                        containerColor = sunset_orange,
+                        contentColor = md_theme_light_background
+                    ) {
+                        Text(
+                            if (newMessageCount >= 99) {
+                                "+99"
+                            } else {
+                                newMessageCount.toString()
+                            }
+                        )
+                    }
+                }
             }
         }
     }

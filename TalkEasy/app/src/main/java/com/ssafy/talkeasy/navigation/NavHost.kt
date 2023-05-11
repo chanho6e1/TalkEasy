@@ -4,9 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.ssafy.talkeasy.feature.auth.navigation.aacScreen
 import com.ssafy.talkeasy.feature.auth.navigation.joinScreen
 import com.ssafy.talkeasy.feature.auth.navigation.loginRouteWard
 import com.ssafy.talkeasy.feature.auth.navigation.loginScreen
+import com.ssafy.talkeasy.feature.auth.navigation.navigateToAAC
 import com.ssafy.talkeasy.feature.auth.navigation.navigateToJoin
 import com.ssafy.talkeasy.feature.auth.navigation.navigateToWelcome
 import com.ssafy.talkeasy.feature.auth.navigation.welcomeScreen
@@ -43,9 +45,10 @@ fun AppNavHost(
         welcomeScreen(
             navController = navController,
             onFinishedLoading = {
-                // aac로 이동
+                navController.navigateToAAC()
             },
             role = ROLE
         )
+        aacScreen()
     }
 }

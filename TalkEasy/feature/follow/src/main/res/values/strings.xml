@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--  FollowList  -->
+    <string name="image_logo">앱 로고입니다</string>
     <string name="ic_add_user_text">친구 추가 버튼입니다.</string>
     <string name="ic_notification_text">알림함 버튼입니다.</string>
     <string name="ic_settings_text">설정 버튼입니다.</string>
     <string name="title_follow_list">친구목록</string>
     <string name="image_follow_list_profile">프로필 이미지입니다.</string>
+    <string name="content_gender_age">%s | %d세</string>
+    <string name="content_woman">여성</string>
+    <string name="content_man">남성</string>
+    <string name="content_no_follow_content">등록된 친구가 없습니다\n친구를 추가해주세요</string>
 
     <!--  Add Follow Detail  -->
     <string name="title_add_follow">친구등록</string>

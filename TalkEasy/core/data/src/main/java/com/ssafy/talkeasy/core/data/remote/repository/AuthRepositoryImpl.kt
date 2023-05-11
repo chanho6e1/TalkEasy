@@ -17,7 +17,9 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun requestLogin(accessToken: String, role: Int): Resource<Default<Auth>> =
         wrapToResource(Dispatchers.IO) {
-            authRemoteDataSource.requestLogin(accessToken, role).toDomainModel()
+            val defaultResponse = authRemoteDataSource.requestLogin(accessToken, role)
+            val auth = defaultResponse.data.toDomainModel()
+            Default(status = defaultResponse.status, data = auth)
         }
 
     override suspend fun requestJoin(
