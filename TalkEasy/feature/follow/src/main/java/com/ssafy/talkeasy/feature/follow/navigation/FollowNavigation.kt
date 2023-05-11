@@ -7,12 +7,12 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.ssafy.talkeasy.feature.follow.ui.mobile.AddFollowDetailRoute
 import com.ssafy.talkeasy.feature.follow.ui.mobile.FollowListRoute
-import com.ssafy.talkeasy.feature.follow.ui.mobile.NotificationListRoute
+import com.ssafy.talkeasy.feature.follow.ui.mobile.MyNotificationListRoute
 
 const val welcomeRouteProtector = "welcome_route_protector"
 const val followListNavigationRoute = "follow_list_route"
 const val addFollowDetailNavigationRoute = "add_follow_detail_route"
-const val notificationListNavigationRoute = "notification_list_route"
+const val myNotificationListNavigationRoute = "my_notification_list_route"
 
 fun NavController.navigateToFollowList(navOptions: NavOptions? = null) {
     this.navigate(followListNavigationRoute, navOptions)
@@ -22,8 +22,8 @@ fun NavController.navigateToAddFollowDetail(navOptions: NavOptions? = null) {
     this.navigate(addFollowDetailNavigationRoute, navOptions)
 }
 
-fun NavController.navigateToNotificationList(navOptions: NavOptions? = null) {
-    this.navigate(notificationListNavigationRoute, navOptions)
+fun NavController.navigateToMyNotificationList(navOptions: NavOptions? = null) {
+    this.navigate(myNotificationListNavigationRoute, navOptions)
 }
 
 fun NavGraphBuilder.followListScreen(navController: NavController) {
@@ -34,7 +34,7 @@ fun NavGraphBuilder.followListScreen(navController: NavController) {
         FollowListRoute(
             navBackStackEntry = followListEntry,
             onClickedAddFollow = { navController.navigateToAddFollowDetail() },
-            onClickedNotification = { navController.navigateToNotificationList() },
+            onClickedNotification = { navController.navigateToMyNotificationList() },
             onClickedSettings = {}
         )
     }
@@ -46,8 +46,8 @@ fun NavGraphBuilder.addFollowDetailScreen() {
     }
 }
 
-fun NavGraphBuilder.notificationListScreen() {
-    composable(route = notificationListNavigationRoute) {
-        NotificationListRoute()
+fun NavGraphBuilder.myNotificationListScreen() {
+    composable(route = myNotificationListNavigationRoute) {
+        MyNotificationListRoute()
     }
 }
