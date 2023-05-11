@@ -15,14 +15,18 @@ import com.ssafy.talkeasy.feature.common.util.Direction
 fun PartnerChat(memberName: String, nickname: String, messages: List<Chat>) {
     if (messages.isNotEmpty()) {
         Box {
-            PartnerChatItemHead(memberName = memberName, nickname = nickname)
+            PartnerChatItemHead(
+                memberName = memberName,
+                nickname = nickname,
+                type = messages[0].type
+            )
 
             LazyColumn(
                 modifier = Modifier.padding(start = 47.dp, top = 19.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(messages.size) { index ->
-                    BaseChatBalloon(
+                    ChatBalloon(
                         direction = Direction.PARTNER,
                         chat = messages[index],
                         isLastMessage = index == messages.lastIndex
@@ -37,7 +41,7 @@ fun PartnerChat(memberName: String, nickname: String, messages: List<Chat>) {
 fun MyChat(messages: List<Chat>) {
     if (messages.isNotEmpty()) {
         Box(contentAlignment = Alignment.TopEnd) {
-            MyChatItemHead()
+            MyChatItemHead(messages[0].type)
 
             LazyColumn(
                 modifier = Modifier.padding(end = 10.dp),
@@ -45,7 +49,7 @@ fun MyChat(messages: List<Chat>) {
                 horizontalAlignment = Alignment.End
             ) {
                 items(messages.size) { index ->
-                    BaseChatBalloon(
+                    ChatBalloon(
                         direction = Direction.ME,
                         chat = messages[index],
                         isLastMessage = index == messages.lastIndex

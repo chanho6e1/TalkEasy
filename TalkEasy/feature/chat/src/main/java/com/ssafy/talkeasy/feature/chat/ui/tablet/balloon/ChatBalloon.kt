@@ -22,19 +22,24 @@ import com.ssafy.talkeasy.feature.chat.R
 import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
+import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_errorContainer
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_secondaryContainer
 import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
 import com.ssafy.talkeasy.feature.common.util.Direction
+import com.ssafy.talkeasy.feature.common.util.Type
+import com.ssafy.talkeasy.feature.common.util.toTimeString
 
 @Composable
-fun PartnerChatItemHead(memberName: String, nickname: String) {
+fun PartnerChatItemHead(memberName: String, nickname: String, type: Int) {
     val chatName = if (nickname == "") {
         memberName
     } else {
         String.format(stringResource(R.string.content_name_and_nickname), memberName, nickname)
     }
+    val color = if (type == 2) md_theme_light_errorContainer else md_theme_light_secondaryContainer
+
 
     Box {
         Row(verticalAlignment = Alignment.Top) {
@@ -57,32 +62,38 @@ fun PartnerChatItemHead(memberName: String, nickname: String) {
                 .padding(start = 37.dp, top = 24.dp),
             painter = painterResource(id = drawable.bg_chat_balloon_left_head),
             contentDescription = stringResource(R.string.image_the_person_chat_balloon_head),
-            tint = md_theme_light_secondaryContainer
+            tint = color
         )
     }
 }
 
 @Composable
-fun MyChatItemHead() {
+fun MyChatItemHead(type: Int) {
+    val color = if (type == 2) md_theme_light_errorContainer else seed
+
     Box {
         Icon(
             modifier = Modifier.align(Alignment.TopStart),
             painter = painterResource(id = drawable.bg_chat_balloon_right_head),
             contentDescription = stringResource(R.string.image_the_person_chat_balloon_head),
-            tint = seed
+            tint = color
         )
     }
 }
 
 @Composable
-fun BaseChatBalloon(direction: Direction, chat: Chat, isLastMessage: Boolean) {
-    val color: Color = when (direction) {
-        Direction.PARTNER -> {
-            md_theme_light_secondaryContainer
-        }
+fun ChatBalloon(direction: Direction, chat: Chat, isLastMessage: Boolean) {
+    val color: Color = if (chat.type == 2) {
+        md_theme_light_errorContainer
+    } else {
+        when (direction) {
+            Direction.PARTNER -> {
+                md_theme_light_secondaryContainer
+            }
 
-        Direction.ME -> {
-            seed
+            Direction.ME -> {
+                seed
+            }
         }
     }
 
@@ -92,18 +103,25 @@ fun BaseChatBalloon(direction: Direction, chat: Chat, isLastMessage: Boolean) {
                 modifier = Modifier.align(Alignment.Bottom),
                 color = cabbage_pont,
                 style = typography.labelMedium,
-                text = chat.time
+                text = chat.time.toTimeString()
             )
         }
 
         Card(shape = shapes.extraSmall, colors = CardDefaults.cardColors(color)) {
-            Text(
+            Box(
                 modifier = Modifier
                     .padding(horizontal = 18.dp, vertical = 10.dp)
-                    .widthIn(max = 214.dp),
-                style = typography.bodyMedium,
-                text = chat.message
-            )
+                    .widthIn(max = 214.dp)
+            ) {
+                when (chat.type) {
+                    Type.MSG.ordinal -> {
+                        Message(message = chat.message)
+                    }
+
+                    Type.LOCATION.ordinal -> {}
+                    Type.SOS.ordinal -> {}
+                }
+            }
         }
 
         if (direction == Direction.PARTNER && isLastMessage) {
@@ -111,13 +129,18 @@ fun BaseChatBalloon(direction: Direction, chat: Chat, isLastMessage: Boolean) {
                 modifier = Modifier.align(Alignment.Bottom),
                 color = cabbage_pont,
                 style = typography.labelMedium,
-                text = chat.time
+                text = chat.time.toTimeString()
             )
         }
     }
 }
 
 @Composable
-fun LocationBalloon() {
+fun Message(message: String) {
+    Text(style = typography.bodyMedium, text = message)
+}
+
+@Composable
+fun Location(direction: Direction, chat: Chat, isLastMessage: Boolean) {
 
 }

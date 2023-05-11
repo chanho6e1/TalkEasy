@@ -5,5 +5,9 @@ enum class Direction {
 }
 
 enum class Type {
-    BASIC, LOCATION, SOS
+    MSG, LOCATION, SOS
+}
+
+enum class Status {
+    REQUEST, RESULT, REJECT
 }
