@@ -57,13 +57,14 @@ public class ChatService {
         ChatRoom existRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("users").all(new String[]{user1, user2})), ChatRoom.class)).orElse(null);
 
         if (existRoom != null) {
-//            throw new ResourceAlreadyExistsException("이미 생성된 채팅방 입니다");
+            throw new ResourceAlreadyExistsException("이미 생성된 채팅방 입니다");
 
-            // nowIn -> true 바꿔주기
-            existRoom.getChatUsers().get(user1).setNowIn(true);
-            mongoTemplate.save(existRoom);
-
-            return CommonResponse.of(HttpStatus.OK, existRoom.getId());
+            /* 유저 언팔/탈퇴 시, 아예 채팅방 삭제하기 때문에 nowIn 정보를 저장할 필요 없음 */
+//            // nowIn -> true 바꿔주기
+//            existRoom.getChatUsers().get(user1).setNowIn(true);
+//            mongoTemplate.save(existRoom);
+//
+//            return CommonResponse.of(HttpStatus.OK, existRoom.getId());
         }
 
         ChatRoom chatRoom = new ChatRoom(new String[]{user1, user2}, "hihi", LocalDateTime.now().toString());
@@ -139,8 +140,9 @@ public class ChatService {
     public void doChat(ChatRoomDetail chat) throws IOException {
         ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getRoomId())), ChatRoom.class);
 
-        updateUserInChatRoom(chatRoom, chat.getFromUserId());
-        updateUserInChatRoom(chatRoom, chat.getToUserId());
+        /* 유저 언팔/탈퇴 시, 채팅방 삭제로 불필요 코드 */
+//        updateUserInChatRoom(chatRoom, chat.getFromUserId());
+//        updateUserInChatRoom(chatRoom, chat.getToUserId());
 
         sendChatMessage(chat, chat.getToUserId());
 
@@ -184,13 +186,16 @@ public class ChatService {
 
         Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "created_dt"));
 
-        ChatRoom chatRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(chatRoomId)), ChatRoom.class)).orElseThrow(() -> new ResourceNotFoundException("ChatRoom", "chatRoomId", chatRoomId));
+        ChatRoom chatRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(chatRoomId)), ChatRoom.class))
+                .orElseThrow(() -> new ResourceNotFoundException("ChatRoom", "chatRoomId", chatRoomId));
 
         String leaveTime = chatRoom.getChatUsers().get(userId).getLeaveTime() == null ? chatRoom.getDate() : chatRoom.getLeaveTime();
 
         Query query = new Query(Criteria.where("roomId").is(chatRoomId).and("created_dt").gte(leaveTime)).with(pageable);
 
         List<ChatRoomDetail> filteredMetaData = Optional.ofNullable(mongoTemplate.find(query, ChatRoomDetail.class)).orElse(Collections.emptyList());
+
+
 
         Page<ChatRoomDetail> metaDataPage = PageableExecutionUtils.getPage(filteredMetaData, pageable, () -> mongoTemplate.count(query.skip(-1).limit(-1), ChatRoomDetail.class));
 
