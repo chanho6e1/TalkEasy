@@ -56,9 +56,6 @@ fun NotificationListContent(modifier: Modifier = Modifier) {
             .fillMaxHeight(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        items(20) {
-            NotificationListItem()
-        }
         itemsIndexed(items = arrayListOf("")) { item, index ->
             NotificationListItem()
         }
