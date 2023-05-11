@@ -3,4 +3,6 @@
     <!-- Chat Balloon -->
     <string name="content_name_and_nickname">%s (%s)</string>
     <string name="image_the_person_chat_balloon_head">상대방의 첫번째 채팅 배경</string>
+    <string name="image_request_location">위치 열람 요청 아이콘</string>
+    <string name="image_reject_location">위치 열람 거부 아이콘</string>
 </resources>
