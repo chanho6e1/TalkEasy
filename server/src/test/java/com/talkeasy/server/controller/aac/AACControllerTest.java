@@ -28,6 +28,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -208,6 +211,11 @@ class AACControllerTest {
         oAuth2User = new OAuth2UserImpl(member);
 
 //        when(aacService.postCustomAac(customAACDto, oAuth2User.getId())).thenReturn("1");
+
+        // Set the authentication object in SecurityContextHolder
+        Authentication authentication = new OAuth2AuthenticationToken(oAuth2User, null, "provider");
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
 
         doReturn("1").when(aacService).postCustomAac(customAACDto, oAuth2User.getId());
 
