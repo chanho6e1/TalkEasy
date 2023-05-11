@@ -25,4 +25,8 @@
     <string name="content_add_notification">추가하기</string>
     <string name="content_memo">메모</string>
 
+    <!--  NotifyList  -->
+    <string name="title_my_notification_list">내 알림함</string>
+    <string name="image_siren_circle">긴급 도움 요청 아이콘입니다.</string>
+
 </resources>
