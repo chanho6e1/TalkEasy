@@ -31,7 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
-import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
 import com.ssafy.talkeasy.feature.common.component.Profile
@@ -172,15 +171,15 @@ fun FollowListContent(
             modifier = modifier,
             message = stringResource(id = R.string.content_no_follow_content),
             textStyle = typography.titleMedium,
-            width = 233,
-            height = 107,
+            width = 156,
+            height = 72,
             betweenValue = 20
         )
     }
 }
 
 @Preview(showBackground = true)
-@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FollowListItem(
     modifier: Modifier = Modifier,
