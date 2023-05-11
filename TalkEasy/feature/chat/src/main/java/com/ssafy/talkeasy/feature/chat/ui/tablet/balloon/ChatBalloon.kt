@@ -3,15 +3,20 @@ package com.ssafy.talkeasy.feature.chat.ui.tablet.balloon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +30,9 @@ import com.ssafy.talkeasy.feature.chat.R
 import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
+import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_error
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_errorContainer
+import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onError
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_secondaryContainer
 import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
@@ -124,7 +131,7 @@ fun ChatBalloon(direction: Direction, chat: Chat, isLastMessage: Boolean) {
                         status = chat.status!!
                     )
 
-                    Type.SOS.ordinal -> {}
+                    Type.SOS.ordinal -> SOS(direction = direction, message = chat.message)
                 }
             }
         }
@@ -179,5 +186,59 @@ fun Location(message: String, status: Int) {
         )
 
         Text(style = typography.bodyMedium, text = message)
+    }
+}
+
+@Composable
+fun SOS(direction: Direction, message: String) {
+    Column(
+        modifier = Modifier.padding(horizontal = 2.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Image(
+            modifier = Modifier.size(42.dp),
+            painter = painterResource(id = drawable.ic_sos),
+            contentDescription = stringResource(R.string.image_sos)
+        )
+
+        Text(style = typography.bodyMedium, text = message)
+
+        when (direction) {
+            Direction.PARTNER -> {
+                TextButton(
+                    shape = shapes.extraSmall,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = md_theme_light_error,
+                        contentColor = md_theme_light_onError
+                    ),
+                    contentPadding = PaddingValues(horizontal = 62.dp, vertical = 8.dp),
+                    onClick = { }
+                ) {
+                    Text(
+                        style = typography.labelMedium,
+                        text = stringResource(R.string.content_button_browse_location)
+                    )
+                }
+            }
+
+            Direction.ME -> {
+                TextButton(
+                    modifier = Modifier.height(0.dp),
+                    shape = shapes.extraSmall,
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = md_theme_light_error,
+                        contentColor = md_theme_light_onError
+                    ),
+                    contentPadding = PaddingValues(horizontal = 62.dp, vertical = 8.dp),
+                    onClick = { }
+                ) {
+                    Text(
+                        style = typography.labelMedium,
+                        text = stringResource(R.string.content_button_browse_location)
+                    )
+                }
+            }
+        }
     }
 }

@@ -39,8 +39,16 @@ class SampleData {
             status = 2
         )
 
+        private val sos = Chat(
+            message = "긴급 도움 요청",
+            time = "2023-05-04T16:18:38.417705",
+            type = 2
+        )
+
         val msgs = listOf(msgShort, msgLong)
 
         val locations = listOf(locationRequest, locationResult, locationReject)
+
+        val soss = listOf(sos)
     }
 }
