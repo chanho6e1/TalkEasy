@@ -2,6 +2,7 @@ package com.talkeasy.server.controller.aac;
 
 
 import com.google.gson.Gson;
+import com.talkeasy.server.authentication.OAuthUserInfo;
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.domain.aac.AAC;
 import com.talkeasy.server.domain.aac.AACCategory;
@@ -23,6 +24,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,18 +36,23 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(MockitoExtension.class)
 class AACControllerTest {
+
+    @Mock
+    private OAuth2UserImpl oAuth2User;
 
     @InjectMocks
     private AACController aacController;
@@ -61,14 +68,6 @@ class AACControllerTest {
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(aacController).build();
     }
-
-    static class OAuth2UserImpl {
-        // 기본 생성자 추가
-        public OAuth2UserImpl() {
-            Member member = Member.builder().id("1").build();
-        }
-    }
-
 
     @Test
     @DisplayName("[GET] 카테고리 목록")
@@ -205,17 +204,18 @@ class AACControllerTest {
 
         String requestJson = new Gson().toJson(customAACDto);
 
-        Member member = Member.builder().id("1").build();
+        Member member = Member.builder().id("1").name("name").role(1).build();
+        oAuth2User = new OAuth2UserImpl(member);
 
-//        when(aacService.postCustomAac(customAACDto, member.getId())).thenReturn("1");
+//        when(aacService.postCustomAac(customAACDto, oAuth2User.getId())).thenReturn("1");
 
-        doReturn("1").when(aacService).postCustomAac(customAACDto, member.getId());
-
+        doReturn("1").when(aacService).postCustomAac(customAACDto, oAuth2User.getId());
 
         mockMvc.perform(post("/api/aac/custom")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestJson)
-                        .with(csrf()))
+                        .with(csrf())
+                        .with(user(oAuth2User))) // 사용자 정보를 직접 지정)
                 .andExpect(status().isCreated())
                 .andDo(MockMvcResultHandlers.print());
 
@@ -240,6 +240,7 @@ class AACControllerTest {
 
         String requestJson = new Gson().toJson(textDto);
 
+//        doReturn("배고파요 밥 먹고싶어요").when(aacService).getGenereteText(textDto);
 //        when(aacService.getGenereteText(textDto)).thenReturn("배고파요 밥 먹고싶어요");
 
         mockMvc.perform(post("/api/aac/generate")

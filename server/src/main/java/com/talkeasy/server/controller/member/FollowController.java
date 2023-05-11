@@ -51,6 +51,9 @@ public class FollowController {
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, followService.getUserInfoByFollow(oAuth2User.getId(), followId)));
 
+//        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+//                HttpStatus.CREATED, followService.getUserInfoByFollow("6459dfcf393c266aa80f5710", "645b7a87019c7f5131d179b0")));
+
     }
 
     @ApiOperation(value = "특이사항 수정", notes = "followId를 주면 특이사항 수정 가능")
@@ -82,6 +85,9 @@ public class FollowController {
     public ResponseEntity<PagedResponse> getfollow(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) {
         return ResponseEntity.ok().body((
                 followService.getfollow(oAuth2User.getId())));
+//        return ResponseEntity.ok().body((
+//                followService.getfollow("645a0420c5b2c82e3afaf9e4")));
+
     }
 
 
