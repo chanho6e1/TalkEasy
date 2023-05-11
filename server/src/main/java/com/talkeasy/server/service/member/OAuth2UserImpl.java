@@ -4,6 +4,8 @@ package com.talkeasy.server.service.member;
 import com.fasterxml.jackson.core.JsonToken;
 import com.talkeasy.server.authentication.OAuthUserInfo;
 import com.talkeasy.server.domain.member.Member;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,11 +16,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+@NoArgsConstructor
 public class OAuth2UserImpl implements OAuth2User, UserDetails {
 
-    private final Member member;
+    private Member member;
     private OAuthUserInfo oAuthUserInfo;
-
 
     public OAuth2UserImpl(Member member) {
         this.member = member;
@@ -28,7 +30,6 @@ public class OAuth2UserImpl implements OAuth2User, UserDetails {
         this.member = member;
         this.oAuthUserInfo = oAuthUserInfo;
     }
-
 
     public Member getMember() {
         return member;

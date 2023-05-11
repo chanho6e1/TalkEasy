@@ -171,6 +171,7 @@ public class FollowService {
     public boolean putLocationStatus(String userId, String followId) {
         Follow follow = getTargetUser(followId);
 
+
         isMine(userId, follow.getFromUserId());
 
         follow.setLocationStatus(!follow.getLocationStatus());
