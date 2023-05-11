@@ -14,4 +14,7 @@
 
     <!-- Profile -->
     <string name="image_follow_list_profile">프로필 이미지입니다.</string>
+
+    <!--  Header  -->
+    <string name="ic_arrow_back_text">뒤로가기 버튼입니다.</string>
 </resources>
