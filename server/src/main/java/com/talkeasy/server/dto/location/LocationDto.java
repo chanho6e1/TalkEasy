@@ -16,11 +16,11 @@ public class LocationDto implements Serializable {
     String userId;
     String name;
     Point point;
-    String x;
-    String y;
+    String lat;
+    String lon;
     LocalDateTime dateTime;
 
     public Location toEntity(){
-        return Location.builder().userId(userId).name(name).x(x).y(y).geom(point).dateTime(dateTime).build();
+        return Location.builder().userId(userId).name(name).geom(point).dateTime(dateTime).build();
     }
 }

@@ -29,7 +29,7 @@ public class LocationService {
         List<Location> locations = new ArrayList<>();
         for (LocationDto locationDto : list) {
             GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
-            Point point = geometryFactory.createPoint(new Coordinate(Double.parseDouble(locationDto.getX()), Double.parseDouble(locationDto.getY())));
+            Point point = geometryFactory.createPoint(new Coordinate(Double.parseDouble(locationDto.getLat()), Double.parseDouble(locationDto.getLon())));
             locationDto.setPoint(point);
             locations.add(locationDto.toEntity());
         }
