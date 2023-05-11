@@ -60,7 +60,7 @@ public class LocationController {
     @ApiOperation(value = "당일 위치 분석", notes = "당일에 대한 위치 분석 결과를 리턴")
     public ResponseEntity<CommonResponse<Object>> dayAnalysis(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) throws ParseException, IOException {
 
-//        kafkaConsumerService.consumeLocationEvent();
+        kafkaConsumerService.consumeLocationEvent();
         restTemplateService.requestDayAnalysis(member.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(

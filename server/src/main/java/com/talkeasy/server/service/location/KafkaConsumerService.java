@@ -45,7 +45,7 @@ public class KafkaConsumerService {
                 if (record.value() != null) {
                     LocationDto locationDto = record.value();
                     locationDto.setDateTime(convertTimestampToLocalDateTime(record.timestamp()));
-                    locationDtos.add(record.value());
+                    locationDtos.add(locationDto);
                     log.info("Topic : {}, Partition : {}, Offset : {}, Timestamp : {}", record.topic(), record.partition(), record.offset(), convertTimestampToLocalDateTime(record.timestamp()));
                 }
             }

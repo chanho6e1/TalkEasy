@@ -69,7 +69,7 @@ public class ChatController {//producer
                                                         @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User
     ) {
 
-//        return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatHistory(chatRoomId, offset, size, "64461f5457831975f4dfd753"));
+//        return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatHistory(chatRoomId, offset, size, "645307321511deecd5c5441a"));
         return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatHistory(chatRoomId, offset, size, oAuth2User.getId()));
     }
 
