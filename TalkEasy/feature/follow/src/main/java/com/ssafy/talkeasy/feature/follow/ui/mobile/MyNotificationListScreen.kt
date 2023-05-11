@@ -18,6 +18,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -26,48 +27,68 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ssafy.talkeasy.core.domain.entity.response.MyNotificationItem
+import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
 import com.ssafy.talkeasy.feature.common.component.ProtectorHeader
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
+import com.ssafy.talkeasy.feature.common.util.toTimeString
 import com.ssafy.talkeasy.feature.follow.R
 
 @Composable
-fun NotificationListRoute(
+fun MyNotificationListRoute(
     modifier: Modifier = Modifier,
 ) {
-    NotificationListScreen(modifier = modifier)
+    val myNotificationList = remember {
+        arrayListOf<MyNotificationItem>()
+    }
+    MyNotificationListScreen(modifier = modifier, notificationList = myNotificationList)
 }
 
 @Preview(showBackground = true)
 @Composable
-fun NotificationListScreen(modifier: Modifier = Modifier) {
+fun MyNotificationListScreen(
+    modifier: Modifier = Modifier,
+    notificationList: List<MyNotificationItem> = arrayListOf(),
+) {
     Column(modifier = modifier.fillMaxSize()) {
         ProtectorHeader(title = stringResource(id = R.string.title_my_notification_list))
-        NotificationListContent()
+        MyNotificationListContent()
     }
 }
 
 @Composable
-fun NotificationListContent(modifier: Modifier = Modifier) {
-    LazyColumn(
-        modifier = modifier
-            .padding(start = 18.dp, end = 18.dp, top = 6.dp)
-            .fillMaxHeight(),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        itemsIndexed(items = arrayListOf("")) { item, index ->
-            NotificationListItem()
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun NotificationListItem(
+fun MyNotificationListContent(
     modifier: Modifier = Modifier,
-    message: String = "",
-    time: String = "",
+    notificationList: List<MyNotificationItem> = arrayListOf(),
+) {
+    if (notificationList.isNotEmpty()) {
+        LazyColumn(
+            modifier = modifier
+                .padding(start = 18.dp, end = 18.dp, top = 6.dp)
+                .fillMaxHeight(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            itemsIndexed(items = notificationList) { index, item ->
+                MyNotificationListItem(item = item)
+            }
+        }
+    } else {
+        NoContentLogoMessage(
+            message = stringResource(id = R.string.content_no_notification),
+            textStyle = typography.titleSmall,
+            width = 156,
+            height = 72,
+            betweenValue = 20
+        )
+    }
+}
+
+@Composable
+fun MyNotificationListItem(
+    modifier: Modifier = Modifier,
+    item: MyNotificationItem,
     onItemClicked: () -> Unit = {},
 ) {
     Column(
@@ -101,14 +122,14 @@ fun NotificationListItem(
             ) {
                 Text(
                     modifier = Modifier,
-                    text = message,
+                    text = item.message,
                     style = typography.bodyMedium,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     modifier = modifier,
                     color = delta,
-                    text = time,
+                    text = item.time.toTimeString(),
                     style = typography.bodyMedium,
                     textAlign = TextAlign.Center
                 )
