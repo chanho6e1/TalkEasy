@@ -9,6 +9,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,6 +31,9 @@ fun WelcomeRouteWard(
 ) {
     val memberInfo by followViewModel.memberInfo.collectAsState()
     val memberName by authViewModel.name.collectAsState()
+    var isInfoLoadingFinished by remember {
+        mutableStateOf(false)
+    }
 
     SideEffect {
         if (memberInfo == null) {
@@ -37,13 +43,15 @@ fun WelcomeRouteWard(
 
     LaunchedEffect(memberInfo) {
         if (memberInfo != null) {
-            onFinishedLoading()
+            isInfoLoadingFinished = true
         }
     }
 
     WelcomeFrame(
         modifier = modifier,
-        memberName = memberName
+        memberName = memberName,
+        onFinishedLoading = onFinishedLoading,
+        isInfoLoadingFinished = isInfoLoadingFinished
     )
 }
 
@@ -51,6 +59,8 @@ fun WelcomeRouteWard(
 internal fun WelcomeFrame(
     modifier: Modifier = Modifier,
     memberName: String,
+    isInfoLoadingFinished: Boolean,
+    onFinishedLoading: () -> Unit = {},
 ) {
     Surface(modifier = modifier.fillMaxSize()) {
         Box(modifier = modifier.wrapContentSize(align = Alignment.Center)) {
@@ -58,7 +68,9 @@ internal fun WelcomeFrame(
                 memberName = memberName,
                 size = 570,
                 textStyle = textStyleBold40,
-                bottomPadding = 80
+                bottomPadding = 80,
+                isInfoLoadingFinished = isInfoLoadingFinished,
+                onFinishedLoading = onFinishedLoading
             )
         }
     }

@@ -35,9 +35,12 @@ fun WelcomeAnimation(
     size: Int,
     textStyle: TextStyle,
     bottomPadding: Int,
+    isInfoLoadingFinished: Boolean,
+    onFinishedLoading: () -> Unit = {},
 ) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(raw.anim_welcome))
     val lottieAnimatable = rememberLottieAnimatable()
+    val isAnimationFinished = lottieAnimatable.isAtEnd
 
     LaunchedEffect(key1 = composition) {
         lottieAnimatable.animate(
@@ -45,6 +48,12 @@ fun WelcomeAnimation(
             clipSpec = LottieClipSpec.Frame(0, 1200),
             initialProgress = 0f
         )
+    }
+
+    LaunchedEffect(key1 = isAnimationFinished, key2 = isInfoLoadingFinished) {
+        if (isInfoLoadingFinished && isAnimationFinished) {
+            onFinishedLoading()
+        }
     }
 
     Box(modifier = modifier.fillMaxWidth()) {
