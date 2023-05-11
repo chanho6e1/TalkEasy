@@ -3,9 +3,9 @@ package com.ssafy.talkeasy.feature.auth.ui.mobile
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -115,35 +115,40 @@ internal fun JoinContent(
             .fillMaxSize()
             .padding(34.dp, 18.dp)
     ) {
-        Column(
+        LazyColumn(
             modifier = modifier,
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
-            Text(
-                text = stringResource(R.string.title_member_info_input),
-                style = typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-
-            EditProfile(
-                size = 110,
-                profile = profile,
-                textStyle = typography.titleLarge
-            ) { onProfileClick() }
-
-            CustomTextField(
-                nickName = nickName,
-                onValueChange = setNickName,
-                label = stringResource(id = R.string.content_name),
-                textStyle = typography.bodyLarge
-            )
-
-            WideSeedButton(
-                onClicked = { onJoinButtonClick(nickName) },
-                text = stringResource(id = R.string.content_join),
-                textStyle = typography.bodyLarge
-            )
+            item {
+                Text(
+                    text = stringResource(R.string.title_member_info_input),
+                    style = typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            item {
+                EditProfile(
+                    size = 110,
+                    profile = profile,
+                    textStyle = typography.titleLarge
+                ) { onProfileClick() }
+            }
+            item {
+                CustomTextField(
+                    value = nickName,
+                    onValueChange = setNickName,
+                    label = stringResource(id = R.string.content_name),
+                    textStyle = typography.bodyLarge
+                )
+            }
+            item {
+                WideSeedButton(
+                    onClicked = { onJoinButtonClick(nickName) },
+                    text = stringResource(id = R.string.content_join),
+                    textStyle = typography.bodyLarge
+                )
+            }
         }
     }
 }
