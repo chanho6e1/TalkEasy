@@ -118,11 +118,11 @@ public class ChatService {
 
         if (chat.getType() == 1) { // location :: msg:: 요청 or 결과 or 실패 (REQUEST, RESULT, REJECT)
             String[] nowMsg = newMsg.split(" ");
-            if (nowMsg[0].equals("REQUEST"))
+            if (nowMsg[0].equals("0")) // REQUEST
                 newMsg = "위치 열람 요청";
-            else if (nowMsg[0].equals("RESULT"))
+            else if (nowMsg[0].equals("1")) // RESULT
                 newMsg = nowMsg[1]; // HH:MM
-            else if (nowMsg[0].equals("REJECT"))
+            else if (nowMsg[0].equals("2")) // REJECT
                 newMsg = "요청 응답 없음";
         } else if (chat.getType() == 2){ // sos
             newMsg = "긴급 도움 요청";
