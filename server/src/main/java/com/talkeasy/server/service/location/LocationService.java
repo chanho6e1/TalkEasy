@@ -5,10 +5,6 @@ import com.talkeasy.server.dto.location.LocationDto;
 import com.talkeasy.server.repository.location.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.geom.PrecisionModel;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +24,12 @@ public class LocationService {
         log.info("========== locationRepository bulk 함수 list size : {}", list.size());
         List<Location> locations = new ArrayList<>();
         for (LocationDto locationDto : list) {
-            GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
-            Point point = geometryFactory.createPoint(new Coordinate(Double.parseDouble(locationDto.getLat()), Double.parseDouble(locationDto.getLon())));
-            locationDto.setPoint(point);
             locations.add(locationDto.toEntity());
         }
         locationRepository.saveAll(locations);
     }
 
+    public Location getLastOne(String userId) {
+        return locationRepository.findTopByUserIdOrderByDateTimeDesc(userId);
+    }
 }
