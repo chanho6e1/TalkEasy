@@ -27,7 +27,7 @@ public class OAuth2UserImpl implements OAuth2User, UserDetails {
     public OAuth2UserImpl(Member member) {
         this.member = member;
     }
-//
+
 //    public OAuth2UserImpl(Member member, OAuthUserInfo oAuthUserInfo) {
 //        this.member = member;
 //        this.oAuthUserInfo = oAuthUserInfo;

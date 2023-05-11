@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.common.PagedResponse;
+import com.talkeasy.server.common.exception.ResourceAlreadyExistsException;
 import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
 import com.talkeasy.server.domain.chat.LastChat;
@@ -32,6 +33,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -85,8 +87,6 @@ class ChatServiceTest {
 
         Mockito.when(mongoTemplate.insert(any(ChatRoom.class), eq("chat_room"))).thenReturn(chatRoom);
 
-        Mockito.when(mongoTemplate.findOne(eq(Query.query(Criteria.where("id").is("3"))), eq(ChatRoom.class)))
-                .thenReturn(chatRoom);
 
 
         // when
@@ -101,7 +101,7 @@ class ChatServiceTest {
 
 
     @Test
-    @DisplayName("채팅방 생성 - 기존 채팅방이 있는 경우")
+    @DisplayName("채팅방 생성 - 기존 채팅방이 있는 경우 - 예외 발생")
     void createRoom_ExistingChatRoom() throws IOException {
         // given
         String user1 = "1";
@@ -112,17 +112,19 @@ class ChatServiceTest {
                 .chatUsers(Map.of(user1, new UserData(true, null), user2, new UserData(true, null)))
                 .date("2023.01.01")
                 .build();
-        Mockito.when(mongoTemplate.findOne(eq(Query.query(Criteria.where("users").all(new String[]{user1, user2}))), eq(ChatRoom.class)))
+
+        Mockito.when(mongoTemplate.findOne(eq(Query.query(Criteria.where("users").all(user1, user2))), eq(ChatRoom.class)))
                 .thenReturn(existChatRoom);
 
         // when
-        CommonResponse result = chatService.createRoom(user1, user2);
+        assertThatThrownBy(()-> chatService.createRoom(user1, user2))
+                .isInstanceOf(ResourceAlreadyExistsException.class)
+                .hasMessageContaining("이미 생성된 채팅방 입니다");
 
         // then
-        assertThat(result.getStatus()).isEqualTo(200);
-        assertThat(result.getData()).isEqualTo(existChatRoom.getId());
-        verify(mongoTemplate, times(1)).findOne(eq(Query.query(Criteria.where("users").all(new String[]{user1, user2}))), eq(ChatRoom.class));
-        verify(mongoTemplate, times(1)).save(eq(existChatRoom));
+
+        verify(mongoTemplate, times(1)).findOne(any(Query.class), eq(ChatRoom.class));
+        verify(mongoTemplate, times(0)).save(eq(existChatRoom));
     }
 
     @Test
@@ -132,8 +134,8 @@ class ChatServiceTest {
         ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom);
         chatService.createQueue(chatRoomDto);
 
-        verify(rabbitAdmin, times(4)).declareQueue(any(Queue.class));
-        verify(rabbitAdmin, times(4)).declareBinding(any(Binding.class));
+        verify(amqpAdmin, times(4)).declareQueue(any(Queue.class));
+        verify(amqpAdmin, times(4)).declareBinding(any(Binding.class));
     }
 
     @Test
@@ -142,8 +144,8 @@ class ChatServiceTest {
         ChatRoom chatRoom = new ChatRoom(new String[]{"1", "2"}, "hihi", LocalDateTime.now().toString());
         ChatRoomDto chatRoomDto = new ChatRoomDto(chatRoom);
         chatService.createQueueDetail(chatRoomDto, "chat", "1");
-        verify(rabbitAdmin, times(1)).declareQueue(any(Queue.class));
-        verify(rabbitAdmin, times(1)).declareBinding(any(Binding.class));
+        verify(amqpAdmin, times(1)).declareQueue(any(Queue.class));
+        verify(amqpAdmin, times(1)).declareBinding(any(Binding.class));
     }
 
     @Test
@@ -182,7 +184,6 @@ class ChatServiceTest {
         chatUsers.put("2", new UserData(true, null));
 
         ChatRoom chatRoom = ChatRoom.builder().id("3").users(new String[]{"1", "2"}).chatUsers(chatUsers).date("2023.01.01").build();
-        Mockito.when(mongoTemplate.findOne(any(Query.class), eq(ChatRoom.class))).thenReturn(chatRoom);
 
         chatService.doChat(chat);
 
