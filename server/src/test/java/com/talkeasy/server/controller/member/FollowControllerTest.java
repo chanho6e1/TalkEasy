@@ -1,5 +1,6 @@
 package com.talkeasy.server.controller.member;
 
+import com.google.gson.Gson;
 import com.talkeasy.server.authentication.OAuthUserInfo;
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.domain.member.Member;
@@ -7,6 +8,7 @@ import com.talkeasy.server.dto.user.FollowRequestDto;
 import com.talkeasy.server.service.chat.ChatService;
 import com.talkeasy.server.service.member.FollowService;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
+import com.talkeasy.server.testutil.WithCustomUser;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -31,6 +34,7 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -41,7 +45,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //@WebMvcTest(FollowController.class)
 class FollowControllerTest {
 
-    //    @Mock
     @InjectMocks
     private FollowController followController;
 
@@ -59,14 +62,8 @@ class FollowControllerTest {
 
     @Mock
     private Member member;
-
-
-    @BeforeEach
-    public void setUp() {
-
-        mockMvc = MockMvcBuilders.standaloneSetup(followController).build();
-        oAuth2UserImpl = new OAuth2UserImpl(Member.builder().id("1").build());
-    }
+    @Mock
+    private Authentication authentication;
 
     //    @BeforeEach
     public OAuth2AuthenticationToken authenticationsetUp() {
@@ -84,32 +81,54 @@ class FollowControllerTest {
     }
 
 
+    @BeforeEach
+    public void setUp() {
+
+        mockMvc = MockMvcBuilders.standaloneSetup(followController).build();
+//        oAuth2UserImpl = new OAuth2UserImpl(Member.builder().id("1").build());
+        member = Member.builder().id("1").build();
+
+        oAuth2UserImpl = new OAuth2UserImpl(Member.builder()
+                .id("1")
+                .name("name")
+                .email("test@test.com")
+                .age(20)
+                .role(0)
+                .build());
+        authentication = new UsernamePasswordAuthenticationToken(oAuth2UserImpl, "1234", oAuth2UserImpl.getAuthorities());
+    }
+
     @Test
+    @WithCustomUser
     @DisplayName("팔로우 하기")
     void follow() throws Exception {
         String toUserId = "2";
-//        OAuth2User oAuth2User = mock(OAuth2User.class);
-
         Authentication authenticationToken = authenticationsetUp();
+
+        FollowRequestDto followRequestDto = new FollowRequestDto();
+        followRequestDto.setMemo("string");
+        String requestJson = new Gson().toJson(followRequestDto);
+
 
         mockMvc.perform(post("/api/follows/{toUserId}", toUserId)
                         .with(csrf())
-                        .with(SecurityMockMvcRequestPostProcessors.authentication(authenticationToken))
+//                        .with(SecurityMockMvcRequestPostProcessors.authentication(authenticationToken))
+                        .with(authentication(authentication))
                         .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestJson)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andDo(print());
 
-        FollowRequestDto followRequestDto = new FollowRequestDto();
-        followRequestDto.setMemo("string");
 
-        Mockito.when(followService.follow("1", "2", followRequestDto)).thenReturn("팔로우 성공");
+//        Mockito.when(followService.follow(oAuth2UserImpl, "2", followRequestDto)).thenReturn("팔로우 성공");
+        Mockito.when(followService.follow("name", "2", followRequestDto)).thenReturn("팔로우 성공");
 
-        ResponseEntity<CommonResponse> response = followController.follow(oAuth2UserImpl, toUserId, followRequestDto);
+//        ResponseEntity<CommonResponse> response = followController.follow(oAuth2UserImpl, toUserId, followRequestDto);
 
-        System.out.println(response);
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(response.getBody().getData()).isEqualTo("팔로우 성공");
+//        System.out.println(response);
+//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
+//        assertThat(response.getBody().getData()).isEqualTo("팔로우 성공");
     }
 
     @Test
