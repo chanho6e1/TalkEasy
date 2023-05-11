@@ -108,13 +108,27 @@ fun ChatBalloon(direction: Direction, chat: Chat, isLastMessage: Boolean) {
     }
 
     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        if (direction == Direction.ME && isLastMessage) {
-            Text(
+        if (direction == Direction.ME) {
+            Column(
                 modifier = Modifier.align(Alignment.Bottom),
-                color = cabbage_pont,
-                style = typography.labelMedium,
-                text = chat.time.toTimeString()
-            )
+                verticalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.End),
+                    color = seed,
+                    style = typography.labelMedium,
+                    text = if (chat.readCount == 0) "" else chat.readCount.toString()
+                )
+
+                if (isLastMessage) {
+                    Text(
+                        modifier = Modifier.align(Alignment.End),
+                        color = cabbage_pont,
+                        style = typography.labelMedium,
+                        text = chat.time.toTimeString()
+                    )
+                }
+            }
         }
 
         Card(shape = shapes.extraSmall, colors = CardDefaults.cardColors(color)) {
@@ -136,13 +150,26 @@ fun ChatBalloon(direction: Direction, chat: Chat, isLastMessage: Boolean) {
             }
         }
 
-        if (direction == Direction.PARTNER && isLastMessage) {
-            Text(
+        if (direction == Direction.PARTNER) {
+            Column(
                 modifier = Modifier.align(Alignment.Bottom),
-                color = cabbage_pont,
-                style = typography.labelMedium,
-                text = chat.time.toTimeString()
-            )
+                verticalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                Text(
+                    modifier = Modifier.align(Alignment.Start),
+                    color = seed,
+                    style = typography.labelMedium,
+                    text = if (chat.readCount == 0) "" else chat.readCount.toString()
+                )
+                if (isLastMessage) {
+                    Text(
+                        modifier = Modifier.align(Alignment.Start),
+                        color = cabbage_pont,
+                        style = typography.labelMedium,
+                        text = chat.time.toTimeString()
+                    )
+                }
+            }
         }
     }
 }

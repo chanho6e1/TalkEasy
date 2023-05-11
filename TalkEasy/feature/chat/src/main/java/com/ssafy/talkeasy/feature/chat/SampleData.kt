@@ -10,7 +10,7 @@ class SampleData {
             roomId = "",
             message = "오늘 점심 먹었니?",
             time = "2023-05-04T16:16:38.417705",
-            readCount = 1,
+            readCount = 0,
             fromUserId = "",
             toUserId = "",
             type = 0
@@ -41,7 +41,7 @@ class SampleData {
             roomId = "",
             message = "30:00",
             time = "2023-05-04T16:17:38.417705",
-            readCount = 1,
+            readCount = 0,
             fromUserId = "",
             toUserId = "",
             type = 1,
