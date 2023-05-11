@@ -8,11 +8,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DatePicker
@@ -21,8 +20,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,12 +34,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,16 +45,12 @@ import androidx.navigation.NavBackStackEntry
 import com.ssafy.talkeasy.feature.auth.AuthViewModel
 import com.ssafy.talkeasy.feature.auth.R
 import com.ssafy.talkeasy.feature.common.component.EditProfile
+import com.ssafy.talkeasy.feature.common.component.NoLabelTextField
 import com.ssafy.talkeasy.feature.common.component.SegmentedButton
 import com.ssafy.talkeasy.feature.common.component.ShowProfileDialog
 import com.ssafy.talkeasy.feature.common.component.WideSeedButton
-import com.ssafy.talkeasy.feature.common.ui.theme.delta
-import com.ssafy.talkeasy.feature.common.ui.theme.green_white
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
-import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_error
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_outline
-import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_primary
-import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold30
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold32
@@ -162,61 +153,59 @@ internal fun JoinContent(
             .fillMaxSize()
             .padding(406.dp, 40.dp)
     ) {
-        Column(
+        LazyColumn(
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(30.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = stringResource(R.string.title_member_info_input),
-                style = textStyleBold32,
-                fontWeight = FontWeight.Bold
-            )
-
-            EditProfile(
-                size = 150,
-                profile = profile,
-                textStyle = textStyleBold30
-            ) { onProfileClick() }
-
-            Column(
-                modifier = modifier,
-                verticalArrangement = Arrangement.spacedBy(20.dp)
-            ) {
-                NameTextField(modifier = modifier, nickName = nickName, setNickName = setNickName)
-                SegmentedButtonSexual(onChangeGender = onChangeGender)
-                BirthPicker(onChangeBirthDate = onChangeBirthDate)
+            item {
+                Text(
+                    text = stringResource(R.string.title_member_info_input),
+                    style = textStyleBold32,
+                    fontWeight = FontWeight.Bold
+                )
             }
 
-            WideSeedButton(
-                onClicked = { onJoinButtonClick(nickName) },
-                text = stringResource(id = R.string.content_join),
-                textStyle = typography.titleLarge
-            )
+            item {
+                EditProfile(
+                    size = 150,
+                    profile = profile,
+                    textStyle = textStyleBold30
+                ) { onProfileClick() }
+            }
+
+            item {
+                Column(
+                    modifier = modifier,
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                ) {
+                    NameTextField(
+                        modifier = modifier,
+                        nickName = nickName,
+                        setNickName = setNickName
+                    )
+                    SegmentedButtonSexual(onChangeGender = onChangeGender)
+                    BirthPicker(onChangeBirthDate = onChangeBirthDate)
+                }
+            }
+
+            item {
+                WideSeedButton(
+                    onClicked = { onJoinButtonClick(nickName) },
+                    text = stringResource(id = R.string.content_join),
+                    textStyle = typography.titleLarge
+                )
+            }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NameTextField(
     modifier: Modifier = Modifier,
     nickName: String,
     setNickName: (String) -> Unit,
 ) {
-    val textFieldColors = TextFieldDefaults.textFieldColors(
-        focusedTextColor = md_theme_light_primary,
-        containerColor = green_white,
-        focusedIndicatorColor = seed,
-        focusedLabelColor = seed,
-        unfocusedIndicatorColor = Color.Transparent,
-        unfocusedLabelColor = delta,
-        cursorColor = seed,
-        errorCursorColor = md_theme_light_error,
-        errorLabelColor = md_theme_light_error,
-        errorIndicatorColor = md_theme_light_error
-    )
-
     Column {
         Text(
             text = stringResource(R.string.content_name),
@@ -225,15 +214,14 @@ fun NameTextField(
 
         Spacer(modifier = modifier.height(4.dp))
 
-        TextField(
-            modifier = modifier.fillMaxWidth(),
-            value = nickName,
-            onValueChange = setNickName,
-            label = { stringResource(id = R.string.content_name) },
+        NoLabelTextField(
+            modifier = modifier,
+            text = nickName,
+            setText = setNickName,
             textStyle = typography.titleLarge,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-            singleLine = true,
-            colors = textFieldColors
+            label = stringResource(id = R.string.content_name),
+            innerPaddingHorizontal = 18,
+            innerPaddingVertical = 14
         )
     }
 }

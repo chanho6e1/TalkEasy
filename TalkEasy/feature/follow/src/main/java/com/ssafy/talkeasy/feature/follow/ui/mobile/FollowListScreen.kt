@@ -38,7 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
-import com.ssafy.talkeasy.feature.common.R as Common
+import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
@@ -55,16 +55,23 @@ internal fun FollowListRoute(
     modifier: Modifier = Modifier,
     navBackStackEntry: NavBackStackEntry,
     viewModel: FollowViewModel = hiltViewModel(navBackStackEntry),
+    onClickedAddFollow: () -> Unit = {},
+    onClickedNotification: () -> Unit = {},
+    onClickedSettings: () -> Unit = {},
 ) {
     val followList by rememberUpdatedState(newValue = viewModel.followList.collectAsState().value)
-    FollowLisScreen(modifier = modifier, followList = followList ?: arrayListOf())
+    FollowLisScreen(
+        modifier = modifier,
+        followList = followList ?: arrayListOf(),
+        onClickedAddFollow = onClickedAddFollow
+    )
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
 internal fun FollowLisScreen(
     modifier: Modifier = Modifier,
-    onClickedAddFriend: () -> Unit = {},
+    onClickedAddFollow: () -> Unit = {},
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
     followList: List<Follow> = arrayListOf(),
@@ -72,7 +79,7 @@ internal fun FollowLisScreen(
     Column() {
         FollowListHeader(
             modifier = modifier,
-            onClickedAddFriend = onClickedAddFriend,
+            onClickedAddFollow = onClickedAddFollow,
             onClickedNotification = onClickedNotification,
             onClickedSettings = onClickedSettings
         )
@@ -85,7 +92,7 @@ internal fun FollowLisScreen(
 @Composable
 fun FollowListHeader(
     modifier: Modifier = Modifier,
-    onClickedAddFriend: () -> Unit = {},
+    onClickedAddFollow: () -> Unit = {},
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
 ) {
@@ -105,7 +112,7 @@ fun FollowListHeader(
 
         item {
             Row(modifier = modifier.padding(end = 18.dp)) {
-                IconButton(modifier = modifier, onClick = onClickedAddFriend) {
+                IconButton(modifier = modifier, onClick = onClickedAddFollow) {
                     Icon(
                         painter = painterResource(R.drawable.ic_add_friend),
                         contentDescription = stringResource(
@@ -181,7 +188,7 @@ fun NoFollowContent(
         ) {
             Image(
                 modifier = modifier,
-                painter = painterResource(id = Common.drawable.bg_talkeasy_logo_verticcal_trans),
+                painter = painterResource(id = drawable.bg_talkeasy_logo_verticcal_trans),
                 contentDescription = stringResource(
                     id = R.string.image_logo
                 ),
@@ -274,7 +281,7 @@ fun FollowListItem(
                         contentColor = md_theme_light_background
                     ) {
                         Text(
-                            if (newMessageCount >= 99) {
+                            text = if (newMessageCount >= 99) {
                                 "+99"
                             } else {
                                 newMessageCount.toString()
