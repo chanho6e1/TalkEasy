@@ -7,4 +7,7 @@
     <string name="image_reject_location">위치 열람 거부 아이콘</string>
     <string name="image_sos">긴급 도움 요청 아이콘</string>
     <string name="content_button_browse_location">위치보기</string>
+
+    <!-- Chat Frame -->
+    <string name="image_no_chat">채팅 내역이 없습니다</string>
 </resources>
