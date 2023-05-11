@@ -100,8 +100,8 @@ class AuthViewModel @Inject constructor(
 
     fun setGender(mGender: String) {
         when (mGender) {
-            "여성" -> gender.value = 0
-            "남성" -> gender.value = 1
+            "남성" -> gender.value = 0
+            "여성" -> gender.value = 1
         }
     }
 
@@ -114,7 +114,7 @@ class AuthViewModel @Inject constructor(
         try {
             file.createNewFile()
             FileOutputStream(file).use { out ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, out)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, out)
                 profileImg.value = file
             }
         } catch (e: Exception) {

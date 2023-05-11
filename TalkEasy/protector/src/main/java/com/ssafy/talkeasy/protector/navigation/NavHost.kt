@@ -49,6 +49,6 @@ fun AppNavHost(
             },
             role = ROLE
         )
-        followListScreen()
+        followListScreen(navController = navController)
     }
 }
