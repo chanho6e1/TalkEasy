@@ -16,20 +16,19 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-@NoArgsConstructor
 public class OAuth2UserImpl implements OAuth2User, UserDetails {
 
-    private Member member;
+    private final Member member;
     private OAuthUserInfo oAuthUserInfo;
 
     public OAuth2UserImpl(Member member) {
         this.member = member;
     }
 
-    public OAuth2UserImpl(Member member, OAuthUserInfo oAuthUserInfo) {
-        this.member = member;
-        this.oAuthUserInfo = oAuthUserInfo;
-    }
+//    public OAuth2UserImpl(Member member, OAuthUserInfo oAuthUserInfo) {
+//        this.member = member;
+//        this.oAuthUserInfo = oAuthUserInfo;
+//    }
 
     public Member getMember() {
         return member;
