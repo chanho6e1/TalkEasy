@@ -26,10 +26,7 @@ import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_secondaryContai
 import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
-
-enum class Direction {
-    PARTNER, ME
-}
+import com.ssafy.talkeasy.feature.common.util.Direction
 
 @Composable
 fun PartnerChatItemHead(memberName: String, nickname: String) {
@@ -69,9 +66,7 @@ fun PartnerChatItemHead(memberName: String, nickname: String) {
 fun MyChatItemHead() {
     Box {
         Icon(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(start = 37.dp, top = 24.dp),
+            modifier = Modifier.align(Alignment.TopStart),
             painter = painterResource(id = drawable.bg_chat_balloon_right_head),
             contentDescription = stringResource(R.string.image_the_person_chat_balloon_head),
             tint = seed
@@ -120,4 +115,9 @@ fun BaseChatBalloon(direction: Direction, chat: Chat, isLastMessage: Boolean) {
             )
         }
     }
+}
+
+@Composable
+fun LocationBalloon() {
+
 }
