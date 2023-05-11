@@ -25,7 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.ssafy.talkeasy.core.domain.entity.Chat
+import com.ssafy.talkeasy.core.domain.entity.response.Chat
 import com.ssafy.talkeasy.feature.chat.R
 import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.component.Profile

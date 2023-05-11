@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ssafy.talkeasy.core.domain.entity.Chat
+import com.ssafy.talkeasy.core.domain.entity.response.Chat
 import com.ssafy.talkeasy.feature.common.util.Direction
 
 @Composable
