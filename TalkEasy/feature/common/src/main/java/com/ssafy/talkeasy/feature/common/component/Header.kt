@@ -15,16 +15,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.feature.common.R
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
-@Preview(showBackground = true)
 @Composable
 fun ProtectorHeader(
     modifier: Modifier = Modifier,
-    title: String = "친구등록",
+    title: String,
     onClickedBackButton: () -> Unit = {},
 ) {
     Box(

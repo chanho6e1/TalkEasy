@@ -30,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -52,7 +51,6 @@ import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_primary
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_secondaryContainer
 import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
-import com.ssafy.talkeasy.feature.common.util.toast
 import com.ssafy.talkeasy.feature.follow.R
 import java.time.LocalDateTime
 
@@ -76,14 +74,12 @@ internal fun AddFollowDetailScreen(
     val (dialogState: Boolean, setDialogState: (Boolean) -> Unit) = remember {
         mutableStateOf(false)
     }
-    val context = LocalContext.current
 
     AddNotificationDialog(
         modifier = modifier,
         visible = dialogState,
         onDismissRequest = { setDialogState(!dialogState) },
         onClickedAddNotification = {
-            context.toast("알림 추가")
             setDialogState(!dialogState)
         }
     )
@@ -114,7 +110,7 @@ internal fun AddFollowDetailScreen(
             }
             WideSeedButton(
                 modifier = modifier.padding(horizontal = 34.dp, vertical = 10.dp),
-                onClicked = { context.toast("등록하기 clicked") },
+                onClicked = { },
                 text = stringResource(id = R.string.title_add_follow),
                 textStyle = typography.bodyLarge
             )
@@ -157,67 +153,65 @@ fun AddNotificationDialog(
 
     if (visible) {
         CustomAlertDialog(
-            onDismissRequest = { onDismissRequest() },
-            content = {
-                Surface(
-                    modifier = modifier
-                        .clip(
-                            RoundedCornerShape(10.dp)
-                        )
-                        .fillMaxWidth(),
-                    color = md_theme_light_background
+            onDismissRequest = { onDismissRequest() }
+        ) {
+            Surface(
+                modifier = modifier
+                    .clip(
+                        RoundedCornerShape(10.dp)
+                    )
+                    .fillMaxWidth(),
+                color = md_theme_light_background
+            ) {
+                LazyColumn(
+                    modifier = Modifier,
+                    contentPadding = PaddingValues(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(30.dp)
                 ) {
-                    LazyColumn(
-                        modifier = Modifier,
-                        contentPadding = PaddingValues(18.dp),
-                        verticalArrangement = Arrangement.spacedBy(30.dp)
-                    ) {
-                        item {
-                            Text(
-                                text = stringResource(id = R.string.title_notification),
-                                style = typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
+                    item {
+                        Text(
+                            text = stringResource(id = R.string.title_notification),
+                            style = typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
 
-                        item {
-                            TimeInput(
-                                state = timePickerState,
-                                colors = timePickerColors
-                            )
-                        }
+                    item {
+                        TimeInput(
+                            state = timePickerState,
+                            colors = timePickerColors
+                        )
+                    }
 
-                        item {
-                            CustomTextField(
-                                value = notificationMemo,
-                                onValueChange = setNotificationMemoName,
-                                textStyle = typography.bodyLarge,
-                                label = stringResource(id = R.string.content_memo)
-                            )
-                        }
+                    item {
+                        CustomTextField(
+                            value = notificationMemo,
+                            onValueChange = setNotificationMemoName,
+                            textStyle = typography.bodyLarge,
+                            label = stringResource(id = R.string.content_memo)
+                        )
+                    }
 
-                        item {
-                            WideSeedButton(
-                                onClicked = { onClickedAddNotification() },
-                                text = stringResource(id = R.string.content_add_notification),
-                                textStyle = typography.bodyLarge
-                            )
-                        }
+                    item {
+                        WideSeedButton(
+                            onClicked = { onClickedAddNotification() },
+                            text = stringResource(id = R.string.content_add_notification),
+                            textStyle = typography.bodyLarge
+                        )
                     }
                 }
             }
-        )
+        }
     }
 }
 
-@Preview
 @Composable
 internal fun AddFollowDetailContent(
     modifier: Modifier = Modifier,
     profileUrl: String = "",
-    name: String = "김싸피",
-    gender: String = "여성",
-    birthDate: String = "1999.1.28",
+    name: String = "",
+    gender: String = "",
+    birthDate: String = "",
     onClickedAddButton: () -> Unit = {},
     onItemClicked: () -> Unit = {},
 ) {
@@ -377,13 +371,12 @@ fun AddFollowDetailNotification(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 fun AddFollowDetailNotificationItem(
     modifier: Modifier = Modifier,
-    memo: String = "메모",
-    timeDivision: String = "오전",
-    time: String = "7:00",
+    memo: String = "",
+    timeDivision: String = "",
+    time: String = "",
     onItemClicked: () -> Unit = {},
 ) {
     Surface(
