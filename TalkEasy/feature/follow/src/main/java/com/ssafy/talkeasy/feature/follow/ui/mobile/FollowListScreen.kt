@@ -1,14 +1,22 @@
 package com.ssafy.talkeasy.feature.follow.ui.mobile
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material3.Badge
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -18,19 +26,27 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter.Companion.tint
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.ssafy.talkeasy.core.domain.entity.response.Follow
+import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
+import com.ssafy.talkeasy.feature.common.ui.theme.harp
+import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
+import com.ssafy.talkeasy.feature.common.ui.theme.sunset_orange
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
+import com.ssafy.talkeasy.feature.common.util.toTimeString
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
 import com.ssafy.talkeasy.feature.follow.R
 
@@ -172,7 +188,7 @@ fun NoFollowContent(
         ) {
             Image(
                 modifier = modifier,
-                painter = painterResource(id = Common.drawable.bg_talkeasy_logo_verticcal_trans),
+                painter = painterResource(id = drawable.bg_talkeasy_logo_verticcal_trans),
                 contentDescription = stringResource(
                     id = R.string.image_logo
                 ),
@@ -265,7 +281,7 @@ fun FollowListItem(
                         contentColor = md_theme_light_background
                     ) {
                         Text(
-                            if (newMessageCount >= 99) {
+                            text = if (newMessageCount >= 99) {
                                 "+99"
                             } else {
                                 newMessageCount.toString()

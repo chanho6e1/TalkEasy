@@ -16,24 +16,19 @@ fun NavController.navigateToFollowList(navOptions: NavOptions? = null) {
     this.navigate(followListNavigationRoute, navOptions)
 }
 
-fun NavGraphBuilder.followListScreen(
-    navController: NavController,
-) {
-    composable(route = followListNavigationRoute) { navBackStackEntry ->
-        val followListEntry = remember(navBackStackEntry) {
-            navController.getBackStackEntry(welcomeRouteProtector)
-        }
-        FollowListRoute(navBackStackEntry = followListEntry)
-    }
-}
-
 fun NavController.navigateToAddFollowDetail(navOptions: NavOptions? = null) {
     this.navigate(addFollowDetailNavigationRoute, navOptions)
 }
 
 fun NavGraphBuilder.followListScreen(navController: NavController) {
-    composable(route = followListNavigationRoute) {
-        FollowListRoute(onClickedAddFollow = { navController.navigateToAddFollowDetail() })
+    composable(route = followListNavigationRoute) { navBackStackEntry ->
+        val followListEntry = remember(navBackStackEntry) {
+            navController.getBackStackEntry(welcomeRouteProtector)
+        }
+        FollowListRoute(
+            navBackStackEntry = followListEntry,
+            onClickedAddFollow = { navController.navigateToAddFollowDetail() }
+        )
     }
 }
 
