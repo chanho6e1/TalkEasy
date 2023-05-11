@@ -48,11 +48,11 @@ public class FollowController {
     public ResponseEntity<CommonResponse> getUserInfoByFollow (@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User,
                                                  @PathVariable("followId") String followId) throws IOException {
 
-//        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-//                HttpStatus.CREATED, followService.getUserInfoByFollow(oAuth2User.getId(), followId)));
-
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                HttpStatus.CREATED, followService.getUserInfoByFollow("6459dfcf393c266aa80f5710", "645b7a87019c7f5131d179b0")));
+                HttpStatus.CREATED, followService.getUserInfoByFollow(oAuth2User.getId(), followId)));
+
+//        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+//                HttpStatus.CREATED, followService.getUserInfoByFollow("6459dfcf393c266aa80f5710", "645b7a87019c7f5131d179b0")));
 
     }
 
@@ -83,10 +83,10 @@ public class FollowController {
     @ApiOperation(value = "나의 팔로워 목록을 조회한다", notes = "나의 팔로우 목록을 조회한다")
     @GetMapping()
     public ResponseEntity<PagedResponse> getfollow(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) {
-//        return ResponseEntity.ok().body((
-//                followService.getfollow(oAuth2User.getId())));
         return ResponseEntity.ok().body((
-                followService.getfollow("645a0420c5b2c82e3afaf9e4")));
+                followService.getfollow(oAuth2User.getId())));
+//        return ResponseEntity.ok().body((
+//                followService.getfollow("645a0420c5b2c82e3afaf9e4")));
 
     }
 
