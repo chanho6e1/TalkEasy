@@ -35,22 +35,28 @@ import com.ssafy.talkeasy.feature.follow.R
 internal fun FollowListRoute(
     modifier: Modifier = Modifier,
     viewModel: FollowViewModel = hiltViewModel(),
+    onClickedAddFollow: () -> Unit = {},
+    onClickedNotification: () -> Unit = {},
+    onClickedSettings: () -> Unit = {},
 ) {
-    FollowLisScreen(modifier = modifier)
+    FollowLisScreen(
+        modifier = modifier,
+        onClickedAddFollow = onClickedAddFollow
+    )
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
 internal fun FollowLisScreen(
     modifier: Modifier = Modifier,
-    onClickedAddFriend: () -> Unit = {},
+    onClickedAddFollow: () -> Unit = {},
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
 ) {
     Column() {
         FollowListHeader(
             modifier = modifier,
-            onClickedAddFriend = onClickedAddFriend,
+            onClickedAddFollow = onClickedAddFollow,
             onClickedNotification = onClickedNotification,
             onClickedSettings = onClickedSettings
         )
@@ -62,7 +68,7 @@ internal fun FollowLisScreen(
 @Composable
 fun FollowListHeader(
     modifier: Modifier = Modifier,
-    onClickedAddFriend: () -> Unit = {},
+    onClickedAddFollow: () -> Unit = {},
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
 ) {
@@ -81,7 +87,7 @@ fun FollowListHeader(
         }
         item {
             Row(modifier = modifier.padding(end = 18.dp)) {
-                IconButton(modifier = modifier, onClick = onClickedAddFriend) {
+                IconButton(modifier = modifier, onClick = onClickedAddFollow) {
                     Icon(
                         painter = painterResource(R.drawable.ic_add_friend),
                         contentDescription = stringResource(

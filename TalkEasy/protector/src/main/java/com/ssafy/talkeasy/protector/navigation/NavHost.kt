@@ -10,6 +10,7 @@ import com.ssafy.talkeasy.feature.auth.navigation.loginScreen
 import com.ssafy.talkeasy.feature.auth.navigation.navigateToJoin
 import com.ssafy.talkeasy.feature.auth.navigation.navigateToWelcome
 import com.ssafy.talkeasy.feature.auth.navigation.welcomeScreen
+import com.ssafy.talkeasy.feature.follow.navigation.addFollowDetailScreen
 import com.ssafy.talkeasy.feature.follow.navigation.followListScreen
 import com.ssafy.talkeasy.feature.follow.navigation.navigateToFollowList
 
@@ -49,6 +50,7 @@ fun AppNavHost(
             },
             role = ROLE
         )
-        followListScreen()
+        followListScreen(navController = navController)
+        addFollowDetailScreen()
     }
 }
