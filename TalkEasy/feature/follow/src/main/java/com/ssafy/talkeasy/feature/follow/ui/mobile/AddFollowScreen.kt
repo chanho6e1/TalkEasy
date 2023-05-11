@@ -289,7 +289,6 @@ fun AddFollowDetailStringContent(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)
 @Composable
 fun AddFollowDetailSignificant(

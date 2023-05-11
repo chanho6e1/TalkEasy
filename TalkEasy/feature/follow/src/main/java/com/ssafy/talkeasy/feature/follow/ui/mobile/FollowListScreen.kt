@@ -1,13 +1,10 @@
 package com.ssafy.talkeasy.feature.follow.ui.mobile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,11 +23,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.ColorFilter.Companion.tint
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -38,11 +33,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
-import com.ssafy.talkeasy.feature.common.R.drawable
+import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
-import com.ssafy.talkeasy.feature.common.ui.theme.harp
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.sunset_orange
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
@@ -163,7 +157,7 @@ fun FollowListContent(
                     profileUrl = item.imageUrl,
                     name = item.userName,
                     age = item.age ?: 0,
-                    time = "2023-05-04T09:28:32.296943",
+                    time = "",
                     newMessageCount = 0,
                     gender = if (item.gender == 0) {
                         stringResource(id = R.string.content_man)
@@ -174,35 +168,14 @@ fun FollowListContent(
             }
         }
     } else {
-        NoFollowContent(modifier = modifier)
-    }
-}
-
-@Composable
-fun NoFollowContent(
-    modifier: Modifier = Modifier,
-) {
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Column(
+        NoContentLogoMessage(
             modifier = modifier,
-            verticalArrangement = Arrangement.spacedBy(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Image(
-                modifier = modifier,
-                painter = painterResource(id = drawable.bg_talkeasy_logo_verticcal_trans),
-                contentDescription = stringResource(
-                    id = R.string.image_logo
-                ),
-                colorFilter = tint(harp)
-            )
-            Text(
-                text = stringResource(id = R.string.content_no_follow_content),
-                style = typography.titleMedium,
-                color = harp,
-                textAlign = TextAlign.Center
-            )
-        }
+            message = stringResource(id = R.string.content_no_follow_content),
+            textStyle = typography.titleMedium,
+            width = 233,
+            height = 107,
+            betweenValue = 20
+        )
     }
 }
 
