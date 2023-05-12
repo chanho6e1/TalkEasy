@@ -2,6 +2,7 @@ package com.talkeasy.server.controller.member;
 
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.common.PagedResponse;
+import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.user.FollowRequestDto;
 import com.talkeasy.server.service.member.FollowService;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
@@ -90,11 +91,24 @@ public class FollowController {
         return ResponseEntity.ok().body((
                 followService.getfollow(oAuth2User.getId())));
 //        return ResponseEntity.ok().body((
-//                followService.getfollow("645a0420c5b2c82e3afaf9e4")));
+//                followService.getfollow("6459dfcf393c266aa80f5710")));
     }
 
+    @ApiOperation(value = "피보호자가 보호자 별명 수정", notes = "피보호자가 보호자의 별명 설정\n" +
+            "보호자는 피보호자의 별명 설정 불가 :: status:400과 동시에 data: \"보호자는 피보호자의 별명을 설정할 수 없습니다.\" 출력\n" +
+            "== RequestParam으로 nickName 전달!!!! 초기 별명은 \"\" <- 빈 문자열로 저장 ==")
+    @PutMapping("/{followId}/nick-name")
+    public ResponseEntity<CommonResponse> putNickName(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User,
+                                                  @PathVariable("followId") String followId,
+                                                  @RequestParam String nickName) throws IOException {
 
+//        Member member = Member.builder().id("6459dfcf393c266aa80f5710").role(1).build();
+//        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+//                HttpStatus.CREATED, followService.putNickName(member, "645b7a87019c7f5131d179b0", "토르토르")));
+        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+                HttpStatus.CREATED, followService.putNickName(oAuth2User.getMember(), followId, nickName)));
 
+    }
 
     // 주보호자 등록/해제 토글
     // 보호자 이미 등록되어 있으면 새로 들어온 아이디로 갈아끼우기
