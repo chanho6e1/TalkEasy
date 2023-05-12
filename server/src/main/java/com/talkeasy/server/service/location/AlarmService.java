@@ -1,6 +1,6 @@
 package com.talkeasy.server.service.location;
 
-import com.talkeasy.server.dto.location.Alarm;
+import com.talkeasy.server.dto.location.AlarmDto;
 import com.talkeasy.server.dto.location.ChatRoom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,16 +48,16 @@ public class AlarmService {
         chatRooms.remove(room.getRoomId());
     }
 
-    public Alarm send(Alarm alarm){
-        if(Alarm.MessageType.SOS.equals(alarm.getType())) {
+    public AlarmDto send(AlarmDto alarm){
+        if(AlarmDto.MessageType.SOS.equals(alarm.getType())) {
             alarm.setCount(alarm.getCount() + 1);
-        }else if(Alarm.MessageType.ACCEPT.equals(alarm.getType())){
+        }else if(AlarmDto.MessageType.ACCEPT.equals(alarm.getType())){
             if(alarm.getCount() == 1){ // 정상적으로 열람 시작
 
                 alarm.setCount(alarm.getCount() + 1);
             }
 
-        }else if(Alarm.MessageType.END.equals(alarm.getType())){
+        }else if(AlarmDto.MessageType.END.equals(alarm.getType())){
 
         }
         return alarm;

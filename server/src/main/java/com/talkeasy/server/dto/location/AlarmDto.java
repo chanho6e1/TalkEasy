@@ -7,16 +7,17 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Alram {
+public class AlarmDto {
     public enum MessageType {
-        START, ING, END
+        SOS, ACCEPT, END
     }
 
-    private MessageType type;
+    private AlarmDto.MessageType type;
     //채팅방 ID
     private String roomId;
     //보내는 사람
     private String sender;
+    private int count;
     //내용
     private String message;
 }

@@ -1,5 +1,5 @@
 package com.talkeasy.server.controller.location;
-import com.talkeasy.server.dto.location.Alarm;
+import com.talkeasy.server.dto.location.AlarmDto;
 import com.talkeasy.server.dto.location.ChatRoom;
 import com.talkeasy.server.service.location.AlarmService;
 import io.swagger.annotations.Api;
@@ -61,9 +61,7 @@ public class AlarmController {
     }
 
     @MessageMapping("/pub")
-    public void enter(Alarm message) {
-
-
+    public void enter(AlarmDto message) {
         messagingTemplate.convertAndSend("/sub/"+message.getRoomId(),message);
     }
 
