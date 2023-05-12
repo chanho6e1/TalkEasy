@@ -187,11 +187,11 @@ task copyPrivate(type: Copy) {
         into 'src/main/resources'
     }
 
-    copy {
-        from '../talkeasy/static'
-        include "index.html"
-        into 'src/main/resources/static'
-    }
+//    copy {
+//        from '../talkeasy/static'
+//        include "index.html"
+//        into 'src/main/resources/static'
+//    }
 
     copy {
         from '../talkeasy/firebase'
