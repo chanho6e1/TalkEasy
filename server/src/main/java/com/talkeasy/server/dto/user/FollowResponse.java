@@ -23,6 +23,7 @@ public class FollowResponse {
     private String birthDate;
     private Boolean mainStatus; // 주보호자 설정
     private Boolean locationStatus; // 위치정보 제공 동의 여부 설정
+    private String nickName;
 
     public FollowResponse(Member member, Follow follow, ChatRoom chatRoom) {
         this.followId = follow.getId();
@@ -38,5 +39,6 @@ public class FollowResponse {
         if(chatRoom!=null){
             this.roomId = chatRoom.getId();
         }
+        this.nickName = follow.getNickName();
     }
 }

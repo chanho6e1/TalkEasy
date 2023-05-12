@@ -21,6 +21,7 @@ public class Follow {
     private String memo;
     private Boolean mainStatus;
     private Boolean locationStatus;
+    private String nickName; // 피보호자가 보호자에게 설정할 별명. 기본값은 ""
     @Field("createdTime")
     @CreatedDate
     private LocalDateTime createdTime;
