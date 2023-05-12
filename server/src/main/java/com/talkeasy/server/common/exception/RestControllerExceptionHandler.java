@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.ArrayList;
@@ -96,5 +97,16 @@ public class RestControllerExceptionHandler {
         ErrorResponse errResponse = new ErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage()+ " : "+ exception.getCause());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
     }
+// @ExceptionHandler(HttpException.class)
+//    public ResponseEntity<ErrorResponse> resolveException(NotFoundException exception) {
+//        ErrorResponse errResponse = new ErrorResponse(HttpStatus.NOT_FOUND, exception.getMessage()+ " : "+ exception.getCause());
+//        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errResponse);
+//    }
+//
+//
+//    retrofit2.adapter.rxjava2.: HTTP 429
+//    @ExceptionHandler(HttpClientErrorException.class)
+
+
 
 }
