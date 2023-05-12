@@ -9,6 +9,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -33,6 +36,9 @@ internal fun WelcomeRouteProtector(
     val memberInfo by followViewModel.memberInfo.collectAsState()
     val followList by followViewModel.followList.collectAsState()
     val memberName by authViewModel.name.collectAsState()
+    var isInfoLoadingFinished by remember {
+        mutableStateOf(false)
+    }
 
     SideEffect {
         if (memberInfo == null) {
@@ -45,14 +51,16 @@ internal fun WelcomeRouteProtector(
 
     LaunchedEffect(key1 = memberInfo, key2 = followList) {
         if (memberInfo != null && followList != null) {
-            onFinishedLoading()
+            isInfoLoadingFinished = true
         }
     }
 
     Box() {
         WelcomeScreen(
             modifier = modifier,
-            memberName = memberName
+            memberName = memberName,
+            isInfoLoadingFinished = isInfoLoadingFinished,
+            onFinishedLoading = onFinishedLoading
         )
     }
 }
@@ -61,6 +69,8 @@ internal fun WelcomeRouteProtector(
 internal fun WelcomeScreen(
     modifier: Modifier = Modifier,
     memberName: String,
+    isInfoLoadingFinished: Boolean,
+    onFinishedLoading: () -> Unit = {},
 ) {
     Surface(modifier = modifier.fillMaxSize()) {
         Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
@@ -68,7 +78,9 @@ internal fun WelcomeScreen(
                 memberName = memberName,
                 size = 320,
                 textStyle = typography.titleMedium,
-                bottomPadding = 50
+                bottomPadding = 50,
+                isInfoLoadingFinished = isInfoLoadingFinished,
+                onFinishedLoading = onFinishedLoading
             )
 
             Image(

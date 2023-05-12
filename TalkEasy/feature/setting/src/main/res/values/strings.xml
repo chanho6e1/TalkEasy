@@ -2,4 +2,11 @@
 <resources>
     <!-- Setting - Top Bar -->
     <string name="image_arrow_back">뒤로가기 버튼입니다</string>
+
+    <!--  Custom Dialog  -->
+    <string name="content_logout">로그아웃을 하시겠습니까?</string>
+    <string name="content_cancel">취소</string>
+    <string name="content_ok">확인</string>
+    <string name="content_withdrawal">회원탈퇴</string>
+    <string name="content_good_bye">이별인가요? 너무 아쉬워요…</string>
 </resources>
