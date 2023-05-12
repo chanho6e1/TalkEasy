@@ -1,6 +1,7 @@
 package com.ssafy.talkeasy.feature.chat
 
 import com.ssafy.talkeasy.core.domain.entity.response.Chat
+import com.ssafy.talkeasy.core.domain.entity.response.Follow
 
 class SampleData {
 
@@ -74,5 +75,20 @@ class SampleData {
         val locations = listOf(locationRequest, locationResult, locationReject)
 
         val soss = listOf(sos)
+
+        val chatPartner = Follow(
+            userId = "",
+            userName = "강은선인데이름이왕왕길어용괜찮아욥",
+            followId = "",
+            imageUrl = "",
+            memo = "",
+            mainStatus = true,
+            gender = 0,
+            age = 31,
+            birthDate = "2023-05-04T16:16:38.417705",
+            locationStatus = false,
+            nickName = "닉네임일이삼사오육칠"
+        )
+
     }
 }

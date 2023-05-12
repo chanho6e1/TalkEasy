@@ -1,5 +1,9 @@
 package com.ssafy.talkeasy.feature.common.util
 
+enum class ChatMode {
+    TTS, CHAT
+}
+
 enum class ChatDirection {
     PARTNER, ME
 }

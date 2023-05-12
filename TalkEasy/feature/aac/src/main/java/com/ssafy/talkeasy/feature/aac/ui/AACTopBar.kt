@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.ssafy.talkeasy.feature.aac.R.string
-import com.ssafy.talkeasy.feature.aac.SampleData.Companion.memberName
+// import com.ssafy.talkeasy.feature.aac.SampleData.Companion.memberName
 import com.ssafy.talkeasy.feature.common.R
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
@@ -41,9 +41,6 @@ import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
 @Composable
 fun AACTopBar(onRight: Boolean) {
-    val chatMode by remember {
-        mutableStateOf(false)
-    }
 
     if (onRight) {
         ConstraintLayout(
@@ -53,18 +50,7 @@ fun AACTopBar(onRight: Boolean) {
         ) {
             val (profile, snackBar, buttons) = createRefs()
 
-            Box(
-                modifier = Modifier.constrainAs(profile) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top, margin = 10.dp)
-                }
-            ) {
-                if (chatMode) {
-                    ChatPartner(name = memberName)
-                } else {
-                    DefaultProfile()
-                }
-            }
+
 
             Box(
                 modifier = Modifier.constrainAs(snackBar) {
@@ -73,7 +59,7 @@ fun AACTopBar(onRight: Boolean) {
                     width = Dimension.fillToConstraints
                 }
             ) {
-                BrowseLocation(memberName)
+                // BrowseLocation(memberName)
             }
 
             Row(
@@ -104,45 +90,17 @@ fun AACTopBar(onRight: Boolean) {
 
                 Spacer(modifier = Modifier.width(20.dp))
 
-                if (chatMode) {
-                    ChatPartner(name = memberName)
-                } else {
-                    DefaultProfile()
-                }
+                // if (chatMode) {
+                //     ChatPartner(name = memberName)
+                // } else {
+                //     DefaultProfile()
+                // }
             }
         }
     }
 }
 
-@Composable
-fun ChatPartner(profileUrl: String = "", name: String) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Profile(profileUrl, 48)
 
-        Spacer(modifier = Modifier.width(14.dp))
-
-        Text(
-            modifier = Modifier.width(203.dp),
-            text = name,
-            color = md_theme_light_onBackground,
-            style = textStyleNormal22
-        )
-
-        Spacer(modifier = Modifier.width(28.dp))
-
-        Surface(
-            shape = shapes.extraSmall,
-            color = black_squeeze
-        ) {
-            Text(
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                text = "변경",
-                color = delta,
-                style = typography.bodyLarge
-            )
-        }
-    }
-}
 
 @Composable
 @Preview
@@ -190,10 +148,4 @@ fun ButtonAlarmAndSetting() {
             )
         }
     }
-}
-
-@Composable
-@Preview(showBackground = true)
-fun DefaultProfile() {
-    ChatPartner(name = stringResource(string.content_chat_mode_tts))
 }

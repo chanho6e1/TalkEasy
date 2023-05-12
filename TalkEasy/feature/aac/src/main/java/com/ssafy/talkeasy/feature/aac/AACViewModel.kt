@@ -1,13 +1,15 @@
 package com.ssafy.talkeasy.feature.aac
 
 import androidx.lifecycle.ViewModel
+import com.ssafy.talkeasy.feature.common.SharedPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 @HiltViewModel
-class AACViewModel @Inject constructor() : ViewModel() {
+class AACViewModel @Inject constructor(private val sharedPreferences: SharedPreferences) :
+    ViewModel() {
 
     private val _selectedCard: MutableStateFlow<List<String>> =
         MutableStateFlow(listOf())
@@ -40,5 +42,11 @@ class AACViewModel @Inject constructor() : ViewModel() {
 
     fun setCategory(category: String = "") {
         _category.value = category
+    }
+
+    fun getOnRight() = sharedPreferences.onRight
+
+    fun setOnRight(value: Boolean) {
+        sharedPreferences.onRight = value
     }
 }
