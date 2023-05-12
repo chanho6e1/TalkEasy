@@ -63,6 +63,9 @@ def get_location():
     results.sort(key=lambda x: (-x[2], x[0]))   # cnt 내림차순, idx 오름차순으로 정렬
     print(results)
 
+    if len(results) > 5:
+        results = results[:5]
+
     return result_to_jsonify(rows, results)
 
 
