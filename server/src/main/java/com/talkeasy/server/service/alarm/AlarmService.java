@@ -49,10 +49,10 @@ public class AlarmService {
 
         isMine(alarm.getUserId(), member.getId());
 
-        alarm.setReadSatus(true);
+        alarm.setReadStatus(true);
         mongoTemplate.save(alarm);
 
-        return alarm.getReadSatus();
+        return alarm.getReadStatus();
     }
 
     private void isMine(String myId, String targetId) {
