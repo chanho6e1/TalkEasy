@@ -31,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.ssafy.talkeasy.feature.common.R
@@ -116,58 +117,57 @@ fun ShowProfileDialog(
     }
 
     if (visible) {
-        CustomAlertDialog(
-            onDismissRequest = { onDismissRequest() },
-            content = {
-                Surface(
-                    modifier = modifier
-                        .clip(
-                            RoundedCornerShape(10.dp)
-                        )
-                        .fillMaxWidth(),
-                    color = md_theme_light_background
+        Dialog(
+            onDismissRequest = { onDismissRequest() }
+        ) {
+            Surface(
+                modifier = modifier
+                    .clip(
+                        RoundedCornerShape(10.dp)
+                    )
+                    .fillMaxWidth(),
+                color = md_theme_light_background
+            ) {
+                LazyColumn(
+                    modifier = Modifier,
+                    contentPadding = PaddingValues(18.dp),
+                    verticalArrangement = Arrangement.spacedBy(30.dp)
                 ) {
-                    LazyColumn(
-                        modifier = Modifier,
-                        contentPadding = PaddingValues(18.dp),
-                        verticalArrangement = Arrangement.spacedBy(30.dp)
-                    ) {
-                        item {
-                            Text(
-                                text = stringResource(id = R.string.title_photo_picker),
-                                style = typography.titleMedium,
-                                fontWeight = FontWeight.Bold
-                            )
-                        }
+                    item {
+                        Text(
+                            text = stringResource(id = R.string.title_photo_picker),
+                            style = typography.titleMedium,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
 
-                        item {
-                            Text(
-                                text = stringResource(id = R.string.content_camera_select),
-                                style = typography.titleSmall,
-                                modifier = Modifier
-                                    .wrapContentHeight()
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        takePhotoFromCameraLauncher.launch()
-                                    }
-                            )
-                        }
+                    item {
+                        Text(
+                            text = stringResource(id = R.string.content_camera_select),
+                            style = typography.titleSmall,
+                            modifier = Modifier
+                                .wrapContentHeight()
+                                .fillMaxWidth()
+                                .clickable {
+                                    takePhotoFromCameraLauncher.launch()
+                                }
+                        )
+                    }
 
-                        item {
-                            Text(
-                                text = stringResource(id = R.string.content_gallery_select),
-                                style = typography.titleSmall,
-                                modifier = Modifier
-                                    .wrapContentHeight()
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        takePhotoFromGalleryLauncher.launch("image/*")
-                                    }
-                            )
-                        }
+                    item {
+                        Text(
+                            text = stringResource(id = R.string.content_gallery_select),
+                            style = typography.titleSmall,
+                            modifier = Modifier
+                                .wrapContentHeight()
+                                .fillMaxWidth()
+                                .clickable {
+                                    takePhotoFromGalleryLauncher.launch("image/*")
+                                }
+                        )
                     }
                 }
             }
-        )
+        }
     }
 }

@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.feature.common.R
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
@@ -30,7 +29,12 @@ fun ProtectorHeader(
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
-        IconButton(onClick = { onClickedBackButton() }, modifier = modifier.padding(18.dp)) {
+        IconButton(
+            onClick = { onClickedBackButton() },
+            modifier = modifier
+                .padding(horizontal = 18.dp)
+                .align(Alignment.CenterStart)
+        ) {
             Icon(
                 modifier = modifier.size(23.dp),
                 painter = painterResource(id = R.drawable.ic_arrow_back),
@@ -39,13 +43,11 @@ fun ProtectorHeader(
         }
         Text(
             modifier = modifier
-                .fillMaxWidth()
                 .padding(vertical = 18.dp)
                 .align(Alignment.Center),
             text = title,
             style = typography.titleLarge,
-            fontWeight = FontWeight.Bold,
-            textAlign = TextAlign.Center
+            fontWeight = FontWeight.Bold
         )
     }
 }
