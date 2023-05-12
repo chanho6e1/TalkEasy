@@ -31,7 +31,8 @@ public class AlarmService {
         String oneWeekAgo = LocalDateTime.now().minusWeeks(1).toString();
 
         List<Alarm> alarms = mongoTemplate.find(Query.query(Criteria.where("userId").is(member.getId())
-                .and("created_dt").gte(oneWeekAgo)), Alarm.class);
+                .and("time").gte(oneWeekAgo)
+        ), Alarm.class);
 
         if (member.getRole() == 0) { // 보호자
             List<ResponseProtectorAlarmDto> result = alarms.stream().map((a) -> new ResponseProtectorAlarmDto(a)).collect(Collectors.toList());
