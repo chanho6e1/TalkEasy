@@ -62,7 +62,16 @@ public class FollowService {
             throw new ResourceAlreadyExistsException("이미 팔로우되어 있습니다");
         }
 
-        Follow toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo(null).mainStatus(false).locationStatus(true).build();
+        Member member = chatService.getMemberById(myId);
+        Follow toFollow;
+
+        if(member.getRole()==1) {
+            //보호자
+            toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo("").mainStatus(false).locationStatus(false).build();
+        }else{
+            //비보호자
+            toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo("").mainStatus(false).locationStatus(true).build();
+        }
 
         return mongoTemplate.insert(toFollow);
 
