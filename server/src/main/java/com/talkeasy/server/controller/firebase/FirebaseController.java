@@ -1,6 +1,7 @@
 package com.talkeasy.server.controller.firebase;
 
 import com.talkeasy.server.common.CommonResponse;
+import com.talkeasy.server.dto.firebase.RequestFcmDto;
 import com.talkeasy.server.service.firebase.FirebaseCloudMessageService;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
 import io.swagger.annotations.Api;
@@ -21,15 +22,25 @@ import java.io.IOException;
 public class FirebaseController {
     private final FirebaseCloudMessageService firebaseCloudMessageService;
 
-    @PostMapping
+    @ApiIgnore
+    @PostMapping("/test")
     @ApiOperation(value = "백엔드 테스트용", notes = "(테스트용)")
-    public ResponseEntity pushMessage(@RequestParam String token,
+    public ResponseEntity pushMessageTest(@RequestParam String token,
                                       @RequestParam String title,
                                       @RequestParam String body) throws IOException {
 
         firebaseCloudMessageService.sendMessageTo(token, title, body);
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping
+    @ApiOperation(value = "SOS 요청 FCM 전송", notes = "FCM을 받을 유저 ID, 제목, 내용 지정")
+    public ResponseEntity pushMessage(@RequestBody RequestFcmDto requestFcmDto) throws IOException {
+
+        firebaseCloudMessageService.sendFcm(requestFcmDto);
+        return ResponseEntity.ok().build();
+    }
+
 
     @PutMapping("/app-token")
     @ApiOperation(value = "유저 앱 토큰 저장", notes = "유저 로그인 시, 기기 앱 토큰 저장 필요")

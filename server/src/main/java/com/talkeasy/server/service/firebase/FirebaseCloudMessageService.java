@@ -1,7 +1,9 @@
 package com.talkeasy.server.service.firebase;
 
 import com.talkeasy.server.domain.app.UserAppToken;
+import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.firebase.FcmMessage;
+import com.talkeasy.server.dto.firebase.RequestFcmDto;
 import lombok.RequiredArgsConstructor;
 import okhttp3.*;
 import org.apache.http.HttpHeaders;
@@ -88,5 +90,15 @@ public class FirebaseCloudMessageService {
         UserAppToken newUserAppToken = mongoTemplate.save(new UserAppToken(userId, appToken));
 
         return newUserAppToken.getAppToken();
+    }
+
+    public void sendFcm(RequestFcmDto requestFcmDto) throws IOException {
+
+        UserAppToken userAppToken = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("userId").is(requestFcmDto.getUserId())), UserAppToken.class)).orElse(null);
+
+        if (userAppToken == null)
+            throw new NullPointerException("해당하는 사용자의 fcm 토큰이 존재하지 않습니다.");
+
+        sendMessageTo(userAppToken.getAppToken(), requestFcmDto.getTitle(), requestFcmDto.getBody());
     }
 }
