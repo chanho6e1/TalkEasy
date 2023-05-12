@@ -6,7 +6,7 @@ public class ResponseWardAlarmDto {
     private String alarmId;
     private String content;
     private String time;
-    private Boolean readSatus; // 읽음 여부 true/false
+    private Boolean readStatus; // 읽음 여부 true/false
     private int type; // location : 1, sos : 2;
     private String chatId; //채팅 번호
 
@@ -14,7 +14,7 @@ public class ResponseWardAlarmDto {
         this.alarmId = alarm.getId();
         this.content = alarm.getContent();
         this.time = alarm.getTime();
-        this.readSatus = alarm.getReadSatus();
+        this.readStatus = alarm.getReadStatus();
         this.type = alarm.getType();
         this.chatId = alarm.getChatId();
     }
