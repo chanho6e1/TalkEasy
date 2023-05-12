@@ -1,5 +1,6 @@
 package com.talkeasy.server.controller.alarm;
 
+import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.service.alarm.AlarmService;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
 import io.swagger.annotations.Api;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/alarm")
 @RequiredArgsConstructor
-@Api(tags = {"alarm 컨트롤러"})
+@Api(tags = {"알림 보관함용 컨트롤러"})
 public class MyAlarmController {
 
     private final AlarmService alarmService;
@@ -43,6 +44,8 @@ public class MyAlarmController {
     @ApiOperation(value = "알림 보관함 조회", notes = "현재 날짜부터 일주일 전까지의 알람을 조회한다.")
     public ResponseEntity<?> getAlarms(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) {
 
+//        Member member = Member.builder().id("64475bb2970b4a6441e96c50").role(0).build();
+//        return ResponseEntity.status(HttpStatus.OK).body(alarmService.getAlarms(member));
         return ResponseEntity.status(HttpStatus.OK).body(alarmService.getAlarms(oAuth2User.getMember()));
     }
 
@@ -51,6 +54,8 @@ public class MyAlarmController {
     public ResponseEntity<?> putReadStatusByAlarmId(@PathVariable String alarmId,
                                                     @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) {
 
+//        Member member = Member.builder().id("64475bb2970b4a6441e96c50").role(0).build();
+//        return ResponseEntity.status(HttpStatus.OK).body(alarmService.putReadStatusByAlarmId(alarmId, member));
         return ResponseEntity.status(HttpStatus.OK).body(alarmService.putReadStatusByAlarmId(alarmId, oAuth2User.getMember()));
     }
 
