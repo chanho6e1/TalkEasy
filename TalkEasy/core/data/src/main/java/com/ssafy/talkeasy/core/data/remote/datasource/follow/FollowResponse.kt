@@ -25,6 +25,8 @@ data class FollowResponse(
     val birthDate: String?,
     @SerializedName("locationStatus")
     val locationStatus: Boolean,
+    @SerializedName("nickName")
+    val nickName: String,
 ) : DataToDomainMapper<Follow> {
 
     override fun toDomainModel(): Follow =
@@ -38,6 +40,7 @@ data class FollowResponse(
             age = age,
             birthDate = birthDate,
             locationStatus = locationStatus,
-            gender = gender
+            gender = gender,
+            nickName = nickName
         )
 }
