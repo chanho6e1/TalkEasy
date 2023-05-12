@@ -21,8 +21,11 @@ public class Alarm {
     private int type; //(위치/sos : 1/2)
     private String userId; //수신할 유저
     private String chatId; //채팅 번호
+    private String fromName; //요청을 한 사람 이름
 
     @CreatedDate
     private LocalDateTime createdTime; //메시지 생성 시간
+
+    private Boolean readStatus; //읾음 처리 여부
 
 }
