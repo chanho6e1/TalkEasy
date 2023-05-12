@@ -32,8 +32,9 @@ public class FollowService {
     private final MongoTemplate mongoTemplate;
     private final ChatService chatService;
 
+//    public String follow(OAuth2UserImpl myId, String toUserId, FollowRequestDto followRequestDto) throws IOException {
     public String follow(String myId, String toUserId, FollowRequestDto followRequestDto) throws IOException {
-
+//
         Follow follow1 = followDetail(myId, toUserId); // 보호자가 피보호자를 친구추가
         Follow follow2 = followDetail(toUserId, myId);
         chatService.createRoom(myId, toUserId);

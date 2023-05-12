@@ -6,6 +6,7 @@ import com.talkeasy.server.authentication.OAuthUserInfo;
 import com.talkeasy.server.domain.member.Member;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,8 +19,10 @@ import java.util.Map;
 
 public class OAuth2UserImpl implements OAuth2User, UserDetails {
 
-    private final Member member;
+    private Member member;
+//    private final Member member;
     private OAuthUserInfo oAuthUserInfo;
+
 
     public OAuth2UserImpl(Member member) {
         this.member = member;

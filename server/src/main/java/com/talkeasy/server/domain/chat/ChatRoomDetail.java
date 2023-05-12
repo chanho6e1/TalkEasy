@@ -25,7 +25,7 @@ public class ChatRoomDetail {
     private String fromUserId;
     private String imageUrl;
     private int type; // 0(msg) :: 1(location) :: 2(sos)
-
+    private int status; //0(REQUEST) :: 1(RESULT) :: 2(REJECT)
 
 
     public ChatRoomDetail(MessageDto messageDto) {
