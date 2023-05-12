@@ -1,6 +1,5 @@
 package com.talkeasy.server.service.location;
 
-import com.talkeasy.server.dto.location.AlarmDto;
 import com.talkeasy.server.dto.location.ChatRoom;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +13,7 @@ import java.util.*;
 @Slf4j
 @RequiredArgsConstructor
 @Transactional
-public class AlarmService {
+public class LocationAlarmService {
     private Map<String, ChatRoom> chatRooms;
 
     @PostConstruct
@@ -37,6 +36,7 @@ public class AlarmService {
         return chatRooms.get(roomId);
     }
 
+
     //채팅방 생성
     public ChatRoom createRoom(String name) {
         ChatRoom chatRoom = ChatRoom.create(name);
@@ -44,22 +44,23 @@ public class AlarmService {
         return chatRoom;
     }
 
-    public void deleteRoom(ChatRoom room){
-        chatRooms.remove(room.getRoomId());
+    public ChatRoom deleteRoom(String roomId){
+        chatRooms.remove(roomId);
+        return findById(roomId);
     }
 
-    public AlarmDto send(AlarmDto alarm){
-        if(AlarmDto.MessageType.SOS.equals(alarm.getType())) {
-            alarm.setCount(alarm.getCount() + 1);
-        }else if(AlarmDto.MessageType.ACCEPT.equals(alarm.getType())){
-            if(alarm.getCount() == 1){ // 정상적으로 열람 시작
-
-                alarm.setCount(alarm.getCount() + 1);
-            }
-
-        }else if(AlarmDto.MessageType.END.equals(alarm.getType())){
-
-        }
-        return alarm;
-    }
+//    public AlarmDto send(AlarmDto alarm){
+//        if(AlarmDto.MessageType.SOS.equals(alarm.getType())) {
+//            alarm.setCount(alarm.getCount() + 1);
+//        }else if(AlarmDto.MessageType.ACCEPT.equals(alarm.getType())){
+//            if(alarm.getCount() == 1){ // 정상적으로 열람 시작
+//
+//                alarm.setCount(alarm.getCount() + 1);
+//            }
+//
+//        }else if(AlarmDto.MessageType.END.equals(alarm.getType())){
+//
+//        }
+//        return alarm;
+//    }
 }
