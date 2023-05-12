@@ -32,8 +32,9 @@ public class FollowService {
     private final MongoTemplate mongoTemplate;
     private final ChatService chatService;
 
+//    public String follow(OAuth2UserImpl myId, String toUserId, FollowRequestDto followRequestDto) throws IOException {
     public String follow(String myId, String toUserId, FollowRequestDto followRequestDto) throws IOException {
-
+//
         Follow follow1 = followDetail(myId, toUserId); // 보호자가 피보호자를 친구추가
         Follow follow2 = followDetail(toUserId, myId);
         chatService.createRoom(myId, toUserId);
@@ -99,7 +100,9 @@ public class FollowService {
 
         List<FollowResponse> result = filteredMetaData.stream()
                 .map((follow) ->
-                        new FollowResponse(mongoTemplate.findOne(Query.query(Criteria.where("id").is(follow.getToUserId())), Member.class), follow))
+                        new FollowResponse(mongoTemplate.findOne(Query.query(Criteria.where("id").is(follow.getToUserId())), Member.class),
+                                follow,
+                                findChatRoom(follow.getFromUserId(), follow.getToUserId())))
                 .collect(Collectors.toList());
 
         Collections.sort(result, Comparator.comparing(FollowResponse::getUserName));
@@ -130,10 +133,20 @@ public class FollowService {
 
         Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(follow.getToUserId())), Member.class);
 
-        FollowResponse result = new FollowResponse(member, follow);
+        /* 두명이 속한 채팅방 번호도 response에 추가*/
+        ChatRoom chatRoom = findChatRoom(follow.getFromUserId(), follow.getToUserId());
+
+        FollowResponse result = new FollowResponse(member, follow, chatRoom);
 
         return result;
     }
+
+    private ChatRoom findChatRoom(String fromUserId, String toUserId) {
+
+        return Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("users").all(fromUserId, toUserId)), ChatRoom.class)).orElse(null);
+
+    }
+
 
     private void isMine(String myId, String fromUserId) {
 

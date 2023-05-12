@@ -1,18 +1,16 @@
 package com.talkeasy.server.dto.location;
 
 import com.talkeasy.server.domain.location.Location;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.locationtech.jts.geom.Point;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class LocationDto implements Serializable {
+public class LocationDto {
     String userId;
     String name;
     Point point;
@@ -20,7 +18,7 @@ public class LocationDto implements Serializable {
     String lon;
     LocalDateTime dateTime;
 
-    public Location toEntity(){
+    public Location toEntity() {
         return Location.builder().userId(userId).name(name).geom(point).dateTime(dateTime).build();
     }
 }

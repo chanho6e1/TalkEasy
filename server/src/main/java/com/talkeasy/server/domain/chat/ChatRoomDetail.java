@@ -24,7 +24,8 @@ public class ChatRoomDetail {
     private String toUserId;
     private String fromUserId;
     private String imageUrl;
-
+    private int type; // 0(msg) :: 1(location) :: 2(sos)
+    private int status; //0(REQUEST) :: 1(RESULT) :: 2(REJECT)
 
 
     public ChatRoomDetail(MessageDto messageDto) {
@@ -34,6 +35,8 @@ public class ChatRoomDetail {
         this.msg = messageDto.getMsg();
         this.created_dt = messageDto.getCreated_dt();
         this.readCnt = 1;
+
+        this.type = messageDto.getType();
 
 //        this.imageUrl = MessageDto.
 

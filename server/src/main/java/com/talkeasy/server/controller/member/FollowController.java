@@ -39,7 +39,7 @@ public class FollowController {
 //        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
 //                HttpStatus.CREATED, followService.follow("645a0420c5b2c82e3afaf9e4", "6459dfcf393c266aa80f5710", followRequestDto)));
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                HttpStatus.CREATED, followService.follow(oAuth2User.getId(), toUserId, followRequestDto)));
+                HttpStatus.CREATED, followService.follow(oAuth2User.getName(), toUserId, followRequestDto)));
 
     }
 
@@ -48,8 +48,13 @@ public class FollowController {
     public ResponseEntity<CommonResponse> getUserInfoByFollow (@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User,
                                                  @PathVariable("followId") String followId) throws IOException {
 
+//        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+//                HttpStatus.CREATED, followService.getUserInfoByFollow("645a0420c5b2c82e3afaf9e4", "645b7a87019c7f5131d179af")));
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, followService.getUserInfoByFollow(oAuth2User.getId(), followId)));
+
+//        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+//                HttpStatus.CREATED, followService.getUserInfoByFollow("6459dfcf393c266aa80f5710", "645b7a87019c7f5131d179b0")));
 
     }
 
@@ -59,7 +64,9 @@ public class FollowController {
                                                  @PathVariable("followId") String followId,
                                                  @RequestBody FollowRequestDto followRequestDto) throws IOException {
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+//        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+//                HttpStatus.CREATED, followService.putMemo("645a0420c5b2c82e3afaf9e4", "645b7a87019c7f5131d179af", followRequestDto)));
+ return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, followService.putMemo(oAuth2User.getId(), followId, followRequestDto)));
 
     }
@@ -82,6 +89,8 @@ public class FollowController {
     public ResponseEntity<PagedResponse> getfollow(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) {
         return ResponseEntity.ok().body((
                 followService.getfollow(oAuth2User.getId())));
+//        return ResponseEntity.ok().body((
+//                followService.getfollow("645a0420c5b2c82e3afaf9e4")));
     }
 
 
@@ -93,6 +102,7 @@ public class FollowController {
             "기존에 등록된 주보호자의 아이디 입력 시, 주보호자 해제")
     @PutMapping("/protector/{followId}")
     public ResponseEntity<CommonResponse> putProtector(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User, @PathVariable String followId) {
+//        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(HttpStatus.OK, followService.putProtector("645a0420c5b2c82e3afaf9e4", "645b7a87019c7f5131d179af")));
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(HttpStatus.OK, followService.putProtector(oAuth2User.getId(), followId)));
     }
 
@@ -100,6 +110,7 @@ public class FollowController {
     @ApiOperation(value = "위치정보 허용 변경", notes = "피보호자가 각각의 보호자에 대해 위치 정보 접근 여부에 대해 설정한다. 처음 초기 설정은 false")
     @PutMapping("/location/{followId}")
     public ResponseEntity<CommonResponse> putLocationStatus(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User, @PathVariable String followId) {
+//        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(HttpStatus.OK, followService.putLocationStatus("645a0420c5b2c82e3afaf9e4", "645b7a87019c7f5131d179af")));
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(HttpStatus.OK, followService.putLocationStatus(oAuth2User.getId(), followId)));
     }
 }

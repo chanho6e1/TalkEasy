@@ -57,10 +57,18 @@ public class LocationController {
     }
 
     @GetMapping("/day")
-    @ApiOperation(value = "당일 위치 분석", notes = "당일에 대한 위치 분석 결과를 리턴")
-    public ResponseEntity<CommonResponse<Object>> dayAnalysis(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) throws ParseException, IOException {
+    @ApiOperation(value = "당일 위치 분석", notes = "당일 이동 정보(좌표, 시간) 리턴")
+    public ResponseEntity<CommonResponse<Object>> dayAnalysis(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
 
         kafkaConsumerService.consumeLocationEvent();
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+                HttpStatus.OK, locationService.getLocationOfDay(member.getId())));
+    }
+
+    @GetMapping("/week")
+    @ApiOperation(value = "일주일 위치 분석", notes = "일주일 동안 많이 갔던 장소 순위 리턴")
+    public ResponseEntity<CommonResponse<Object>> weekAnalysis(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) throws ParseException, IOException {
+
         restTemplateService.requestDayAnalysis(member.getId());
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(

@@ -1,15 +1,13 @@
 package com.talkeasy.server.domain.location;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import org.locationtech.jts.geom.Point;
 
-@Data
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -25,6 +23,7 @@ public class Location {
     @Column
     private String name;
     @Column(columnDefinition = "geometry(Point, 4326)")
+    @JsonIgnoreProperties(value = "envelope")
     private Point geom;
     @Column
     private LocalDateTime dateTime;
