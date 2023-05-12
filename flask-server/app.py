@@ -2,10 +2,15 @@ import psycopg2
 import os
 
 from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
+import datetime as dt
+
+# from flask_sqlalchemy import SQLAlchemy
+from shapely.wkb import loads
 
 # db = SQLAlchemy()
 app = Flask(__name__)
+
+
 # app.config.from_envvar('APP_CONFIG_FILE')
 
 @app.route('/')
@@ -22,20 +27,39 @@ def get_location():
                           password=os.getenv('DB_PASSWORD'),
                           port=5432)
 
-
     cur = db.cursor()
     id = request.args.get('id')
 
-    sql = "select * from location where user_id=%s"
-    cur.execute(sql, (id,))
+    now = dt.datetime.now()
+    today = dt.datetime(now.year, now.month, now.day, 0, 0, 0)
+
+    last_week = today - dt.timedelta(days=7)
+    print(last_week)
+
+    sql = "select * from location where user_id=%s and date_time>=%s"
+    cur.execute(sql, (id, last_week))
     rows = cur.fetchall()
 
-    result = []
+    locations = []
     for row in rows:
-        result.append(row)
+        location = Location(row[1], row[4])
+        locations.append(location)
+
+    locations = [location.json() for location in locations]
+
+    return jsonify(locations)
 
 
-    return jsonify(result)
+class Location:
+    def __init__(self, date_time, point):
+        self.date_time = date_time
+        self.point = loads(point, hex=True).wkt
+
+    def json(self):
+        return {
+            'date_time': self.date_time,
+            'point': self.point
+        }
 
 
 if __name__ == '__main__':
