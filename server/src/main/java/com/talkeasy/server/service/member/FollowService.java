@@ -32,7 +32,7 @@ public class FollowService {
     private final MongoTemplate mongoTemplate;
     private final ChatService chatService;
 
-//    public String follow(OAuth2UserImpl myId, String toUserId, FollowRequestDto followRequestDto) throws IOException {
+    //    public String follow(OAuth2UserImpl myId, String toUserId, FollowRequestDto followRequestDto) throws IOException {
     public String follow(String myId, String toUserId, FollowRequestDto followRequestDto) throws IOException {
 //
         Follow follow1 = followDetail(myId, toUserId); // 보호자가 피보호자를 친구추가
@@ -65,12 +65,12 @@ public class FollowService {
         Member member = chatService.getMemberById(myId);
         Follow toFollow;
 
-        if(member.getRole()==1) {
+        if(member.getRole()==1) { // 내가 피보호자
             //보호자
-            toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo("").mainStatus(false).locationStatus(false).build();
+            toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo("").mainStatus(false).locationStatus(false).nickName("").build();
         }else{
             //비보호자
-            toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo("").mainStatus(false).locationStatus(true).build();
+            toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo("").mainStatus(false).locationStatus(true).nickName("").build();
         }
 
         return mongoTemplate.insert(toFollow);
@@ -127,6 +127,23 @@ public class FollowService {
         isMine(myId, follow.getFromUserId());
 
         follow.setMemo(followRequestDto.getMemo());
+
+        mongoTemplate.save(follow);
+
+        return "수정 성공";
+    }
+
+    public String putNickName(Member myInfo, String followId, String nickName) {
+        Follow follow = getTargetUser(followId);
+
+        isMine(myInfo.getId(), follow.getFromUserId());
+
+        if (myInfo.getRole() == 0){
+            // 보호자라면 피보호자의 별명을 설정할 수 없다
+            throw new ArgumentMismatchException("보호자는 피보호자의 별명을 설정할 수 없습니다.");
+        }
+
+        follow.setNickName(nickName);
 
         mongoTemplate.save(follow);
 
@@ -206,6 +223,5 @@ public class FollowService {
     public Follow getTargetUser(String followId) {
         return Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(followId)), Follow.class)).orElseThrow(() -> new ResourceNotFoundException("친구목록에 존재하지 않는 사용자 입니다."));
     }
-
 
 }

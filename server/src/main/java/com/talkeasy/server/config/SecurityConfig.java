@@ -39,6 +39,7 @@ public class SecurityConfig {
                         "/api/aac/**",
                         "/api/members/**",
                         "/api/follows/**",
+                        "/api/alarm/**",
                         "/ws-stomp/**",
                         "/room.html",
                         "/api/alarm/*"

@@ -12,6 +12,7 @@ import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
 import com.talkeasy.server.domain.chat.LastChat;
+import com.talkeasy.server.dto.alarm.RequestSosAlarmDto;
 import com.talkeasy.server.dto.chat.ChatRoomDto;
 import com.talkeasy.server.dto.chat.ChatRoomListDto;
 import com.talkeasy.server.dto.chat.UserInfo;
@@ -128,15 +129,12 @@ public class ChatService {
             } else if (chat.getStatus() == 1) { // RESULT
 //                newMsg = nowMsg[1]; // HH:MM
 
-
-
             } else if (chat.getStatus() == 2) {// REJECT
                 newMsg = "요청 응답 없음";
-
             }
         } else if (chat.getType() == 2) { // SOS
             newMsg = "긴급 도움 요청";
-
+            // 보호자한테만 알림 저장
 
         }
 
@@ -161,7 +159,6 @@ public class ChatService {
         Alarm alarm = Alarm.builder()
                 .chatId(chat.getId())
                 .readStatus(false)
-                .time(chat.getCreated_dt())
                 .userId(userId)
                 .type(type)
                 .content(content)
@@ -176,26 +173,23 @@ public class ChatService {
         Member fromMember = getMemberById(chat.getFromUserId());
         Member toMember = getMemberById(chat.getToUserId());
 
-        if (chat.getType() == 1) {
-            alarm.setType(1);
+//        if (chat.getType() == 1) {
+//            alarm.setType(1);
+//
+//            if (chat.getStatus() == 1) {
+////            if (chat.getStatus() == 1 && toMember.getRole() == 0) {
+//                alarm.setContent(chat.getMsg());
+//                alarm.setFromName(fromMember.getName());
+//                saveAlarm(alarm);
+//            }
+//        }
 
-            if (chat.getStatus() == 1) {
-//            if (chat.getStatus() == 1 && toMember.getRole() == 0) {
-                alarm.setContent(chat.getMsg());
-                alarm.setFromName(fromMember.getName());
-                saveAlarm(alarm);
-            }
-        } else if (chat.getType() == 2) {
+        if (chat.getType() == 2) {
             alarm.setType(2);
             /*00님이 긴급 도움 요청을 하셨습니다*/
-            createAlarm(chat, fromMember.getName()+"이 긴급 도움 요청을 하셨습니다", fromMember.getName(), 2, toMember.getId());
-            /*00님께 긴급 도움 요청을 한 기록이 있습니다*/
-            createAlarm(chat, toMember.getName()+"께 긴급 도움 요청을 한 기록이 있습니다", toMember.getName(), 2, fromMember.getId());
+            createAlarm(chat, toMember.getName()+"님께서 긴급 도움 요청을 하셨습니다", toMember.getName(), 2, toMember.getId());
+//            createAlarm(chat, fromMember.getName()+"이 긴급 도움 요청을 하셨습니다", fromMember.getName(), 2, toMember.getId());
         }
-    }
-
-    public void saveSosAlarm(Alarm alarm) {
-        saveAlarm(alarm);
     }
 
     public String saveAlarm(Alarm alarm) {
@@ -379,4 +373,6 @@ public class ChatService {
 
         return new PagedResponse(HttpStatus.OK, userInfos, 1);
     }
+
+
 }

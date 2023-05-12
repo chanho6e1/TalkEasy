@@ -1,5 +1,6 @@
 package com.talkeasy.server.domain.location;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import javax.persistence.*;
@@ -22,6 +23,7 @@ public class Location {
     @Column
     private String name;
     @Column(columnDefinition = "geometry(Point, 4326)")
+    @JsonIgnoreProperties(value = "envelope")
     private Point geom;
     @Column
     private LocalDateTime dateTime;
