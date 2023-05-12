@@ -1,2 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <!--  Protector LocationOpen  -->
+    <string name="title_open_location">위치정보 열람</string>
+    <string name="content_open_location_loading">위치정보열람 요청중입니다.</string>
+    <string name="content_today">오늘</string>
+    <string name="content_week">일주일</string>
+    <string name="content_stop">중단하기</string>
+</resources>
