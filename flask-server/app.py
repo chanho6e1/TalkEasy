@@ -39,13 +39,40 @@ def get_location():
     sql = "select * from location where user_id=%s and date_time>=%s"
     cur.execute(sql, (id, last_week))
     rows = cur.fetchall()
+    length = len(rows)
 
-    locations = []
+    ids = []
     for row in rows:
-        location = Location(row[1], row[4])
-        locations.append(location)
+        ids.append(row[0])
+
+    flags = [False]*length
+    locations = []
+    for i in range(length):
+        if flags[i]:
+            continue
+        flags[i] = True
+
+        cur_id = ids[i]
+
+        # 만약 flag 처리됐다면 pass
+        sql = "select * from (select * from location where user_id = %s and date_time >= %s) as week_table where ST_DWithin(geom, %s,10)"
+        cur.execute(sql, (id, last_week, rows[i][4]))
+        cur_rows = cur.fetchall()
+
+        # flag 처리
+        for j in cur_rows:
+            print(j)
+        break;
 
     locations = [location.json() for location in locations]
+
+    # 리턴
+    # locations = []
+    # for row in rows:
+    #     location = Location(row[1], row[4])
+    #     locations.append(location)
+    #
+    # locations = [location.json() for location in locations]
 
     return jsonify(locations)
 
