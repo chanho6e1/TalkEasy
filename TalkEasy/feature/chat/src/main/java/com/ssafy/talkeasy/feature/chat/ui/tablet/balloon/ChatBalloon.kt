@@ -37,9 +37,9 @@ import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_secondaryContai
 import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
-import com.ssafy.talkeasy.feature.common.util.Direction
-import com.ssafy.talkeasy.feature.common.util.Status
-import com.ssafy.talkeasy.feature.common.util.Type
+import com.ssafy.talkeasy.feature.common.util.ChatDirection
+import com.ssafy.talkeasy.feature.common.util.LocationStatus
+import com.ssafy.talkeasy.feature.common.util.ChatType
 import com.ssafy.talkeasy.feature.common.util.toTimeString
 
 @Composable
@@ -92,23 +92,23 @@ fun MyChatItemHead(type: Int) {
 }
 
 @Composable
-fun ChatBalloon(direction: Direction, chat: Chat, isLastMessage: Boolean) {
+fun ChatBalloon(chatDirection: ChatDirection, chat: Chat, isLastMessage: Boolean) {
     val color: Color = if (chat.type == 2) {
         md_theme_light_errorContainer
     } else {
-        when (direction) {
-            Direction.PARTNER -> {
+        when (chatDirection) {
+            ChatDirection.PARTNER -> {
                 md_theme_light_secondaryContainer
             }
 
-            Direction.ME -> {
+            ChatDirection.ME -> {
                 seed
             }
         }
     }
 
     Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        if (direction == Direction.ME) {
+        if (chatDirection == ChatDirection.ME) {
             Column(
                 modifier = Modifier.align(Alignment.Bottom),
                 verticalArrangement = Arrangement.spacedBy(3.dp)
@@ -139,18 +139,18 @@ fun ChatBalloon(direction: Direction, chat: Chat, isLastMessage: Boolean) {
                 contentAlignment = Alignment.Center
             ) {
                 when (chat.type) {
-                    Type.MSG.ordinal -> Message(message = chat.message)
-                    Type.LOCATION.ordinal -> Location(
+                    ChatType.MSG.ordinal -> Message(message = chat.message)
+                    ChatType.LOCATION.ordinal -> Location(
                         message = chat.message,
                         status = chat.status!!
                     )
 
-                    Type.SOS.ordinal -> SOS(direction = direction, message = chat.message)
+                    ChatType.SOS.ordinal -> SOS(chatDirection = chatDirection, message = chat.message)
                 }
             }
         }
 
-        if (direction == Direction.PARTNER) {
+        if (chatDirection == ChatDirection.PARTNER) {
             Column(
                 modifier = Modifier.align(Alignment.Bottom),
                 verticalArrangement = Arrangement.spacedBy(3.dp)
@@ -185,17 +185,17 @@ fun Location(message: String, status: Int) {
     var contentDescription = ""
 
     when (status) {
-        Status.REQUEST.ordinal -> {
+        LocationStatus.REQUEST.ordinal -> {
             imageId = drawable.ic_location_request
             contentDescription = stringResource(R.string.image_request_location)
         }
 
-        Status.RESULT.ordinal -> {
+        LocationStatus.RESULT.ordinal -> {
             imageId = drawable.ic_location_request
             contentDescription = stringResource(R.string.image_request_location)
         }
 
-        Status.REJECT.ordinal -> {
+        LocationStatus.REJECT.ordinal -> {
             imageId = drawable.ic_location_reject
             contentDescription = stringResource(R.string.image_reject_location)
         }
@@ -217,7 +217,7 @@ fun Location(message: String, status: Int) {
 }
 
 @Composable
-fun SOS(direction: Direction, message: String) {
+fun SOS(chatDirection: ChatDirection, message: String) {
     Column(
         modifier = Modifier.padding(horizontal = 2.dp, vertical = 10.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -231,8 +231,8 @@ fun SOS(direction: Direction, message: String) {
 
         Text(style = typography.bodyMedium, text = message)
 
-        when (direction) {
-            Direction.PARTNER -> {
+        when (chatDirection) {
+            ChatDirection.PARTNER -> {
                 TextButton(
                     shape = shapes.extraSmall,
                     colors = ButtonDefaults.buttonColors(
@@ -249,7 +249,7 @@ fun SOS(direction: Direction, message: String) {
                 }
             }
 
-            Direction.ME -> {
+            ChatDirection.ME -> {
                 TextButton(
                     modifier = Modifier.height(0.dp),
                     shape = shapes.extraSmall,

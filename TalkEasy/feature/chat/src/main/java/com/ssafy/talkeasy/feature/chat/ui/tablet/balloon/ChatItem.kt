@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.core.domain.entity.response.Chat
-import com.ssafy.talkeasy.feature.common.util.Direction
+import com.ssafy.talkeasy.feature.common.util.ChatDirection
 
 @Composable
 fun PartnerChat(memberName: String, nickname: String, messages: List<Chat>) {
@@ -27,7 +27,7 @@ fun PartnerChat(memberName: String, nickname: String, messages: List<Chat>) {
             ) {
                 items(messages.size) { index ->
                     ChatBalloon(
-                        direction = Direction.PARTNER,
+                        chatDirection = ChatDirection.PARTNER,
                         chat = messages[index],
                         isLastMessage = index == messages.lastIndex
                     )
@@ -50,7 +50,7 @@ fun MyChat(messages: List<Chat>) {
             ) {
                 items(messages.size) { index ->
                     ChatBalloon(
-                        direction = Direction.ME,
+                        chatDirection = ChatDirection.ME,
                         chat = messages[index],
                         isLastMessage = index == messages.lastIndex
                     )

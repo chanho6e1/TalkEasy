@@ -1,13 +1,13 @@
 package com.ssafy.talkeasy.feature.common.util
 
-enum class Direction {
+enum class ChatDirection {
     PARTNER, ME
 }
 
-enum class Type {
+enum class ChatType {
     MSG, LOCATION, SOS
 }
 
-enum class Status {
+enum class LocationStatus {
     REQUEST, RESULT, REJECT
 }
