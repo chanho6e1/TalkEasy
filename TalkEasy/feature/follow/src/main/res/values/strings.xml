@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--  FollowList  -->
-    <string name="image_logo">앱 로고입니다</string>
     <string name="ic_add_user_text">친구 추가 버튼입니다.</string>
     <string name="ic_notification_text">알림함 버튼입니다.</string>
     <string name="ic_settings_text">설정 버튼입니다.</string>
@@ -25,4 +24,7 @@
     <string name="content_add_notification">추가하기</string>
     <string name="content_memo">메모</string>
 
+    <!--  MyNotificationList  -->
+    <string name="title_my_notification_list">내 알림함</string>
+    <string name="content_no_notification">알림이 없습니다.</string>
 </resources>
