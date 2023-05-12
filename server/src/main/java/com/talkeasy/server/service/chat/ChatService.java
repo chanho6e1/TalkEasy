@@ -12,6 +12,7 @@ import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
 import com.talkeasy.server.domain.chat.LastChat;
+import com.talkeasy.server.dto.alarm.RequestSosAlarmDto;
 import com.talkeasy.server.dto.chat.ChatRoomDto;
 import com.talkeasy.server.dto.chat.ChatRoomListDto;
 import com.talkeasy.server.dto.chat.UserInfo;
@@ -116,80 +117,79 @@ public class ChatService {
         ChatRoomDetail chat = gson.fromJson(str, ChatRoomDetail.class);
 
         String newMsg = chat.getMsg();
+
         Alarm alarm = Alarm.builder().chatId(chat.getId()).readStatus(false).build();
+//        Alarm alarm = new Alarm();
+
+//        Alarm alarm1 = Alarm.builder().chatId(chat.getId()).readStatus(false).build();
 
         if (chat.getType() == 1) { // location :: msg:: 요청 or 결과 or 실패 (REQUEST, RESULT, REJECT)
             if (chat.getStatus() == 0) {// REQUEST
                 newMsg = "위치 열람 요청";
             } else if (chat.getStatus() == 1) { // RESULT
 //                newMsg = nowMsg[1]; // HH:MM
+
             } else if (chat.getStatus() == 2) {// REJECT
                 newMsg = "요청 응답 없음";
             }
         } else if (chat.getType() == 2) { // SOS
             newMsg = "긴급 도움 요청";
+            // 보호자한테만 알림 저장
 
         }
+
+          /*
+                1. 보호자인지 비보호자인지
+                2. 타입
+                에 따라 담는 메시지가 달라짐
+                */
+        setAlarmContent(chat, alarm);
 
         chat.setMsg(newMsg);
         chat.setCreated_dt(LocalDateTime.now().toString());
         chat.setReadCnt(1);
 
-        /*
-        1. 보호자인지 비보호자인지
-        2. 타입
-        에 따라 담는 메시지가 달라짐
-         */
-        alarm = setAlarmContent(chat, alarm);
-        saveAlarm(alarm);
+
         /*알람을 디비에 저장*/
         log.info("{}", chat);
         return chat;
     }
 
-    private Alarm setAlarmContent(ChatRoomDetail chat, Alarm alarm) {
-
-        /* 메시지를 받는 사람 */
-        Member member = getMemberById(chat.getToUserId());
-
-        /* 
-          1. 요청을 한 사람의 이름 주입
-          2. 메시지 전송 시간 주입
-          3. 메시지를 받는 이의 유저 아이디 주입
-        * */
-
-        alarm.setFromName(member.getName());
-        alarm.setTime(chat.getCreated_dt());
-        alarm.setUserId(chat.getToUserId());
-
-
-        /* 위치 요청 & 메시지를 받는 사람이 보호자라면*/
-
-        if (chat.getType() == 1 && member.getRole() == 1) {
-            /* 00님께서 몇분동안 위치열람을 하셨습니다
-             * 사실상 시간만 전송
-             * */
-            alarm.setType(1);
-            alarm.setContent(chat.getMsg());
-            return alarm;
-        }
-
-        /* sos 요청 & 메시지를 받는 사람이 보호자라면*/
-        alarm.setType(2);
-
-        if (member.getRole() == 0) {
-            /* 00님께서 긴급 도움 요청을 하셨습니다*/
-            alarm.setContent("긴급 도움 요청을 하셨습니다");
-
-        }
-        /* sos 요청 & 메시지를 받는 사람이 비보호자라면*/
-        else {
-            /* 00님께 긴급 도움 요청을 한 기록이 있습니다*/
-            alarm.setContent("긴급 도움 요청을 한 기록이 있습니다");
-        }
-
+    private Alarm createAlarm(ChatRoomDetail chat, String content, String fromName, int type, String userId) {
+        Alarm alarm = Alarm.builder()
+                .chatId(chat.getId())
+                .readStatus(false)
+                .userId(userId)
+                .type(type)
+                .content(content)
+                .fromName(fromName)
+                .build();
+        saveAlarm(alarm);
         return alarm;
+    }
 
+    private void setAlarmContent(ChatRoomDetail chat, Alarm alarm) {
+
+        Member fromMember = getMemberById(chat.getFromUserId());
+        Member toMember = getMemberById(chat.getToUserId());
+
+//        if (chat.getType() == 1) {
+//            alarm.setType(1);
+//
+//            if (chat.getStatus() == 1) {
+////            if (chat.getStatus() == 1 && toMember.getRole() == 0) {
+//                alarm.setContent(chat.getMsg());
+//                alarm.setFromName(fromMember.getName());
+//                saveAlarm(alarm);
+//            }
+//        }
+
+        if (chat.getType() == 2) {
+            alarm.setType(2);
+            /*00님이 긴급 도움 요청을 하셨습니다*/
+            createAlarm(chat, toMember.getName()+"님께서 긴급 도움 요청을 하셨습니다", toMember.getName(), 2, toMember.getId());
+//            createAlarm(chat, fromMember.getName()+"이 긴급 도움 요청을 하셨습니다", fromMember.getName(), 2, toMember.getId());
+        }
     }
 
     public String saveAlarm(Alarm alarm) {
@@ -373,4 +373,6 @@ public class ChatService {
 
         return new PagedResponse(HttpStatus.OK, userInfos, 1);
     }
+
+
 }

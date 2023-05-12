@@ -4,8 +4,10 @@ import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.common.exception.ArgumentMismatchException;
 import com.talkeasy.server.domain.alarm.Alarm;
 import com.talkeasy.server.domain.member.Member;
+import com.talkeasy.server.dto.alarm.RequestSosAlarmDto;
 import com.talkeasy.server.dto.alarm.ResponseProtectorAlarmDto;
 import com.talkeasy.server.dto.alarm.ResponseWardAlarmDto;
+import com.talkeasy.server.service.chat.ChatService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -24,15 +26,17 @@ import java.util.stream.Collectors;
 public class AlarmService {
 
     private final MongoTemplate mongoTemplate;
+    private final ChatService chatService;
 
     // 보호자용 알람 전체 조회
     public PagedResponse<?> getAlarms(Member member) {
 
-        String oneWeekAgo = LocalDateTime.now().minusWeeks(1).toString();
+        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
 
         List<Alarm> alarms = mongoTemplate.find(Query.query(Criteria.where("userId").is(member.getId())
-                .and("time").gte(oneWeekAgo)
+                .and("createdTime").gte(oneWeekAgo)
         ), Alarm.class);
+
 
         if (member.getRole() == 0) { // 보호자
             List<ResponseProtectorAlarmDto> result = alarms.stream().map((a) -> new ResponseProtectorAlarmDto(a)).collect(Collectors.toList());
@@ -61,5 +65,24 @@ public class AlarmService {
         if (!myId.equals(targetId)) {
             throw new ArgumentMismatchException("나의 알람이 아닙니다.");
         }
+    }
+
+    public String postAlarmBySOS(RequestSosAlarmDto requestSosAlarmDto, Member member) {
+
+        Alarm alarm = Alarm.builder()
+                .readStatus(false)
+                .userId("645307321511deecd5c5441a")
+                .content(requestSosAlarmDto.getTime() + "에 도움 요청 버튼이 눌렸습니다.")
+                .fromName("ㅇㄹㅇ")
+                .build();
+//                Alarm alarm = Alarm.builder()
+//                .readStatus(false)
+//                .userId(member.getId())
+//                .content(requestSosAlarmDto.getTime() + "에 도움 요청 버튼이 눌렸습니다.")
+//                .fromName(member.getName())
+//                .build();
+
+        return chatService.saveAlarm(alarm);
+
     }
 }

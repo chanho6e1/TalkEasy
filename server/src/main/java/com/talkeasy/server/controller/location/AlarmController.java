@@ -19,7 +19,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.IOException;
 
-@Api(tags = {"alarm 관련 API"})
+@Api(tags = {"location alarm 관련 API"})
 @Controller
 @RequestMapping("/api/location")
 @RequiredArgsConstructor

@@ -13,19 +13,17 @@ import lombok.Setter;
 public class ResponseWardAlarmDto {
     private String alarmId;
     private String content;
-    private String time;
+    private String created_dt;
     private Boolean readStatus; // 읽음 여부 true/false
-    private int type; // location : 1, sos : 2;
-    private String chatId; //채팅 번호
     private String fromUserName; // 요청을 보낸 사람
 
     public ResponseWardAlarmDto(Alarm alarm) {
         this.alarmId = alarm.getId();
         this.content = alarm.getContent();
-        this.time = alarm.getTime();
         this.readStatus = alarm.getReadStatus();
-        this.type = alarm.getType();
-        this.chatId = alarm.getChatId();
         this.fromUserName = alarm.getFromName();
+        this.created_dt = alarm.getCreatedTime().toString();
     }
+
+
 }
