@@ -26,7 +26,5 @@
 
     <!--  MyNotificationList  -->
     <string name="title_my_notification_list">내 알림함</string>
-    <string name="image_siren_circle">긴급 도움 요청 아이콘입니다.</string>
     <string name="content_no_notification">알림이 없습니다.</string>
-
 </resources>
