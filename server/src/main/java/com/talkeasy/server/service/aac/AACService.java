@@ -54,16 +54,14 @@ public class AACService {
 
         // 카테고리별 고정 내용 출력
         List<ResponseAACDto> fixedResult = mongoTemplate.find(Query.query(Criteria.where("category").is(categoryId)
-                .and("fixed").is(1)), AAC.class)
+                .and("fixed").is(1)).with(Sort.by(Sort.Direction.ASC, "title")), AAC.class)
                 .stream()
                 .map(ResponseAACDto::new)
                 .collect(Collectors.toList());
 
-        // 카테고리별 일반 내용 출력 - 페이지네이션
-        Query query = new Query(Criteria.where("category").is(categoryId).and("fixed").is(0));
-        List<ResponseAACDto> aacList = mongoTemplate.find(query, AAC.class)
-                .stream()
-                .map((a) -> new ResponseAACDto((a))).collect(Collectors.toList());
+        // 카테고리별 일반 내용 출력
+        Query query = new Query(Criteria.where("category").is(categoryId).and("fixed").is(0)).with(Sort.by(Sort.Direction.ASC, "title"));
+        List<ResponseAACDto> aacList = mongoTemplate.find(query, AAC.class).stream().map((a) -> new ResponseAACDto((a))).collect(Collectors.toList());
 
         // 고정/일반 내용 한번에 출력
         ResponseAACListDto categoryList = ResponseAACListDto.builder().fixedList(fixedResult).aacList(aacList).build();
@@ -74,10 +72,9 @@ public class AACService {
 
     public PagedResponse<ResponseAACListDto> getAacByCustom(String userId) {
 
-        Query query = new Query(Criteria.where("userId").is(userId));
+        Query query = new Query(Criteria.where("userId").is(userId)).with(Sort.by(Sort.Direction.ASC, "title"));
         List<ResponseAACDto> aacList = mongoTemplate.find(query, CustomAAC.class)
-                .stream()
-                .map((a) -> new ResponseAACDto(a)).collect(Collectors.toList());
+                .stream().map((a) -> new ResponseAACDto(a)).collect(Collectors.toList());
 
         ResponseAACListDto categoryList = ResponseAACListDto.builder().fixedList(new ArrayList<>()).aacList(aacList).build();
 
