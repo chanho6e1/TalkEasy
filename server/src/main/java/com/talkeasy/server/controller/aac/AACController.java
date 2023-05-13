@@ -38,15 +38,13 @@ public class AACController {
     @GetMapping("/categories/{categoryId}")
     @ApiOperation(value = "카테고리별 aac 조회", notes = "1: 고정 2: 음식 3: 인간관계 4: 기분 5: 긴급/피해상황  6: 병원/건강  7: 생활  8: 교통  9:사용자 지정 \n" +
             "fixedList : 고정 리스트,  aacList : 일반 리스트\n" +
-            "페이지바뀌더라도 고정 리스트는 항상 출력")
+            "페이지네이션 제거")
     public ResponseEntity<?> getCategoryContents(@PathVariable String categoryId,
-                                                 @RequestParam(required = false, defaultValue = "1") int offset,
-                                                 @RequestParam(value = "size", required = false, defaultValue = "10") int size,
                                                  @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
 
         if (categoryId.equals("9"))
-            return ResponseEntity.status(HttpStatus.OK).body(aacService.getAacByCustom(member.getId(), offset, size));
-        return ResponseEntity.status(HttpStatus.OK).body(aacService.getAacByCategory(categoryId, offset, size));
+            return ResponseEntity.status(HttpStatus.OK).body(aacService.getAacByCustom(member.getId()));
+        return ResponseEntity.status(HttpStatus.OK).body(aacService.getAacByCategory(categoryId));
     }
 
     @GetMapping("/relative-verb/{aacId}")
