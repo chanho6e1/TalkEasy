@@ -1,7 +1,9 @@
 package com.ssafy.talkeasy.feature.chat.ui.tablet
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -11,20 +13,31 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstrainedLayoutReference
+import androidx.constraintlayout.compose.ConstraintLayoutScope
+import androidx.constraintlayout.compose.Dimension
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.ssafy.talkeasy.core.domain.entity.response.Chat
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.chat.R
 import com.ssafy.talkeasy.feature.chat.ui.tablet.balloon.MyChat
 import com.ssafy.talkeasy.feature.chat.ui.tablet.balloon.PartnerChat
 import com.ssafy.talkeasy.feature.common.R.drawable
+import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
+import com.ssafy.talkeasy.feature.common.ui.theme.green_white
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
@@ -33,6 +46,67 @@ import com.ssafy.talkeasy.feature.common.ui.theme.textStyleNormal22
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
 import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.common.util.toTimeString
+
+@Composable
+fun ConstraintLayoutScope.ChatRoomBox(
+    chatRoomRef: ConstrainedLayoutReference,
+    aacRef: ConstrainedLayoutReference,
+    chatPartnerRef: ConstrainedLayoutReference,
+    isOpened: Boolean,
+    chatMode: ChatMode,
+    chatPartner: Follow?,
+    marginLeft: Dp = 20.dp,
+    chatViewModel: ChatViewModel = hiltViewModel(),
+) {
+    val chats by chatViewModel.chats.collectAsState()
+    val (offset, setOffset) = remember {
+        mutableStateOf(1)
+    }
+
+    if (isOpened) {
+        Box(
+            modifier = Modifier
+                .constrainAs(chatRoomRef) {
+                    top.linkTo(aacRef.top)
+                    bottom.linkTo(parent.bottom, margin = 18.dp)
+                    start.linkTo(parent.start, margin = marginLeft)
+                    end.linkTo(chatPartnerRef.end)
+                    width = Dimension.fillToConstraints
+                    height = Dimension.fillToConstraints
+                }
+                .background(color = green_white, shape = shapes.extraSmall)
+        ) {
+            if (chatPartner == null || chatMode == ChatMode.TTS) {
+                NoContentLogoMessage(
+                    message = stringResource(id = R.string.content_no_content_tts),
+                    textStyle = typography.titleMedium,
+                    width = 156,
+                    height = 72,
+                    betweenValue = 20
+                )
+            } else if (chats.isNullOrEmpty()) {
+                NoContentLogoMessage(
+                    message = stringResource(id = R.string.content_no_chat),
+                    textStyle = typography.titleMedium,
+                    width = 156,
+                    height = 72,
+                    betweenValue = 20
+                )
+            } else {
+                chatViewModel.getChatHistory(chatPartner.roomId, offset, 50)
+                chats?.let { ChatContent(chatPartner = chatPartner, chats = it) }
+            }
+        }
+    } else {
+        Box(
+            modifier = Modifier.constrainAs(chatRoomRef) {
+                top.linkTo(chatPartnerRef.bottom)
+                bottom.linkTo(parent.bottom)
+                start.linkTo(parent.start)
+            }
+        )
+    }
+}
 
 @Composable
 fun ChatContent(chatPartner: Follow, chats: List<Chat>) {

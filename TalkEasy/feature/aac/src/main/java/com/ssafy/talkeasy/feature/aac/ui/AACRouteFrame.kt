@@ -1,6 +1,5 @@
 package com.ssafy.talkeasy.feature.aac.ui
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,8 +13,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -26,23 +25,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.aac.AACViewModel
 import com.ssafy.talkeasy.feature.aac.SampleData
-import com.ssafy.talkeasy.feature.chat.R
-import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatContent
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatPartner
+import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatRoomBox
 import com.ssafy.talkeasy.feature.chat.ui.tablet.OpenChatRoomButton
-import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
-import com.ssafy.talkeasy.feature.common.ui.theme.green_white
-import com.ssafy.talkeasy.feature.common.ui.theme.shapes
-import com.ssafy.talkeasy.feature.common.ui.theme.typography
 import com.ssafy.talkeasy.feature.common.util.ChatMode
-
-val marginTop = 18.dp
-val marginRight = 36.dp
-val marginLeft = 20.dp
 
 @Composable
 @Preview(showBackground = true, widthDp = 1429, heightDp = 857)
 fun AACRouteFrame(aacViewModel: AACViewModel = hiltViewModel()) {
+    val marginTop = 18.dp
+    val marginRight = 36.dp
+    val marginLeft = 20.dp
     val (isOpened, setIsOpened) = remember {
         mutableStateOf(false)
     }
@@ -63,7 +56,8 @@ fun AACRouteFrame(aacViewModel: AACViewModel = hiltViewModel()) {
             chatPartnerRef = chatPartnerRef,
             aacTopBarRef = aacTopBarRef,
             chatMode = chatMode,
-            chatPartner = chatPartner
+            chatPartner = chatPartner,
+            marginLeft = marginLeft
         )
 
         OpenChatRoomButtonBox(
@@ -79,7 +73,8 @@ fun AACRouteFrame(aacViewModel: AACViewModel = hiltViewModel()) {
             chatPartnerRef = chatPartnerRef,
             isOpened = isOpened,
             chatMode = chatMode,
-            chatPartner = chatPartner
+            chatPartner = chatPartner,
+            marginLeft = marginLeft
         )
 
         BrowseLocationBox(
@@ -89,13 +84,15 @@ fun AACRouteFrame(aacViewModel: AACViewModel = hiltViewModel()) {
             aacRef = aacRef
         )
 
-        TopBarBox(aacTopBarRef = aacTopBarRef)
+        TopBarBox(aacTopBarRef = aacTopBarRef, marginTop = marginTop, marginRight = marginRight)
 
         AACBox(
             aacRef = aacRef,
             chatRoomRef = chatRoomRef,
             aacTopBarRef = aacTopBarRef,
-            isOpened = isOpened
+            isOpened = isOpened,
+            marginTop = marginTop,
+            marginRight = marginRight
         )
     }
 }
@@ -106,6 +103,7 @@ fun ConstraintLayoutScope.ChatPartnerBox(
     aacTopBarRef: ConstrainedLayoutReference,
     chatMode: ChatMode,
     chatPartner: Follow?,
+    marginLeft: Dp = 20.dp,
 ) {
     Box(
         modifier = Modifier.constrainAs(chatPartnerRef) {
@@ -139,62 +137,6 @@ fun ConstraintLayoutScope.OpenChatRoomButtonBox(
 }
 
 @Composable
-fun ConstraintLayoutScope.ChatRoomBox(
-    chatRoomRef: ConstrainedLayoutReference,
-    aacRef: ConstrainedLayoutReference,
-    chatPartnerRef: ConstrainedLayoutReference,
-    isOpened: Boolean,
-    chatMode: ChatMode,
-    chatPartner: Follow?,
-    aacViewModel: AACViewModel = viewModel(),
-) {
-    val chats by aacViewModel.chats.collectAsState()
-
-    if (isOpened) {
-        Box(
-            modifier = Modifier
-                .constrainAs(chatRoomRef) {
-                    top.linkTo(aacRef.top)
-                    bottom.linkTo(parent.bottom, margin = 18.dp)
-                    start.linkTo(parent.start, margin = marginLeft)
-                    end.linkTo(chatPartnerRef.end)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.fillToConstraints
-                }
-                .background(color = green_white, shape = shapes.extraSmall)
-        ) {
-            if (chatPartner == null || chatMode == ChatMode.TTS) {
-                NoContentLogoMessage(
-                    message = stringResource(id = R.string.content_no_content_tts),
-                    textStyle = typography.titleMedium,
-                    width = 156,
-                    height = 72,
-                    betweenValue = 20
-                )
-            } else if (chats.isNullOrEmpty()) {
-                NoContentLogoMessage(
-                    message = stringResource(id = R.string.content_no_chat),
-                    textStyle = typography.titleMedium,
-                    width = 156,
-                    height = 72,
-                    betweenValue = 20
-                )
-            } else {
-                chats?.let { ChatContent(chatPartner = chatPartner, chats = it) }
-            }
-        }
-    } else {
-        Box(
-            modifier = Modifier.constrainAs(chatRoomRef) {
-                top.linkTo(chatPartnerRef.bottom)
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start)
-            }
-        )
-    }
-}
-
-@Composable
 fun ConstraintLayoutScope.BrowseLocationBox(
     snackBarRef: ConstrainedLayoutReference,
     chatPartnerRef: ConstrainedLayoutReference,
@@ -218,6 +160,8 @@ fun ConstraintLayoutScope.BrowseLocationBox(
 @Composable
 fun ConstraintLayoutScope.TopBarBox(
     aacTopBarRef: ConstrainedLayoutReference,
+    marginTop: Dp = 18.dp,
+    marginRight: Dp = 36.dp,
     aacViewModel: AACViewModel = viewModel(),
 ) {
     Box(
@@ -237,6 +181,8 @@ fun ConstraintLayoutScope.AACBox(
     chatRoomRef: ConstrainedLayoutReference,
     aacTopBarRef: ConstrainedLayoutReference,
     isOpened: Boolean,
+    marginTop: Dp = 18.dp,
+    marginRight: Dp = 36.dp,
     aacViewModel: AACViewModel = viewModel(),
 ) {
     val smallCardsColumn = if (isOpened) 4 else 5

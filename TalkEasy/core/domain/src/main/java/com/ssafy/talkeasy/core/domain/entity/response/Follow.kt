@@ -12,4 +12,5 @@ data class Follow(
     val birthDate: String?,
     val locationStatus: Boolean,
     val nickName: String,
+    val roomId: String,
 )
