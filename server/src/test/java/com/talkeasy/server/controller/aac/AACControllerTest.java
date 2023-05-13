@@ -152,7 +152,7 @@ class AACControllerTest {
 
         PagedResponse<ResponseAACListDto> result = new PagedResponse<>(HttpStatus.OK, aacList, 1);
 
-        when(aacService.getAacByCustom(anyString(), anyInt(), anyInt())).thenReturn(result);
+        when(aacService.getAacByCustom(anyString())).thenReturn(result);
 
 
 
