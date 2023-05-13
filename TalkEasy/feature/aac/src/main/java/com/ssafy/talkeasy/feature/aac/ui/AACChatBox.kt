@@ -34,7 +34,7 @@ fun AACChatBox(words: List<String> = listOf()) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 20.dp, start = 36.dp, end = 36.dp),
+            .padding(bottom = 20.dp),
         shape = shapes.extraSmall,
         color = black_squeeze
     ) {

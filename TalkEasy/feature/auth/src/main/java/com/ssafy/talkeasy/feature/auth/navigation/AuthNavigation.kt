@@ -5,7 +5,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.ssafy.talkeasy.feature.aac.ui.AACFrame
+import com.ssafy.talkeasy.feature.aac.ui.AACRouteFrame
 import com.ssafy.talkeasy.feature.auth.ui.mobile.JoinRouteProtector
 import com.ssafy.talkeasy.feature.auth.ui.mobile.LoginRouteProtector
 import com.ssafy.talkeasy.feature.auth.ui.mobile.WelcomeRouteProtector
@@ -118,6 +118,6 @@ fun NavGraphBuilder.welcomeScreen(
 
 fun NavGraphBuilder.aacScreen() {
     composable(route = AACRouteWard) {
-        AACFrame()
+        AACRouteFrame()
     }
 }

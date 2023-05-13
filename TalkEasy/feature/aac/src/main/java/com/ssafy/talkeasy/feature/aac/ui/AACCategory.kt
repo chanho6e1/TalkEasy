@@ -10,9 +10,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -40,7 +41,7 @@ import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
 @SuppressLint("DiscouragedApi")
 @Composable
-fun AACCategory() {
+fun AACCategory(isOpened: Boolean) {
     val categoryIndexArray =
         stringArrayResource(id = R.array.aac_category_index)
     val categoryValueArray = stringArrayResource(id = R.array.aac_category_word)
@@ -55,6 +56,7 @@ fun AACCategory() {
             context.packageName
         )
     }
+    val categoryCardWidth = if (isOpened) 190 else 250
 
     val category = List(8) { index ->
         Category(
@@ -65,42 +67,33 @@ fun AACCategory() {
         )
     }
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(40.dp)) {
-        item {
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                items(items = category.subList(0, 4)) {
-                    AACCategoryCard(
-                        iconId = it.imageId,
-                        contentDescription = it.contentDescription,
-                        category = it.value
-                    )
-                }
-            }
-        }
-
-        item {
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                items(items = category.subList(4, 8)) {
-                    AACCategoryCard(
-                        iconId = it.imageId,
-                        contentDescription = it.contentDescription,
-                        category = it.value
-                    )
-                }
-            }
+    LazyHorizontalGrid(
+        rows = GridCells.Fixed(2),
+        horizontalArrangement = Arrangement.spacedBy(24.dp)
+    ) {
+        items(items = category) {
+            AACCategoryCard(
+                categoryCardWidth,
+                iconId = it.imageId,
+                contentDescription = it.contentDescription,
+                category = it.value
+            )
         }
     }
 }
 
 @Composable
 fun AACCategoryCard(
+    width: Int,
     iconId: Int,
     contentDescription: String,
     category: String,
     aacViewModel: AACViewModel = viewModel(),
 ) {
     Button(
-        modifier = Modifier.width(250.dp),
+        modifier = Modifier
+            .width(width.dp)
+            .wrapContentHeight(),
         shape = shapes.medium,
         colors = ButtonDefaults.buttonColors(md_theme_light_surfaceVariant),
         contentPadding = PaddingValues(vertical = 18.dp),

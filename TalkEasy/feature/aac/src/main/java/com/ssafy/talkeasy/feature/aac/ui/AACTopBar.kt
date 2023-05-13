@@ -1,8 +1,8 @@
 package com.ssafy.talkeasy.feature.aac.ui
 
+// import com.ssafy.talkeasy.feature.aac.SampleData.Companion.memberName
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,7 +14,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -23,57 +22,22 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.ssafy.talkeasy.feature.aac.R.string
-// import com.ssafy.talkeasy.feature.aac.SampleData.Companion.memberName
 import com.ssafy.talkeasy.feature.common.R
-import com.ssafy.talkeasy.feature.common.component.Profile
-import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
-import com.ssafy.talkeasy.feature.common.ui.theme.delta
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_error
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_errorContainer
-import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold22
-import com.ssafy.talkeasy.feature.common.ui.theme.textStyleNormal22
-import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
 @Composable
 fun AACTopBar(onRight: Boolean) {
-
     if (onRight) {
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.dp, bottom = 16.dp, start = 24.dp, end = 36.dp)
-        ) {
-            val (profile, snackBar, buttons) = createRefs()
+        Row {
+            ButtonSOS()
 
+            Spacer(modifier = Modifier.width(20.dp))
 
-
-            Box(
-                modifier = Modifier.constrainAs(snackBar) {
-                    start.linkTo(profile.end)
-                    end.linkTo(buttons.start)
-                    width = Dimension.fillToConstraints
-                }
-            ) {
-                // BrowseLocation(memberName)
-            }
-
-            Row(
-                modifier = Modifier.constrainAs(buttons) {
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top, margin = 8.dp)
-                }
-            ) {
-                ButtonSOS()
-
-                Spacer(modifier = Modifier.width(20.dp))
-
-                ButtonAlarmAndSetting()
-            }
+            ButtonAlarmAndSetting()
         }
     } else {
         Row(
@@ -99,8 +63,6 @@ fun AACTopBar(onRight: Boolean) {
         }
     }
 }
-
-
 
 @Composable
 @Preview

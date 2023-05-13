@@ -15,4 +15,5 @@
     <string name="content_open_chat_room">채\n팅\n창\n열\n기</string>
     <string name="image_profile_default">기본 프로필 이미지입니다.</string>
     <string name="content_chat_mode_tts">TTS(음성 출력) 모드</string>
+    <string name="content_no_content_tts">TTS(음성 출력) 모드입니다</string>
 </resources>
