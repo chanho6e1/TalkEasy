@@ -50,7 +50,7 @@ public class AACService {
     }
 
     // 카테고리별 aac 조회
-    public PagedResponse<ResponseAACListDto> getAacByCategory(String categoryId, int offset, int size) {
+    public PagedResponse<ResponseAACListDto> getAacByCategory(String categoryId) {
 
         // 카테고리별 고정 내용 출력
         List<ResponseAACDto> fixedResult = mongoTemplate.find(Query.query(Criteria.where("category").is(categoryId)
@@ -60,44 +60,48 @@ public class AACService {
                 .collect(Collectors.toList());
 
         // 카테고리별 일반 내용 출력 - 페이지네이션
-        Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "title")); // 가나다 순으로
-        Query query = new Query(Criteria.where("category").is(categoryId).and("fixed").is(0)).with(pageable);
+//        Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "title")); // 가나다 순으로
+//        Query query = new Query(Criteria.where("category").is(categoryId).and("fixed").is(0)).with(pageable);
+        Query query = new Query(Criteria.where("category").is(categoryId).and("fixed").is(0));
 
         List<AAC> filteredMetaData = mongoTemplate.find(query, AAC.class);
 
-        Page<AAC> metaDataPage = PageableExecutionUtils.getPage(
-                filteredMetaData,
-                pageable,
-                () -> mongoTemplate.count(query.skip(-1).limit(-1), AAC.class)
-        );
+//        Page<AAC> metaDataPage = PageableExecutionUtils.getPage(
+//                filteredMetaData,
+//                pageable,
+//                () -> mongoTemplate.count(query.skip(-1).limit(-1), AAC.class)
+//        );
 
-        List<ResponseAACDto> aacList = metaDataPage.getContent().stream().map((a) -> new ResponseAACDto(a)).collect(Collectors.toList());
+//        List<ResponseAACDto> aacList = metaDataPage.getContent().stream().map((a) -> new ResponseAACDto(a)).collect(Collectors.toList());
+
+        List<ResponseAACDto> aacList = filteredMetaData.stream().map((a) -> new ResponseAACDto((a))).collect(Collectors.toList());
 
         // 고정/일반 내용 한번에 출력
         ResponseAACListDto categoryList = ResponseAACListDto.builder().fixedList(fixedResult).aacList(aacList).build();
 
-        return new PagedResponse(HttpStatus.OK, categoryList, metaDataPage.getTotalPages());
+        return new PagedResponse(HttpStatus.OK, categoryList, 1);
 
     }
 
-    public PagedResponse<ResponseAACListDto> getAacByCustom(String userId, int offset, int size) {
+    public PagedResponse<ResponseAACListDto> getAacByCustom(String userId) {
 
-        Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "text")); // 가나다 순으로
-        Query query = new Query(Criteria.where("userId").is(userId)).with(pageable);
+//        Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "text")); // 가나다 순으로
+//        Query query = new Query(Criteria.where("userId").is(userId)).with(pageable);
+        Query query = new Query(Criteria.where("userId").is(userId));
 
         List<CustomAAC> filteredMetaData = mongoTemplate.find(query, CustomAAC.class);
 
-        Page<CustomAAC> metaDataPage = PageableExecutionUtils.getPage(
-                filteredMetaData,
-                pageable,
-                () -> mongoTemplate.count(query.skip(-1).limit(-1), CustomAAC.class)
-        );
+//        Page<CustomAAC> metaDataPage = PageableExecutionUtils.getPage(
+//                filteredMetaData,
+//                pageable,
+//                () -> mongoTemplate.count(query.skip(-1).limit(-1), CustomAAC.class)
+//        );
 
-        List<ResponseAACDto> aacList = metaDataPage.getContent().stream().map((a) -> new ResponseAACDto(a)).collect(Collectors.toList());
+        List<ResponseAACDto> aacList = filteredMetaData.stream().map((a) -> new ResponseAACDto(a)).collect(Collectors.toList());
 
         ResponseAACListDto categoryList = ResponseAACListDto.builder().fixedList(new ArrayList<>()).aacList(aacList).build();
 
-        return new PagedResponse(HttpStatus.OK, categoryList, metaDataPage.getTotalPages());
+        return new PagedResponse(HttpStatus.OK, categoryList, 1);
 
     }
 
