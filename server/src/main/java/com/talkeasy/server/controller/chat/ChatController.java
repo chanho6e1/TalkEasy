@@ -1,10 +1,12 @@
 package com.talkeasy.server.controller.chat;
 
 import com.google.api.Http;
+import com.google.gson.Gson;
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.chat.MakeChatRoomDto;
+import com.talkeasy.server.dto.chat.MessageDto;
 import com.talkeasy.server.service.chat.ChatService;
 import com.talkeasy.server.service.chat.ChatTestService;
 import com.talkeasy.server.service.chat.ChatUserQueueService;
@@ -12,6 +14,8 @@ import com.talkeasy.server.service.member.OAuth2UserImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -69,7 +73,7 @@ public class ChatController {//producer
                                                         @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User
     ) {
 
-//        return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatHistory(chatRoomId, offset, size, "64461f5457831975f4dfd753"));
+//        return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatHistory(chatRoomId, offset, size, "645307321511deecd5c5441a"));
         return ResponseEntity.status(HttpStatus.OK).body(chatService.getChatHistory(chatRoomId, offset, size, oAuth2User.getId()));
     }
 
@@ -96,6 +100,9 @@ public class ChatController {//producer
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
                 HttpStatus.OK, chatTestService.receiveMessage(roomId, recieveUserId, queueName)));
     }
+
+
+
 
 
 }

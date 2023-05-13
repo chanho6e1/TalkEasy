@@ -20,7 +20,7 @@ public class Scheduler {
     private final KafkaConsumerService kafkaConsumerService;
 
     //    @Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul") // 초, 분, 시, 일, 월, 주, (년)
-    @Scheduled(cron = "0 3 0 * * *", zone = "Asia/Seoul") // 매일 새벽 3분에 postgresQL에 데이터를 넣는 스케쥴러
+    @Scheduled(cron = "0 3 0/12 * * *", zone = "Asia/Seoul") // 매일 새벽 3분에 postgresQL에 데이터를 넣는 스케쥴러
 //    @Scheduled(cron = "0 */1 * * * *", zone = "Asia/Seoul") // 매일 새벽 5분에 postgresQL에 데이터를 넣는 스케쥴러
     public void locationEvent() {
         log.info("========== scheduler 실행 time : {}", LocalDateTime.now());

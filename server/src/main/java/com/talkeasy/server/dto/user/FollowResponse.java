@@ -1,5 +1,6 @@
 package com.talkeasy.server.dto.user;
 
+import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.member.Follow;
 import com.talkeasy.server.domain.member.Member;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.Data;
 public class FollowResponse {
 
     private String followId;
+    private String roomId;
     private String userId;
     private String userName;
     private String imageUrl;
@@ -21,8 +23,9 @@ public class FollowResponse {
     private String birthDate;
     private Boolean mainStatus; // 주보호자 설정
     private Boolean locationStatus; // 위치정보 제공 동의 여부 설정
+    private String nickName;
 
-    public FollowResponse(Member member, Follow follow) {
+    public FollowResponse(Member member, Follow follow, ChatRoom chatRoom) {
         this.followId = follow.getId();
         this.userId = member.getId();
         this.userName = member.getName();
@@ -33,5 +36,9 @@ public class FollowResponse {
         this.age = member.getAge();
         this.gender = member.getGender();
         this.birthDate = member.getBirthDate();
+        if(chatRoom!=null){
+            this.roomId = chatRoom.getId();
+        }
+        this.nickName = follow.getNickName();
     }
 }

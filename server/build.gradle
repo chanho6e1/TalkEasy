@@ -104,7 +104,7 @@ dependencies {
     implementation 'org.webjars:sockjs-client:1.5.1'
 //     https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-amqp
     implementation 'org.springframework.boot:spring-boot-starter-amqp'
-    implementation "com.rabbitmq:amqp-client:5.14.0"
+//    implementation "com.rabbitmq:amqp-client:5.14.0"
 
 
     //tts
@@ -139,6 +139,9 @@ dependencies {
     // junit5 테스트
     testImplementation 'org.junit.jupiter:junit-jupiter-api'
     testImplementation 'org.mockito:mockito-core'
+
+    implementation 'org.hibernate:hibernate-spatial:5.6.11.Final'
+
 }
 
 tasks.named('test') {
@@ -171,11 +174,11 @@ task copyPrivate(type: Copy) {
         into 'src/main/resources'
     }
 
-//    copy {
-//        from '../talkeasy'
-//        include "application-prod.yml"
-//        into 'src/main/resources'
-//    }
+    copy {
+        from '../talkeasy'
+        include "application-prod.yml"
+        into 'src/main/resources'
+    }
 
 
     copy {
@@ -184,11 +187,11 @@ task copyPrivate(type: Copy) {
         into 'src/main/resources'
     }
 
-    copy {
-        from '../talkeasy/static'
-        include "index.html"
-        into 'src/main/resources/static'
-    }
+//    copy {
+//        from '../talkeasy/static'
+//        include "index.html"
+//        into 'src/main/resources/static'
+//    }
 
     copy {
         from '../talkeasy/firebase'

@@ -6,11 +6,13 @@ import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.common.exception.ArgumentMismatchException;
 import com.talkeasy.server.common.exception.ResourceAlreadyExistsException;
 import com.talkeasy.server.common.exception.ResourceNotFoundException;
+import com.talkeasy.server.domain.alarm.Alarm;
 import com.talkeasy.server.domain.app.UserAppToken;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
 import com.talkeasy.server.domain.chat.LastChat;
+import com.talkeasy.server.dto.alarm.RequestSosAlarmDto;
 import com.talkeasy.server.dto.chat.ChatRoomDto;
 import com.talkeasy.server.dto.chat.ChatRoomListDto;
 import com.talkeasy.server.dto.chat.UserInfo;
@@ -54,16 +56,10 @@ public class ChatService {
 
         //user1이 로그인한 사용자, user2가 대상자
 
-        ChatRoom existRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("users").all(new String[]{user1, user2})), ChatRoom.class)).orElse(null);
+        ChatRoom existRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("users").all(user1, user2)), ChatRoom.class)).orElse(null);
 
         if (existRoom != null) {
-//            throw new ResourceAlreadyExistsException("이미 생성된 채팅방 입니다");
-
-            // nowIn -> true 바꿔주기
-            existRoom.getChatUsers().get(user1).setNowIn(true);
-            mongoTemplate.save(existRoom);
-
-            return CommonResponse.of(HttpStatus.OK, existRoom.getId());
+            throw new ResourceAlreadyExistsException("이미 생성된 채팅방 입니다");
         }
 
         ChatRoom chatRoom = new ChatRoom(new String[]{user1, user2}, "hihi", LocalDateTime.now().toString());
@@ -120,10 +116,85 @@ public class ChatService {
         String str = new String(message.getBody());
         ChatRoomDetail chat = gson.fromJson(str, ChatRoomDetail.class);
 
+        String newMsg = chat.getMsg();
+
+        Alarm alarm = Alarm.builder().chatId(chat.getId()).readStatus(false).build();
+//        Alarm alarm = new Alarm();
+
+//        Alarm alarm1 = Alarm.builder().chatId(chat.getId()).readStatus(false).build();
+
+        if (chat.getType() == 1) { // location :: msg:: 요청 or 결과 or 실패 (REQUEST, RESULT, REJECT)
+            if (chat.getStatus() == 0) {// REQUEST
+                newMsg = "위치 열람 요청";
+            } else if (chat.getStatus() == 1) { // RESULT
+//                newMsg = nowMsg[1]; // HH:MM
+
+            } else if (chat.getStatus() == 2) {// REJECT
+                newMsg = "요청 응답 없음";
+            }
+        } else if (chat.getType() == 2) { // SOS
+            newMsg = "긴급 도움 요청";
+            // 보호자한테만 알림 저장
+
+        }
+
+          /*
+                1. 보호자인지 비보호자인지
+                2. 타입
+                에 따라 담는 메시지가 달라짐
+                */
+        setAlarmContent(chat, alarm);
+
+        chat.setMsg(newMsg);
         chat.setCreated_dt(LocalDateTime.now().toString());
         chat.setReadCnt(1);
+
+
+        /*알람을 디비에 저장*/
         log.info("{}", chat);
         return chat;
+    }
+
+    private Alarm createAlarm(ChatRoomDetail chat, String content, String fromName, int type, String userId) {
+        Alarm alarm = Alarm.builder()
+                .chatId(chat.getId())
+                .readStatus(false)
+                .userId(userId)
+                .type(type)
+                .content(content)
+                .fromName(fromName)
+                .build();
+        saveAlarm(alarm);
+        return alarm;
+    }
+
+    private void setAlarmContent(ChatRoomDetail chat, Alarm alarm) {
+
+        Member fromMember = getMemberById(chat.getFromUserId());
+        Member toMember = getMemberById(chat.getToUserId());
+
+//        if (chat.getType() == 1) {
+//            alarm.setType(1);
+//
+//            if (chat.getStatus() == 1) {
+////            if (chat.getStatus() == 1 && toMember.getRole() == 0) {
+//                alarm.setContent(chat.getMsg());
+//                alarm.setFromName(fromMember.getName());
+//                saveAlarm(alarm);
+//            }
+//        }
+
+        if (chat.getType() == 2) {
+            alarm.setType(2);
+            /*00님이 긴급 도움 요청을 하셨습니다*/
+            createAlarm(chat, toMember.getName()+"님께서 긴급 도움 요청을 하셨습니다", toMember.getName(), 2, toMember.getId());
+//            createAlarm(chat, fromMember.getName()+"이 긴급 도움 요청을 하셨습니다", fromMember.getName(), 2, toMember.getId());
+        }
+    }
+
+    public String saveAlarm(Alarm alarm) {
+        Alarm alarmDomain = mongoTemplate.insert(alarm);
+        return alarmDomain.getId();
     }
 
 
@@ -137,15 +208,8 @@ public class ChatService {
     }
 
     public void doChat(ChatRoomDetail chat) throws IOException {
-        ChatRoom chatRoom = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getRoomId())), ChatRoom.class);
-
-        updateUserInChatRoom(chatRoom, chat.getFromUserId());
-        updateUserInChatRoom(chatRoom, chat.getToUserId());
 
         sendChatMessage(chat, chat.getToUserId());
-
-        /*전송한 채팅을 디비에 저장*/
-        saveChatDetail(chat);
 
         PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
         PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
@@ -156,6 +220,7 @@ public class ChatService {
         /* FCM 알림 - 안드로이드 FCM 연결 시, 주석 풀 것. */
 //        Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getFromUserId())), Member.class);
 //        UserAppToken userAppToken = mongoTemplate.findOne(Query.query(Criteria.where("userId").is(chat.getToUserId())), UserAppToken.class);
+//
 //        firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), chat.getMsg()); // String targetToken, String title, String body
 
     }
@@ -184,13 +249,15 @@ public class ChatService {
 
         Pageable pageable = PageRequest.of(offset - 1, size, Sort.by(Sort.Direction.ASC, "created_dt"));
 
-        ChatRoom chatRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(chatRoomId)), ChatRoom.class)).orElseThrow(() -> new ResourceNotFoundException("ChatRoom", "chatRoomId", chatRoomId));
+        ChatRoom chatRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(chatRoomId)), ChatRoom.class))
+                .orElseThrow(() -> new ResourceNotFoundException("ChatRoom", "chatRoomId", chatRoomId));
 
         String leaveTime = chatRoom.getChatUsers().get(userId).getLeaveTime() == null ? chatRoom.getDate() : chatRoom.getLeaveTime();
 
         Query query = new Query(Criteria.where("roomId").is(chatRoomId).and("created_dt").gte(leaveTime)).with(pageable);
 
         List<ChatRoomDetail> filteredMetaData = Optional.ofNullable(mongoTemplate.find(query, ChatRoomDetail.class)).orElse(Collections.emptyList());
+
 
         Page<ChatRoomDetail> metaDataPage = PageableExecutionUtils.getPage(filteredMetaData, pageable, () -> mongoTemplate.count(query.skip(-1).limit(-1), ChatRoomDetail.class));
 
@@ -207,9 +274,9 @@ public class ChatService {
 
         for (LastChat lastChat : lastChatList) {
             String otherUserId = lastChat.getFromUserId().equals(userId) ? lastChat.getToUserId() : lastChat.getFromUserId();
-            Optional<Member> memberOptional = getMemberById(otherUserId);
-            if (memberOptional.isPresent()) {
-                Member member = memberOptional.get();
+            Member member = getMemberById(otherUserId);
+
+            if (member != null) {
                 ChatRoomListDto chatRoomListDto = new ChatRoomListDto(lastChat);
                 chatRoomListDto.setProfile(member.getImageUrl());
                 chatRoomListDto.setName(member.getName());
@@ -230,9 +297,9 @@ public class ChatService {
     }
 
 
-    public Optional<Member> getMemberById(String id) {
+    public Member getMemberById(String id) {
         Query query = Query.query(Criteria.where("id").is(id));
-        return Optional.ofNullable(mongoTemplate.findOne(query, Member.class));
+        return Optional.ofNullable(mongoTemplate.findOne(query, Member.class)).orElse(null);
     }
 
     public QueueInformation getQueueInfo(String roomId, String userId) {
@@ -255,10 +322,6 @@ public class ChatService {
         LastChat lastChatDto = new LastChat(chat);
         lastChatDto.setUserId(userId);
         mongoTemplate.insert(lastChatDto, "last_chat");
-    }
-
-    public void saveChatDetail(ChatRoomDetail chat) {
-       mongoTemplate.insert(chat, "chat_room_detail");
     }
 
     public List<LastChat> getLastChatList(String userId) {
@@ -310,4 +373,6 @@ public class ChatService {
 
         return new PagedResponse(HttpStatus.OK, userInfos, 1);
     }
+
+
 }

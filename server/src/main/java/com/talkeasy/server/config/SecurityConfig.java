@@ -39,8 +39,10 @@ public class SecurityConfig {
                         "/api/aac/**",
                         "/api/members/**",
                         "/api/follows/**",
+                        "/api/alarm/**",
                         "/ws-stomp/**",
-                        "/room.html"
+                        "/room.html",
+                        "/api/alarm/*"
                 ).permitAll()
                 .anyRequest().authenticated();
         http.csrf().disable();
