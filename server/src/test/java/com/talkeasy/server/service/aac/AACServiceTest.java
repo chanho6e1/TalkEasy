@@ -86,7 +86,7 @@ class AACServiceTest {
 
         when(mongoTemplate.find(any(Query.class), eq(AAC.class))).thenReturn(List.of(aac1, aac2));
 
-        PagedResponse<?> testResult = aacService.getAacByCategory(categoryId, offset, size);
+        PagedResponse<?> testResult = aacService.getAacByCategory(categoryId);
 
         // 결과 비교
         ResponseAACListDto result = (ResponseAACListDto) testResult.getData();
@@ -115,7 +115,7 @@ class AACServiceTest {
 
         when(mongoTemplate.find(any(Query.class), eq(CustomAAC.class))).thenReturn(filteredMetaData);
 
-        PagedResponse<ResponseAACListDto> testResult = aacService.getAacByCustom(member.getId(), offset, size);
+        PagedResponse<ResponseAACListDto> testResult = aacService.getAacByCustom(member.getId());
 
         // 결과 비교
         ResponseAACListDto result = (ResponseAACListDto) testResult.getData();
@@ -138,7 +138,7 @@ class AACServiceTest {
 
         when(mongoTemplate.find(any(Query.class), eq(CustomAAC.class))).thenReturn(Collections.emptyList());
 
-        PagedResponse<ResponseAACListDto> testResult = aacService.getAacByCustom(member.getId(), offset, size);
+        PagedResponse<ResponseAACListDto> testResult = aacService.getAacByCustom(member.getId());
 
         // 결과 비교
         ResponseAACListDto result = (ResponseAACListDto) testResult.getData();
