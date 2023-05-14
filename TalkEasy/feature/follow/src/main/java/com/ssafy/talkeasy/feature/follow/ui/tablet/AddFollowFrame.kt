@@ -62,42 +62,11 @@ fun AddFollowFrame(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentSize()
-                    .padding(
-                        top = 24.dp,
-                        bottom = 32.dp,
-                        start = 24.dp,
-                        end = 24.dp
-                    ),
+                    .padding(top = 24.dp, bottom = 32.dp, start = 24.dp, end = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                ) {
-                    Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        text = "친구 추가 QR 코드",
-                        color = md_theme_light_onBackground,
-                        style = textStyleBold22
-                    )
-
-                    TextButton(
-                        modifier = Modifier.align(Alignment.CenterEnd),
-                        colors = ButtonDefaults.textButtonColors(
-                            contentColor = md_theme_light_primary,
-                            containerColor = Color.Transparent
-                        ),
-                        onClick = { onDismissListener() }
-                    ) {
-                        Text(
-                            text = "닫기",
-                            style = typography.titleSmall,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                }
+                TopBar() { onDismissListener() }
 
                 if (memberInfo != null) {
                     QRCode(
@@ -118,6 +87,37 @@ fun AddFollowFrame(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun TopBar(onDismissListener: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
+        Text(
+            modifier = Modifier.align(Alignment.Center),
+            text = "친구 추가 QR 코드",
+            color = md_theme_light_onBackground,
+            style = textStyleBold22
+        )
+
+        TextButton(
+            modifier = Modifier.align(Alignment.CenterEnd),
+            colors = ButtonDefaults.textButtonColors(
+                contentColor = md_theme_light_primary,
+                containerColor = Color.Transparent
+            ),
+            onClick = { onDismissListener() }
+        ) {
+            Text(
+                text = "닫기",
+                style = typography.titleSmall,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
