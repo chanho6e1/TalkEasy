@@ -29,6 +29,7 @@ import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatPartner
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatRoomBox
 import com.ssafy.talkeasy.feature.chat.ui.tablet.OpenChatRoomButton
 import com.ssafy.talkeasy.feature.common.util.ChatMode
+import com.ssafy.talkeasy.feature.follow.ui.tablet.FollowFrame
 
 @Composable
 @Preview(showBackground = true, widthDp = 1429, heightDp = 857)
@@ -39,8 +40,17 @@ fun AACRouteFrame(aacViewModel: AACViewModel = hiltViewModel()) {
     val (isOpened, setIsOpened) = remember {
         mutableStateOf(false)
     }
+    val (showFollowDialog, setShowFollowDialog) = remember {
+        mutableStateOf(true)
+    }
     val chatMode by aacViewModel.chatMode.collectAsState()
     val chatPartner by aacViewModel.chatPartner.collectAsState()
+
+    if (showFollowDialog) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            FollowFrame() { setShowFollowDialog(false) }
+        }
+    }
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (
@@ -57,8 +67,8 @@ fun AACRouteFrame(aacViewModel: AACViewModel = hiltViewModel()) {
             aacTopBarRef = aacTopBarRef,
             chatMode = chatMode,
             chatPartner = chatPartner,
-            marginLeft = marginLeft
-        )
+            marginLeft = marginLeft,
+        ) { setShowFollowDialog(true) }
 
         OpenChatRoomButtonBox(
             openChatRoomButtonRef = openChatRoomButtonRef,
@@ -104,6 +114,7 @@ fun ConstraintLayoutScope.ChatPartnerBox(
     chatMode: ChatMode,
     chatPartner: Follow?,
     marginLeft: Dp = 20.dp,
+    onChangeButtonClickListener: () -> Unit,
 ) {
     Box(
         modifier = Modifier.constrainAs(chatPartnerRef) {
@@ -112,7 +123,7 @@ fun ConstraintLayoutScope.ChatPartnerBox(
             bottom.linkTo(aacTopBarRef.bottom)
         }
     ) {
-        ChatPartner(chatMode = chatMode, chatPartner = chatPartner)
+        ChatPartner(chatMode = chatMode, chatPartner = chatPartner, onChangeButtonClickListener)
     }
 }
 

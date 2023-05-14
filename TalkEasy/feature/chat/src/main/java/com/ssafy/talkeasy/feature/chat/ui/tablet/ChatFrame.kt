@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -117,11 +118,7 @@ fun ChatContent(chatPartner: Follow, chats: List<Chat>) {
     ) {
         items(items = sublistChat(chats)) {
             if (it[0].fromUserId == chatPartner.userId) {
-                PartnerChat(
-                    memberName = chatPartner.userName,
-                    nickname = chatPartner.nickName,
-                    messages = it
-                )
+                PartnerChat(chatPartner = chatPartner, messages = it)
             } else {
                 MyChat(messages = it)
             }
@@ -129,8 +126,9 @@ fun ChatContent(chatPartner: Follow, chats: List<Chat>) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatPartner(chatMode: ChatMode, chatPartner: Follow?) {
+fun ChatPartner(chatMode: ChatMode, chatPartner: Follow?, onChangeButtonClickListener: () -> Unit) {
     val profileUrl: String
     val memberName: String
 
@@ -143,7 +141,7 @@ fun ChatPartner(chatMode: ChatMode, chatPartner: Follow?) {
     }
 
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Profile(profileUrl = profileUrl, size = 48)
+        Profile(profileUrl = profileUrl, size = 48, chatMode = chatMode)
 
         Spacer(modifier = Modifier.width(14.dp))
 
@@ -156,7 +154,11 @@ fun ChatPartner(chatMode: ChatMode, chatPartner: Follow?) {
 
         Spacer(modifier = Modifier.width(28.dp))
 
-        Surface(shape = shapes.extraSmall, color = black_squeeze) {
+        Surface(
+            shape = shapes.extraSmall,
+            color = black_squeeze,
+            onClick = { onChangeButtonClickListener() }
+        ) {
             Text(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                 text = "변경",

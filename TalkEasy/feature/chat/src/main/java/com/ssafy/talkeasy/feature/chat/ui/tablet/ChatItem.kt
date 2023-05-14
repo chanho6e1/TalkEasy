@@ -9,20 +9,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.core.domain.entity.response.Chat
+import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.common.component.ChatBalloon
 import com.ssafy.talkeasy.feature.common.component.MyChatItemHead
 import com.ssafy.talkeasy.feature.common.component.PartnerChatItemHead
 import com.ssafy.talkeasy.feature.common.util.ChatDirection
 
 @Composable
-fun PartnerChat(memberName: String, nickname: String, messages: List<Chat>) {
+fun PartnerChat(chatPartner: Follow, messages: List<Chat>) {
     if (messages.isNotEmpty()) {
         Box {
-            PartnerChatItemHead(
-                memberName = memberName,
-                nickname = nickname,
-                type = messages[0].type
-            )
+            PartnerChatItemHead(chatPartner = chatPartner, type = messages[0].type)
 
             LazyColumn(
                 modifier = Modifier.padding(start = 47.dp, top = 19.dp),
