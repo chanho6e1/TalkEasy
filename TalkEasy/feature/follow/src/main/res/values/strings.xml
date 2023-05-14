@@ -27,4 +27,11 @@
     <!--  MyNotificationList  -->
     <string name="title_my_notification_list">내 알림함</string>
     <string name="content_no_notification">알림이 없습니다.</string>
+    <string name="image_close_follow_dialog">친구 목록을 닫는 버튼</string>
+    <string name="title_chat_partner">채팅 전송 상대 선택</string>
+    <string name="content_add_follow">친구 추가</string>
+
+    <!-- Tablet - Follow Item -->
+    <string name="content_chat_mode_tts">TTS(음성 출력) 모드</string>
+    <string name="title_main_follow">주 보호자</string>
 </resources>
