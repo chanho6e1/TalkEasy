@@ -137,7 +137,15 @@ fun ChatPartner(chatMode: ChatMode, chatPartner: Follow?, onChangeButtonClickLis
         memberName = stringResource(id = R.string.content_chat_mode_tts)
     } else {
         profileUrl = chatPartner.imageUrl
-        memberName = chatPartner.userName
+        memberName = if (chatPartner.nickName == "") {
+            chatPartner.userName
+        } else {
+            String.format(
+                stringResource(com.ssafy.talkeasy.feature.common.R.string.content_name_and_nickname),
+                chatPartner.userName,
+                chatPartner.nickName
+            )
+        }
     }
 
     Row(verticalAlignment = Alignment.CenterVertically) {
