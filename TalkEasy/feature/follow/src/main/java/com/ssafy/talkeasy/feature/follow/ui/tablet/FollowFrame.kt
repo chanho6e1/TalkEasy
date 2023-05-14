@@ -45,6 +45,15 @@ import com.ssafy.talkeasy.feature.follow.R
 @Composable
 fun FollowFrame(onDismiss: () -> Unit, followViewModel: FollowViewModel = viewModel()) {
     val followList by followViewModel.followList.collectAsState()
+    val (isShowManageFollowDialog, setIsShowManageFollowDialog) = remember {
+        mutableStateOf(false)
+    }
+
+    if (isShowManageFollowDialog) {
+        ManageFollowFrame {
+            setIsShowManageFollowDialog(false)
+        }
+    }
 
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
@@ -63,7 +72,7 @@ fun FollowFrame(onDismiss: () -> Unit, followViewModel: FollowViewModel = viewMo
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                TTSModeFollow()
+                TTSModeFollow() { setIsShowManageFollowDialog(true) }
 
                 Spacer(modifier = Modifier.height(20.dp))
 
