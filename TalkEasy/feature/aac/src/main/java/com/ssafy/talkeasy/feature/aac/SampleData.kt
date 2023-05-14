@@ -4,8 +4,6 @@ class SampleData {
 
     companion object {
 
-        const val memberName = "강은선"
-
         val string25 = listOf(
             "네",
             "119에 전화해주세요",

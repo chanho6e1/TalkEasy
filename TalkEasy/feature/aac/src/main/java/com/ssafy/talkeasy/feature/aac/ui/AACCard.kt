@@ -1,5 +1,6 @@
 package com.ssafy.talkeasy.feature.aac.ui
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,7 +36,7 @@ fun AACCardWrap(word: String, color: Color, onCardSelectedListener: (String) -> 
 @Composable
 fun AACCardSmall(word: String, aacViewModel: AACViewModel = viewModel()) {
     Surface(
-        modifier = Modifier.width(225.dp),
+        modifier = Modifier.fillMaxWidth(),
         shape = shapes.extraSmall,
         color = md_theme_light_surfaceVariant,
         onClick = { aacViewModel.addCard(word) }

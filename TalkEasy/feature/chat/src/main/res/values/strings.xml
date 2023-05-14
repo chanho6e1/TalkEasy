@@ -1,2 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <!-- Chat Frame -->
+    <string name="image_app_logo">앱 로고 아이콘</string>
+    <string name="content_no_chat">채팅 내역이 없습니다</string>
+    <string name="image_open_chat_frame">채팅창 여는 버튼 아이콘</string>
+    <string name="content_open_chat_room">채\n팅\n창\n열\n기</string>
+    <string name="image_profile_default">기본 프로필 이미지입니다.</string>
+    <string name="content_chat_mode_tts">TTS(음성 출력) 모드</string>
+    <string name="content_no_content_tts">TTS(음성 출력) 모드입니다</string>
+</resources>

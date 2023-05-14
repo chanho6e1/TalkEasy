@@ -49,11 +49,7 @@ import kotlinx.coroutines.withContext
 @Composable
 @Preview(showBackground = true)
 fun BrowseLocation(name: String = "") {
-    Card(
-        Modifier.padding(horizontal = 24.dp),
-        shape = RoundedCornerShape(5.dp),
-        colors = CardDefaults.cardColors(delta)
-    ) {
+    Card(shape = RoundedCornerShape(5.dp), colors = CardDefaults.cardColors(delta)) {
         ConstraintLayout {
             val (text, button) = createRefs()
 

@@ -30,4 +30,12 @@
 
     <!--  LocationOpenAnimation  -->
     <string name="content_location_open_animation">위치정보 열람 요청 중입니다.</string>
+
+    <!-- Chat Balloon -->
+    <string name="content_name_and_nickname">%s (%s)</string>
+    <string name="image_the_person_chat_balloon_head">상대방의 첫번째 채팅 배경</string>
+    <string name="image_request_location">위치 열람 요청 아이콘</string>
+    <string name="image_reject_location">위치 열람 거부 아이콘</string>
+    <string name="image_sos">긴급 도움 요청 아이콘</string>
+    <string name="content_button_browse_location">위치보기</string>
 </resources>

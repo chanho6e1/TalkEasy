@@ -2,9 +2,10 @@ package com.ssafy.talkeasy.feature.aac.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,9 +26,7 @@ fun AACFixedCards(aacViewModel: AACViewModel = viewModel()) {
     val fixedWords = stringArrayResource(id = R.array.aac_fixed_words)
 
     LazyRow(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 36.dp),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         items(fixedWords) { word ->
@@ -39,20 +38,17 @@ fun AACFixedCards(aacViewModel: AACViewModel = viewModel()) {
 }
 
 @Composable
-fun AACSmallCards(words: List<String>) {
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(15.dp)) {
-        items(count = ((words.size - 1) / 5) + 1) { index ->
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(20.dp)) {
-                val rowItems = if (words.size >= (index * 5) + 5) {
-                    words.subList(index * 5, (index * 5) + 5)
-                } else {
-                    words.subList(index * 5, words.size)
-                }
-
-                items(count = 5) { index ->
-                    AACCardSmall(word = rowItems[index])
-                }
-            }
+fun AACSmallCards(words: List<String>, column: Int = 5) {
+    val list = words.subList(0, column * 5)
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(column),
+        horizontalArrangement = Arrangement.spacedBy(15.dp),
+        verticalArrangement = Arrangement.spacedBy(15.dp),
+        reverseLayout = false,
+        userScrollEnabled = false
+    ) {
+        items(list) {
+            AACCardSmall(word = it)
         }
     }
 }
