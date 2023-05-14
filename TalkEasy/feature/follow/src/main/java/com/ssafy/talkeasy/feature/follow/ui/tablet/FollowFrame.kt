@@ -65,11 +65,7 @@ fun FollowFrame(onDismiss: () -> Unit, followViewModel: FollowViewModel = viewMo
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                if (followList.isNullOrEmpty()) {
-
-                } else {
-                    ChatModeFollow(followList!!)
-                }
+                ChatModeFollow(followList)
             }
         }
     }

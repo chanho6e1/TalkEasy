@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Badge
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,13 +22,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.common.R.string
+import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
+import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
+import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_outline
+import com.ssafy.talkeasy.feature.common.ui.theme.sunset_orange
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
 import com.ssafy.talkeasy.feature.common.util.ChatMode
+import com.ssafy.talkeasy.feature.common.util.toTimeString
 import com.ssafy.talkeasy.feature.follow.R
 
 @Composable
@@ -59,13 +66,13 @@ fun TTSModeFollow() {
         }
 
         Box(modifier = Modifier.padding(horizontal = 8.dp)) {
-            FollowItem(chatMode = ChatMode.TTS)
+            TTSFollowItem()
         }
     }
 }
 
 @Composable
-fun ChatModeFollow(followList: List<Follow>) {
+fun ChatModeFollow(followList: List<Follow>?) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -79,7 +86,19 @@ fun ChatModeFollow(followList: List<Follow>) {
             style = typography.bodyLarge
         )
 
-        FollowList(followList = followList)
+        if (followList.isNullOrEmpty()) {
+            Box(modifier = Modifier.height(250.dp)) {
+                NoContentLogoMessage(
+                    message = stringResource(id = R.string.content_no_follow_content),
+                    textStyle = typography.titleMedium,
+                    width = 156,
+                    height = 72,
+                    betweenValue = 20
+                )
+            }
+        } else {
+            FollowList(followList = followList)
+        }
     }
 }
 
@@ -112,38 +131,46 @@ fun FollowList(followList: List<Follow>) {
                     ) {}
                 }
 
-                FollowItem(chatMode = ChatMode.CHAT, follow = follow)
+                FollowItem(follow = follow)
             }
         }
     }
 }
 
 @Composable
-fun FollowItem(chatMode: ChatMode, follow: Follow? = null) {
-    val profileUrl: String
-    val memberName: String
+fun TTSFollowItem() {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Profile(chatMode = ChatMode.TTS)
 
-    if (follow == null || chatMode == ChatMode.TTS) {
-        profileUrl = ""
-        memberName = stringResource(id = R.string.content_chat_mode_tts)
+        Text(
+            text = stringResource(id = R.string.content_chat_mode_tts),
+            style = typography.bodyLarge,
+            color = md_theme_light_onBackground
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun FollowItem(follow: Follow) {
+    val memberName: String = if (follow.nickName == "") {
+        follow.userName
     } else {
-        profileUrl = follow.imageUrl
-        memberName = if (follow.nickName == "") {
-            follow.userName
-        } else {
-            String.format(
-                stringResource(string.content_name_and_nickname),
-                follow.userName,
-                follow.nickName
-            )
-        }
+        String.format(
+            stringResource(string.content_name_and_nickname),
+            follow.userName,
+            follow.nickName
+        )
     }
 
     Column(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        if (follow != null && follow.mainStatus) {
+        if (follow.mainStatus) {
             Text(
                 text = stringResource(R.string.title_main_follow),
                 color = md_theme_light_outline,
@@ -155,13 +182,46 @@ fun FollowItem(chatMode: ChatMode, follow: Follow? = null) {
             horizontalArrangement = Arrangement.spacedBy(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Profile(profileUrl = profileUrl, chatMode = chatMode)
+            Profile(profileUrl = follow.imageUrl, chatMode = ChatMode.CHAT)
 
+            Column(
+                verticalArrangement = Arrangement.spacedBy(9.dp),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = memberName,
+                    style = typography.bodyLarge,
+                    color = md_theme_light_onBackground
+                )
+
+                Text(text = "가장 최근 메세지", style = typography.bodyMedium, color = cabbage_pont)
+            }
+        }
+
+        Column(
+            modifier = Modifier.align(Alignment.End),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.End
+        ) {
             Text(
-                text = memberName,
-                style = typography.bodyLarge,
-                color = md_theme_light_onBackground
+                text = "2023-05-04T16:16:38.417705".toTimeString(),
+                color = delta,
+                style = typography.bodySmall
             )
+
+            val newMessageCount = 3
+            Badge(
+                containerColor = sunset_orange,
+                contentColor = md_theme_light_background
+            ) {
+                Text(
+                    text = if (newMessageCount >= 99) {
+                        "+99"
+                    } else {
+                        newMessageCount.toString()
+                    }
+                )
+            }
         }
     }
 }
