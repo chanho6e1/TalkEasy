@@ -13,6 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TalkEasy">
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/GOOGLE_MAP_APP_KEY" />
+
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">

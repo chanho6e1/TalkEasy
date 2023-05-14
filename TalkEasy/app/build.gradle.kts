@@ -83,9 +83,6 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 
-    implementation(libs.google.map)
-    implementation(libs.google.map.location)
-
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
