@@ -1,6 +1,7 @@
 package com.talkeasy.server.service.location;
 
 
+import com.talkeasy.server.dto.location.LocationDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -9,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 
 @EnableScheduling
 @EnableAsync
@@ -18,13 +20,35 @@ import java.time.LocalDateTime;
 public class Scheduler {
 
     private final KafkaConsumerService kafkaConsumerService;
+    private final KafkaProducerService kafkaProducerService;
 
-    //    @Scheduled(cron = "0 * * * * *", zone = "Asia/Seoul") // 초, 분, 시, 일, 월, 주, (년)
-    @Scheduled(cron = "0 3 0/12 * * *", zone = "Asia/Seoul") // 매일 새벽 3분에 postgresQL에 데이터를 넣는 스케쥴러
-//    @Scheduled(cron = "0 */1 * * * *", zone = "Asia/Seoul") // 매일 새벽 5분에 postgresQL에 데이터를 넣는 스케쥴러
+    @Scheduled(cron = "0 3 0/12 * * *", zone = "Asia/Seoul") // 00:03, 12:03 에 postgresQL에 데이터 저장
     public void locationEvent() {
         log.info("========== scheduler 실행 time : {}", LocalDateTime.now());
         kafkaConsumerService.consumeLocationEvent();
     }
+
+    @Scheduled(cron = "0 0/20 * * * *", zone = "Asia/Seoul") // dummy data 생성
+    public void makeLocation() {
+
+        Random random = new Random();
+        random.setSeed(System.currentTimeMillis());
+
+        double lon = 128.3445734;
+        double lat = 36.119485;
+
+        lon += random.nextDouble();
+        lat += random.nextDouble();
+
+        LocationDto locationDto = new LocationDto();
+        locationDto.setUserId("6459dfcf393c266aa80f5710");
+        locationDto.setName("강은선인데이름이왕왕길어용괜찮아욥");
+        locationDto.setLon(String.valueOf(lon));
+        locationDto.setLat(String.valueOf(lat));
+
+        kafkaProducerService.sendMessage(locationDto);
+
+    }
+
 
 }
