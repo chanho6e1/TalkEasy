@@ -37,4 +37,6 @@
     <string name="title_chat_mode_chat">채팅 모드</string>
     <string name="title_chat_mode_tts">음성 모드</string>
     <string name="content_message_not_send">(채팅 미 전송)</string>
+    <string name="image_add_follow_qr">친구 추가 QR 코드</string>
+    <string name="content_fail_to_load_member_info">회원 정보 조회에 실패했습니다\n앱 종료 후 다시 시도하세요</string>
 </resources>

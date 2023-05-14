@@ -50,6 +50,7 @@ fun AACRouteFrame(
     val chatPartner by aacViewModel.chatPartner.collectAsState()
 
     SideEffect {
+        followViewModel.requestMemberInfo()
         followViewModel.requestFollowList()
     }
 

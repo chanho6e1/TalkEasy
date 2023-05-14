@@ -51,6 +51,8 @@ dependencies {
 
     implementation(libs.glide.compose)
 
+    implementation("com.journeyapps:zxing-android-embedded:4.2.0")
+
     implementation(project(":core:domain"))
     implementation(project(":feature:common"))
 }

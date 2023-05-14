@@ -21,6 +21,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -57,7 +59,7 @@ fun FollowFrame(onDismiss: () -> Unit, followViewModel: FollowViewModel = viewMo
                 modifier = Modifier.padding(30.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                TopBar(onCloseButtonClickListener = onDismiss) {}
+                TopBar(onCloseButtonClickListener = onDismiss)
 
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -75,8 +77,15 @@ fun FollowFrame(onDismiss: () -> Unit, followViewModel: FollowViewModel = viewMo
 fun TopBar(
     modifier: Modifier = Modifier,
     onCloseButtonClickListener: () -> Unit,
-    onAddFollowButtonClickListener: () -> Unit,
 ) {
+    val (isShowAddFollowDialog, setIsShowAddFollowDialog) = remember {
+        mutableStateOf(false)
+    }
+
+    if (isShowAddFollowDialog) {
+        AddFollowFrame(onDismissListener = { setIsShowAddFollowDialog(false) })
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -110,7 +119,7 @@ fun TopBar(
                 containerColor = seed
             ),
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 6.dp),
-            onClick = { onAddFollowButtonClickListener() }
+            onClick = { setIsShowAddFollowDialog(true) }
         ) {
             Text(
                 text = stringResource(R.string.content_add_follow),
