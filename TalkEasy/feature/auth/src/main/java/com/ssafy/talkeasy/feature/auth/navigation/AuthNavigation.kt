@@ -5,7 +5,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.ssafy.talkeasy.feature.aac.ui.AACFrame
 import com.ssafy.talkeasy.feature.auth.ui.mobile.JoinRouteProtector
 import com.ssafy.talkeasy.feature.auth.ui.mobile.LoginRouteProtector
 import com.ssafy.talkeasy.feature.auth.ui.mobile.WelcomeRouteProtector
@@ -19,7 +18,6 @@ const val loginRouteWard = "login_route_ward"
 const val joinRouteWard = "join_route_ward"
 const val welcomeRouteWard = "welcome_route_ward"
 const val welcomeRouteProtector = "welcome_route_protector"
-const val AACRouteWard = "aac_route_ward"
 
 fun NavController.navigateToLogin(navOptions: NavOptions? = null, role: Int) {
     if (role == 0) {
@@ -43,10 +41,6 @@ fun NavController.navigateToWelcome(navOptions: NavOptions? = null, role: Int) {
     } else {
         this.navigate(welcomeRouteWard, navOptions)
     }
-}
-
-fun NavController.navigateToAAC(navOptions: NavOptions? = null) {
-    this.navigate(AACRouteWard, navOptions)
 }
 
 fun NavGraphBuilder.loginScreen(
@@ -113,11 +107,5 @@ fun NavGraphBuilder.welcomeScreen(
             }
             WelcomeRouteWard(navBackStackEntry = loginEntry, onFinishedLoading = onFinishedLoading)
         }
-    }
-}
-
-fun NavGraphBuilder.aacScreen() {
-    composable(route = AACRouteWard) {
-        AACFrame()
     }
 }
