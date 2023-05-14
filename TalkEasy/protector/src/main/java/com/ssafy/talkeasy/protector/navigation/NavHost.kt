@@ -13,7 +13,10 @@ import com.ssafy.talkeasy.feature.auth.navigation.welcomeScreen
 import com.ssafy.talkeasy.feature.follow.navigation.addFollowDetailScreen
 import com.ssafy.talkeasy.feature.follow.navigation.followListScreen
 import com.ssafy.talkeasy.feature.follow.navigation.myNotificationListScreen
+import com.ssafy.talkeasy.feature.follow.navigation.navigateToAddFollowDetail
 import com.ssafy.talkeasy.feature.follow.navigation.navigateToFollowList
+import com.ssafy.talkeasy.feature.follow.navigation.navigateToMyNotificationList
+import com.ssafy.talkeasy.feature.location.navigation.locationOpenScreen
 
 private const val ROLE = 0
 
@@ -37,6 +40,7 @@ fun AppNavHost(
             },
             role = ROLE
         )
+
         joinScreen(
             navController = navController,
             onJoinMember = {
@@ -44,15 +48,24 @@ fun AppNavHost(
             },
             role = ROLE
         )
+
         welcomeScreen(
             navController = navController,
-            onFinishedLoading = {
-                navController.navigateToFollowList()
-            },
+            onFinishedLoading = { navController.navigateToFollowList() },
             role = ROLE
         )
-        followListScreen(navController = navController)
+
+        followListScreen(
+            navController = navController,
+            onClickedAddFollow = { navController.navigateToAddFollowDetail() },
+            onClickedNotification = { navController.navigateToMyNotificationList() },
+            onClickedSettings = { }
+        )
+
         addFollowDetailScreen()
+
         myNotificationListScreen()
+
+        locationOpenScreen()
     }
 }
