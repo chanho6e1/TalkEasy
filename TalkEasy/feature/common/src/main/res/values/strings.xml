@@ -27,4 +27,12 @@
     <string name="content_notification_request_sos">%s님께서 긴급 도움 요청을 하셨습니다.</string>
     <string name="content_notification_request_location">%s님으로부터 정보 열람 요청이 왔습니다.</string>
     <string name="content_notification_response_location">%s에 도움 요청 버튼이 눌렸습니다. </string>
+
+    <!-- Chat Balloon -->
+    <string name="content_name_and_nickname">%s (%s)</string>
+    <string name="image_the_person_chat_balloon_head">상대방의 첫번째 채팅 배경</string>
+    <string name="image_request_location">위치 열람 요청 아이콘</string>
+    <string name="image_reject_location">위치 열람 거부 아이콘</string>
+    <string name="image_sos">긴급 도움 요청 아이콘</string>
+    <string name="content_button_browse_location">위치보기</string>
 </resources>

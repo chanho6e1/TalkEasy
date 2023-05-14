@@ -29,6 +29,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.ssafy.talkeasy.core.domain.entity.response.Chat
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
+import com.ssafy.talkeasy.feature.chat.ChatViewModel
 import com.ssafy.talkeasy.feature.chat.R
 import com.ssafy.talkeasy.feature.chat.ui.tablet.balloon.MyChat
 import com.ssafy.talkeasy.feature.chat.ui.tablet.balloon.PartnerChat

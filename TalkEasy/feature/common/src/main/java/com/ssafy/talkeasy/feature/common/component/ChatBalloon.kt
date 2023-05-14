@@ -1,4 +1,4 @@
-package com.ssafy.talkeasy.feature.chat.ui.tablet.balloon
+package com.ssafy.talkeasy.feature.common.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -26,9 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.core.domain.entity.response.Chat
-import com.ssafy.talkeasy.feature.chat.R
-import com.ssafy.talkeasy.feature.common.R.drawable
-import com.ssafy.talkeasy.feature.common.component.Profile
+import com.ssafy.talkeasy.feature.common.R
 import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_error
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_errorContainer
@@ -38,8 +36,8 @@ import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
 import com.ssafy.talkeasy.feature.common.util.ChatDirection
-import com.ssafy.talkeasy.feature.common.util.LocationStatus
 import com.ssafy.talkeasy.feature.common.util.ChatType
+import com.ssafy.talkeasy.feature.common.util.LocationStatus
 import com.ssafy.talkeasy.feature.common.util.toTimeString
 
 @Composable
@@ -70,7 +68,7 @@ fun PartnerChatItemHead(memberName: String, nickname: String, type: Int) {
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(start = 37.dp, top = 24.dp),
-            painter = painterResource(id = drawable.bg_chat_balloon_left_head),
+            painter = painterResource(id = R.drawable.bg_chat_balloon_left_head),
             contentDescription = stringResource(R.string.image_the_person_chat_balloon_head),
             tint = color
         )
@@ -84,7 +82,7 @@ fun MyChatItemHead(type: Int) {
     Box {
         Icon(
             modifier = Modifier.align(Alignment.TopStart),
-            painter = painterResource(id = drawable.bg_chat_balloon_right_head),
+            painter = painterResource(id = R.drawable.bg_chat_balloon_right_head),
             contentDescription = stringResource(R.string.image_the_person_chat_balloon_head),
             tint = color
         )
@@ -145,7 +143,10 @@ fun ChatBalloon(chatDirection: ChatDirection, chat: Chat, isLastMessage: Boolean
                         status = chat.status!!
                     )
 
-                    ChatType.SOS.ordinal -> SOS(chatDirection = chatDirection, message = chat.message)
+                    ChatType.SOS.ordinal -> SOS(
+                        chatDirection = chatDirection,
+                        message = chat.message
+                    )
                 }
             }
         }
@@ -186,17 +187,17 @@ fun Location(message: String, status: Int) {
 
     when (status) {
         LocationStatus.REQUEST.ordinal -> {
-            imageId = drawable.ic_location_request
+            imageId = R.drawable.ic_location_request
             contentDescription = stringResource(R.string.image_request_location)
         }
 
         LocationStatus.RESULT.ordinal -> {
-            imageId = drawable.ic_location_request
+            imageId = R.drawable.ic_location_request
             contentDescription = stringResource(R.string.image_request_location)
         }
 
         LocationStatus.REJECT.ordinal -> {
-            imageId = drawable.ic_location_reject
+            imageId = R.drawable.ic_location_reject
             contentDescription = stringResource(R.string.image_reject_location)
         }
     }
@@ -225,7 +226,7 @@ fun SOS(chatDirection: ChatDirection, message: String) {
     ) {
         Image(
             modifier = Modifier.size(42.dp),
-            painter = painterResource(id = drawable.ic_sos),
+            painter = painterResource(id = R.drawable.ic_sos),
             contentDescription = stringResource(R.string.image_sos)
         )
 

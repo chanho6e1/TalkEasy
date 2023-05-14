@@ -1,4 +1,4 @@
-package com.ssafy.talkeasy.feature.chat.ui.tablet
+package com.ssafy.talkeasy.feature.chat
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -24,7 +24,7 @@ class ChatViewModel @Inject constructor(
     private val _chats: MutableStateFlow<List<Chat>?> = MutableStateFlow(listOf())
     val chats: StateFlow<List<Chat>?> = _chats
 
-    fun getChatHistory(roomId: String = "645b7a87019c7f5131d179b1", offset: Int, size: Int) =
+    fun getChatHistory(roomId: String, offset: Int, size: Int) =
         viewModelScope.launch {
             when (val value = getChatHistoryUseCase(roomId, offset, size)) {
                 is Resource.Success<PagingDefault<List<Chat>>> -> {

@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Chat Balloon -->
-    <string name="content_name_and_nickname">%s (%s)</string>
-    <string name="image_the_person_chat_balloon_head">상대방의 첫번째 채팅 배경</string>
-    <string name="image_request_location">위치 열람 요청 아이콘</string>
-    <string name="image_reject_location">위치 열람 거부 아이콘</string>
-    <string name="image_sos">긴급 도움 요청 아이콘</string>
-    <string name="content_button_browse_location">위치보기</string>
-
     <!-- Chat Frame -->
     <string name="image_app_logo">앱 로고 아이콘</string>
     <string name="content_no_chat">채팅 내역이 없습니다</string>
