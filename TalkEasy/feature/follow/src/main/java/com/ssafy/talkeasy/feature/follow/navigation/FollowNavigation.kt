@@ -26,16 +26,21 @@ fun NavController.navigateToMyNotificationList(navOptions: NavOptions? = null) {
     this.navigate(myNotificationListNavigationRoute, navOptions)
 }
 
-fun NavGraphBuilder.followListScreen(navController: NavController) {
+fun NavGraphBuilder.followListScreen(
+    navController: NavController,
+    onClickedAddFollow: () -> Unit,
+    onClickedNotification: () -> Unit,
+    onClickedSettings: () -> Unit,
+) {
     composable(route = followListNavigationRoute) { navBackStackEntry ->
         val followListEntry = remember(navBackStackEntry) {
             navController.getBackStackEntry(welcomeRouteProtector)
         }
         FollowListRoute(
             navBackStackEntry = followListEntry,
-            onClickedAddFollow = { navController.navigateToAddFollowDetail() },
-            onClickedNotification = { navController.navigateToMyNotificationList() },
-            onClickedSettings = {}
+            onClickedAddFollow = onClickedAddFollow,
+            onClickedNotification = onClickedNotification,
+            onClickedSettings = onClickedSettings
         )
     }
 }

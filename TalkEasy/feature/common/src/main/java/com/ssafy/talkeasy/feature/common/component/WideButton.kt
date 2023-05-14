@@ -8,6 +8,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
@@ -19,10 +20,12 @@ fun WideSeedButton(
     onClicked: () -> Unit,
     text: String,
     textStyle: TextStyle,
+    containerColor: Color = seed,
+    textColor: Color = md_theme_light_onBackground,
 ) {
     val mainButtonColor = ButtonDefaults.buttonColors(
         contentColor = md_theme_light_onBackground,
-        containerColor = seed
+        containerColor = containerColor
     )
 
     Button(
@@ -32,6 +35,6 @@ fun WideSeedButton(
         shape = RoundedCornerShape(5.dp),
         contentPadding = PaddingValues(vertical = 14.dp)
     ) {
-        Text(text = text, style = textStyle)
+        Text(text = text, style = textStyle, color = textColor)
     }
 }

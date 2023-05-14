@@ -31,6 +31,7 @@ glide-compose = "1.0.0-alpha.3"
 google-services = "4.3.15"
 google-map = "18.1.0"
 google-map-location = "21.0.1"
+google-map-compose = "2.11.0"
 
 firebase-bom = "32.0.0"
 
@@ -92,6 +93,7 @@ glide-compose = { module = "com.github.bumptech.glide:compose", version.ref = "g
 
 google-map = { module = "com.google.android.gms:play-services-maps", version.ref = "google-map" }
 google-map-location = { module = "com.google.android.gms:play-services-location", version.ref = "google-map-location" }
+google-map-compose = { module = "com.google.maps.android:maps-compose", version.ref = "google-map-compose" }
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
@@ -112,6 +114,7 @@ debug-compose = ["androidx-compose-tooling", "androidx-compose-ui-test-manifest"
 retrofit = ["retrofit", "retrofit-converter-gson"]
 okhttp3 = ["okhttp3", "okhttp3-logging-interceptor"]
 kakao = ["kakao-user", "kakao-share"]
+google-map = ["google-map-location", "google-map-compose", "google-map"]
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
