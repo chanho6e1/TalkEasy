@@ -5,7 +5,7 @@ data class Follow(
     val userName: String,
     val followId: String,
     val imageUrl: String,
-    val memo: String,
+    val memo: String?,
     val mainStatus: Boolean,
     val gender: Int?,
     val age: Int?,

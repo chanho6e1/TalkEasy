@@ -35,6 +35,7 @@ import com.ssafy.talkeasy.feature.chat.R
 import com.ssafy.talkeasy.feature.chat.ui.tablet.balloon.MyChat
 import com.ssafy.talkeasy.feature.chat.ui.tablet.balloon.PartnerChat
 import com.ssafy.talkeasy.feature.common.R.drawable
+import com.ssafy.talkeasy.feature.common.R.string
 import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
@@ -141,7 +142,7 @@ fun ChatPartner(chatMode: ChatMode, chatPartner: Follow?, onChangeButtonClickLis
             chatPartner.userName
         } else {
             String.format(
-                stringResource(com.ssafy.talkeasy.feature.common.R.string.content_name_and_nickname),
+                stringResource(string.content_name_and_nickname),
                 chatPartner.userName,
                 chatPartner.nickName
             )

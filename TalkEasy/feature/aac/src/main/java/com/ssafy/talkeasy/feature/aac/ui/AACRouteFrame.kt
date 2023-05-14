@@ -13,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
@@ -22,6 +21,7 @@ import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.aac.AACViewModel
 import com.ssafy.talkeasy.feature.aac.SampleData
@@ -29,11 +29,15 @@ import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatPartner
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatRoomBox
 import com.ssafy.talkeasy.feature.chat.ui.tablet.OpenChatRoomButton
 import com.ssafy.talkeasy.feature.common.util.ChatMode
+import com.ssafy.talkeasy.feature.follow.FollowViewModel
 import com.ssafy.talkeasy.feature.follow.ui.tablet.FollowFrame
 
 @Composable
-@Preview(showBackground = true, widthDp = 1429, heightDp = 857)
-fun AACRouteFrame(aacViewModel: AACViewModel = hiltViewModel()) {
+fun AACRouteFrame(
+    navBackStackEntry: NavBackStackEntry,
+    aacViewModel: AACViewModel = hiltViewModel(),
+    followViewModel: FollowViewModel = hiltViewModel(navBackStackEntry),
+) {
     val marginTop = 18.dp
     val marginRight = 36.dp
     val marginLeft = 20.dp
@@ -41,14 +45,15 @@ fun AACRouteFrame(aacViewModel: AACViewModel = hiltViewModel()) {
         mutableStateOf(false)
     }
     val (showFollowDialog, setShowFollowDialog) = remember {
-        mutableStateOf(true)
+        mutableStateOf(false)
     }
     val chatMode by aacViewModel.chatMode.collectAsState()
     val chatPartner by aacViewModel.chatPartner.collectAsState()
+    val followList by followViewModel.followList.collectAsState()
 
     if (showFollowDialog) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            FollowFrame() { setShowFollowDialog(false) }
+            FollowFrame(onDismiss = { setShowFollowDialog(false) }, followList = followList)
         }
     }
 
@@ -67,7 +72,7 @@ fun AACRouteFrame(aacViewModel: AACViewModel = hiltViewModel()) {
             aacTopBarRef = aacTopBarRef,
             chatMode = chatMode,
             chatPartner = chatPartner,
-            marginLeft = marginLeft,
+            marginLeft = marginLeft
         ) { setShowFollowDialog(true) }
 
         OpenChatRoomButtonBox(

@@ -1,10 +1,8 @@
 package com.ssafy.talkeasy.feature.follow.ui.tablet
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,22 +28,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.common.R.drawable
-import com.ssafy.talkeasy.feature.common.R.string
-import com.ssafy.talkeasy.feature.common.component.Profile
-import com.ssafy.talkeasy.feature.common.ui.theme.delta
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onPrimaryContainer
-import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_outline
 import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold22
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
-import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.follow.R
 
 @Composable
-fun FollowFrame(onDismiss: () -> Unit) {
+fun FollowFrame(onDismiss: () -> Unit, followList: List<Follow>?) {
     Dialog(onDismissRequest = { onDismiss() }) {
         Card(
             modifier = Modifier
@@ -64,8 +56,14 @@ fun FollowFrame(onDismiss: () -> Unit) {
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                TTSMode()
+                TTSModeFollow()
 
+                Spacer(modifier = Modifier.height(20.dp))
+
+                if (followList.isNullOrEmpty()) {
+                } else {
+                    ChatModeFollow(followList)
+                }
             }
         }
     }
@@ -80,7 +78,7 @@ fun TopBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .wrapContentHeight(),
+            .wrapContentHeight()
     ) {
         IconButton(
             modifier = Modifier
@@ -116,88 +114,6 @@ fun TopBar(
                 text = stringResource(R.string.content_add_follow),
                 style = typography.bodyLarge,
                 textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
-@Composable
-fun TTSMode() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        Row(
-            modifier = Modifier.wrapContentSize(),
-            horizontalArrangement = Arrangement.spacedBy(2.dp),
-            verticalAlignment = Alignment.Bottom
-        ) {
-            Text(
-                modifier = Modifier.alignByBaseline(),
-                text = "음성 모드",
-                color = md_theme_light_onBackground,
-                style = typography.bodyLarge
-            )
-
-            Text(
-                modifier = Modifier.alignByBaseline(),
-                text = "(채팅 미 전송)",
-                color = delta,
-                style = typography.bodySmall
-            )
-        }
-
-        FollowItem(chatMode = ChatMode.TTS)
-    }
-}
-
-@Composable
-fun FollowItem(chatMode: ChatMode, follow: Follow? = null) {
-    val profileUrl: String
-    val memberName: String
-
-    if (follow == null || chatMode == ChatMode.TTS) {
-        profileUrl = ""
-        memberName = stringResource(id = R.string.content_chat_mode_tts)
-    } else {
-        profileUrl = follow.imageUrl
-        memberName = if (follow.nickName == "") {
-            follow.userName
-        } else {
-            String.format(
-                stringResource(string.content_name_and_nickname),
-                follow.userName,
-                follow.nickName
-            )
-        }
-    }
-
-    Column(
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        if (follow != null && follow.mainStatus) {
-            Text(
-                text = stringResource(R.string.title_main_follow),
-                color = md_theme_light_outline,
-                style = typography.bodyMedium
-            )
-        }
-
-        Row(
-            modifier = Modifier.padding(start = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(14.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Profile(profileUrl = profileUrl, chatMode = chatMode)
-
-            Text(
-                text = memberName,
-                style = typography.bodyLarge,
-                color = md_theme_light_onBackground
             )
         }
     }

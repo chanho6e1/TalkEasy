@@ -49,6 +49,6 @@ fun AppNavHost(
             },
             role = ROLE
         )
-        aacScreen()
+        aacScreen(navController = navController)
     }
 }

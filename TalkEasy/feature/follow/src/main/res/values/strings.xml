@@ -34,4 +34,7 @@
     <!-- Tablet - Follow Item -->
     <string name="content_chat_mode_tts">TTS(음성 출력) 모드</string>
     <string name="title_main_follow">주 보호자</string>
+    <string name="title_chat_mode_chat">채팅 모드</string>
+    <string name="title_chat_mode_tts">음성 모드</string>
+    <string name="content_message_not_send">(채팅 미 전송)</string>
 </resources>

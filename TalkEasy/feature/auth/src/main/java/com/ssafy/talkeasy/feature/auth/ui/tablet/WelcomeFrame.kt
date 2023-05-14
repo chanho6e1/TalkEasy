@@ -30,6 +30,7 @@ fun WelcomeRouteWard(
     followViewModel: FollowViewModel = hiltViewModel(),
 ) {
     val memberInfo by followViewModel.memberInfo.collectAsState()
+    val followList by followViewModel.followList.collectAsState()
     val memberName by authViewModel.name.collectAsState()
     var isInfoLoadingFinished by remember {
         mutableStateOf(false)
@@ -38,6 +39,9 @@ fun WelcomeRouteWard(
     SideEffect {
         if (memberInfo == null) {
             followViewModel.requestMemberInfo()
+        }
+        if (followList == null) {
+            followViewModel.requestFollowList()
         }
     }
 
