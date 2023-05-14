@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,7 +22,6 @@ import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavBackStackEntry
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.aac.AACViewModel
 import com.ssafy.talkeasy.feature.aac.SampleData
@@ -34,9 +34,8 @@ import com.ssafy.talkeasy.feature.follow.ui.tablet.FollowFrame
 
 @Composable
 fun AACRouteFrame(
-    navBackStackEntry: NavBackStackEntry,
     aacViewModel: AACViewModel = hiltViewModel(),
-    followViewModel: FollowViewModel = hiltViewModel(navBackStackEntry),
+    followViewModel: FollowViewModel = hiltViewModel(),
 ) {
     val marginTop = 18.dp
     val marginRight = 36.dp
@@ -49,11 +48,14 @@ fun AACRouteFrame(
     }
     val chatMode by aacViewModel.chatMode.collectAsState()
     val chatPartner by aacViewModel.chatPartner.collectAsState()
-    val followList by followViewModel.followList.collectAsState()
+
+    SideEffect {
+        followViewModel.requestFollowList()
+    }
 
     if (showFollowDialog) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            FollowFrame(onDismiss = { setShowFollowDialog(false) }, followList = followList)
+            FollowFrame(onDismiss = { setShowFollowDialog(false) })
         }
     }
 
@@ -73,7 +75,10 @@ fun AACRouteFrame(
             chatMode = chatMode,
             chatPartner = chatPartner,
             marginLeft = marginLeft
-        ) { setShowFollowDialog(true) }
+        ) {
+            followViewModel.requestFollowList()
+            setShowFollowDialog(true)
+        }
 
         OpenChatRoomButtonBox(
             openChatRoomButtonRef = openChatRoomButtonRef,
