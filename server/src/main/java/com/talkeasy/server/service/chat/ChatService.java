@@ -119,9 +119,16 @@ public class ChatService {
         String newMsg = chat.getMsg();
 
         Alarm alarm = Alarm.builder().chatId(chat.getId()).readStatus(false).build();
-//        Alarm alarm = new Alarm();
 
-//        Alarm alarm1 = Alarm.builder().chatId(chat.getId()).readStatus(false).build();
+        /* toUser 와 fromUser가 해당 채팅방에 속해있는지 확인 */
+
+        ChatRoom chatRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getRoomId()).
+                and("users").all(chat.getToUserId(), chat.getFromUserId())), ChatRoom.class)).orElse(
+                null);
+
+        if (chatRoom == null) {
+            return null;
+        }
 
         if (chat.getType() == 1) { // location :: msg:: 요청 or 결과 or 실패 (REQUEST, RESULT, REJECT)
             if (chat.getStatus() == 0) {// REQUEST
@@ -154,6 +161,7 @@ public class ChatService {
         log.info("{}", chat);
         return chat;
     }
+
 
     private Alarm createAlarm(ChatRoomDetail chat, String content, String fromName, int type, String userId) {
         Alarm alarm = Alarm.builder()
@@ -208,6 +216,7 @@ public class ChatService {
     }
 
     public void doChat(ChatRoomDetail chat) throws IOException {
+
 
         sendChatMessage(chat, chat.getToUserId());
 
