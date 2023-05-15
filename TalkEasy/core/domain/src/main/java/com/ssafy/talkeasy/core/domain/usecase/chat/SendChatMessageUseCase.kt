@@ -15,7 +15,7 @@ class SendChatMessageUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        message: MessageRequest
+        message: MessageRequest,
     ): Resource<Chat> = withContext(Dispatchers.IO) {
         chatRepository.sendChatMessage(message)
     }

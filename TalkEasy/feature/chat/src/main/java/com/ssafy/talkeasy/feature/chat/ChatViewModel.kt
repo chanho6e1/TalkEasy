@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.talkeasy.core.domain.Resource
+import com.ssafy.talkeasy.core.domain.entity.request.MessageRequest
 import com.ssafy.talkeasy.core.domain.entity.response.Chat
 import com.ssafy.talkeasy.core.domain.entity.response.PagingDefault
 import com.ssafy.talkeasy.core.domain.usecase.chat.GetChatHistoryUseCase
+import com.ssafy.talkeasy.core.domain.usecase.chat.SendChatMessageUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +18,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ChatViewModel @Inject constructor(
     private val getChatHistoryUseCase: GetChatHistoryUseCase,
+    private val sendChatMessageUseCase: SendChatMessageUseCase,
 ) : ViewModel() {
 
     private val _chatsTotalPage: MutableStateFlow<Int> = MutableStateFlow(0)
@@ -37,4 +40,31 @@ class ChatViewModel @Inject constructor(
                 }
             }
         }
+
+    fun sendMessage(
+        type: Int,
+        fromUserId: String,
+        msg: String,
+        roomId: String,
+        toUserId: String,
+    ) = viewModelScope.launch {
+        val message = MessageRequest(
+            type = type,
+            fromUserId = fromUserId,
+            msg = msg,
+            roomId = roomId,
+            toUserId = toUserId
+        )
+
+        message.let {
+            when (val value = sendChatMessageUseCase(message)) {
+                is Resource.Success<Chat> -> {
+                }
+
+                is Resource.Error -> {
+                    Log.e("sendMessage", "getChatHistory: ${value.errorMessage}")
+                }
+            }
+        }
+    }
 }

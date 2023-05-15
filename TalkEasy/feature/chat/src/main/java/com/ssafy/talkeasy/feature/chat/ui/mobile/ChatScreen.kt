@@ -43,8 +43,8 @@ import com.ssafy.talkeasy.core.domain.entity.response.Chat
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.chat.ChatViewModel
 import com.ssafy.talkeasy.feature.chat.R
-import com.ssafy.talkeasy.feature.chat.ui.tablet.balloon.MyChat
-import com.ssafy.talkeasy.feature.chat.ui.tablet.balloon.PartnerChat
+import com.ssafy.talkeasy.feature.chat.ui.tablet.MyChat
+import com.ssafy.talkeasy.feature.chat.ui.tablet.PartnerChat
 import com.ssafy.talkeasy.feature.chat.ui.tablet.sublistChat
 import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
 import com.ssafy.talkeasy.feature.common.component.NoLabelTextField
@@ -64,6 +64,7 @@ fun ChatRouteProtector(
 ) {
     val chats by chatViewModel.chats.collectAsState()
     val selectFollow by followListViewModel.selectFollow.collectAsState()
+    val memberInfo by followListViewModel.memberInfo.collectAsState()
     val (text: String, setText: (String) -> Unit) = remember {
         mutableStateOf("")
     }
@@ -71,19 +72,29 @@ fun ChatRouteProtector(
         mutableStateOf(1)
     }
 
-    LaunchedEffect(selectFollow?.roomId) {
+    LaunchedEffect(key1 = selectFollow) {
         selectFollow?.let { chatViewModel.getChatHistory(it.roomId, offset, 50) }
     }
 
-    selectFollow?.let {
+    selectFollow?.let { follow ->
         ChatScreen(
             text = text,
             setText = setText,
             chats = chats,
-            chatPartner = it,
+            chatPartner = follow,
             onClickedLocationOpenRequest = onClickedLocationOpenRequest,
             onClickedInfoDetail = onClickedInfoDetail,
-            onSendButtonClick = {}
+            onSendButtonClick = {
+                chatViewModel.sendMessage(
+                    toUserId = selectFollow!!.userId,
+                    roomId = selectFollow!!.roomId,
+                    msg = text,
+                    fromUserId = memberInfo!!.userId,
+                    type = 0
+                )
+                setText("")
+                chatViewModel.getChatHistory(follow.roomId, offset, 50)
+            }
         )
     }
 }
@@ -212,8 +223,7 @@ fun ChatContent(chatPartner: Follow, chats: List<Chat>) {
         items(items = sublistChat(chats)) {
             if (it[0].fromUserId == chatPartner.userId) {
                 PartnerChat(
-                    memberName = chatPartner.userName,
-                    nickname = chatPartner.nickName,
+                    chatPartner = chatPartner,
                     messages = it
                 )
             } else {
