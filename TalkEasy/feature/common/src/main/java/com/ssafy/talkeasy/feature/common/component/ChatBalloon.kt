@@ -87,7 +87,9 @@ fun MyChatItemHead(type: Int) {
 
     Box {
         Icon(
-            modifier = Modifier.align(Alignment.TopStart),
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = 10.dp),
             painter = painterResource(id = R.drawable.bg_chat_balloon_right_head),
             contentDescription = stringResource(R.string.image_the_person_chat_balloon_head),
             tint = color
