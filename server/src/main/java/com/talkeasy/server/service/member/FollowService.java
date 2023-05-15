@@ -11,8 +11,12 @@ import com.talkeasy.server.domain.member.Follow;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.user.FollowRequestDto;
 import com.talkeasy.server.dto.user.FollowResponse;
+import com.talkeasy.server.dto.user.LastChatResponse;
 import com.talkeasy.server.service.chat.ChatService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.core.QueueInformation;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -32,6 +36,7 @@ public class FollowService {
 
     private final MongoTemplate mongoTemplate;
     private final ChatService chatService;
+    private final RabbitAdmin rabbitAdmin;
 
     //    public String follow(OAuth2UserImpl myId, String toUserId, FollowRequestDto followRequestDto) throws IOException {
     public String follow(String myId, String toUserId, FollowRequestDto followRequestDto) throws IOException {
@@ -59,17 +64,17 @@ public class FollowService {
 
         Follow follow = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("fromUserId").is(myId).and("toUserId").is(toUserId)), Follow.class)).orElse(null);
 
-        if (follow!= null) {
+        if (follow != null) {
             throw new ResourceAlreadyExistsException("이미 팔로우되어 있습니다");
         }
 
         Member member = chatService.getMemberById(myId);
         Follow toFollow;
 
-        if(member.getRole()==1) { // 내가 피보호자
+        if (member.getRole() == 1) { // 내가 피보호자
             //보호자
             toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo("").mainStatus(false).locationStatus(false).nickName("").build();
-        }else{
+        } else {
             //비보호자
             toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo("").mainStatus(false).locationStatus(true).nickName("").build();
         }
@@ -89,7 +94,7 @@ public class FollowService {
 
         ChatRoom chatRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("users").all(toUserId, myId)), ChatRoom.class)).orElse(null);
 
-        if(chatRoom!=null) {
+        if (chatRoom != null) {
             chatService.deleteRoom(chatRoom.getId(), myId);
         }
         return "언팔로우 성공";
@@ -106,16 +111,35 @@ public class FollowService {
 
         Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(userId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("member", "userId", userId));
 
-        List<Follow> filteredMetaData = mongoTemplate.find(new Query(Criteria.where("fromUserId").is(userId)), Follow.class);
+        List<Follow> filteredMetaData = mongoTemplate.find(new Query(Criteria.where("fromUserId").is(userId))
+                .with(Sort.by(Sort.Direction.DESC, "mainStatus")), Follow.class);
 
         List<FollowResponse> result = filteredMetaData.stream()
-                .map((follow) ->
-                        new FollowResponse(mongoTemplate.findOne(Query.query(Criteria.where("id").is(follow.getToUserId())), Member.class),
-                                follow,
-                                findChatRoom(follow.getFromUserId(), follow.getToUserId())))
+                .map((follow) -> {
+                    FollowResponse followResponse = new FollowResponse(mongoTemplate.findOne(Query.query(Criteria.where("id").is(follow.getToUserId()))
+                            .with(Sort.by(Sort.Direction.ASC, "name")), Member.class),
+                            follow,
+                            findChatRoom(follow.getFromUserId(), follow.getToUserId()));
+
+                    LastChat lastChat = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("roomId").is(followResponse.getRoomId())
+                            .and("userId").is(userId)), LastChat.class)).orElse(null);
+
+                    LastChatResponse lastChatResponse = null;
+                    if (lastChat != null) {
+                        lastChatResponse = LastChatResponse.builder()
+                                .msg(lastChat.getMsg())
+                                .created_dt(lastChat.getCreated_dt())
+                                .readCnt(getNotReadCount(lastChat, userId))
+                                .build();
+                    }
+                    followResponse.setLastChat(lastChatResponse);
+
+                    return followResponse;
+                })
                 .collect(Collectors.toList());
 
-        Collections.sort(result, Comparator.comparing(FollowResponse::getUserName));
+
+//        Collections.sort(result, Comparator.comparing(FollowResponse::getUserName));
 
         return new PagedResponse(HttpStatus.OK, result, 1);
     }
@@ -139,7 +163,7 @@ public class FollowService {
 
         isMine(myInfo.getId(), follow.getFromUserId());
 
-        if (myInfo.getRole() == 0){
+        if (myInfo.getRole() == 0) {
             // 보호자라면 피보호자의 별명을 설정할 수 없다
             throw new ArgumentMismatchException("보호자는 피보호자의 별명을 설정할 수 없습니다.");
         }
@@ -165,9 +189,30 @@ public class FollowService {
         
         FollowResponse result = new FollowResponse(member, follow, chatRoom);
 
+        LastChat lastChat = mongoTemplate.findOne(Query.query(Criteria.where("roomId").is(result.getRoomId())
+        .and("userId").is(myId)), LastChat.class);
+
+        LastChatResponse lastChatResponse = null;
+        if (lastChat != null) {
+            lastChatResponse = LastChatResponse.builder()
+                    .msg(lastChat.getMsg())
+                    .created_dt(lastChat.getCreated_dt())
+                    .readCnt(getNotReadCount(lastChat, myId))
+                    .build();
+        }
+
+        result.setLastChat(lastChatResponse);
+
         return result;
     }
 
+    int getNotReadCount(LastChat lastChat, String myId){
+        QueueInformation queueInformation = chatService.getQueueInfo(lastChat.getRoomId(), myId);
+        if(queueInformation!=null) {
+            return queueInformation.getMessageCount();
+        }
+        return 0;
+    }
 
     private ChatRoom findChatRoom(String fromUserId, String toUserId) {
 

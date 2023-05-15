@@ -1,6 +1,7 @@
 package com.talkeasy.server.dto.user;
 
 import com.talkeasy.server.domain.chat.ChatRoom;
+import com.talkeasy.server.domain.chat.LastChat;
 import com.talkeasy.server.domain.member.Follow;
 import com.talkeasy.server.domain.member.Member;
 import lombok.AllArgsConstructor;
@@ -24,6 +25,7 @@ public class FollowResponse {
     private Boolean mainStatus; // 주보호자 설정
     private Boolean locationStatus; // 위치정보 제공 동의 여부 설정
     private String nickName;
+    private LastChatResponse lastChat;
 
     public FollowResponse(Member member, Follow follow, ChatRoom chatRoom) {
         this.followId = follow.getId();
