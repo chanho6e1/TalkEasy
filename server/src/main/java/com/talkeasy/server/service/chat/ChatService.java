@@ -67,8 +67,8 @@ public class ChatService {
 
         createQueue(new ChatRoomDto(chatRoomDto));
 
-        doCreateRoomChat(chatRoomDto, user1);
-        doCreateRoomChat(chatRoomDto, user2);
+//        doCreateRoomChat(chatRoomDto, user1);
+//        doCreateRoomChat(chatRoomDto, user2);
 
         return CommonResponse.of(HttpStatus.CREATED, chatRoom.getId());
 
@@ -306,7 +306,6 @@ public class ChatService {
         String queueName = String.format("chat.queue.%s.%s", roomId, userId);
         return rabbitAdmin.getQueueInfo(queueName);
     }
-
 
     public void saveLastChat(ChatRoomDetail chat) {
 

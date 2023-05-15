@@ -186,7 +186,7 @@ public class FollowService {
 
         /* 두명이 속한 채팅방 번호도 response에 추가*/
         ChatRoom chatRoom = findChatRoom(follow.getFromUserId(), follow.getToUserId());
-
+        
         FollowResponse result = new FollowResponse(member, follow, chatRoom);
 
         LastChat lastChat = mongoTemplate.findOne(Query.query(Criteria.where("roomId").is(result.getRoomId())

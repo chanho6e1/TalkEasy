@@ -50,9 +50,12 @@ public class FollowController {
                                                  @PathVariable("followId") String followId) throws IOException {
 
 //        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+//                HttpStatus.CREATED, followService.getUserInfoByFollow("6459dfcf393c266aa80f5710", "645b7a87019c7f5131d179b0")));
+
 //                HttpStatus.CREATED, followService.getUserInfoByFollow("64613b09971240357edbb88f", "64617a36596a5a20f5a76007")));
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, followService.getUserInfoByFollow(oAuth2User.getId(), followId)));
+
     }
 
     @ApiOperation(value = "특이사항 수정", notes = "followId를 주면 특이사항 수정 가능")
