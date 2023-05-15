@@ -6,6 +6,7 @@ import com.talkeasy.server.common.exception.ArgumentMismatchException;
 import com.talkeasy.server.common.exception.ResourceAlreadyExistsException;
 import com.talkeasy.server.common.exception.ResourceNotFoundException;
 import com.talkeasy.server.domain.chat.ChatRoom;
+import com.talkeasy.server.domain.chat.LastChat;
 import com.talkeasy.server.domain.member.Follow;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.user.FollowRequestDto;
@@ -161,11 +162,12 @@ public class FollowService {
 
         /* 두명이 속한 채팅방 번호도 response에 추가*/
         ChatRoom chatRoom = findChatRoom(follow.getFromUserId(), follow.getToUserId());
-
+        
         FollowResponse result = new FollowResponse(member, follow, chatRoom);
 
         return result;
     }
+
 
     private ChatRoom findChatRoom(String fromUserId, String toUserId) {
 

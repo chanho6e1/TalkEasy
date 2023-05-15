@@ -307,7 +307,6 @@ public class ChatService {
         return rabbitAdmin.getQueueInfo(queueName);
     }
 
-
     public void saveLastChat(ChatRoomDetail chat) {
 
         saveLastChatDetail(chat, chat.getFromUserId());
