@@ -21,6 +21,7 @@ public class Scheduler {
 
     private final KafkaConsumerService kafkaConsumerService;
     private final KafkaProducerService kafkaProducerService;
+    private final RestTemplateService restTemplateService;
 
     @Scheduled(cron = "0 3 0/12 * * *", zone = "Asia/Seoul") // 00:03, 12:03 에 postgresQL에 데이터 저장
     public void locationEvent() {
@@ -44,10 +45,15 @@ public class Scheduler {
         LocationDto locationDto = new LocationDto();
         locationDto.setUserId("64613b09971240357edbb88f");
         locationDto.setName("강은선인데이름이왕왕길어용괜찮아욥");
-        locationDto.setLon(String.valueOf(lon));
-        locationDto.setLat(String.valueOf(lat));
+        locationDto.setLon(lon);
+        locationDto.setLat(lat);
 
         kafkaProducerService.sendMessage(locationDto);
     }
 
+    @Scheduled(cron = "0 3 0 * * *", zone = "Asia/Seoul")
+    public void makeWeeklyReport() {
+
+        restTemplateService.requestDayAnalysis();
+    }
 }
