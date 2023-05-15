@@ -40,6 +40,8 @@ kotlinx-coroutines = "1.5.2"
 
 lottie-compose = "6.0.0"
 
+rabbitmq = "5.17.0"
+
 [libraries]
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -102,6 +104,8 @@ kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutine
 javax-inject = { module = "javax.inject:javax.inject", version = "1" }
 
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie-compose" }
+
+rabbitmq = { module = "com.rabbitmq:amqp-client", version.ref = "rabbitmq" }
 
 [bundles]
 androidx = ["androidx-core", "androidx-navigation-fragment", "androidx-navigation-ui", "androidx-navigation-fragment-ktx", "androidx-navigation-ui-ktx",
