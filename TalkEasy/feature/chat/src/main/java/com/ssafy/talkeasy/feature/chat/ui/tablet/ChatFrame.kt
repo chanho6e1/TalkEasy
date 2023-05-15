@@ -10,10 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,8 +34,6 @@ import com.ssafy.talkeasy.core.domain.entity.response.Chat
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.chat.ChatViewModel
 import com.ssafy.talkeasy.feature.chat.R
-import com.ssafy.talkeasy.feature.chat.ui.tablet.balloon.MyChat
-import com.ssafy.talkeasy.feature.chat.ui.tablet.balloon.PartnerChat
 import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.R.string
 import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
@@ -66,6 +66,12 @@ fun ConstraintLayoutScope.ChatRoomBox(
         mutableStateOf(1)
     }
 
+    LaunchedEffect(key1 = chatPartner?.followId, key2 = chatMode) {
+        if (chatMode == ChatMode.CHAT && chatPartner != null) {
+            chatViewModel.getChatHistory(chatPartner.roomId, offset, 50)
+        }
+    }
+
     if (isOpened) {
         Box(
             modifier = Modifier
@@ -96,7 +102,6 @@ fun ConstraintLayoutScope.ChatRoomBox(
                     betweenValue = 20
                 )
             } else {
-                chatViewModel.getChatHistory(chatPartner.roomId, offset, 50)
                 chats?.let { ChatContent(chatPartner = chatPartner, chats = it) }
             }
         }
@@ -113,11 +118,15 @@ fun ConstraintLayoutScope.ChatRoomBox(
 
 @Composable
 fun ChatContent(chatPartner: Follow, chats: List<Chat>) {
+    val chatList = sublistChat(chats)
+    val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = chatList.lastIndex)
+
     LazyColumn(
         modifier = Modifier.padding(11.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        state = scrollState
     ) {
-        items(items = sublistChat(chats)) {
+        items(items = chatList) {
             if (it[0].fromUserId == chatPartner.userId) {
                 PartnerChat(chatPartner = chatPartner, messages = it)
             } else {
@@ -213,7 +222,7 @@ fun sublistChat(chats: List<Chat>): List<List<Chat>> {
         firstChat = chats[startIndex]
     }
 
-    result.add(chats.subList(startIndex, lastIndex + 1))
+    result.add(chats.subList(startIndex, lastIndex))
 
     return result
 }
