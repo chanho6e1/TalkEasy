@@ -28,6 +28,9 @@ class FollowViewModel @Inject constructor(
     private val _followList = MutableStateFlow<List<Follow>?>(null)
     val followList: StateFlow<List<Follow>?> = _followList
 
+    private val _selectFollow = MutableStateFlow<Follow?>(null)
+    val selectFollow: StateFlow<Follow?> = _selectFollow
+
     fun requestMemberInfo() = viewModelScope.launch {
         when (val value = memberInfoUseCase()) {
             is Resource.Success<Default<MemberInfo>> -> {
@@ -54,5 +57,9 @@ class FollowViewModel @Inject constructor(
                 "requestFollowList: ${value.errorMessage}"
             )
         }
+    }
+
+    fun setSelectFollow(follow: Follow) {
+        _selectFollow.value = follow
     }
 }
