@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.core.QueueInformation;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -24,6 +26,7 @@ public class ChatReadService {
     private final MongoTemplate mongoTemplate;
     private final RabbitTemplate rabbitTemplate;
     private final Gson gson;
+    private final RabbitAdmin rabbitAdmin;
 
     public ChatReadDto convertChat(Message message) {
         String str = new String(message.getBody());
@@ -37,8 +40,9 @@ public class ChatReadService {
         List<ChatRoomDetail> chatList = mongoTemplate.find(Query.query(Criteria.where("created_dt").lt(chatReadDto.getReadTime()).and("readCnt").is(1)
                 .and("roomId").is(chatReadDto.getRoomId())), ChatRoomDetail.class);
 
-        for(ChatRoomDetail chat : chatList) {
+        for (ChatRoomDetail chat : chatList) {
             if (!chatReadDto.getReadUserId().equals(chat.getFromUserId())) {
+                /* 상대방이 수신 시 */
                 if (chat.getReadCnt() > 0) {
                     chat.setReadCnt(0);
                     mongoTemplate.save(chat);
@@ -59,10 +63,18 @@ public class ChatReadService {
 
                     Message msg = MessageBuilder.withBody(gson.toJson(chatReadResponseDto).getBytes()).build();
 
-                    rabbitTemplate.send("read.exchange", sb.toString(), msg);
-
+                    if (getReadQueueInfo(chat.getRoomId(), chat.getToUserId()) != null) {
+                        rabbitTemplate.send("read.exchange", sb.toString(), msg);
+                    }
                 }
             }
         }
     }
+
+    public QueueInformation getReadQueueInfo(String roomId, String userId) {
+        String queueName = String.format("read.queue.%s.%s", roomId, userId);
+        return rabbitAdmin.getQueueInfo(queueName);
+    }
+
+
 }
