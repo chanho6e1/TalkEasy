@@ -51,6 +51,7 @@ import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_primary
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_secondaryContainer
 import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
+import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.follow.R
 import java.time.LocalDateTime
 
@@ -232,7 +233,7 @@ internal fun AddFollowDetailContent(
                     .wrapContentHeight(),
                 contentAlignment = Alignment.Center
             ) {
-                Profile(profileUrl = profileUrl, size = 116)
+                Profile(profileUrl = profileUrl, size = 116, chatMode = ChatMode.CHAT)
             }
         }
 

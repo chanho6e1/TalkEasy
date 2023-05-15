@@ -40,6 +40,7 @@ import com.ssafy.talkeasy.feature.common.ui.theme.delta
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.sunset_orange
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
+import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.common.util.toTimeString
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
 import com.ssafy.talkeasy.feature.follow.R
@@ -199,7 +200,7 @@ fun FollowListItem(
             .clickable { onSelectedItem(item) },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Profile(item.imageUrl, 56)
+        Profile(item.imageUrl, 56, ChatMode.CHAT)
 
         Column(
             modifier = modifier

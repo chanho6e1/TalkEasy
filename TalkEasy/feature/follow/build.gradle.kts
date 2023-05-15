@@ -51,6 +51,10 @@ dependencies {
 
     implementation(libs.glide.compose)
 
+    implementation(libs.retrofit.converter.gson)
+
+    implementation(libs.zxing.android.embedded)
+
     implementation(project(":core:domain"))
     implementation(project(":feature:common"))
 }

@@ -49,17 +49,7 @@ fun AACTopBar(onRight: Boolean) {
         ) {
             ButtonSOS()
 
-            Row(horizontalArrangement = Arrangement.End) {
-                ButtonAlarmAndSetting()
-
-                Spacer(modifier = Modifier.width(20.dp))
-
-                // if (chatMode) {
-                //     ChatPartner(name = memberName)
-                // } else {
-                //     DefaultProfile()
-                // }
-            }
+            ButtonAlarmAndSetting()
         }
     }
 }
