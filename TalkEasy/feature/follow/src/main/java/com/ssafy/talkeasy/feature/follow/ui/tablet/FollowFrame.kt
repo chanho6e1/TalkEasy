@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
@@ -39,11 +40,17 @@ import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold22
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
+import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
 import com.ssafy.talkeasy.feature.follow.R
 
 @Composable
-fun FollowFrame(onDismiss: () -> Unit, followViewModel: FollowViewModel = viewModel()) {
+fun FollowFrame(
+    onDismiss: () -> Unit,
+    setChatMode: (ChatMode) -> Unit,
+    setChatPartner: (Follow) -> Unit,
+    followViewModel: FollowViewModel = viewModel(),
+) {
     val followList by followViewModel.followList.collectAsState()
     val (isShowManageFollowDialog, setIsShowManageFollowDialog) = remember {
         mutableStateOf(false)
@@ -55,7 +62,7 @@ fun FollowFrame(onDismiss: () -> Unit, followViewModel: FollowViewModel = viewMo
         }
     }
 
-    Dialog(onDismissRequest = { onDismiss() }) {
+    Dialog(onDismissRequest = onDismiss) {
         Card(
             modifier = Modifier
                 .width(500.dp)
@@ -72,11 +79,20 @@ fun FollowFrame(onDismiss: () -> Unit, followViewModel: FollowViewModel = viewMo
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                TTSModeFollow() { setIsShowManageFollowDialog(true) }
+                TTSModeFollow(
+                    setChatMode = { chatMode -> setChatMode(chatMode) },
+                    closeFollowDialog = onDismiss
+                )
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                ChatModeFollow(followList)
+                ChatModeFollow(
+                    followList = followList,
+                    setChatMode = { chatMode -> setChatMode(chatMode) },
+                    setChatPartner = { chatPartner -> setChatPartner(chatPartner) },
+                    showManageFollowDialog = { setIsShowManageFollowDialog(true) },
+                    closeFollowDialog = onDismiss
+                )
             }
         }
     }

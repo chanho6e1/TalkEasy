@@ -56,7 +56,11 @@ fun AACRouteFrame(
 
     if (showFollowDialog) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            FollowFrame(onDismiss = { setShowFollowDialog(false) })
+            FollowFrame(
+                onDismiss = { setShowFollowDialog(false) },
+                setChatMode = { chatMode -> aacViewModel.setChatMode(chatMode) },
+                setChatPartner = { chatPartner -> aacViewModel.setChatPartner(chatPartner) }
+            )
         }
     }
 

@@ -67,4 +67,8 @@ class AACViewModel @Inject constructor(private val sharedPreferences: SharedPref
     fun setChatMode(mode: ChatMode) {
         _chatMode.value = mode
     }
+
+    fun setChatPartner(chatPartner: Follow?) {
+        _chatPartner.value = chatPartner
+    }
 }

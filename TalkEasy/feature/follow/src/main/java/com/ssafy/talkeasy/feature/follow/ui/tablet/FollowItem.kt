@@ -1,5 +1,8 @@
 package com.ssafy.talkeasy.feature.follow.ui.tablet
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Badge
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -37,9 +40,8 @@ import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.common.util.toTimeString
 import com.ssafy.talkeasy.feature.follow.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TTSModeFollow(onClickListener: () -> Unit) {
+fun TTSModeFollow(setChatMode: (ChatMode) -> Unit, closeFollowDialog: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -67,14 +69,27 @@ fun TTSModeFollow(onClickListener: () -> Unit) {
             )
         }
 
-        Surface(modifier = Modifier.padding(horizontal = 8.dp), onClick = { onClickListener() }) {
+        Surface(
+            modifier = Modifier
+                .padding(horizontal = 8.dp)
+                .clickable {
+                    setChatMode(ChatMode.TTS)
+                    closeFollowDialog()
+                }
+        ) {
             TTSFollowItem()
         }
     }
 }
 
 @Composable
-fun ChatModeFollow(followList: List<Follow>?) {
+fun ChatModeFollow(
+    followList: List<Follow>?,
+    setChatMode: (ChatMode) -> Unit,
+    setChatPartner: (Follow) -> Unit,
+    showManageFollowDialog: () -> Unit,
+    closeFollowDialog: () -> Unit,
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -99,31 +114,51 @@ fun ChatModeFollow(followList: List<Follow>?) {
                 )
             }
         } else {
-            FollowList(followList = followList)
+            FollowList(
+                followList = followList,
+                setChatMode = { chatMode -> setChatMode(chatMode) },
+                setChatPartner = { chatPartner -> setChatPartner(chatPartner) },
+                showManageFollowDialog = showManageFollowDialog,
+                closeFollowDialog = closeFollowDialog
+            )
         }
     }
 }
 
 @Composable
-fun FollowList(followList: List<Follow>) {
+fun FollowList(
+    followList: List<Follow>,
+    setChatMode: (ChatMode) -> Unit,
+    setChatPartner: (Follow) -> Unit,
+    showManageFollowDialog: () -> Unit,
+    closeFollowDialog: () -> Unit,
+) {
     var isFirstNormalFollow = false
 
     LazyColumn(
         modifier = Modifier.padding(horizontal = 8.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        items(items = followList) { follow ->
+        itemsIndexed(items = followList) { index, follow ->
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                if (follow.mainStatus) {
-                    isFirstNormalFollow = true
-                } else if (isFirstNormalFollow) {
-                    isFirstNormalFollow = false
-                    Divider(thickness = 1.5.dp, color = black_squeeze)
-                } else {
-                    Divider(thickness = 1.dp, color = black_squeeze)
+                if (followList.size != 1) {
+                    if (follow.mainStatus) {
+                        isFirstNormalFollow = true
+                    } else if (isFirstNormalFollow && index > 0) {
+                        isFirstNormalFollow = false
+                        Divider(thickness = 1.5.dp, color = black_squeeze)
+                    } else if (index > 0) {
+                        Divider(thickness = 1.dp, color = black_squeeze)
+                    }
                 }
 
-                FollowItem(follow = follow)
+                FollowItem(
+                    follow = follow,
+                    setChatMode = { chatMode -> setChatMode(chatMode) },
+                    setChatPartner = { chatPartner -> setChatPartner(chatPartner) },
+                    showManageFollowDialog = showManageFollowDialog,
+                    closeFollowDialog = closeFollowDialog
+                )
             }
         }
     }
@@ -145,9 +180,15 @@ fun TTSFollowItem() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun FollowItem(follow: Follow) {
+fun FollowItem(
+    follow: Follow,
+    setChatMode: (ChatMode) -> Unit,
+    setChatPartner: (Follow) -> Unit,
+    showManageFollowDialog: () -> Unit,
+    closeFollowDialog: () -> Unit,
+) {
     val memberName: String = if (follow.nickName == "") {
         follow.userName
     } else {
@@ -171,12 +212,21 @@ fun FollowItem(follow: Follow) {
         }
 
         Row(
+            modifier = Modifier.combinedClickable(
+                onClick = {
+                    setChatMode(ChatMode.CHAT)
+                    setChatPartner(follow)
+                    closeFollowDialog()
+                },
+                onLongClick = { showManageFollowDialog() }
+            ),
             horizontalArrangement = Arrangement.spacedBy(14.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Profile(profileUrl = follow.imageUrl, chatMode = ChatMode.CHAT)
 
             Column(
+                modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(9.dp),
                 horizontalAlignment = Alignment.Start
             ) {
@@ -188,31 +238,30 @@ fun FollowItem(follow: Follow) {
 
                 Text(text = "가장 최근 메세지", style = typography.bodyMedium, color = cabbage_pont)
             }
-        }
 
-        Column(
-            modifier = Modifier.align(Alignment.End),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.End
-        ) {
-            Text(
-                text = "2023-05-04T16:16:38.417705".toTimeString(),
-                color = delta,
-                style = typography.bodySmall
-            )
-
-            val newMessageCount = 3
-            Badge(
-                containerColor = sunset_orange,
-                contentColor = md_theme_light_background
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalAlignment = Alignment.End
             ) {
                 Text(
-                    text = if (newMessageCount >= 99) {
-                        "+99"
-                    } else {
-                        newMessageCount.toString()
-                    }
+                    text = "2023-05-04T16:16:38.417705".toTimeString(),
+                    color = delta,
+                    style = typography.bodySmall
                 )
+
+                val newMessageCount = 3
+                Badge(
+                    containerColor = sunset_orange,
+                    contentColor = md_theme_light_background
+                ) {
+                    Text(
+                        text = if (newMessageCount >= 99) {
+                            "+99"
+                        } else {
+                            newMessageCount.toString()
+                        }
+                    )
+                }
             }
         }
     }
