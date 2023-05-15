@@ -167,8 +167,6 @@ fun FollowListContent(
             itemsIndexed(items = followList) { _, item ->
                 FollowListItem(
                     item = item,
-                    time = "",
-                    newMessageCount = 0,
                     onSelectedItem = onSelectedItem
                 )
             }
@@ -190,8 +188,6 @@ fun FollowListContent(
 fun FollowListItem(
     modifier: Modifier = Modifier,
     item: Follow,
-    time: String,
-    newMessageCount: Int,
     onSelectedItem: (Follow) -> Unit,
 ) {
     Row(
@@ -225,10 +221,10 @@ fun FollowListItem(
 
                 Spacer(modifier = modifier.width(10.dp))
 
-                if (time.isNotEmpty()) {
+                item.lastChat?.let { lastChat ->
                     Row(modifier = modifier, horizontalArrangement = Arrangement.Center) {
                         Text(
-                            text = time.toTimeString(),
+                            text = lastChat.time.toTimeString(),
                             style = typography.bodySmall,
                             color = delta
                         )
@@ -241,36 +237,36 @@ fun FollowListItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row() {
-                    Text(
-                        text = String.format(
-                            stringResource(
-                                id = R.string.content_gender_age,
-                                if (item.gender == 0) {
-                                    stringResource(id = R.string.content_man)
-                                } else {
-                                    stringResource(id = R.string.content_woman)
-                                },
-                                item.age ?: 0
-                            )
-                        ),
-                        style = typography.bodyLarge,
-                        color = cabbage_pont
-                    )
-                }
-
-                if (newMessageCount > 0) {
-                    Badge(
-                        containerColor = sunset_orange,
-                        contentColor = md_theme_light_background
-                    ) {
-                        Text(
-                            text = if (newMessageCount >= 99) {
-                                "+99"
+                Text(
+                    text = String.format(
+                        stringResource(
+                            id = R.string.content_gender_age,
+                            if (item.gender == 0) {
+                                stringResource(id = R.string.content_man)
                             } else {
-                                newMessageCount.toString()
-                            }
+                                stringResource(id = R.string.content_woman)
+                            },
+                            item.age ?: 0
                         )
+                    ),
+                    style = typography.bodyLarge,
+                    color = cabbage_pont
+                )
+
+                item.lastChat?.let { lastChat ->
+                    if (lastChat.readCount > 0) {
+                        Badge(
+                            containerColor = sunset_orange,
+                            contentColor = md_theme_light_background
+                        ) {
+                            Text(
+                                text = if (lastChat.readCount >= 99) {
+                                    "+99"
+                                } else {
+                                    lastChat.readCount.toString()
+                                }
+                            )
+                        }
                     }
                 }
             }
