@@ -32,9 +32,12 @@ public class ChatRoomHandler {
         log.info(" message : {}", message);
         System.out.println("hihihihhihi");
         ChatRoomDetail chat = chatService.convertChat(message);
-        if(chat.getRoomId().equals("0")) {
+        if(chat == null) {
+            log.info("========== chatControl 유효하지 않은 접근입니다 ==========");
             return;
         }
+
+
 //        //비즈니스 로직 (mongodb 저장, 채팅 보내기)
         String roomId = chatService.saveChat(chat);
         chat.setRoomId(roomId);
