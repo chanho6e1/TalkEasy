@@ -17,4 +17,6 @@ public class MessageDto{
     private String msg; // 메시지 내용
     private String created_dt; // 생성 시간?
     private int type; // 0(msg) :: 1(location) :: 2(sos)
+    private int status; //0(REQUEST) :: 1(RESULT) :: 2(REJECT)
+
 }

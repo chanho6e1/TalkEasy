@@ -50,12 +50,11 @@ public class FollowController {
                                                  @PathVariable("followId") String followId) throws IOException {
 
 //        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-//                HttpStatus.CREATED, followService.getUserInfoByFollow("645a0420c5b2c82e3afaf9e4", "645b7a87019c7f5131d179af")));
+//                HttpStatus.CREATED, followService.getUserInfoByFollow("6459dfcf393c266aa80f5710", "645b7a87019c7f5131d179b0")));
+
+//                HttpStatus.CREATED, followService.getUserInfoByFollow("64613b09971240357edbb88f", "64617a36596a5a20f5a76007")));
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, followService.getUserInfoByFollow(oAuth2User.getId(), followId)));
-
-//        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-//                HttpStatus.CREATED, followService.getUserInfoByFollow("6459dfcf393c266aa80f5710", "645b7a87019c7f5131d179b0")));
 
     }
 
@@ -91,7 +90,7 @@ public class FollowController {
         return ResponseEntity.ok().body((
                 followService.getfollow(oAuth2User.getId())));
 //        return ResponseEntity.ok().body((
-//                followService.getfollow("6459dfcf393c266aa80f5710")));
+//                followService.getfollow("64613b09971240357edbb88f")));
     }
 
     @ApiOperation(value = "피보호자가 보호자 별명 수정", notes = "피보호자가 보호자의 별명 설정\n" +

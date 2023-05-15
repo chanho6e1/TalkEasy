@@ -67,8 +67,8 @@ public class ChatService {
 
         createQueue(new ChatRoomDto(chatRoomDto));
 
-        doCreateRoomChat(chatRoomDto, user1);
-        doCreateRoomChat(chatRoomDto, user2);
+//        doCreateRoomChat(chatRoomDto, user1);
+//        doCreateRoomChat(chatRoomDto, user2);
 
         return CommonResponse.of(HttpStatus.CREATED, chatRoom.getId());
 
@@ -187,7 +187,7 @@ public class ChatService {
         if (chat.getType() == 2) {
             alarm.setType(2);
             /*00님이 긴급 도움 요청을 하셨습니다*/
-            createAlarm(chat, toMember.getName()+"님께서 긴급 도움 요청을 하셨습니다", toMember.getName(), 2, toMember.getId());
+            createAlarm(chat, toMember.getName() + "님께서 긴급 도움 요청을 하셨습니다", toMember.getName(), 2, toMember.getId());
 //            createAlarm(chat, fromMember.getName()+"이 긴급 도움 요청을 하셨습니다", fromMember.getName(), 2, toMember.getId());
         }
     }
@@ -214,8 +214,12 @@ public class ChatService {
         PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
         PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
 
-        rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getToUserId(), gson.toJson(toUserList));
-        rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
+        if (getUserQueueInfo(chat.getToUserId()) != null) {
+            rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getToUserId(), gson.toJson(toUserList));
+        }
+        if (getUserQueueInfo(chat.getFromUserId()) != null) {
+            rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
+        }
 
         /* FCM 알림 - 안드로이드 FCM 연결 시, 주석 풀 것. */
 //        Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getFromUserId())), Member.class);
@@ -227,6 +231,13 @@ public class ChatService {
 
 
     public void sendChatMessage(ChatRoomDetail chat, String toUserId) {
+
+        //해당 채팅방이 있는지 확인하고 전송
+        QueueInformation queueInformation = getQueueInfo(chat.getRoomId(), toUserId);
+        if (queueInformation == null) {
+            return;
+        }
+
         String routingKey = String.format("room.%s.%s", chat.getRoomId(), toUserId);
 
         Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
@@ -307,6 +318,10 @@ public class ChatService {
         return rabbitAdmin.getQueueInfo(queueName);
     }
 
+    public QueueInformation getUserQueueInfo(String userId) {
+        String queueName = String.format("user.queue.%s", userId);
+        return rabbitAdmin.getQueueInfo(queueName);
+    }
 
     public void saveLastChat(ChatRoomDetail chat) {
 
