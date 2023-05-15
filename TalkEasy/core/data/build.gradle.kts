@@ -25,6 +25,8 @@ dependencies {
     implementation(libs.bundles.retrofit)
     implementation(libs.bundles.okhttp3)
 
+    implementation(libs.rabbitmq)
+
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 
