@@ -236,31 +236,34 @@ fun FollowItem(
                     color = md_theme_light_onBackground
                 )
 
-                Text(text = "가장 최근 메세지", style = typography.bodyMedium, color = cabbage_pont)
+                follow.lastChat?.let {
+                    Text(text = it.message, style = typography.bodyMedium, color = cabbage_pont)
+                }
             }
 
-            Column(
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.End
-            ) {
-                Text(
-                    text = "2023-05-04T16:16:38.417705".toTimeString(),
-                    color = delta,
-                    style = typography.bodySmall
-                )
-
-                val newMessageCount = 3
-                Badge(
-                    containerColor = sunset_orange,
-                    contentColor = md_theme_light_background
+            follow.lastChat?.let {
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalAlignment = Alignment.End
                 ) {
                     Text(
-                        text = if (newMessageCount >= 99) {
-                            "+99"
-                        } else {
-                            newMessageCount.toString()
-                        }
+                        text = it.time.toTimeString(),
+                        color = delta,
+                        style = typography.bodySmall
                     )
+
+                    Badge(
+                        containerColor = sunset_orange,
+                        contentColor = md_theme_light_background
+                    ) {
+                        Text(
+                            text = if (it.readCount >= 99) {
+                                "+99"
+                            } else {
+                                it.readCount.toString()
+                            }
+                        )
+                    }
                 }
             }
         }
