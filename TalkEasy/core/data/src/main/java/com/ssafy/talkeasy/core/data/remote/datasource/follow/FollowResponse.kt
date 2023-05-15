@@ -14,7 +14,7 @@ data class FollowResponse(
     @SerializedName("imageUrl")
     val imageUrl: String,
     @SerializedName("memo")
-    val memo: String?,
+    val memo: String,
     @SerializedName("mainStatus")
     val mainStatus: Boolean,
     @SerializedName("age")
