@@ -208,7 +208,10 @@ public class FollowService {
 
     int getNotReadCount(LastChat lastChat, String myId){
         QueueInformation queueInformation = chatService.getQueueInfo(lastChat.getRoomId(), myId);
-        return queueInformation.getMessageCount();
+        if(queueInformation!=null) {
+            return queueInformation.getMessageCount();
+        }
+        return 0;
     }
 
     private ChatRoom findChatRoom(String fromUserId, String toUserId) {
