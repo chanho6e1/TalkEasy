@@ -10,9 +10,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,9 +34,8 @@ import com.ssafy.talkeasy.core.domain.entity.response.Chat
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.chat.ChatViewModel
 import com.ssafy.talkeasy.feature.chat.R
-import com.ssafy.talkeasy.feature.chat.ui.tablet.balloon.MyChat
-import com.ssafy.talkeasy.feature.chat.ui.tablet.balloon.PartnerChat
 import com.ssafy.talkeasy.feature.common.R.drawable
+import com.ssafy.talkeasy.feature.common.R.string
 import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
@@ -62,6 +64,12 @@ fun ConstraintLayoutScope.ChatRoomBox(
     val chats by chatViewModel.chats.collectAsState()
     val (offset, setOffset) = remember {
         mutableStateOf(1)
+    }
+
+    LaunchedEffect(key1 = chatPartner?.followId, key2 = chatMode) {
+        if (chatMode == ChatMode.CHAT && chatPartner != null) {
+            chatViewModel.getChatHistory(chatPartner.roomId, offset, 50)
+        }
     }
 
     if (isOpened) {
@@ -94,7 +102,6 @@ fun ConstraintLayoutScope.ChatRoomBox(
                     betweenValue = 20
                 )
             } else {
-                chatViewModel.getChatHistory(chatPartner.roomId, offset, 50)
                 chats?.let { ChatContent(chatPartner = chatPartner, chats = it) }
             }
         }
@@ -111,17 +118,17 @@ fun ConstraintLayoutScope.ChatRoomBox(
 
 @Composable
 fun ChatContent(chatPartner: Follow, chats: List<Chat>) {
+    val chatList = sublistChat(chats)
+    val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = chatList.lastIndex)
+
     LazyColumn(
         modifier = Modifier.padding(11.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        state = scrollState
     ) {
-        items(items = sublistChat(chats)) {
+        items(items = chatList) {
             if (it[0].fromUserId == chatPartner.userId) {
-                PartnerChat(
-                    memberName = chatPartner.userName,
-                    nickname = chatPartner.nickName,
-                    messages = it
-                )
+                PartnerChat(chatPartner = chatPartner, messages = it)
             } else {
                 MyChat(messages = it)
             }
@@ -129,8 +136,9 @@ fun ChatContent(chatPartner: Follow, chats: List<Chat>) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatPartner(chatMode: ChatMode, chatPartner: Follow?) {
+fun ChatPartner(chatMode: ChatMode, chatPartner: Follow?, onChangeButtonClickListener: () -> Unit) {
     val profileUrl: String
     val memberName: String
 
@@ -139,11 +147,19 @@ fun ChatPartner(chatMode: ChatMode, chatPartner: Follow?) {
         memberName = stringResource(id = R.string.content_chat_mode_tts)
     } else {
         profileUrl = chatPartner.imageUrl
-        memberName = chatPartner.userName
+        memberName = if (chatPartner.nickName == "") {
+            chatPartner.userName
+        } else {
+            String.format(
+                stringResource(string.content_name_and_nickname),
+                chatPartner.userName,
+                chatPartner.nickName
+            )
+        }
     }
 
     Row(verticalAlignment = Alignment.CenterVertically) {
-        Profile(profileUrl = profileUrl, size = 48)
+        Profile(profileUrl = profileUrl, size = 48, chatMode = chatMode)
 
         Spacer(modifier = Modifier.width(14.dp))
 
@@ -156,7 +172,11 @@ fun ChatPartner(chatMode: ChatMode, chatPartner: Follow?) {
 
         Spacer(modifier = Modifier.width(28.dp))
 
-        Surface(shape = shapes.extraSmall, color = black_squeeze) {
+        Surface(
+            shape = shapes.extraSmall,
+            color = black_squeeze,
+            onClick = { onChangeButtonClickListener() }
+        ) {
             Text(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
                 text = "변경",
@@ -202,7 +222,7 @@ fun sublistChat(chats: List<Chat>): List<List<Chat>> {
         firstChat = chats[startIndex]
     }
 
-    result.add(chats.subList(startIndex, lastIndex + 1))
+    result.add(chats.subList(startIndex, lastIndex))
 
     return result
 }

@@ -41,6 +41,7 @@ import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold24
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleNormal22
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
+import com.ssafy.talkeasy.feature.common.util.ChatMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
@@ -114,7 +115,7 @@ fun RequestBrowse(profileUrl: String = "", memberName: String) {
                     end = 14.dp
                 )
             ) {
-                Profile(profileUrl, 58)
+                Profile(profileUrl, 58, ChatMode.CHAT)
             }
 
             Text(color = seed, style = textStyleBold24, text = memberName)

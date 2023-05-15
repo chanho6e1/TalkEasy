@@ -6,9 +6,9 @@ import com.ssafy.talkeasy.core.domain.entity.response.Auth
 
 data class AuthResponse(
     @SerializedName("token")
-    val token: String,
+    val token: String?,
     @SerializedName("name")
-    val name: String,
+    val name: String?,
 ) : DataToDomainMapper<Auth> {
 
     override fun toDomainModel(): Auth = Auth(token = token, name = name)

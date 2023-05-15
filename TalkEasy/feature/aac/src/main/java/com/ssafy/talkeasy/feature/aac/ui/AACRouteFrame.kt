@@ -7,13 +7,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
@@ -29,18 +29,40 @@ import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatPartner
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatRoomBox
 import com.ssafy.talkeasy.feature.chat.ui.tablet.OpenChatRoomButton
 import com.ssafy.talkeasy.feature.common.util.ChatMode
+import com.ssafy.talkeasy.feature.follow.FollowViewModel
+import com.ssafy.talkeasy.feature.follow.ui.tablet.FollowFrame
 
 @Composable
-@Preview(showBackground = true, widthDp = 1429, heightDp = 857)
-fun AACRouteFrame(aacViewModel: AACViewModel = hiltViewModel()) {
+fun AACRouteFrame(
+    aacViewModel: AACViewModel = hiltViewModel(),
+    followViewModel: FollowViewModel = hiltViewModel(),
+) {
     val marginTop = 18.dp
     val marginRight = 36.dp
     val marginLeft = 20.dp
     val (isOpened, setIsOpened) = remember {
         mutableStateOf(false)
     }
+    val (showFollowDialog, setShowFollowDialog) = remember {
+        mutableStateOf(false)
+    }
     val chatMode by aacViewModel.chatMode.collectAsState()
     val chatPartner by aacViewModel.chatPartner.collectAsState()
+
+    SideEffect {
+        followViewModel.requestMemberInfo()
+        followViewModel.requestFollowList()
+    }
+
+    if (showFollowDialog) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            FollowFrame(
+                onDismiss = { setShowFollowDialog(false) },
+                setChatMode = { chatMode -> aacViewModel.setChatMode(chatMode) },
+                setChatPartner = { chatPartner -> aacViewModel.setChatPartner(chatPartner) }
+            )
+        }
+    }
 
     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
         val (
@@ -58,7 +80,10 @@ fun AACRouteFrame(aacViewModel: AACViewModel = hiltViewModel()) {
             chatMode = chatMode,
             chatPartner = chatPartner,
             marginLeft = marginLeft
-        )
+        ) {
+            followViewModel.requestFollowList()
+            setShowFollowDialog(true)
+        }
 
         OpenChatRoomButtonBox(
             openChatRoomButtonRef = openChatRoomButtonRef,
@@ -104,6 +129,7 @@ fun ConstraintLayoutScope.ChatPartnerBox(
     chatMode: ChatMode,
     chatPartner: Follow?,
     marginLeft: Dp = 20.dp,
+    onChangeButtonClickListener: () -> Unit,
 ) {
     Box(
         modifier = Modifier.constrainAs(chatPartnerRef) {
@@ -112,7 +138,7 @@ fun ConstraintLayoutScope.ChatPartnerBox(
             bottom.linkTo(aacTopBarRef.bottom)
         }
     ) {
-        ChatPartner(chatMode = chatMode, chatPartner = chatPartner)
+        ChatPartner(chatMode = chatMode, chatPartner = chatPartner, onChangeButtonClickListener)
     }
 }
 

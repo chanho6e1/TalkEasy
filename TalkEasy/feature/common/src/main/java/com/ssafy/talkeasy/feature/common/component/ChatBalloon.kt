@@ -26,6 +26,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.core.domain.entity.response.Chat
+import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.common.R
 import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_error
@@ -36,22 +37,27 @@ import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
 import com.ssafy.talkeasy.feature.common.util.ChatDirection
+import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.common.util.ChatType
 import com.ssafy.talkeasy.feature.common.util.LocationStatus
 import com.ssafy.talkeasy.feature.common.util.toTimeString
 
 @Composable
-fun PartnerChatItemHead(memberName: String, nickname: String, type: Int) {
-    val chatName = if (nickname == "") {
-        memberName
+fun PartnerChatItemHead(chatPartner: Follow, type: Int) {
+    val chatName = if (chatPartner.nickName == "") {
+        chatPartner.userName
     } else {
-        String.format(stringResource(R.string.content_name_and_nickname), memberName, nickname)
+        String.format(
+            stringResource(R.string.content_name_and_nickname),
+            chatPartner.userName,
+            chatPartner.nickName
+        )
     }
     val color = if (type == 2) md_theme_light_errorContainer else md_theme_light_secondaryContainer
 
     Box {
         Row(verticalAlignment = Alignment.Top) {
-            Profile(size = 37)
+            Profile(profileUrl = chatPartner.imageUrl, size = 37, chatMode = ChatMode.CHAT)
 
             Text(
                 modifier = Modifier
@@ -81,7 +87,9 @@ fun MyChatItemHead(type: Int) {
 
     Box {
         Icon(
-            modifier = Modifier.align(Alignment.TopStart),
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(top = 10.dp),
             painter = painterResource(id = R.drawable.bg_chat_balloon_right_head),
             contentDescription = stringResource(R.string.image_the_person_chat_balloon_head),
             tint = color
