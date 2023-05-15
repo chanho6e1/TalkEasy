@@ -84,7 +84,7 @@ fun SOSRequestFrame(closeSOSRequestDialog: () -> Unit, showSOSDialog: () -> Unit
                     modifier = Modifier
                         .size(187.dp)
                         .clip(CircleShape)
-                        .background(color = md_theme_light_error),
+                        .background(color = md_theme_light_error)
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.Center),
@@ -149,7 +149,7 @@ fun SOSFrame(quitSOSListener: () -> Unit) {
                     modifier = Modifier
                         .size(187.dp)
                         .clip(CircleShape)
-                        .background(color = md_theme_light_errorContainer),
+                        .background(color = md_theme_light_errorContainer)
                 ) {
                     Image(
                         modifier = Modifier
