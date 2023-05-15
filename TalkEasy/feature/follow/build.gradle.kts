@@ -51,7 +51,9 @@ dependencies {
 
     implementation(libs.glide.compose)
 
-    implementation("com.journeyapps:zxing-android-embedded:4.2.0")
+    implementation(libs.retrofit.converter.gson)
+
+    implementation(libs.zxing.android.embedded)
 
     implementation(project(":core:domain"))
     implementation(project(":feature:common"))

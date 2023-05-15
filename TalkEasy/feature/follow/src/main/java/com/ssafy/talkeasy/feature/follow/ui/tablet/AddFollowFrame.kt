@@ -1,6 +1,7 @@
 package com.ssafy.talkeasy.feature.follow.ui.tablet
 
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,8 +31,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
 import com.journeyapps.barcodescanner.BarcodeEncoder
+import com.ssafy.talkeasy.core.domain.entity.response.MemberInfo
 import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
@@ -73,7 +76,7 @@ fun AddFollowFrame(
                         modifier = Modifier
                             .aspectRatio(1f)
                             .fillMaxWidth(),
-                        memberId = memberInfo!!.userId
+                        memberInfo = memberInfo!!
                     )
                 } else {
                     Box(modifier = Modifier.height(200.dp)) {
@@ -123,9 +126,21 @@ fun TopBar(onDismissListener: () -> Unit) {
 }
 
 @Composable
-fun QRCode(modifier: Modifier, memberId: String) {
+fun QRCode(modifier: Modifier, memberInfo: MemberInfo) {
+    val memberInfoString = Gson().toJson(
+        mapOf(
+            "userId" to memberInfo.userId,
+            "userName" to memberInfo.userId,
+            "imageUrl" to memberInfo.imageUrl,
+            "gender" to memberInfo.gender,
+            "birthDate" to memberInfo.birthDate
+        )
+    )
     val barcodeEncoder = BarcodeEncoder()
-    val bitmap: Bitmap = barcodeEncoder.encodeBitmap(memberId, BarcodeFormat.QR_CODE, 500, 500)
+    val bitmap: Bitmap =
+        barcodeEncoder.encodeBitmap(memberInfoString, BarcodeFormat.QR_CODE, 500, 500)
+
+    Log.d("QRCode", memberInfoString)
 
     Image(
         modifier = modifier,
