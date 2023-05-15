@@ -71,11 +71,27 @@ val typography =
         )
     )
 
+val textStyleBold90 = TextStyle(
+    fontFamily = welcomeFont,
+    fontWeight = FontWeight.Bold,
+    fontSize = 90.sp,
+    lineHeight = 64.sp,
+    letterSpacing = 0.5.sp
+)
+
 val textStyleBold40 = TextStyle(
     fontFamily = welcomeFont,
     fontWeight = FontWeight.Bold,
     fontSize = 40.sp,
     lineHeight = 44.sp,
+    letterSpacing = 0.5.sp
+)
+
+val textStyleBold36 = TextStyle(
+    fontFamily = welcomeFont,
+    fontWeight = FontWeight.Bold,
+    fontSize = 36.sp,
+    lineHeight = 24.sp,
     letterSpacing = 0.5.sp
 )
 
@@ -115,6 +131,14 @@ val textStyleNormal30 = TextStyle(
     fontFamily = welcomeFont,
     fontWeight = FontWeight.Normal,
     fontSize = 30.sp,
+    lineHeight = 24.sp,
+    letterSpacing = 0.5.sp
+)
+
+val textStyleNormal28 = TextStyle(
+    fontFamily = welcomeFont,
+    fontWeight = FontWeight.Normal,
+    fontSize = 28.sp,
     lineHeight = 24.sp,
     letterSpacing = 0.5.sp
 )

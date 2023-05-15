@@ -2,6 +2,7 @@ package com.ssafy.talkeasy.feature.aac.ui
 
 // import com.ssafy.talkeasy.feature.aac.SampleData.Companion.memberName
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,10 +31,10 @@ import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold22
 
 @Composable
-fun AACTopBar(onRight: Boolean) {
+fun AACTopBar(onRight: Boolean, showSOSRequestDialog: () -> Unit) {
     if (onRight) {
         Row {
-            ButtonSOS()
+            ButtonSOS(showSOSRequestDialog = showSOSRequestDialog)
 
             Spacer(modifier = Modifier.width(20.dp))
 
@@ -47,7 +48,7 @@ fun AACTopBar(onRight: Boolean) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ButtonSOS()
+            ButtonSOS(showSOSRequestDialog = showSOSRequestDialog)
 
             ButtonAlarmAndSetting()
         }
@@ -55,9 +56,12 @@ fun AACTopBar(onRight: Boolean) {
 }
 
 @Composable
-@Preview
-fun ButtonSOS() {
-    Surface(shape = shapes.extraSmall, color = md_theme_light_errorContainer) {
+fun ButtonSOS(showSOSRequestDialog: () -> Unit) {
+    Surface(
+        modifier = Modifier.clickable { showSOSRequestDialog() },
+        shape = shapes.extraSmall,
+        color = md_theme_light_errorContainer
+    ) {
         Text(
             modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
             text = "SOS",
