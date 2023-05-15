@@ -136,4 +136,14 @@ public class MemberService {
         return member.getLocationStatus();
     }
 
+    public boolean checkFollow(String protectorId, String protegeId){
+        Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(protegeId)), Member.class);
+        System.out.println("member name : " + member.getName() + "member status : " + member.getLocationStatus());
+        if(!member.getLocationStatus()){
+            return false;
+        }
+        Follow follow = mongoTemplate.findOne(Query.query(Criteria.where("toUserId").is(protectorId).and("fromUserId").is(protegeId)), Follow.class);
+        System.out.println(follow.getId()+" 보호자 name : " + member.getId() + "피보호자 Id: " + protegeId + "follow status : " + follow.getLocationStatus());
+        return follow.getLocationStatus();
+    }
 }

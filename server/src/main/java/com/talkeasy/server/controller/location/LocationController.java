@@ -7,6 +7,7 @@ import com.talkeasy.server.service.location.KafkaConsumerService;
 import com.talkeasy.server.service.location.KafkaProducerService;
 import com.talkeasy.server.service.location.LocationService;
 import com.talkeasy.server.service.location.RestTemplateService;
+import com.talkeasy.server.service.member.MemberService;
 import com.talkeasy.server.service.member.OAuth2UserImpl;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import retrofit2.http.Path;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.IOException;
@@ -33,7 +35,7 @@ public class LocationController {
     private final KafkaConsumerService kafkaConsumerService;
     private final RestTemplateService restTemplateService;
     private final LocationService locationService;
-
+    private final MemberService memberService;
 
     @PostMapping
     @ApiOperation(value = "위치정보", notes = "위치정보를 받아와서 카프카에 저장")
@@ -74,17 +76,19 @@ public class LocationController {
                 HttpStatus.OK, restTemplateService.requestDayAnalysis(member.getId())));
     }
 
-    @GetMapping("/analysis")
-    @ApiOperation(value = "위치 분석", notes = "오늘, 일주일 위치 분석")
-    public ResponseEntity<CommonResponse<Object>> analysis(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
-
+    @GetMapping("/analysis/{protegeId}")
+    @ApiOperation(value = "위치 분석", notes = "오늘, 일주일 위치 분석\n피보호자가 위치정보 열람을 허용하지 않았다면 statusCode 210을 리턴")
+    public ResponseEntity<CommonResponse<Object>> analysis(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl protector, @PathVariable String protegeId) {
         kafkaConsumerService.consumeLocationEvent();
-
-        // 위치 허용 권한
+        System.out.println("보호자 ID : " + protector.getId() + " 피보호자 ID : " + protector);
+        if(!memberService.checkFollow(protector.getId(), protegeId)){
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(CommonResponse.of(
+                    HttpStatus.NO_CONTENT, ""));
+        }
 
         HashMap<String, Object> analysis = new HashMap<>();
-        analysis.put("day", locationService.getLocationOfDay(member.getId()));
-        analysis.put("week", locationService.getLocationOfWeek(member.getId()));
+        analysis.put("day", locationService.getLocationOfDay(protegeId));
+        analysis.put("week", locationService.getLocationOfWeek(protegeId));
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
                 HttpStatus.OK, analysis));
