@@ -129,7 +129,7 @@ public class FollowService {
                         lastChatResponse = LastChatResponse.builder()
                                 .msg(lastChat.getMsg())
                                 .created_dt(lastChat.getCreated_dt())
-                                .readCnt(lastChat.getReadCnt())
+                                .readCnt(getNotReadCount(lastChat, userId))
                                 .build();
                     }
                     followResponse.setLastChat(lastChatResponse);
