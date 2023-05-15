@@ -13,5 +13,5 @@ data class Follow(
     val locationStatus: Boolean,
     val nickName: String,
     val roomId: String,
-    val lastChat: LastChat?
+    val lastChat: LastChat?,
 )
