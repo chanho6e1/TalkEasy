@@ -31,6 +31,8 @@ import com.ssafy.talkeasy.feature.chat.ui.tablet.OpenChatRoomButton
 import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
 import com.ssafy.talkeasy.feature.follow.ui.tablet.FollowFrame
+import com.ssafy.talkeasy.feature.location.ui.tablet.SOSFrame
+import com.ssafy.talkeasy.feature.location.ui.tablet.SOSRequestFrame
 
 @Composable
 fun AACRouteFrame(
@@ -49,6 +51,12 @@ fun AACRouteFrame(
     val (showNotificationDialog, setShowNotificationDialog) = remember {
         mutableStateOf(false)
     }
+    val (showSOSRequestDialog, setShowSOSRequestDialog) = remember {
+        mutableStateOf(false)
+    }
+    val (showSOSDialog, setShowSOSDialog) = remember {
+        mutableStateOf(false)
+    }
     val chatMode by aacViewModel.chatMode.collectAsState()
     val chatPartner by aacViewModel.chatPartner.collectAsState()
 
@@ -64,6 +72,21 @@ fun AACRouteFrame(
                 setChatMode = { chatMode -> aacViewModel.setChatMode(chatMode) },
                 setChatPartner = { chatPartner -> aacViewModel.setChatPartner(chatPartner) }
             )
+        }
+    }
+
+    if (showSOSRequestDialog) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            SOSRequestFrame(
+                closeSOSRequestDialog = { setShowSOSRequestDialog(false) },
+                showSOSDialog = { setShowSOSDialog(true) }
+            )
+        }
+    }
+
+    if (showSOSDialog) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            SOSFrame(quitSOSListener = { setShowSOSDialog(false) })
         }
     }
 
@@ -117,6 +140,12 @@ fun AACRouteFrame(
             marginTop = marginTop,
             marginRight = marginRight,
             showNotificationDialog = { setShowNotificationDialog(true) }
+        )
+        TopBarBox(
+            aacTopBarRef = aacTopBarRef,
+            marginTop = marginTop,
+            marginRight = marginRight,
+            showSOSRequestDialog = { setShowSOSRequestDialog(true) }
         )
 
         AACBox(
@@ -204,6 +233,7 @@ fun ConstraintLayoutScope.TopBarBox(
     aacTopBarRef: ConstrainedLayoutReference,
     marginTop: Dp = 18.dp,
     marginRight: Dp = 36.dp,
+    showSOSRequestDialog: () -> Unit,
     showNotificationDialog: () -> Unit,
     aacViewModel: AACViewModel = viewModel(),
 ) {
@@ -218,6 +248,7 @@ fun ConstraintLayoutScope.TopBarBox(
             onRight = aacViewModel.getOnRight(),
             showNotificationDialog = showNotificationDialog
         )
+        AACTopBar(onRight = aacViewModel.getOnRight(), showSOSRequestDialog = showSOSRequestDialog)
     }
 }
 
