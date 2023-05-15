@@ -272,9 +272,9 @@ public class ChatService {
         ChatRoom chatRoom = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(chatRoomId)), ChatRoom.class))
                 .orElseThrow(() -> new ResourceNotFoundException("ChatRoom", "chatRoomId", chatRoomId));
 
-        String leaveTime = chatRoom.getChatUsers().get(userId).getLeaveTime() == null ? chatRoom.getDate() : chatRoom.getLeaveTime();
+//        String leaveTime = chatRoom.getChatUsers().get(userId).getLeaveTime() == null ? chatRoom.getDate() : chatRoom.getLeaveTime();
 
-        Query query = new Query(Criteria.where("roomId").is(chatRoomId).and("created_dt").gte(leaveTime)).with(pageable);
+        Query query = new Query(Criteria.where("roomId").is(chatRoomId)).with(pageable);
 
         List<ChatRoomDetail> filteredMetaData = Optional.ofNullable(mongoTemplate.find(query, ChatRoomDetail.class)).orElse(Collections.emptyList());
 
