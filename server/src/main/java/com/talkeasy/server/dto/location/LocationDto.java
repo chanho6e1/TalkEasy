@@ -14,8 +14,8 @@ public class LocationDto {
     String userId;
     String name;
     Point point;
-    String lat;
-    String lon;
+    Double lat;
+    Double lon;
     LocalDateTime dateTime;
 
     public Location toEntity() {

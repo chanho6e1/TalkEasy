@@ -1,6 +1,5 @@
 package com.talkeasy.server.controller.location;
 
-import com.nimbusds.jose.shaded.json.parser.ParseException;
 import com.talkeasy.server.common.CommonResponse;
 import com.talkeasy.server.dto.location.LocationDto;
 import com.talkeasy.server.service.location.KafkaConsumerService;
@@ -17,10 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import retrofit2.http.Path;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.io.IOException;
 import java.util.HashMap;
 
 
@@ -60,28 +57,30 @@ public class LocationController {
     }
 
     @GetMapping("/day")
-    @ApiOperation(value = "당일 위치 분석", notes = "당일 이동 정보(좌표, 시간) 리턴")
+    @ApiOperation(value = "당일 위치 분석 테스트", notes = "당일 이동 정보(좌표, 시간) 리턴")
     public ResponseEntity<CommonResponse<Object>> dayAnalysisTest(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
 
         kafkaConsumerService.consumeLocationEvent();
+
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
                 HttpStatus.OK, locationService.getLocationOfDay(member.getId())));
     }
 
     @GetMapping("/week")
-    @ApiOperation(value = "일주일 위치 분석", notes = "일주일 동안 많이 갔던 장소 순위 리턴")
-    public ResponseEntity<CommonResponse<Object>> weekAnalysisTest(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) throws ParseException, IOException {
+    @ApiOperation(value = "일주일 위치 분석 테스트", notes = "일주일 동안 많이 갔던 장소 순위 리턴")
+    public ResponseEntity<CommonResponse<Object>> weekAnalysisTest() {
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                HttpStatus.OK, restTemplateService.requestDayAnalysis(member.getId())));
+                HttpStatus.OK, restTemplateService.requestDayAnalysis()));
     }
 
     @GetMapping("/analysis/{protegeId}")
     @ApiOperation(value = "위치 분석", notes = "오늘, 일주일 위치 분석\n피보호자가 위치정보 열람을 허용하지 않았다면 statusCode 210을 리턴")
     public ResponseEntity<CommonResponse<Object>> analysis(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl protector, @PathVariable String protegeId) {
+
         kafkaConsumerService.consumeLocationEvent();
         System.out.println("보호자 ID : " + protector.getId() + " 피보호자 ID : " + protector);
-        if(!memberService.checkFollow(protector.getId(), protegeId)){
+        if (!memberService.checkFollow(protector.getId(), protegeId)) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(CommonResponse.of(
                     HttpStatus.NO_CONTENT, ""));
         }

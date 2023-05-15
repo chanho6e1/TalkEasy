@@ -71,7 +71,7 @@ public class KafkaConsumerService {
     private void convertLocationToPoint(LocationDto locationDto) {
 
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
-        locationDto.setPoint(geometryFactory.createPoint(new Coordinate(Double.parseDouble(locationDto.getLat()), Double.parseDouble(locationDto.getLon()))));
+        locationDto.setPoint(geometryFactory.createPoint(new Coordinate(locationDto.getLat(), locationDto.getLon())));
     }
 
     public void convertTimestampToLocalDateTime(LocationDto locationDto, long timeStamp) {
