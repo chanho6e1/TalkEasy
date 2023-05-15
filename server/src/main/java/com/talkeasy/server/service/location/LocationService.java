@@ -4,6 +4,7 @@ import com.talkeasy.server.domain.location.Location;
 import com.talkeasy.server.dto.location.LocationDto;
 import com.talkeasy.server.dto.location.LocationResponseDto;
 import com.talkeasy.server.repository.location.LocationRepository;
+import com.talkeasy.server.repository.location.ReportRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 public class LocationService {
 
     private final LocationRepository locationRepository;
+    private final ReportRepository reportRepository;
 
     @Transactional
     public void bulk(List<LocationDto> list) {
@@ -45,4 +47,10 @@ public class LocationService {
 
         return locationRepository.findByUserIdAndDateTimeAfter(userId, startTimeOfToday).stream().map(LocationResponseDto::new).collect(Collectors.toList());
     }
+
+    public List<LocationResponseDto> getLocationOfWeek(String userId) {
+
+        return reportRepository.findByUserId(userId).stream().map(LocationResponseDto::new).collect(Collectors.toList());
+    }
+
 }

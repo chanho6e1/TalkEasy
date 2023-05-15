@@ -76,7 +76,7 @@ public class LocationController {
 
     @GetMapping("/analysis")
     @ApiOperation(value = "위치 분석", notes = "오늘, 일주일 위치 분석")
-    public ResponseEntity<CommonResponse<Object>> analysis(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) throws ParseException, IOException {
+    public ResponseEntity<CommonResponse<Object>> analysis(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
 
         kafkaConsumerService.consumeLocationEvent();
 
@@ -84,10 +84,10 @@ public class LocationController {
 
         HashMap<String, Object> analysis = new HashMap<>();
         analysis.put("day", locationService.getLocationOfDay(member.getId()));
-        // Todo : 분석 결과 db에 저장 후 불러오기
-        analysis.put("week", restTemplateService.requestDayAnalysis(member.getId()));
+        analysis.put("week", locationService.getLocationOfWeek(member.getId()));
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
                 HttpStatus.OK, analysis));
     }
+
 }
