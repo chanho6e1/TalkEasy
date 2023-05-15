@@ -92,8 +92,13 @@ public class MemberService {
 
         mongoTemplate.remove(member);
 
-//        member.setDelete();
-//        mongoTemplate.save(member);
+        // follow 삭제
+        List<Follow> follows = mongoTemplate.find(Query.query(Criteria.where("fromUserId").is(userId)), Follow.class);
+        for (Follow follow : follows)
+            mongoTemplate.remove(follow);
+        follows = mongoTemplate.find(Query.query(Criteria.where("toUserId").is(userId)), Follow.class);
+        for (Follow follow : follows)
+            mongoTemplate.remove(follow);
 
         // 커스텀 AAC 삭제
         mongoTemplate.remove(Query.query(Criteria.where("userId").is(userId)), CustomAAC.class);
