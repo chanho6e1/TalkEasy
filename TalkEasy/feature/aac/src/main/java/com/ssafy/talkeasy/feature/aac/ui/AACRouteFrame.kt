@@ -40,10 +40,13 @@ fun AACRouteFrame(
     val marginTop = 18.dp
     val marginRight = 36.dp
     val marginLeft = 20.dp
-    val (isOpened, setIsOpened) = remember {
+    val (showChangeChatPartnerDialog, setShowChangeChatPartnerDialog) = remember {
         mutableStateOf(false)
     }
     val (showFollowDialog, setShowFollowDialog) = remember {
+        mutableStateOf(false)
+    }
+    val (showNotificationDialog, setShowNotificationDialog) = remember {
         mutableStateOf(false)
     }
     val chatMode by aacViewModel.chatMode.collectAsState()
@@ -89,14 +92,14 @@ fun AACRouteFrame(
             openChatRoomButtonRef = openChatRoomButtonRef,
             chatRoomRef = chatRoomRef
         ) {
-            setIsOpened(!isOpened)
+            setShowChangeChatPartnerDialog(!showChangeChatPartnerDialog)
         }
 
         ChatRoomBox(
             chatRoomRef = chatRoomRef,
             aacRef = aacRef,
             chatPartnerRef = chatPartnerRef,
-            isOpened = isOpened,
+            isOpened = showChangeChatPartnerDialog,
             chatMode = chatMode,
             chatPartner = chatPartner,
             marginLeft = marginLeft
@@ -109,16 +112,29 @@ fun AACRouteFrame(
             aacRef = aacRef
         )
 
-        TopBarBox(aacTopBarRef = aacTopBarRef, marginTop = marginTop, marginRight = marginRight)
+        TopBarBox(
+            aacTopBarRef = aacTopBarRef,
+            marginTop = marginTop,
+            marginRight = marginRight,
+            showNotificationDialog = { setShowNotificationDialog(true) }
+        )
 
         AACBox(
             aacRef = aacRef,
             chatRoomRef = chatRoomRef,
             aacTopBarRef = aacTopBarRef,
-            isOpened = isOpened,
+            isOpened = showChangeChatPartnerDialog,
             marginTop = marginTop,
             marginRight = marginRight
         )
+    }
+
+    if (showNotificationDialog) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            NotificationFrame(notifications = listOf()) {
+                setShowNotificationDialog(false)
+            }
+        }
     }
 }
 
@@ -188,6 +204,7 @@ fun ConstraintLayoutScope.TopBarBox(
     aacTopBarRef: ConstrainedLayoutReference,
     marginTop: Dp = 18.dp,
     marginRight: Dp = 36.dp,
+    showNotificationDialog: () -> Unit,
     aacViewModel: AACViewModel = viewModel(),
 ) {
     Box(
@@ -197,7 +214,10 @@ fun ConstraintLayoutScope.TopBarBox(
             height = Dimension.wrapContent
         }
     ) {
-        AACTopBar(onRight = aacViewModel.getOnRight())
+        AACTopBar(
+            onRight = aacViewModel.getOnRight(),
+            showNotificationDialog = showNotificationDialog
+        )
     }
 }
 

@@ -53,7 +53,9 @@ fun MyNotificationListContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             itemsIndexed(items = notificationList) { index, item ->
-                MyNotificationListItem(item = item)
+                val isLastItem = index == notificationList.lastIndex
+
+                MyNotificationListItem(item = item, isLastItem = isLastItem)
             }
         }
     } else {

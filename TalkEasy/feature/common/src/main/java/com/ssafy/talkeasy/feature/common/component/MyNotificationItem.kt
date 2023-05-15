@@ -32,6 +32,7 @@ import com.ssafy.talkeasy.feature.common.util.toTimeString
 fun MyNotificationListItem(
     modifier: Modifier = Modifier,
     item: MyNotificationItem,
+    isLastItem: Boolean,
     onItemClicked: () -> Unit = {},
 ) {
     Column(
@@ -81,8 +82,10 @@ fun MyNotificationListItem(
                             id = when (item.type) {
                                 NotificationType.LOCATION ->
                                     R.string.content_notification_request_location
+
                                 NotificationType.SOS_REQUEST ->
                                     R.string.content_notification_request_sos
+
                                 NotificationType.SOS_RESPONSE ->
                                     R.string.content_notification_response_location
                             }
@@ -101,11 +104,14 @@ fun MyNotificationListItem(
                 )
             }
         }
-        Box(
-            modifier = Modifier
-                .height(1.dp)
-                .fillMaxWidth()
-                .background(black_squeeze)
-        )
+
+        if (!isLastItem) {
+            Box(
+                modifier = Modifier
+                    .height(1.dp)
+                    .fillMaxWidth()
+                    .background(black_squeeze)
+            )
+        }
     }
 }

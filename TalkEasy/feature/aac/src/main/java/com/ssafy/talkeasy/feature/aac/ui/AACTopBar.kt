@@ -30,14 +30,14 @@ import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold22
 
 @Composable
-fun AACTopBar(onRight: Boolean) {
+fun AACTopBar(onRight: Boolean, showNotificationDialog: () -> Unit) {
     if (onRight) {
         Row {
             ButtonSOS()
 
             Spacer(modifier = Modifier.width(20.dp))
 
-            ButtonAlarmAndSetting()
+            ButtonAlarmAndSetting(showNotificationDialog = showNotificationDialog)
         }
     } else {
         Row(
@@ -49,7 +49,7 @@ fun AACTopBar(onRight: Boolean) {
         ) {
             ButtonSOS()
 
-            ButtonAlarmAndSetting()
+            ButtonAlarmAndSetting(showNotificationDialog = showNotificationDialog)
         }
     }
 }
@@ -68,14 +68,13 @@ fun ButtonSOS() {
 }
 
 @Composable
-@Preview(showBackground = true)
-fun ButtonAlarmAndSetting() {
+fun ButtonAlarmAndSetting(showNotificationDialog: () -> Unit) {
     val (newAlarm, setNewAlarm) = remember {
         mutableStateOf(false)
     }
 
     Row {
-        IconButton(onClick = { setNewAlarm(!newAlarm) }) {
+        IconButton(onClick = showNotificationDialog) {
             Image(
                 modifier = Modifier.size(40.dp),
                 painter = if (newAlarm) {
