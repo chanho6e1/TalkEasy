@@ -1,7 +1,6 @@
 package com.ssafy.talkeasy.feature.follow.ui.tablet
 
 import android.graphics.Bitmap
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -139,8 +138,6 @@ fun QRCode(modifier: Modifier, memberInfo: MemberInfo) {
     val barcodeEncoder = BarcodeEncoder()
     val bitmap: Bitmap =
         barcodeEncoder.encodeBitmap(memberInfoString, BarcodeFormat.QR_CODE, 500, 500)
-
-    Log.d("QRCode", memberInfoString)
 
     Image(
         modifier = modifier,
