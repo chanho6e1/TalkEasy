@@ -15,7 +15,7 @@ import com.ssafy.talkeasy.feature.common.util.ChatMode
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun Profile(profileUrl: String = "", size: Int = 56, chatMode: ChatMode) {
+fun Profile(profileUrl: String = "", size: Int = 56, chatMode: ChatMode = ChatMode.CHAT) {
     val model = when (chatMode) {
         ChatMode.TTS -> R.drawable.ic_chat_tts
         ChatMode.CHAT -> profileUrl.ifEmpty { R.drawable.ic_default_profile }
