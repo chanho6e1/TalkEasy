@@ -1,5 +1,6 @@
 package com.ssafy.talkeasy.feature.follow.ui.mobile
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -51,6 +52,7 @@ internal fun FollowListRoute(
     onClickedAddFollow: () -> Unit = {},
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
+    onSelectedItem: () -> Unit,
 ) {
     val followList by rememberUpdatedState(newValue = viewModel.followList.collectAsState().value)
     FollowLisScreen(
@@ -58,7 +60,11 @@ internal fun FollowListRoute(
         followList = followList ?: arrayListOf(),
         onClickedAddFollow = onClickedAddFollow,
         onClickedNotification = onClickedNotification,
-        onClickedSettings = onClickedSettings
+        onClickedSettings = onClickedSettings,
+        onSelectedItem = { follow ->
+            viewModel.setSelectFollow(follow)
+            onSelectedItem()
+        }
     )
 }
 
@@ -70,6 +76,7 @@ internal fun FollowLisScreen(
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
     followList: List<Follow> = arrayListOf(),
+    onSelectedItem: (Follow) -> Unit = {},
 ) {
     Column() {
         FollowListHeader(
@@ -79,7 +86,11 @@ internal fun FollowLisScreen(
             onClickedSettings = onClickedSettings
         )
 
-        FollowListContent(modifier = modifier, followList = followList)
+        FollowListContent(
+            modifier = modifier,
+            followList = followList,
+            onSelectedItem = onSelectedItem
+        )
     }
 }
 
@@ -144,6 +155,7 @@ fun FollowListHeader(
 @Composable
 fun FollowListContent(
     modifier: Modifier = Modifier,
+    onSelectedItem: (Follow) -> Unit,
     followList: List<Follow> = arrayListOf(),
 ) {
     if (followList.isNotEmpty()) {
@@ -151,18 +163,12 @@ fun FollowListContent(
             contentPadding = PaddingValues(horizontal = 18.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            itemsIndexed(items = followList) { index, item ->
+            itemsIndexed(items = followList) { _, item ->
                 FollowListItem(
-                    profileUrl = item.imageUrl,
-                    name = item.userName,
-                    age = item.age ?: 0,
+                    item = item,
                     time = "",
                     newMessageCount = 0,
-                    gender = if (item.gender == 0) {
-                        stringResource(id = R.string.content_man)
-                    } else {
-                        stringResource(id = R.string.content_woman)
-                    }
+                    onSelectedItem = onSelectedItem
                 )
             }
         }
@@ -178,23 +184,22 @@ fun FollowListContent(
     }
 }
 
-@Preview(showBackground = true)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FollowListItem(
     modifier: Modifier = Modifier,
-    profileUrl: String = "",
-    name: String = "",
-    gender: String = "여성",
-    age: Int = 0,
-    time: String = "",
-    newMessageCount: Int = 99,
+    item: Follow,
+    time: String,
+    newMessageCount: Int,
+    onSelectedItem: (Follow) -> Unit,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onSelectedItem(item) },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Profile(profileUrl, 56)
+        Profile(item.imageUrl, 56)
 
         Column(
             modifier = modifier
@@ -210,7 +215,7 @@ fun FollowListItem(
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = name,
+                    text = item.userName,
                     style = typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     overflow = TextOverflow.Ellipsis,
@@ -240,8 +245,12 @@ fun FollowListItem(
                         text = String.format(
                             stringResource(
                                 id = R.string.content_gender_age,
-                                gender,
-                                age
+                                if (item.gender == 0) {
+                                    stringResource(id = R.string.content_man)
+                                } else {
+                                    stringResource(id = R.string.content_woman)
+                                },
+                                item.age ?: 0
                             )
                         ),
                         style = typography.bodyLarge,
