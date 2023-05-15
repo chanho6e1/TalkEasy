@@ -79,7 +79,6 @@ public class LocationController {
     public ResponseEntity<CommonResponse<Object>> analysis(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl protector, @PathVariable String protegeId) {
 
         kafkaConsumerService.consumeLocationEvent();
-        System.out.println("보호자 ID : " + protector.getId() + " 피보호자 ID : " + protector);
         if (!memberService.checkFollow(protector.getId(), protegeId)) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(CommonResponse.of(
                     HttpStatus.NO_CONTENT, ""));
