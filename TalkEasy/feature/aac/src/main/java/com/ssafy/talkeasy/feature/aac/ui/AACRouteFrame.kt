@@ -139,12 +139,7 @@ fun AACRouteFrame(
             aacTopBarRef = aacTopBarRef,
             marginTop = marginTop,
             marginRight = marginRight,
-            showNotificationDialog = { setShowNotificationDialog(true) }
-        )
-        TopBarBox(
-            aacTopBarRef = aacTopBarRef,
-            marginTop = marginTop,
-            marginRight = marginRight,
+            showNotificationDialog = { setShowNotificationDialog(true) },
             showSOSRequestDialog = { setShowSOSRequestDialog(true) }
         )
 
@@ -246,9 +241,9 @@ fun ConstraintLayoutScope.TopBarBox(
     ) {
         AACTopBar(
             onRight = aacViewModel.getOnRight(),
-            showNotificationDialog = showNotificationDialog
+            showNotificationDialog = showNotificationDialog,
+            showSOSRequestDialog = showSOSRequestDialog
         )
-        AACTopBar(onRight = aacViewModel.getOnRight(), showSOSRequestDialog = showSOSRequestDialog)
     }
 }
 
