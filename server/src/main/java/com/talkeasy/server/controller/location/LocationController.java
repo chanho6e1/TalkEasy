@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 
 @RestController
@@ -58,7 +59,7 @@ public class LocationController {
 
     @GetMapping("/day")
     @ApiOperation(value = "당일 위치 분석", notes = "당일 이동 정보(좌표, 시간) 리턴")
-    public ResponseEntity<CommonResponse<Object>> dayAnalysis(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
+    public ResponseEntity<CommonResponse<Object>> dayAnalysisTest(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
 
         kafkaConsumerService.consumeLocationEvent();
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
@@ -67,11 +68,26 @@ public class LocationController {
 
     @GetMapping("/week")
     @ApiOperation(value = "일주일 위치 분석", notes = "일주일 동안 많이 갔던 장소 순위 리턴")
-    public ResponseEntity<CommonResponse<Object>> weekAnalysis(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) throws ParseException, IOException {
-
-        restTemplateService.requestDayAnalysis(member.getId());
+    public ResponseEntity<CommonResponse<Object>> weekAnalysisTest(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) throws ParseException, IOException {
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
                 HttpStatus.OK, restTemplateService.requestDayAnalysis(member.getId())));
     }
+
+    @GetMapping("/analysis")
+    @ApiOperation(value = "위치 분석", notes = "오늘, 일주일 위치 분석")
+    public ResponseEntity<CommonResponse<Object>> analysis(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) {
+
+        kafkaConsumerService.consumeLocationEvent();
+
+        // 위치 허용 권한
+
+        HashMap<String, Object> analysis = new HashMap<>();
+        analysis.put("day", locationService.getLocationOfDay(member.getId()));
+        analysis.put("week", locationService.getLocationOfWeek(member.getId()));
+
+        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+                HttpStatus.OK, analysis));
+    }
+
 }

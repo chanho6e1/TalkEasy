@@ -13,5 +13,4 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     Location findTopByUserIdOrderByDateTimeDesc(String userId);
 
     List<Location> findByUserIdAndDateTimeAfter(String userId, LocalDateTime startTimeOfToday);
-
 }

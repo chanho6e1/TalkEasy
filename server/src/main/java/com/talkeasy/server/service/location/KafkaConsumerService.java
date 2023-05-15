@@ -30,8 +30,8 @@ public class KafkaConsumerService {
     private final LocationService locationService;
     private final ConsumerFactory<String, LocationDto> consumerFactory;
 
-
     public void consumeLocationEvent() {
+
         try (KafkaConsumer<String, LocationDto> kafkaConsumer = new KafkaConsumer<>(consumerFactory.getConfigurationProperties())) {
 
             String topicName = "location-event";
@@ -39,7 +39,7 @@ public class KafkaConsumerService {
 
             List<LocationDto> locationDtos = new ArrayList<>();
 
-            ConsumerRecords<String, LocationDto> records = kafkaConsumer.poll(Duration.ofSeconds(3));
+            ConsumerRecords<String, LocationDto> records = kafkaConsumer.poll(Duration.ofSeconds(1));
             log.info("==================== record count : {}", records.count());
 
             for (ConsumerRecord<String, LocationDto> record : records) {
@@ -69,11 +69,13 @@ public class KafkaConsumerService {
     }
 
     private void convertLocationToPoint(LocationDto locationDto) {
+
         GeometryFactory geometryFactory = new GeometryFactory(new PrecisionModel(), 4326);
         locationDto.setPoint(geometryFactory.createPoint(new Coordinate(Double.parseDouble(locationDto.getLat()), Double.parseDouble(locationDto.getLon()))));
     }
 
     public void convertTimestampToLocalDateTime(LocationDto locationDto, long timeStamp) {
+
         locationDto.setDateTime(LocalDateTime.ofInstant(Instant.ofEpochMilli(timeStamp), ZoneId.systemDefault()));
     }
 
