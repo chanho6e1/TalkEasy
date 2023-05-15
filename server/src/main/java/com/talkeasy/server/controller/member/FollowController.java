@@ -40,7 +40,7 @@ public class FollowController {
 //        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
 //                HttpStatus.CREATED, followService.follow("645a0420c5b2c82e3afaf9e4", "6459dfcf393c266aa80f5710", followRequestDto)));
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-                HttpStatus.CREATED, followService.follow(oAuth2User.getName(), toUserId, followRequestDto)));
+                HttpStatus.CREATED, followService.follow(oAuth2User.getId(), toUserId, followRequestDto)));
 
     }
 
