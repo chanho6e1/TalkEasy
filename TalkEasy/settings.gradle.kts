@@ -2,6 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         google()
+        maven { setUrl("https://jitpack.io") }
         mavenCentral()
     }
 }
@@ -9,8 +10,9 @@ dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
-        mavenCentral()
+        maven { setUrl("https://jitpack.io") }
         maven { setUrl("https://devrepo.kakao.com/nexus/content/groups/public/") }
+        mavenCentral()
     }
 }
 rootProject.name = "TalkEasy"

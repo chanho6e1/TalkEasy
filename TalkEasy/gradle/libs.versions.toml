@@ -42,6 +42,8 @@ lottie-compose = "6.0.0"
 
 zxing-android-embedded = "4.2.0"
 
+stomp = "2.0.5"
+
 [libraries]
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -106,6 +108,8 @@ javax-inject = { module = "javax.inject:javax.inject", version = "1" }
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie-compose" }
 
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxing-android-embedded" }
+
+stomp = { module = "com.github.bishoybasily:stomp", version.ref = "stomp" }
 
 [bundles]
 androidx = ["androidx-core", "androidx-navigation-fragment", "androidx-navigation-ui", "androidx-navigation-fragment-ktx", "androidx-navigation-ui-ktx",

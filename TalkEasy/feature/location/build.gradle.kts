@@ -60,6 +60,8 @@ dependencies {
 
     implementation(libs.bundles.google.map)
 
+    implementation(libs.stomp)
+
     implementation(project(":core:domain"))
     implementation(project(":feature:common"))
 }
