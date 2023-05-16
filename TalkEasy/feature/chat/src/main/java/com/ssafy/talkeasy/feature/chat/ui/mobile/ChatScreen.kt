@@ -54,6 +54,8 @@ import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_secondaryContainer
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
+import com.ssafy.talkeasy.feature.common.util.OnBottomReached
+import com.ssafy.talkeasy.feature.common.util.OnTopReached
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
 
 @Composable
