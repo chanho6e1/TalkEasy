@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -25,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -63,17 +65,42 @@ fun ChatRouteProtector(
     chatViewModel: ChatViewModel = hiltViewModel(),
 ) {
     val chats by chatViewModel.chats.collectAsState()
+    val newChat by chatViewModel.newChat.collectAsState()
+    val chatsTotalPage by chatViewModel.chatsTotalPage.collectAsState()
     val selectFollow by followListViewModel.selectFollow.collectAsState()
     val memberInfo by followListViewModel.memberInfo.collectAsState()
-    val (text: String, setText: (String) -> Unit) = remember {
-        mutableStateOf("")
+    var isClickedSendButton by remember {
+        mutableStateOf(false)
     }
-    val (offset, setOffset) = remember {
-        mutableStateOf(1)
+    val (text: String, setText: (String) -> Unit) = remember { mutableStateOf("") }
+    var offset by remember { mutableStateOf(1) }
+
+    // chats 초기화
+    LaunchedEffect(Unit) {
+        selectFollow?.let { follow -> chatViewModel.getChatHistory(follow.roomId, offset, 50) }
     }
 
-    LaunchedEffect(key1 = selectFollow) {
-        selectFollow?.let { chatViewModel.getChatHistory(it.roomId, offset, 50) }
+    // 메시지 구독
+    DisposableEffect(Unit) {
+        if (selectFollow != null && memberInfo != null) {
+            chatViewModel.receiveChatMessage(selectFollow!!.roomId, memberInfo!!.userId)
+        }
+
+        // 메시지 구독 취소
+        onDispose {
+            chatViewModel.stopReceiveMessage()
+        }
+    }
+
+    // 메시지 읽음 처리
+    LaunchedEffect(newChat) {
+        if (selectFollow != null && memberInfo != null && chats.isNotEmpty()) {
+            chatViewModel.readChatMessage(
+                readTime = chats.last().time,
+                roomId = selectFollow!!.roomId,
+                readUserId = memberInfo!!.userId
+            )
+        }
     }
 
     selectFollow?.let { follow ->
@@ -82,19 +109,27 @@ fun ChatRouteProtector(
             setText = setText,
             chats = chats,
             chatPartner = follow,
+            offset = offset,
             onClickedLocationOpenRequest = onClickedLocationOpenRequest,
             onClickedInfoDetail = onClickedInfoDetail,
             onSendButtonClick = {
-                chatViewModel.sendMessage(
-                    toUserId = selectFollow!!.userId,
-                    roomId = selectFollow!!.roomId,
+                chatViewModel.sendChatMessage(
+                    toUserId = follow.userId,
+                    roomId = follow.roomId,
                     msg = text,
                     fromUserId = memberInfo!!.userId,
                     type = 0
                 )
                 setText("")
-                chatViewModel.getChatHistory(follow.roomId, offset, 50)
-            }
+                isClickedSendButton = !isClickedSendButton
+            },
+            OnTopReached = {
+                if (offset < chatsTotalPage) {
+                    offset += 1
+                    chatViewModel.loadMoreChats(follow.roomId, offset, 50)
+                }
+            },
+            isClickedSendButton = isClickedSendButton
         )
     }
 }
@@ -104,10 +139,13 @@ fun ChatScreen(
     text: String,
     setText: (String) -> Unit = {},
     chatPartner: Follow,
+    offset: Int,
+    isClickedSendButton: Boolean,
     chats: List<Chat>?,
     onClickedLocationOpenRequest: () -> Unit = {},
     onClickedInfoDetail: () -> Unit = {},
     onSendButtonClick: () -> Unit = {},
+    OnTopReached: () -> Unit,
 ) {
     Scaffold(
         topBar = {
@@ -140,7 +178,13 @@ fun ChatScreen(
                     betweenValue = 20
                 )
             } else {
-                ChatContent(chatPartner = chatPartner, chats = chats)
+                ChatContent(
+                    chatPartner = chatPartner,
+                    chats = chats,
+                    isClickedSendButton = isClickedSendButton,
+                    offset = offset,
+                    OnTopReached = OnTopReached
+                )
             }
         }
     }
@@ -215,12 +259,35 @@ fun ChatHeader(
 }
 
 @Composable
-fun ChatContent(chatPartner: Follow, chats: List<Chat>) {
+fun ChatContent(
+    isClickedSendButton: Boolean,
+    chatPartner: Follow,
+    chats: List<Chat>,
+    offset: Int,
+    OnTopReached: () -> Unit,
+) {
+    val scrollState = rememberLazyListState()
+    var isBottomMode by remember { mutableStateOf(true) }
+    var previousScrollPosition by remember { mutableStateOf(0) }
+    var previousScrollOffset by remember { mutableStateOf(0) }
+
+    LaunchedEffect(chats) {
+        if (isBottomMode) {
+            scrollState.scrollToItem(0)
+        }
+    }
+
+    LaunchedEffect(isClickedSendButton) {
+        scrollState.scrollToItem(0)
+    }
+
     LazyColumn(
-        modifier = Modifier.padding(horizontal = 18.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        modifier = Modifier.padding(horizontal = 18.dp, vertical = 10.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
+        state = scrollState,
+        reverseLayout = true
     ) {
-        items(items = sublistChat(chats)) {
+        items(items = sublistChat(chats.reversed())) {
             if (it[0].fromUserId == chatPartner.userId) {
                 PartnerChat(
                     chatPartner = chatPartner,
@@ -229,6 +296,25 @@ fun ChatContent(chatPartner: Follow, chats: List<Chat>) {
             } else {
                 MyChat(messages = it)
             }
+        }
+    }
+
+    scrollState.OnBottomReached() {
+        if (chats.isNotEmpty() && !isBottomMode) {
+            previousScrollPosition = scrollState.firstVisibleItemIndex
+            previousScrollOffset = scrollState.firstVisibleItemScrollOffset
+            OnTopReached()
+        }
+    }
+
+    scrollState.OnTopReached(
+        onIsBottom = { isBottomMode = true },
+        onIsNotBottom = { isBottomMode = false }
+    )
+
+    if (!isBottomMode) {
+        LaunchedEffect(key1 = offset) {
+            scrollState.scrollToItem(previousScrollPosition, previousScrollOffset)
         }
     }
 }
