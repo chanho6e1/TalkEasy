@@ -2,6 +2,8 @@ package com.talkeasy.server.dto.location;
 
 import com.talkeasy.server.domain.location.Location;
 import com.talkeasy.server.domain.location.Report;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +11,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class LocationResponseDto {
 
     Double lat;
