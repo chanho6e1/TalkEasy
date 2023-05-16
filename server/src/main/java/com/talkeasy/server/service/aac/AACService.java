@@ -8,6 +8,7 @@ import com.talkeasy.server.domain.aac.AACCategory;
 import com.talkeasy.server.domain.aac.CustomAAC;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.aac.CustomAACDto;
+import com.talkeasy.server.dto.aac.OpenAIMessage;
 import com.talkeasy.server.dto.aac.ResponseAACDto;
 import com.talkeasy.server.dto.aac.ResponseAACListDto;
 import com.talkeasy.server.dto.chat.ChatTextDto;
@@ -24,8 +25,9 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.support.PageableExecutionUtils;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -149,24 +151,54 @@ public class AACService {
     /* gpt */
     public String getGenereteText(ChatTextDto text) {
 
-        OpenAiService service = new OpenAiService(apiKey);
+//        OpenAiService service = new OpenAiService(apiKey);
+//
+////        String inputText = "'" + text.getText() + " . this words rearrange and complete in korean please.'";
+//
+//        if (text == null)
+//            throw new NullPointerException("입력된 데이터가 없습니다.");
+//
+//        String inputText = "'" + text.getText() + " .' 이 단어들을 어순 맞게 문장 완성해줘.";
+//
+//        CompletionRequest completionRequest = CompletionRequest.builder()
+//                .prompt(inputText)
+//                .model("text-davinci-003")
+//                .maxTokens(100) // 원하는 출력 길이 조정 (선택사항)
+//                .temperature(0.5) // 다양성 조절 (선택사항)
+//                .n(1)
+//                .build();
+//
+//        return service.createCompletion(completionRequest).getChoices().get(0).getText().strip().replace("\"", "");
 
-//        String inputText = "'" + text.getText() + " . this words rearrange and complete in korean please.'";
+        /**/
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + apiKey);
 
-        if (text == null)
-            throw new NullPointerException("입력된 데이터가 없습니다.");
+        List<OpenAIMessage> messages = new ArrayList<>();
 
-        String inputText = "'" + text.getText() + " .' 이 단어들을 어순 맞게 문장 완성해줘.";
+        messages.add(new OpenAIMessage("user", text.getText() + " .' 이 단어를 사용해서 한문장으로 완성해줘."));
 
-        CompletionRequest completionRequest = CompletionRequest.builder()
-                .prompt(inputText)
-                .model("text-davinci-003")
-                .maxTokens(100) // 원하는 출력 길이 조정 (선택사항)
-                .temperature(0.5) // 다양성 조절 (선택사항)
-                .n(1)
-                .build();
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("messages", messages);
+        requestBody.put("model","gpt-3.5-turbo");
+        requestBody.put("temperature", 0.0f);
+        requestBody.put("max_tokens", 50);
 
-        return service.createCompletion(completionRequest).getChoices().get(0).getText().strip().replace("\"", "");
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<Map> response = restTemplate.postForEntity("https://api.openai.com/v1/chat/completions", requestEntity, Map.class);
+        Map<String, Object> responseBody = response.getBody();
+
+        // choices 필드의 값을 추출
+        List<Map<String, Object>> choices = (List<Map<String, Object>>) responseBody.get("choices");
+        // 첫 번째 choice의 message 필드의 값을 추출
+        Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
+        // message 필드의 content 값을 추출
+        String content = (String) message.get("content");
+
+        return content.replace("\"", "");
     }
 
 }
