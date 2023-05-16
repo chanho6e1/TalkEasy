@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -214,6 +215,11 @@ fun ConstraintLayoutScope.AACBox(
     val smallCardsColumn = if (isOpened) 4 else 5
     val words by aacViewModel.selectedCard.collectAsState()
     val category by aacViewModel.category.collectAsState()
+    val generatedSentence by aacViewModel.generatedSentence.collectAsState()
+
+    LaunchedEffect(key1 = generatedSentence) {
+        aacViewModel.initSelectedCard()
+    }
 
     Column(
         modifier = Modifier.constrainAs(aacRef) {

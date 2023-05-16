@@ -1,9 +1,11 @@
 package com.ssafy.talkeasy.core.network.di
 
+import com.ssafy.talkeasy.core.domain.repository.AACRepository
 import com.ssafy.talkeasy.core.domain.repository.AuthRepository
 import com.ssafy.talkeasy.core.domain.repository.ChatRepository
 import com.ssafy.talkeasy.core.domain.repository.FollowRepository
 import com.ssafy.talkeasy.core.domain.repository.MemberRepository
+import com.ssafy.talkeasy.core.domain.usecase.aac.GenerateSentenceUseCase
 import com.ssafy.talkeasy.core.domain.usecase.auth.JoinUseCase
 import com.ssafy.talkeasy.core.domain.usecase.auth.LoginUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.GetChatHistoryUseCase
@@ -43,4 +45,9 @@ object UseCaseModule {
     @Provides
     fun provideGetChatHistoryUseCase(chatRepository: ChatRepository): GetChatHistoryUseCase =
         GetChatHistoryUseCase(chatRepository)
+
+    @Singleton
+    @Provides
+    fun provideGenerateSentenceUseCase(aacRepository: AACRepository): GenerateSentenceUseCase =
+        GenerateSentenceUseCase(aacRepository)
 }

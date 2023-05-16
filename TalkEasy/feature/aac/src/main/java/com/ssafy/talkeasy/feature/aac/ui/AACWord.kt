@@ -30,9 +30,11 @@ fun AACFixedCards(aacViewModel: AACViewModel = viewModel()) {
         horizontalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         items(fixedWords) { word ->
-            AACCardWrap(word = word, color = seed) { it ->
-                aacViewModel.addCard(it)
-            }
+            AACCardWrap(
+                word = word,
+                color = seed,
+                onCardSelectedListener = { aacViewModel.addCard(word) }
+            )
         }
     }
 }
