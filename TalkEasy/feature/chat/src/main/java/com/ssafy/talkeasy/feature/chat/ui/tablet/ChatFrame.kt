@@ -93,7 +93,7 @@ fun ConstraintLayoutScope.ChatRoomBox(
                     height = 72,
                     betweenValue = 20
                 )
-            } else if (chats.isNullOrEmpty()) {
+            } else if (chats.isEmpty()) {
                 NoContentLogoMessage(
                     message = stringResource(id = R.string.content_no_chat),
                     textStyle = typography.titleMedium,
@@ -102,7 +102,7 @@ fun ConstraintLayoutScope.ChatRoomBox(
                     betweenValue = 20
                 )
             } else {
-                chats?.let { ChatContent(chatPartner = chatPartner, chats = it) }
+                ChatContent(chatPartner = chatPartner, chats = chats)
             }
         }
     } else {
