@@ -3,7 +3,6 @@ package com.ssafy.talkeasy.core.data.remote.repository
 import com.ssafy.talkeasy.core.data.common.util.wrapToResource
 import com.ssafy.talkeasy.core.data.remote.datasource.chat.ChatRemoteDataSource
 import com.ssafy.talkeasy.core.domain.Resource
-import com.ssafy.talkeasy.core.domain.entity.request.MessageRequest
 import com.ssafy.talkeasy.core.domain.entity.response.Chat
 import com.ssafy.talkeasy.core.domain.entity.response.PagingDefault
 import com.ssafy.talkeasy.core.domain.repository.ChatRepository
@@ -26,9 +25,4 @@ class ChatRepositoryImpl @Inject constructor(
             totalPages = response.totalPages
         )
     }
-
-    override suspend fun sendChatMessage(message: MessageRequest): Resource<Chat> =
-        wrapToResource(Dispatchers.IO) {
-            chatRemoteDataSource.sendMessage(message = message).toDomainModel()
-        }
 }

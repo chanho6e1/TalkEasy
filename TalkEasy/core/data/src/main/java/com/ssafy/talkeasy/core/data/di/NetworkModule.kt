@@ -1,6 +1,8 @@
 package com.ssafy.talkeasy.core.data.di
 
 import android.content.Context
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.ssafy.talkeasy.core.data.common.util.AuthInterceptorClient
 import com.ssafy.talkeasy.core.data.common.util.Constants.BASE_URL
 import com.ssafy.talkeasy.core.data.common.util.NoAuthInterceptorClient
@@ -81,4 +83,10 @@ object NetworkModule {
             .baseUrl(BASE_URL)
             .client(okHttpClient)
             .build()
+
+    @Provides
+    @Singleton
+    fun provideGson(): Gson {
+        return GsonBuilder().create()
+    }
 }
