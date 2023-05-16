@@ -42,10 +42,13 @@ fun AACRouteFrame(
     val marginTop = 18.dp
     val marginRight = 36.dp
     val marginLeft = 20.dp
-    val (isOpened, setIsOpened) = remember {
+    val (showChangeChatPartnerDialog, setShowChangeChatPartnerDialog) = remember {
         mutableStateOf(false)
     }
     val (showFollowDialog, setShowFollowDialog) = remember {
+        mutableStateOf(false)
+    }
+    val (showNotificationDialog, setShowNotificationDialog) = remember {
         mutableStateOf(false)
     }
     val (showSOSRequestDialog, setShowSOSRequestDialog) = remember {
@@ -112,14 +115,14 @@ fun AACRouteFrame(
             openChatRoomButtonRef = openChatRoomButtonRef,
             chatRoomRef = chatRoomRef
         ) {
-            setIsOpened(!isOpened)
+            setShowChangeChatPartnerDialog(!showChangeChatPartnerDialog)
         }
 
         ChatRoomBox(
             chatRoomRef = chatRoomRef,
             aacRef = aacRef,
             chatPartnerRef = chatPartnerRef,
-            isOpened = isOpened,
+            isOpened = showChangeChatPartnerDialog,
             chatMode = chatMode,
             chatPartner = chatPartner,
             marginLeft = marginLeft
@@ -136,6 +139,7 @@ fun AACRouteFrame(
             aacTopBarRef = aacTopBarRef,
             marginTop = marginTop,
             marginRight = marginRight,
+            showNotificationDialog = { setShowNotificationDialog(true) },
             showSOSRequestDialog = { setShowSOSRequestDialog(true) }
         )
 
@@ -143,10 +147,18 @@ fun AACRouteFrame(
             aacRef = aacRef,
             chatRoomRef = chatRoomRef,
             aacTopBarRef = aacTopBarRef,
-            isOpened = isOpened,
+            isOpened = showChangeChatPartnerDialog,
             marginTop = marginTop,
             marginRight = marginRight
         )
+    }
+
+    if (showNotificationDialog) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            NotificationFrame(notifications = listOf()) {
+                setShowNotificationDialog(false)
+            }
+        }
     }
 }
 
@@ -217,6 +229,7 @@ fun ConstraintLayoutScope.TopBarBox(
     marginTop: Dp = 18.dp,
     marginRight: Dp = 36.dp,
     showSOSRequestDialog: () -> Unit,
+    showNotificationDialog: () -> Unit,
     aacViewModel: AACViewModel = viewModel(),
 ) {
     Box(
@@ -226,7 +239,11 @@ fun ConstraintLayoutScope.TopBarBox(
             height = Dimension.wrapContent
         }
     ) {
-        AACTopBar(onRight = aacViewModel.getOnRight(), showSOSRequestDialog = showSOSRequestDialog)
+        AACTopBar(
+            onRight = aacViewModel.getOnRight(),
+            showNotificationDialog = showNotificationDialog,
+            showSOSRequestDialog = showSOSRequestDialog
+        )
     }
 }
 
