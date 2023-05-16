@@ -73,4 +73,6 @@
     <string name="content_request_browse"> 님이 위치 정보 열람을 요청합니다</string>
     <string name="content_reject">거절</string>
     <string name="content_approve_with_time">수락(%d)</string>
+    <string name="title_notification">알림함</string>
+    <string name="content_no_notification">도착한 알림이 없습니다</string>
 </resources>

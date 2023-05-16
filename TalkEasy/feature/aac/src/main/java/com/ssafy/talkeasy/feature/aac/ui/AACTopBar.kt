@@ -2,6 +2,7 @@ package com.ssafy.talkeasy.feature.aac.ui
 
 // import com.ssafy.talkeasy.feature.aac.SampleData.Companion.memberName
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.feature.aac.R.string
 import com.ssafy.talkeasy.feature.common.R
@@ -30,14 +30,18 @@ import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold22
 
 @Composable
-fun AACTopBar(onRight: Boolean) {
+fun AACTopBar(
+    onRight: Boolean,
+    showSOSRequestDialog: () -> Unit,
+    showNotificationDialog: () -> Unit,
+) {
     if (onRight) {
         Row {
-            ButtonSOS()
+            ButtonSOS(showSOSRequestDialog = showSOSRequestDialog)
 
             Spacer(modifier = Modifier.width(20.dp))
 
-            ButtonAlarmAndSetting()
+            ButtonAlarmAndSetting(showNotificationDialog = showNotificationDialog)
         }
     } else {
         Row(
@@ -47,17 +51,20 @@ fun AACTopBar(onRight: Boolean) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ButtonSOS()
+            ButtonSOS(showSOSRequestDialog = showSOSRequestDialog)
 
-            ButtonAlarmAndSetting()
+            ButtonAlarmAndSetting(showNotificationDialog = showNotificationDialog)
         }
     }
 }
 
 @Composable
-@Preview
-fun ButtonSOS() {
-    Surface(shape = shapes.extraSmall, color = md_theme_light_errorContainer) {
+fun ButtonSOS(showSOSRequestDialog: () -> Unit) {
+    Surface(
+        modifier = Modifier.clickable { showSOSRequestDialog() },
+        shape = shapes.extraSmall,
+        color = md_theme_light_errorContainer
+    ) {
         Text(
             modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
             text = "SOS",
@@ -68,14 +75,13 @@ fun ButtonSOS() {
 }
 
 @Composable
-@Preview(showBackground = true)
-fun ButtonAlarmAndSetting() {
+fun ButtonAlarmAndSetting(showNotificationDialog: () -> Unit) {
     val (newAlarm, setNewAlarm) = remember {
         mutableStateOf(false)
     }
 
     Row {
-        IconButton(onClick = { setNewAlarm(!newAlarm) }) {
+        IconButton(onClick = showNotificationDialog) {
             Image(
                 modifier = Modifier.size(40.dp),
                 painter = if (newAlarm) {

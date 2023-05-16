@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -30,7 +30,7 @@ import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 
 @Composable
 @Preview(showBackground = true)
-fun AACChatBox(words: List<String> = listOf()) {
+fun AACChatBox(words: List<String> = listOf(), aacViewModel: AACViewModel = viewModel()) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -59,12 +59,11 @@ fun AACChatBox(words: List<String> = listOf()) {
             )
 
             SendButtonRow(
-                modifier = Modifier
-                    .constrainAs(buttons) {
-                        end.linkTo(parent.end)
-                    },
+                modifier = Modifier.constrainAs(buttons) {
+                    end.linkTo(parent.end)
+                },
                 sendEnable = words.isNotEmpty(),
-                onSendButtonClick = { }
+                onSendButtonClick = { aacViewModel.generateSentence(words = words) }
             )
         }
     }
@@ -77,10 +76,12 @@ fun AACChatCards(
     aacViewModel: AACViewModel = viewModel(),
 ) {
     LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = modifier) {
-        items(words) { word ->
-            AACCardWrap(word = word, color = harp) {
-                aacViewModel.deleteCard(it)
-            }
+        itemsIndexed(words) { index, word ->
+            AACCardWrap(
+                word = word,
+                color = harp,
+                onCardSelectedListener = { aacViewModel.deleteCard(index) }
+            )
         }
     }
 }

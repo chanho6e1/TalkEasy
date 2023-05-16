@@ -1,6 +1,8 @@
 package com.ssafy.talkeasy.core.data.di
 
 import com.google.gson.Gson
+import com.ssafy.talkeasy.core.data.remote.datasource.aac.AACRemoteDataSource
+import com.ssafy.talkeasy.core.data.remote.datasource.aac.AACRemoteDataSourceImpl
 import com.ssafy.talkeasy.core.data.remote.datasource.auth.AuthRemoteDataSource
 import com.ssafy.talkeasy.core.data.remote.datasource.auth.AuthRemoteDataSourceImpl
 import com.ssafy.talkeasy.core.data.remote.datasource.chat.ChatRemoteDataSource
@@ -11,6 +13,7 @@ import com.ssafy.talkeasy.core.data.remote.datasource.follow.FollowRemoteDataSou
 import com.ssafy.talkeasy.core.data.remote.datasource.follow.FollowRemoteDataSourceImpl
 import com.ssafy.talkeasy.core.data.remote.datasource.member.MemberRemoteDataSource
 import com.ssafy.talkeasy.core.data.remote.datasource.member.MemberRemoteDataSourceImpl
+import com.ssafy.talkeasy.core.data.remote.service.AACApiService
 import com.ssafy.talkeasy.core.data.remote.service.AuthApiService
 import com.ssafy.talkeasy.core.data.remote.service.ChatApiService
 import com.ssafy.talkeasy.core.data.remote.service.FollowApiService
@@ -48,6 +51,12 @@ object DataSourceModule {
     fun provideChatRemoteDataSource(
         chatApiService: ChatApiService,
     ): ChatRemoteDataSource = ChatRemoteDataSourceImpl(chatApiService)
+
+    @Provides
+    @Singleton
+    fun provideAACRemoteDataSource(
+        aacApiService: AACApiService,
+    ): AACRemoteDataSource = AACRemoteDataSourceImpl(aacApiService)
 
     @Provides
     @Singleton

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -31,6 +32,8 @@ import com.ssafy.talkeasy.feature.chat.ui.tablet.OpenChatRoomButton
 import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
 import com.ssafy.talkeasy.feature.follow.ui.tablet.FollowFrame
+import com.ssafy.talkeasy.feature.location.ui.tablet.SOSFrame
+import com.ssafy.talkeasy.feature.location.ui.tablet.SOSRequestFrame
 
 @Composable
 fun AACRouteFrame(
@@ -40,10 +43,19 @@ fun AACRouteFrame(
     val marginTop = 18.dp
     val marginRight = 36.dp
     val marginLeft = 20.dp
-    val (isOpened, setIsOpened) = remember {
+    val (showChangeChatPartnerDialog, setShowChangeChatPartnerDialog) = remember {
         mutableStateOf(false)
     }
     val (showFollowDialog, setShowFollowDialog) = remember {
+        mutableStateOf(false)
+    }
+    val (showNotificationDialog, setShowNotificationDialog) = remember {
+        mutableStateOf(false)
+    }
+    val (showSOSRequestDialog, setShowSOSRequestDialog) = remember {
+        mutableStateOf(false)
+    }
+    val (showSOSDialog, setShowSOSDialog) = remember {
         mutableStateOf(false)
     }
     val chatMode by aacViewModel.chatMode.collectAsState()
@@ -61,6 +73,21 @@ fun AACRouteFrame(
                 setChatMode = { chatMode -> aacViewModel.setChatMode(chatMode) },
                 setChatPartner = { chatPartner -> aacViewModel.setChatPartner(chatPartner) }
             )
+        }
+    }
+
+    if (showSOSRequestDialog) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            SOSRequestFrame(
+                closeSOSRequestDialog = { setShowSOSRequestDialog(false) },
+                showSOSDialog = { setShowSOSDialog(true) }
+            )
+        }
+    }
+
+    if (showSOSDialog) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            SOSFrame(quitSOSListener = { setShowSOSDialog(false) })
         }
     }
 
@@ -89,14 +116,14 @@ fun AACRouteFrame(
             openChatRoomButtonRef = openChatRoomButtonRef,
             chatRoomRef = chatRoomRef
         ) {
-            setIsOpened(!isOpened)
+            setShowChangeChatPartnerDialog(!showChangeChatPartnerDialog)
         }
 
         ChatRoomBox(
             chatRoomRef = chatRoomRef,
             aacRef = aacRef,
             chatPartnerRef = chatPartnerRef,
-            isOpened = isOpened,
+            isOpened = showChangeChatPartnerDialog,
             chatMode = chatMode,
             chatPartner = chatPartner,
             marginLeft = marginLeft
@@ -109,16 +136,30 @@ fun AACRouteFrame(
             aacRef = aacRef
         )
 
-        TopBarBox(aacTopBarRef = aacTopBarRef, marginTop = marginTop, marginRight = marginRight)
+        TopBarBox(
+            aacTopBarRef = aacTopBarRef,
+            marginTop = marginTop,
+            marginRight = marginRight,
+            showNotificationDialog = { setShowNotificationDialog(true) },
+            showSOSRequestDialog = { setShowSOSRequestDialog(true) }
+        )
 
         AACBox(
             aacRef = aacRef,
             chatRoomRef = chatRoomRef,
             aacTopBarRef = aacTopBarRef,
-            isOpened = isOpened,
+            isOpened = showChangeChatPartnerDialog,
             marginTop = marginTop,
             marginRight = marginRight
         )
+    }
+
+    if (showNotificationDialog) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            NotificationFrame(notifications = listOf()) {
+                setShowNotificationDialog(false)
+            }
+        }
     }
 }
 
@@ -188,6 +229,8 @@ fun ConstraintLayoutScope.TopBarBox(
     aacTopBarRef: ConstrainedLayoutReference,
     marginTop: Dp = 18.dp,
     marginRight: Dp = 36.dp,
+    showSOSRequestDialog: () -> Unit,
+    showNotificationDialog: () -> Unit,
     aacViewModel: AACViewModel = viewModel(),
 ) {
     Box(
@@ -197,7 +240,11 @@ fun ConstraintLayoutScope.TopBarBox(
             height = Dimension.wrapContent
         }
     ) {
-        AACTopBar(onRight = aacViewModel.getOnRight())
+        AACTopBar(
+            onRight = aacViewModel.getOnRight(),
+            showNotificationDialog = showNotificationDialog,
+            showSOSRequestDialog = showSOSRequestDialog
+        )
     }
 }
 
@@ -214,6 +261,11 @@ fun ConstraintLayoutScope.AACBox(
     val smallCardsColumn = if (isOpened) 4 else 5
     val words by aacViewModel.selectedCard.collectAsState()
     val category by aacViewModel.category.collectAsState()
+    val generatedSentence by aacViewModel.generatedSentence.collectAsState()
+
+    LaunchedEffect(key1 = generatedSentence) {
+        aacViewModel.initSelectedCard()
+    }
 
     Column(
         modifier = Modifier.constrainAs(aacRef) {

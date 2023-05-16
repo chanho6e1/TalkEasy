@@ -6,4 +6,10 @@
     <string name="content_today">오늘</string>
     <string name="content_week">일주일</string>
     <string name="content_stop">중단하기</string>
+    <string name="title_request_sos">긴급 도움 요청</string>
+    <string name="content_request_sos">카운트 다운이 끝나면 주 보호자에게\n실시간 위치 알림이 전송됩니다.</string>
+    <string name="image_cancel_sos_request">긴급 도움 요청 취소 버튼.</string>
+    <string name="image_sos">긴급 도움 요청 아이콘</string>
+    <string name="content_sos">긴급 도움 요청 중입니다.\n긴급 상황 종료 시 상황 종료 버튼을 눌러주세요.</string>
+    <string name="content_quit_sos">상황 종료</string>
 </resources>

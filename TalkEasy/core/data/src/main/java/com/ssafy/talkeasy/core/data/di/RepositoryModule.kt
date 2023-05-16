@@ -1,14 +1,17 @@
 package com.ssafy.talkeasy.core.data.di
 
+import com.ssafy.talkeasy.core.data.remote.datasource.aac.AACRemoteDataSource
 import com.ssafy.talkeasy.core.data.remote.datasource.auth.AuthRemoteDataSourceImpl
 import com.ssafy.talkeasy.core.data.remote.datasource.chat.ChatRemoteDataSource
 import com.ssafy.talkeasy.core.data.remote.datasource.chat.RabbitmqRemoteDataSource
 import com.ssafy.talkeasy.core.data.remote.datasource.follow.FollowRemoteDataSourceImpl
 import com.ssafy.talkeasy.core.data.remote.datasource.member.MemberRemoteDataSourceImpl
+import com.ssafy.talkeasy.core.data.remote.repository.AACRepositoryImpl
 import com.ssafy.talkeasy.core.data.remote.repository.AuthRepositoryImpl
 import com.ssafy.talkeasy.core.data.remote.repository.ChatRepositoryImpl
 import com.ssafy.talkeasy.core.data.remote.repository.FollowRepositoryImpl
 import com.ssafy.talkeasy.core.data.remote.repository.MemberRepositoryImpl
+import com.ssafy.talkeasy.core.domain.repository.AACRepository
 import com.ssafy.talkeasy.core.data.remote.repository.RabbitmqRepositoryImpl
 import com.ssafy.talkeasy.core.domain.repository.AuthRepository
 import com.ssafy.talkeasy.core.domain.repository.ChatRepository
@@ -48,6 +51,12 @@ object RepositoryModule {
     fun provideChatRepository(
         chatRemoteDataSource: ChatRemoteDataSource,
     ): ChatRepository = ChatRepositoryImpl(chatRemoteDataSource)
+
+    @Provides
+    @Singleton
+    fun provideAACRepository(
+        aacRemoteDataSource: AACRemoteDataSource,
+    ): AACRepository = AACRepositoryImpl(aacRemoteDataSource)
 
     @Provides
     @Singleton
