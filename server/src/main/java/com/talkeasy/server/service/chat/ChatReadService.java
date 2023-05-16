@@ -37,7 +37,7 @@ public class ChatReadService {
 
     public void readMessage(ChatReadDto chatReadDto) {
 
-        List<ChatRoomDetail> chatList = mongoTemplate.find(Query.query(Criteria.where("created_dt").lt(chatReadDto.getReadTime()).and("readCnt").is(1)
+        List<ChatRoomDetail> chatList = mongoTemplate.find(Query.query(Criteria.where("created_dt").lte(chatReadDto.getReadTime()).and("readCnt").is(1)
                 .and("roomId").is(chatReadDto.getRoomId())), ChatRoomDetail.class);
 
         for (ChatRoomDetail chat : chatList) {
