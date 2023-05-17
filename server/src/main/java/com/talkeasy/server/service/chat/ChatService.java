@@ -221,15 +221,15 @@ public class ChatService {
 
         sendChatMessage(chat, chat.getToUserId());
 
-        PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
-        PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
-
-        if (getUserQueueInfo(chat.getToUserId()) != null) {
-            rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getToUserId(), gson.toJson(toUserList));
-        }
-        if (getUserQueueInfo(chat.getFromUserId()) != null) {
-            rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
-        }
+//        PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
+//        PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
+//
+//        if (getUserQueueInfo(chat.getToUserId()) != null) {
+//            rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getToUserId(), gson.toJson(toUserList));
+//        }
+//        if (getUserQueueInfo(chat.getFromUserId()) != null) {
+//            rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
+//        }
 
         /* FCM 알림 - 안드로이드 FCM 연결 시, 주석 풀 것. */
 //        Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getFromUserId())), Member.class);
