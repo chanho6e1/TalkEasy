@@ -107,8 +107,7 @@ class AACViewModel @Inject constructor(
     }
 
     fun generateSentence(words: List<String>) = viewModelScope.launch {
-        var text = ""
-        for (word in words) text += "$word "
+        val text = words.toString().split("[", "]")[1]
 
         when (val value = generateSentenceUseCase(text)) {
             is Resource.Success<String> -> {
