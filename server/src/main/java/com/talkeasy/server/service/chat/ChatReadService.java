@@ -48,8 +48,11 @@ public class ChatReadService {
                     chat.setReadCnt(0);
                     mongoTemplate.save(chat);
 
+                    log.info("read user {}", chatReadDto.getReadUserId());
+
                     log.info("roomId {}", chat.getRoomId());
                     log.info("userId {}", chat.getToUserId());
+                    log.info("msg {}", chat.getMsg());
 
                     StringBuilder sb = new StringBuilder()
                             .append("room.")
@@ -61,7 +64,7 @@ public class ChatReadService {
                     log.info("sb {}", sb);
 
                     ChatReadResponseDto chatReadResponseDto = ChatReadResponseDto.builder().msgId(chat.getId()).roomId(chat.getRoomId())
-                            .readCnt(chat.getReadCnt()).build();
+                            .readCnt(chat.getReadCnt()).msg(chat.getMsg()).build();
 
                     Message msg = MessageBuilder.withBody(gson.toJson(chatReadResponseDto).getBytes()).build();
 

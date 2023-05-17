@@ -9,4 +9,5 @@ public class ChatReadResponseDto {
     private String msgId;
     private String roomId;
     private int readCnt;
+    private String msg;
 }
