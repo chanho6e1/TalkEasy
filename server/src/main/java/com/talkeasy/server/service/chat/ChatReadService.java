@@ -54,7 +54,8 @@ public class ChatReadService {
                             .append("room.")
                             .append(chat.getRoomId())
                             .append(".")
-                            .append(chat.getToUserId()); // 상대방에게 보내기
+                            .append(chat.getFromUserId()); // 상대방에게 보내기
+//                            .append(chat.getToUserId()); // 상대방에게 보내기
 
                     log.info("sb {}", sb);
 
@@ -63,7 +64,8 @@ public class ChatReadService {
 
                     Message msg = MessageBuilder.withBody(gson.toJson(chatReadResponseDto).getBytes()).build();
 
-                    if (getReadQueueInfo(chat.getRoomId(), chat.getToUserId()) != null) {
+                    if (getReadQueueInfo(chat.getRoomId(), chat.getFromUserId()) != null) {
+//                        rabbitTemplate.convertAndSend("read.exchange", sb.toString(), msg);
                         rabbitTemplate.send("read.exchange", sb.toString(), msg);
                     }
                 }
