@@ -151,6 +151,13 @@ public class AACService {
     /* gpt */
     public String getGenereteText(ChatTextDto text) {
 
+        String[] input_texts = text.getText().split(",");
+        if (input_texts.length == 1){
+            return input_texts[0];
+        }
+
+        String data = text.getText().replace(",", "");
+
         /**/
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -158,7 +165,7 @@ public class AACService {
 
         List<OpenAIMessage> messages = new ArrayList<>();
 
-        messages.add(new OpenAIMessage("user", text.getText() + " .' 한글로 완전한 문장으로 완성해줘."));
+        messages.add(new OpenAIMessage("user", data + " .' 한글로 완전한 문장으로 완성해줘."));
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("messages", messages);
