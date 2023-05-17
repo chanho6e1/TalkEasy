@@ -312,9 +312,11 @@ fun ConstraintLayoutScope.AACBox(
                 if (category == "") {
                     AACCategory(isOpened = isOpened)
                 } else {
-                    Spacer(modifier = Modifier.padding(top = 8.dp))
+                    if (category != "사용자 지정") {
+                        Spacer(modifier = Modifier.padding(top = 8.dp))
 
-                    AACRelatedCards()
+                        AACRelatedCards()
+                    }
 
                     AACCardBox(category = category)
                 }
@@ -326,18 +328,29 @@ fun ConstraintLayoutScope.AACBox(
 @Composable
 fun AACCardBox(category: String, aacViewModel: AACViewModel = viewModel()) {
     val aacWordList by aacViewModel.aacWordList.collectAsState()
+    val wordCountPerPage: Int
+    val marginTop: Dp
+    val marginBottom: Dp
+    if (category != "사용자 지정") {
+        wordCountPerPage = 16
+        marginTop = 14.dp
+        marginBottom = 10.dp
+    } else {
+        wordCountPerPage = 20
+        marginTop = 20.dp
+        marginBottom = 16.dp
+    }
     val (page, setPage) = remember {
         mutableStateOf(0)
     }
     val aacWordListSize = aacWordList?.aacList?.size ?: 0
-    val wordCountPerPage = 16
     val totalPageCount =
         aacWordListSize / wordCountPerPage + if (aacWordListSize % wordCountPerPage == 0) 0 else 1
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 14.dp),
+            .padding(top = marginTop),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
@@ -358,7 +371,7 @@ fun AACCardBox(category: String, aacViewModel: AACViewModel = viewModel()) {
 
         Box(
             modifier = Modifier
-                .padding(bottom = 10.dp)
+                .padding(bottom = marginBottom)
                 .fillMaxWidth()
         ) {
             Box(modifier = Modifier.align(Alignment.Center)) {
