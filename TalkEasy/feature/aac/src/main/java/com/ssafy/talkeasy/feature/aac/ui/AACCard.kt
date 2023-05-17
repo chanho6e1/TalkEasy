@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.ssafy.talkeasy.core.domain.entity.response.AACWord
 import com.ssafy.talkeasy.feature.aac.AACViewModel
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_onBackground
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_surfaceVariant
@@ -34,16 +35,16 @@ fun AACCardWrap(word: String, color: Color, onCardSelectedListener: () -> Unit) 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AACCardSmall(word: String, aacViewModel: AACViewModel = viewModel()) {
+fun AACCardSmall(word: AACWord, aacViewModel: AACViewModel = viewModel()) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = shapes.extraSmall,
         color = md_theme_light_surfaceVariant,
-        onClick = { aacViewModel.addCard(word) }
+        onClick = { aacViewModel.addCard(word.title) }
     ) {
         Text(
             modifier = Modifier.padding(vertical = 18.dp),
-            text = word,
+            text = word.title,
             textAlign = TextAlign.Center,
             color = md_theme_light_onBackground,
             style = typography.titleMedium

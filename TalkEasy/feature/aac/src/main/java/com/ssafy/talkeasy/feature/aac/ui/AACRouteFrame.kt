@@ -1,6 +1,7 @@
 package com.ssafy.talkeasy.feature.aac.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +26,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.aac.AACViewModel
-import com.ssafy.talkeasy.feature.aac.SampleData
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatPartner
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatRoomBox
 import com.ssafy.talkeasy.feature.chat.ui.tablet.OpenChatRoomButton
@@ -258,10 +258,13 @@ fun ConstraintLayoutScope.AACBox(
     marginRight: Dp = 36.dp,
     aacViewModel: AACViewModel = viewModel(),
 ) {
-    val smallCardsColumn = if (isOpened) 4 else 5
     val words by aacViewModel.selectedCard.collectAsState()
     val category by aacViewModel.category.collectAsState()
     val generatedSentence by aacViewModel.generatedSentence.collectAsState()
+
+    SideEffect {
+        aacViewModel.getWordList(categoryId = 1)
+    }
 
     LaunchedEffect(key1 = generatedSentence) {
         aacViewModel.initSelectedCard()
@@ -282,23 +285,33 @@ fun ConstraintLayoutScope.AACBox(
 
         AACFixedCards()
 
-        if (category == "") {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            if (category == "") {
                 AACCategory(isOpened = isOpened)
+            } else {
+                AACCardBox(category = category)
             }
-        } else {
-            AACCardBox(smallCardsColumn = smallCardsColumn, category = category)
         }
     }
 }
 
 @Composable
-fun AACCardBox(smallCardsColumn: Int, category: String) {
+fun AACCardBox(category: String, aacViewModel: AACViewModel = viewModel()) {
+    val aacWordList by aacViewModel.aacWordList.collectAsState()
+    val (page, setPage) = remember {
+        mutableStateOf(0)
+    }
+    val aacWordListSize = aacWordList?.aacList?.size ?: 0
+    val wordCountPerPage = 20
+    val totalPageCount =
+        aacWordListSize / wordCountPerPage + if (aacWordListSize % wordCountPerPage == 0) 0 else 1
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(top = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         Box(
             modifier = Modifier
@@ -306,16 +319,22 @@ fun AACCardBox(smallCardsColumn: Int, category: String) {
                 .fillMaxWidth(),
             contentAlignment = Alignment.TopEnd
         ) {
-            AACSmallCards(words = SampleData.string25, column = smallCardsColumn)
+            aacWordList?.let {
+                AACSmallCards(
+                    page = page,
+                    wordCountPerPage = wordCountPerPage,
+                    wordList = it.aacList
+                )
+            }
         }
 
         Box(
             modifier = Modifier
-                .weight(1f)
+                .padding(bottom = 10.dp)
                 .fillMaxWidth()
         ) {
             Box(modifier = Modifier.align(Alignment.Center)) {
-                AACPaging()
+                AACPaging(page = page, totalPage = totalPageCount, setPage = setPage)
             }
 
             Box(modifier = Modifier.align(Alignment.CenterEnd)) {

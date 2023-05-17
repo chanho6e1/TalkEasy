@@ -10,20 +10,6 @@
     <string name="image_preview">미리보기 버튼입니다</string>
     <string name="image_send_chat">채팅 전송 버튼입니다</string>
 
-    <!-- AAC Fixed Words -->
-    <string-array name="aac_fixed_words">
-        <item>안녕하세요</item>
-        <item>안녕히계세요</item>
-        <item>감사합니다</item>
-        <item>죄송합니다</item>
-        <item>네</item>
-        <item>아니요</item>
-        <item>좋아요</item>
-        <item>싫어요</item>
-        <item>그만해주세요</item>
-        <item>괜찮아요</item>
-    </string-array>
-
     <!-- AAC Category -->
     <string-array name="aac_category_index">
         <item>food</item>

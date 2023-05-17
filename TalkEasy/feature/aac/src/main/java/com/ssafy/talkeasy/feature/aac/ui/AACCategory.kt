@@ -13,7 +13,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -41,7 +41,7 @@ import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
 @SuppressLint("DiscouragedApi")
 @Composable
-fun AACCategory(isOpened: Boolean) {
+fun AACCategory(isOpened: Boolean, aacViewModel: AACViewModel = viewModel()) {
     val categoryIndexArray =
         stringArrayResource(id = R.array.aac_category_index)
     val categoryValueArray = stringArrayResource(id = R.array.aac_category_word)
@@ -71,12 +71,13 @@ fun AACCategory(isOpened: Boolean) {
         rows = GridCells.Fixed(2),
         horizontalArrangement = Arrangement.spacedBy(24.dp)
     ) {
-        items(items = category) {
+        itemsIndexed(items = category) { index, category ->
             AACCategoryCard(
                 categoryCardWidth,
-                iconId = it.imageId,
-                contentDescription = it.contentDescription,
-                category = it.value
+                iconId = category.imageId,
+                contentDescription = category.contentDescription,
+                category = category.value,
+                getWordList = { aacViewModel.getWordList(index + 2) }
             )
         }
     }
@@ -88,6 +89,7 @@ fun AACCategoryCard(
     iconId: Int,
     contentDescription: String,
     category: String,
+    getWordList: () -> Unit,
     aacViewModel: AACViewModel = viewModel(),
 ) {
     Button(
@@ -97,7 +99,10 @@ fun AACCategoryCard(
         shape = shapes.medium,
         colors = ButtonDefaults.buttonColors(md_theme_light_surfaceVariant),
         contentPadding = PaddingValues(vertical = 18.dp),
-        onClick = { aacViewModel.setCategory(category) }
+        onClick = {
+            getWordList()
+            aacViewModel.setCategory(category)
+        }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -120,7 +125,10 @@ fun AACCategoryCard(
 fun BackToCategory(category: String = "음식", aacViewModel: AACViewModel = viewModel()) {
     Button(
         colors = ButtonDefaults.buttonColors(Color.Transparent),
-        onClick = { aacViewModel.setCategory() }
+        onClick = {
+            aacViewModel.setCategory()
+            aacViewModel.initAACWordList()
+        }
     ) {
         Column(
             modifier = Modifier.padding(end = 8.dp),
