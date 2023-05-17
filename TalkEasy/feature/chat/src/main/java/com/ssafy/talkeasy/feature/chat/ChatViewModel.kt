@@ -8,13 +8,13 @@ import com.ssafy.talkeasy.core.domain.entity.request.MessageRequest
 import com.ssafy.talkeasy.core.domain.entity.request.ReadMessageRequest
 import com.ssafy.talkeasy.core.domain.entity.response.Chat
 import com.ssafy.talkeasy.core.domain.entity.response.PagingDefault
+import com.ssafy.talkeasy.core.domain.entity.response.Read
 import com.ssafy.talkeasy.core.domain.usecase.chat.DisConnectRabbitmqUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.GetChatHistoryUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.ReadChatMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.ReceiveChatMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.SendChatMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.StopReceiveMessageUseCase
-import com.ssafy.talkeasy.feature.common.util.getCurrentDateTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -77,17 +77,7 @@ class ChatViewModel @Inject constructor(
             when (val value = sendChatMessageUseCase(message)) {
                 is Resource.Success<Boolean> -> {
                     if (value.data) {
-                        val chat = Chat(
-                            roomId = roomId,
-                            fromUserId = fromUserId,
-                            type = type,
-                            message = msg,
-                            time = getCurrentDateTime(),
-                            readCount = 1,
-                            toUserId = toUserId,
-                            status = 5
-                        )
-                        addChatFromChats(chat)
+                        Log.d("TAG", "sendChatMessage: Success")
                     }
                 }
 
@@ -111,6 +101,7 @@ class ChatViewModel @Inject constructor(
                     is Resource.Success<Boolean> -> {
                         if (value.data) {
                             readChatLocalData(readUserId)
+                            Log.d("TAG", "readChatMessage: Success")
                         }
                     }
 
@@ -124,8 +115,21 @@ class ChatViewModel @Inject constructor(
     fun receiveChatMessage(roomId: String, fromUserId: String) =
         viewModelScope.launch {
             receiveChatMessageUseCase(roomId, fromUserId) {
-                _newChat.value = it
-                addChatFromChats(it)
+                when (it) {
+                    is Chat -> {
+                        _newChat.value = it
+                        addChatFromChats(it)
+                        Log.d("TAG", "receiveChatMessage: Chat $it")
+                    }
+                    is Read -> {
+                        readChatLocalData(it)
+                        Log.d("TAG", "receiveChatMessage: Read $it")
+                    }
+                    is String -> {
+                        Log.i("receiveChatMessage", "receiveChatMessage : $it")
+                    }
+                }
+                Log.d("TAG", "receiveChatMessage: _newChat.value : ${_newChat.value}")
             }
         }
 
@@ -135,15 +139,19 @@ class ChatViewModel @Inject constructor(
 
     private fun addChatFromChats(chat: Chat) {
         val newChats: MutableList<Chat> = _chats.value.toMutableList()
-        newChats.removeAt(0)
+        if (newChats.isNotEmpty()) {
+            newChats.removeAt(0)
+        }
         newChats.add(chat)
         _chats.value = newChats
+        Log.d("TAG", "addChatFromChats: _chats.value : ${_chats.value}")
     }
 
     private fun addChatsFromChats(chats: List<Chat>) {
         val newChats: MutableList<Chat> = _chats.value.toMutableList()
         newChats.addAll(0, chats)
         _chats.value = newChats
+        Log.d("TAG", "addChatsFromChats: _chats.value : ${_chats.value}")
     }
 
     private fun readChatLocalData(myUserId: String) {
@@ -154,6 +162,18 @@ class ChatViewModel @Inject constructor(
             }
         }
         _chats.value = newChats
+        Log.d("TAG", "readChatLocalData: _chats.value : ${_chats.value}")
+    }
+
+    private fun readChatLocalData(read: Read) {
+        _chats.value = _chats.value.map { chat ->
+            if (chat.id == read.msgId) {
+                chat.copy(readCount = read.readCount)
+            } else {
+                chat
+            }
+        }
+        Log.d("TAG", "readChatLocalData: last chat : $${_chats.value.last()}")
     }
 
     fun loadMoreChats(roomId: String, offset: Int, size: Int) {
@@ -164,6 +184,7 @@ class ChatViewModel @Inject constructor(
         super.onCleared()
         viewModelScope.launch {
             disConnectRabbitmqUseCase()
+            Log.d("TAG", "onCleared: ")
         }
     }
 }

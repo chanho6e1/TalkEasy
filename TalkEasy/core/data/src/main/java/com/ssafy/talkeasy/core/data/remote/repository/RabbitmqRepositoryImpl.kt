@@ -5,7 +5,6 @@ import com.ssafy.talkeasy.core.data.remote.datasource.chat.RabbitmqRemoteDataSou
 import com.ssafy.talkeasy.core.domain.Resource
 import com.ssafy.talkeasy.core.domain.entity.request.MessageRequest
 import com.ssafy.talkeasy.core.domain.entity.request.ReadMessageRequest
-import com.ssafy.talkeasy.core.domain.entity.response.Chat
 import com.ssafy.talkeasy.core.domain.repository.RabbitmqRepository
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +21,7 @@ class RabbitmqRepositoryImpl @Inject constructor(
     override suspend fun receiveMessage(
         roomId: String,
         fromUserId: String,
-        callback: (Chat) -> Unit,
+        callback: (Any) -> Unit,
     ) = rabbitmqRemoteDataSource.receiveChatMessage(roomId, fromUserId, callback)
 
     override suspend fun readChatMessage(

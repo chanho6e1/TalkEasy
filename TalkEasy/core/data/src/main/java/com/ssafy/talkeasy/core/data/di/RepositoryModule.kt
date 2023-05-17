@@ -11,8 +11,8 @@ import com.ssafy.talkeasy.core.data.remote.repository.AuthRepositoryImpl
 import com.ssafy.talkeasy.core.data.remote.repository.ChatRepositoryImpl
 import com.ssafy.talkeasy.core.data.remote.repository.FollowRepositoryImpl
 import com.ssafy.talkeasy.core.data.remote.repository.MemberRepositoryImpl
-import com.ssafy.talkeasy.core.domain.repository.AACRepository
 import com.ssafy.talkeasy.core.data.remote.repository.RabbitmqRepositoryImpl
+import com.ssafy.talkeasy.core.domain.repository.AACRepository
 import com.ssafy.talkeasy.core.domain.repository.AuthRepository
 import com.ssafy.talkeasy.core.domain.repository.ChatRepository
 import com.ssafy.talkeasy.core.domain.repository.FollowRepository

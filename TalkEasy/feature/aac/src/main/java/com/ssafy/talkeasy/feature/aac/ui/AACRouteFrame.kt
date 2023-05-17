@@ -26,6 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.aac.AACViewModel
 import com.ssafy.talkeasy.feature.aac.SampleData
+import com.ssafy.talkeasy.feature.chat.ChatViewModel
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatPartner
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatRoomBox
 import com.ssafy.talkeasy.feature.chat.ui.tablet.OpenChatRoomButton
@@ -39,6 +40,7 @@ import com.ssafy.talkeasy.feature.location.ui.tablet.SOSRequestFrame
 fun AACRouteFrame(
     aacViewModel: AACViewModel = hiltViewModel(),
     followViewModel: FollowViewModel = hiltViewModel(),
+    chatViewModel: ChatViewModel = hiltViewModel(),
 ) {
     val marginTop = 18.dp
     val marginRight = 36.dp
@@ -58,12 +60,30 @@ fun AACRouteFrame(
     val (showSOSDialog, setShowSOSDialog) = remember {
         mutableStateOf(false)
     }
+    val (isClickedSendButton, setIsClickedSendButton) = remember {
+        mutableStateOf(false)
+    }
     val chatMode by aacViewModel.chatMode.collectAsState()
     val chatPartner by aacViewModel.chatPartner.collectAsState()
+    val generatedSentence by aacViewModel.generatedSentence.collectAsState()
+    val memberInfo by followViewModel.memberInfo.collectAsState()
 
     SideEffect {
         followViewModel.requestMemberInfo()
         followViewModel.requestFollowList()
+    }
+
+    LaunchedEffect(key1 = generatedSentence) {
+        if (chatMode == ChatMode.CHAT && chatPartner != null && isClickedSendButton) {
+            chatViewModel.sendChatMessage(
+                toUserId = chatPartner!!.userId,
+                roomId = chatPartner!!.roomId,
+                msg = generatedSentence,
+                fromUserId = memberInfo!!.userId,
+                type = 0
+            )
+            setIsClickedSendButton(false)
+        }
     }
 
     if (showFollowDialog) {
@@ -126,7 +146,9 @@ fun AACRouteFrame(
             isOpened = showChangeChatPartnerDialog,
             chatMode = chatMode,
             chatPartner = chatPartner,
-            marginLeft = marginLeft
+            marginLeft = marginLeft,
+            isClickedSendButton = isClickedSendButton,
+            memberInfo = memberInfo
         )
 
         BrowseLocationBox(
@@ -150,7 +172,9 @@ fun AACRouteFrame(
             aacTopBarRef = aacTopBarRef,
             isOpened = showChangeChatPartnerDialog,
             marginTop = marginTop,
-            marginRight = marginRight
+            marginRight = marginRight,
+            generatedSentence = generatedSentence,
+            setIsClickedSendButton = setIsClickedSendButton
         )
     }
 
@@ -256,12 +280,13 @@ fun ConstraintLayoutScope.AACBox(
     isOpened: Boolean,
     marginTop: Dp = 18.dp,
     marginRight: Dp = 36.dp,
+    generatedSentence: String,
+    setIsClickedSendButton: (Boolean) -> Unit,
     aacViewModel: AACViewModel = viewModel(),
 ) {
     val smallCardsColumn = if (isOpened) 4 else 5
     val words by aacViewModel.selectedCard.collectAsState()
     val category by aacViewModel.category.collectAsState()
-    val generatedSentence by aacViewModel.generatedSentence.collectAsState()
 
     LaunchedEffect(key1 = generatedSentence) {
         aacViewModel.initSelectedCard()
@@ -278,7 +303,7 @@ fun ConstraintLayoutScope.AACBox(
         },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AACChatBox(words = words)
+        AACChatBox(words = words, setIsClickedSendButton = setIsClickedSendButton)
 
         AACFixedCards()
 

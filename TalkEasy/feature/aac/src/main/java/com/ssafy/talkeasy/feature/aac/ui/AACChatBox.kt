@@ -30,7 +30,11 @@ import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 
 @Composable
 @Preview(showBackground = true)
-fun AACChatBox(words: List<String> = listOf(), aacViewModel: AACViewModel = viewModel()) {
+fun AACChatBox(
+    words: List<String> = listOf(),
+    aacViewModel: AACViewModel = viewModel(),
+    setIsClickedSendButton: (Boolean) -> Unit = {},
+) {
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -63,7 +67,10 @@ fun AACChatBox(words: List<String> = listOf(), aacViewModel: AACViewModel = view
                     end.linkTo(parent.end)
                 },
                 sendEnable = words.isNotEmpty(),
-                onSendButtonClick = { aacViewModel.generateSentence(words = words) }
+                onSendButtonClick = {
+                    aacViewModel.generateSentence(words = words)
+                    setIsClickedSendButton(true)
+                }
             )
         }
     }

@@ -2,7 +2,6 @@ package com.ssafy.talkeasy.core.data.remote.datasource.chat
 
 import com.ssafy.talkeasy.core.domain.entity.request.MessageRequest
 import com.ssafy.talkeasy.core.domain.entity.request.ReadMessageRequest
-import com.ssafy.talkeasy.core.domain.entity.response.Chat
 
 interface RabbitmqRemoteDataSource {
 
@@ -11,7 +10,7 @@ interface RabbitmqRemoteDataSource {
     suspend fun receiveChatMessage(
         roomId: String,
         fromUserId: String,
-        callback: (Chat) -> Unit,
+        callback: (Any) -> Unit,
     )
 
     suspend fun readChatMessage(readMessageRequest: ReadMessageRequest): Boolean
