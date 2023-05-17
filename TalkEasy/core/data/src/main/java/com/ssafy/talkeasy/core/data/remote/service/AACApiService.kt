@@ -3,6 +3,7 @@ package com.ssafy.talkeasy.core.data.remote.service
 import com.ssafy.talkeasy.core.data.remote.datasource.aac.AACWordListResponse
 import com.ssafy.talkeasy.core.data.remote.datasource.aac.AACWordRequest
 import com.ssafy.talkeasy.core.data.remote.datasource.aac.AACWordResponse
+import com.ssafy.talkeasy.core.data.remote.datasource.aac.TTSRequest
 import com.ssafy.talkeasy.core.data.remote.datasource.common.DefaultResponse
 import com.ssafy.talkeasy.core.data.remote.datasource.common.PagingDefaultResponse
 import retrofit2.http.Body
@@ -29,4 +30,10 @@ interface AACApiService {
         @Path("aacId")
         aacId: Int,
     ): PagingDefaultResponse<List<AACWordResponse>>
+
+    @POST("/api/aac/tts")
+    suspend fun getTTSMp3Url(
+        @Body
+        body: TTSRequest,
+    ): DefaultResponse<String>
 }

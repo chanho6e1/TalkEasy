@@ -10,4 +10,6 @@ interface AACRemoteDataSource {
     suspend fun getWordList(categoryId: Int): PagingDefaultResponse<AACWordListResponse>
 
     suspend fun getRelativeVerbList(aacId: Int): PagingDefaultResponse<List<AACWordResponse>>
+
+    suspend fun getTTSMp3Url(tts: TTSRequest): DefaultResponse<String>
 }

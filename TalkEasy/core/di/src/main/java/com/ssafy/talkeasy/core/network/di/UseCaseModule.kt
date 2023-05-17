@@ -6,6 +6,7 @@ import com.ssafy.talkeasy.core.domain.repository.ChatRepository
 import com.ssafy.talkeasy.core.domain.repository.FollowRepository
 import com.ssafy.talkeasy.core.domain.repository.MemberRepository
 import com.ssafy.talkeasy.core.domain.usecase.aac.GenerateSentenceUseCase
+import com.ssafy.talkeasy.core.domain.usecase.aac.GetTTSMp3UrlUseCase
 import com.ssafy.talkeasy.core.domain.usecase.aac.GetWordListUseCase
 import com.ssafy.talkeasy.core.domain.usecase.auth.JoinUseCase
 import com.ssafy.talkeasy.core.domain.usecase.auth.LoginUseCase
@@ -56,4 +57,9 @@ object UseCaseModule {
     @Provides
     fun provideGetWordListUseCase(aacRepository: AACRepository): GetWordListUseCase =
         GetWordListUseCase(aacRepository)
+
+    @Singleton
+    @Provides
+    fun provideGetTTSMp3UrlUseCase(aacRepository: AACRepository): GetTTSMp3UrlUseCase =
+        GetTTSMp3UrlUseCase(aacRepository)
 }

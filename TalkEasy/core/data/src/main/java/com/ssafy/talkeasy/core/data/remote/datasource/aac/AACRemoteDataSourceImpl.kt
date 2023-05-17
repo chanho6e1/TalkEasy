@@ -18,4 +18,7 @@ class AACRemoteDataSourceImpl @Inject constructor(
     override suspend fun getRelativeVerbList(
         aacId: Int,
     ): PagingDefaultResponse<List<AACWordResponse>> = aacApiService.getRelativeVerbList(aacId)
+
+    override suspend fun getTTSMp3Url(tts: TTSRequest): DefaultResponse<String> =
+        aacApiService.getTTSMp3Url(tts)
 }

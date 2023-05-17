@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
@@ -265,6 +266,8 @@ fun ConstraintLayoutScope.AACBox(
     val generatedSentence by aacViewModel.generatedSentence.collectAsState()
     val aacWordList by aacViewModel.aacWordList.collectAsState()
     val fixedList by aacViewModel.aacFixedList.collectAsState()
+    val ttsMp3Url by aacViewModel.ttsMp3Url.collectAsState()
+    val context = LocalContext.current
 
     SideEffect {
         if (fixedList.isEmpty()) {
@@ -274,6 +277,12 @@ fun ConstraintLayoutScope.AACBox(
 
     LaunchedEffect(key1 = generatedSentence) {
         aacViewModel.initSelectedCard()
+    }
+
+    LaunchedEffect(key1 = ttsMp3Url) {
+        if (ttsMp3Url.isNotBlank()) {
+            ttsPlay(context, ttsMp3Url)
+        }
     }
 
     Column(

@@ -11,4 +11,6 @@ interface AACRepository {
     suspend fun getWordList(categoryId: Int): Resource<AACWordList>
 
     suspend fun getRelativeVerbList(aacId: Int): Resource<List<AACWord>>
+
+    suspend fun getTTSMp3Url(text: String): Resource<String>
 }

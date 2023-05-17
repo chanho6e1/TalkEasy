@@ -3,6 +3,7 @@ package com.ssafy.talkeasy.core.data.remote.repository
 import com.ssafy.talkeasy.core.data.common.util.wrapToResource
 import com.ssafy.talkeasy.core.data.remote.datasource.aac.AACRemoteDataSource
 import com.ssafy.talkeasy.core.data.remote.datasource.aac.AACWordRequest
+import com.ssafy.talkeasy.core.data.remote.datasource.aac.TTSRequest
 import com.ssafy.talkeasy.core.domain.Resource
 import com.ssafy.talkeasy.core.domain.entity.response.AACWord
 import com.ssafy.talkeasy.core.domain.entity.response.AACWordList
@@ -27,5 +28,10 @@ class AACRepositoryImpl @Inject constructor(
     override suspend fun getRelativeVerbList(aacId: Int): Resource<List<AACWord>> =
         wrapToResource(Dispatchers.IO) {
             aacRemoteDataSource.getRelativeVerbList(aacId).data.map { it.toDomainModel() }
+        }
+
+    override suspend fun getTTSMp3Url(text: String): Resource<String> =
+        wrapToResource(Dispatchers.IO) {
+            aacRemoteDataSource.getTTSMp3Url(TTSRequest(text = text)).data
         }
 }

@@ -9,6 +9,7 @@ import com.ssafy.talkeasy.core.domain.entity.response.AACWordList
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.core.domain.usecase.aac.GenerateSentenceUseCase
 import com.ssafy.talkeasy.core.domain.usecase.aac.GetRelativeVerbListUseCase
+import com.ssafy.talkeasy.core.domain.usecase.aac.GetTTSMp3UrlUseCase
 import com.ssafy.talkeasy.core.domain.usecase.aac.GetWordListUseCase
 import com.ssafy.talkeasy.feature.common.SharedPreferences
 import com.ssafy.talkeasy.feature.common.util.ChatMode
@@ -25,6 +26,7 @@ class AACViewModel @Inject constructor(
     private val generateSentenceUseCase: GenerateSentenceUseCase,
     private val getWordListUseCase: GetWordListUseCase,
     private val getRelativeVerbListUseCase: GetRelativeVerbListUseCase,
+    private val getTTSMp3UrlUseCase: GetTTSMp3UrlUseCase,
 ) : ViewModel() {
 
     private val _selectedCard: MutableStateFlow<List<String>> =
@@ -51,6 +53,9 @@ class AACViewModel @Inject constructor(
 
     private val _relativeVerbList: MutableStateFlow<List<AACWord>> = MutableStateFlow(listOf())
     val relativeVerbList: StateFlow<List<AACWord>> = _relativeVerbList
+
+    private val _ttsMp3Url: MutableStateFlow<String> = MutableStateFlow("")
+    val ttsMp3Url: StateFlow<String> = _ttsMp3Url
 
     val whoRequest: String = "위치 정보 요청한 사람"
 
@@ -112,6 +117,10 @@ class AACViewModel @Inject constructor(
         when (val value = generateSentenceUseCase(text)) {
             is Resource.Success<String> -> {
                 _generatedSentence.value = value.data
+
+                if (chatMode.value == ChatMode.TTS) {
+                    getTTSMp3Url(value.data)
+                }
             }
 
             is Resource.Error -> {
@@ -146,6 +155,18 @@ class AACViewModel @Inject constructor(
 
             is Resource.Error -> {
                 Log.e("getRelativeVerbList", "getRelativeVerbList: ${value.errorMessage}")
+            }
+        }
+    }
+
+    private fun getTTSMp3Url(text: String) = viewModelScope.launch {
+        when (val value = getTTSMp3UrlUseCase(text)) {
+            is Resource.Success<String> -> {
+                _ttsMp3Url.value = value.data
+            }
+
+            is Resource.Error -> {
+                Log.e("getTTSMp3Url", "getTTSMp3Url: ${value.errorMessage}")
             }
         }
     }
