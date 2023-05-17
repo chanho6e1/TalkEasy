@@ -37,6 +37,8 @@ public class ChatRoomHandler {
             return;
         }
 
+        log.info("send message {}", chat.getMsg());
+        log.info("send message Time {}", chat.getCreated_dt());
 
 //        //비즈니스 로직 (mongodb 저장, 채팅 보내기)
         String roomId = chatService.saveChat(chat);
@@ -56,6 +58,9 @@ public class ChatRoomHandler {
         if(chat.getRoomId().equals("0")) {
             return;
         }
+
+        log.info("read message {}", chat.getReadUserId());
+        log.info("read message Time {}", chat.getReadTime());
 
         chatReadService.readMessage(chat);
 
