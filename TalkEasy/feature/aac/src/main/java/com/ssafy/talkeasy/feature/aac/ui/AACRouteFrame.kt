@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -295,10 +296,17 @@ fun ConstraintLayoutScope.AACBox(
         } else {
             AACFixedCards()
 
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 if (category == "") {
                     AACCategory(isOpened = isOpened)
                 } else {
+                    Spacer(modifier = Modifier.padding(top = 8.dp))
+
+                    AACRelatedCards()
+
                     AACCardBox(category = category)
                 }
             }
@@ -313,14 +321,14 @@ fun AACCardBox(category: String, aacViewModel: AACViewModel = viewModel()) {
         mutableStateOf(0)
     }
     val aacWordListSize = aacWordList?.aacList?.size ?: 0
-    val wordCountPerPage = 20
+    val wordCountPerPage = 16
     val totalPageCount =
         aacWordListSize / wordCountPerPage + if (aacWordListSize % wordCountPerPage == 0) 0 else 1
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 20.dp),
+            .padding(top = 14.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
