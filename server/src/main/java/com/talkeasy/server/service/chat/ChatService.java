@@ -233,10 +233,10 @@ public class ChatService {
 //        }
 
         /* FCM 알림 - 안드로이드 FCM 연결 시, 주석 풀 것. */
-        Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getFromUserId())), Member.class);
-        UserAppToken userAppToken = mongoTemplate.findOne(Query.query(Criteria.where("userId").is(chat.getToUserId())), UserAppToken.class);
-        /*gson 형식의 스트링 바디를 보내는 경우*/
-        firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), new MessageDto(chat, member.getName())); // String targetToken, String title, String body
+//        Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getFromUserId())), Member.class);
+//        UserAppToken userAppToken = mongoTemplate.findOne(Query.query(Criteria.where("userId").is(chat.getToUserId())), UserAppToken.class);
+//        /*gson 형식의 스트링 바디를 보내는 경우*/
+//        firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), new MessageDto(chat, member.getName())); // String targetToken, String title, String body
         /*기존 방식*/
 //        firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), chat.getMsg()); // String targetToken, String title, String body
 
