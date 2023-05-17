@@ -220,6 +220,7 @@ public class ChatService {
 
 
         sendChatMessage(chat, chat.getToUserId());
+        sendChatMessage(chat, chat.getFromUserId());
 
 //        PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
 //        PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
@@ -253,10 +254,6 @@ public class ChatService {
         String routingKey = String.format("room.%s.%s", chat.getRoomId(), toUserId);
 
         Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
-        rabbitTemplate.send("chat.exchange", routingKey, msg);
-
-        routingKey = String.format("room.%s.%s", chat.getRoomId(), chat.getFromUserId());
-        msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
         rabbitTemplate.send("chat.exchange", routingKey, msg);
     }
 
