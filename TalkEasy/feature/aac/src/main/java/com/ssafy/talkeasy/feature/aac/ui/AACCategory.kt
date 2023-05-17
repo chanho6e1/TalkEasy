@@ -100,8 +100,8 @@ fun AACCategoryCard(
         colors = ButtonDefaults.buttonColors(md_theme_light_surfaceVariant),
         contentPadding = PaddingValues(vertical = 18.dp),
         onClick = {
-            getWordList()
             aacViewModel.setCategory(category)
+            getWordList()
         }
     ) {
         Column(

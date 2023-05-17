@@ -13,6 +13,7 @@ import com.ssafy.talkeasy.feature.common.SharedPreferences
 import com.ssafy.talkeasy.feature.common.util.ChatMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -112,6 +113,8 @@ class AACViewModel @Inject constructor(
     }
 
     fun getWordList(categoryId: Int) = viewModelScope.launch {
+        if (categoryId != 1) delay(300L)
+
         when (val value = getWordListUseCase(categoryId)) {
             is Resource.Success<AACWordList> -> {
                 if (categoryId == 1) {

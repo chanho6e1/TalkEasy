@@ -29,6 +29,7 @@ import com.ssafy.talkeasy.feature.aac.AACViewModel
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatPartner
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatRoomBox
 import com.ssafy.talkeasy.feature.chat.ui.tablet.OpenChatRoomButton
+import com.ssafy.talkeasy.feature.common.component.LoadingAnimationIterate
 import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
 import com.ssafy.talkeasy.feature.follow.ui.tablet.FollowFrame
@@ -261,9 +262,13 @@ fun ConstraintLayoutScope.AACBox(
     val words by aacViewModel.selectedCard.collectAsState()
     val category by aacViewModel.category.collectAsState()
     val generatedSentence by aacViewModel.generatedSentence.collectAsState()
+    val aacWordList by aacViewModel.aacWordList.collectAsState()
+    val fixedList by aacViewModel.aacFixedList.collectAsState()
 
     SideEffect {
-        aacViewModel.getWordList(categoryId = 1)
+        if (fixedList.isEmpty()) {
+            aacViewModel.getWordList(categoryId = 1)
+        }
     }
 
     LaunchedEffect(key1 = generatedSentence) {
@@ -283,13 +288,19 @@ fun ConstraintLayoutScope.AACBox(
     ) {
         AACChatBox(words = words)
 
-        AACFixedCards()
+        if (category != "" && aacWordList == null) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                LoadingAnimationIterate(size = 200)
+            }
+        } else {
+            AACFixedCards()
 
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            if (category == "") {
-                AACCategory(isOpened = isOpened)
-            } else {
-                AACCardBox(category = category)
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                if (category == "") {
+                    AACCategory(isOpened = isOpened)
+                } else {
+                    AACCardBox(category = category)
+                }
             }
         }
     }

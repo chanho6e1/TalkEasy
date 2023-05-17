@@ -20,6 +20,6 @@ interface AACApiService {
     @GET("api/aac/categories/{categoryId}")
     suspend fun getWordList(
         @Path("categoryId")
-        categoryId: Int
+        categoryId: Int,
     ): PagingDefaultResponse<AACWordListResponse>
 }
