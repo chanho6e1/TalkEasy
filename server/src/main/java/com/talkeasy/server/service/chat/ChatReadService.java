@@ -16,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class ChatReadService {
     public ChatReadDto convertChat(Message message) {
         String str = new String(message.getBody());
         ChatReadDto chat = gson.fromJson(str, ChatReadDto.class);
-
+        chat.setReadTime(LocalDateTime.now().toString());
         return chat;
     }
 
