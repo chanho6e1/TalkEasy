@@ -9,10 +9,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -56,8 +55,6 @@ fun AACCategory(isOpened: Boolean, aacViewModel: AACViewModel = viewModel()) {
             context.packageName
         )
     }
-    val categoryCardWidth = if (isOpened) 190 else 250
-
     val category = List(8) { index ->
         Category(
             index = categoryIndexArray[index],
@@ -66,14 +63,16 @@ fun AACCategory(isOpened: Boolean, aacViewModel: AACViewModel = viewModel()) {
             contentDescription = categoryImageContentDescriptionArray[index]
         )
     }
+    val horizontalContentPadding = if (isOpened) 30.dp else 60.dp
 
-    LazyHorizontalGrid(
-        rows = GridCells.Fixed(2),
-        horizontalArrangement = Arrangement.spacedBy(24.dp)
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(4),
+        horizontalArrangement = Arrangement.spacedBy(24.dp),
+        verticalArrangement = Arrangement.spacedBy(40.dp),
+        contentPadding = PaddingValues(horizontal = horizontalContentPadding)
     ) {
         itemsIndexed(items = category) { index, category ->
             AACCategoryCard(
-                categoryCardWidth,
                 iconId = category.imageId,
                 contentDescription = category.contentDescription,
                 category = category.value,
@@ -85,7 +84,6 @@ fun AACCategory(isOpened: Boolean, aacViewModel: AACViewModel = viewModel()) {
 
 @Composable
 fun AACCategoryCard(
-    width: Int,
     iconId: Int,
     contentDescription: String,
     category: String,
@@ -93,9 +91,7 @@ fun AACCategoryCard(
     aacViewModel: AACViewModel = viewModel(),
 ) {
     Button(
-        modifier = Modifier
-            .width(width.dp)
-            .wrapContentHeight(),
+        modifier = Modifier.wrapContentHeight(),
         shape = shapes.medium,
         colors = ButtonDefaults.buttonColors(md_theme_light_surfaceVariant),
         contentPadding = PaddingValues(vertical = 18.dp),

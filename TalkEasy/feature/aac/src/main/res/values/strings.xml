@@ -61,4 +61,6 @@
     <string name="content_approve_with_time">수락(%d)</string>
     <string name="title_notification">알림함</string>
     <string name="content_no_notification">도착한 알림이 없습니다</string>
+    <string name="image_show_custom_word_dialog_button">사용자 정의 단어를 관리하는 다이얼로그를 열어주는 아이콘</string>
+    <string name="content_show_custom_word_dialog_button">사용자 정의 단어 추가</string>
 </resources>

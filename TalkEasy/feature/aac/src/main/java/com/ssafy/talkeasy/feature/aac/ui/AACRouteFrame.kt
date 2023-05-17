@@ -1,5 +1,6 @@
 package com.ssafy.talkeasy.feature.aac.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,6 +33,8 @@ import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatPartner
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatRoomBox
 import com.ssafy.talkeasy.feature.chat.ui.tablet.OpenChatRoomButton
 import com.ssafy.talkeasy.feature.common.component.LoadingAnimationIterate
+import com.ssafy.talkeasy.feature.common.component.noRippleClickable
+import com.ssafy.talkeasy.feature.common.ui.theme.dimens
 import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
 import com.ssafy.talkeasy.feature.follow.ui.tablet.FollowFrame
@@ -59,6 +62,9 @@ fun AACRouteFrame(
         mutableStateOf(false)
     }
     val (showSOSDialog, setShowSOSDialog) = remember {
+        mutableStateOf(false)
+    }
+    val (showCustomWordDialog, setShowCustomWordDialog) = remember {
         mutableStateOf(false)
     }
     val chatMode by aacViewModel.chatMode.collectAsState()
@@ -153,7 +159,8 @@ fun AACRouteFrame(
             aacTopBarRef = aacTopBarRef,
             isOpened = showChangeChatPartnerDialog,
             marginTop = marginTop,
-            marginRight = marginRight
+            marginRight = marginRight,
+            showCustomWordDialog = { setShowCustomWordDialog(true) }
         )
     }
 
@@ -161,6 +168,21 @@ fun AACRouteFrame(
         Box(modifier = Modifier.fillMaxSize()) {
             NotificationFrame(notifications = listOf()) {
                 setShowNotificationDialog(false)
+            }
+        }
+    }
+
+    if (showCustomWordDialog) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomStart) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(dimens)
+                    .noRippleClickable { setShowCustomWordDialog(false) }
+            )
+
+            Box(modifier = Modifier.padding(start = 80.dp, bottom = 45.dp)) {
+                AACCustomWordDialog()
             }
         }
     }
@@ -259,6 +281,7 @@ fun ConstraintLayoutScope.AACBox(
     isOpened: Boolean,
     marginTop: Dp = 18.dp,
     marginRight: Dp = 36.dp,
+    showCustomWordDialog: () -> Unit,
     aacViewModel: AACViewModel = viewModel(),
 ) {
     val words by aacViewModel.selectedCard.collectAsState()
@@ -305,20 +328,28 @@ fun ConstraintLayoutScope.AACBox(
         } else {
             AACFixedCards()
 
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                if (category == "") {
+            if (category == "") {
+                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     AACCategory(isOpened = isOpened)
-                } else {
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 22.dp, start = 40.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    AACCustomWordDialogButton(showCustomWordDialog = showCustomWordDialog)
+                }
+            } else {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     if (category != "사용자 지정") {
                         Spacer(modifier = Modifier.padding(top = 8.dp))
 
                         AACRelatedCards()
                     }
 
-                    AACCardBox(category = category)
+                    AACCardBox(category = category, showCustomWordDialog = showCustomWordDialog)
                 }
             }
         }
@@ -326,7 +357,11 @@ fun ConstraintLayoutScope.AACBox(
 }
 
 @Composable
-fun AACCardBox(category: String, aacViewModel: AACViewModel = viewModel()) {
+fun AACCardBox(
+    category: String,
+    showCustomWordDialog: () -> Unit,
+    aacViewModel: AACViewModel = viewModel(),
+) {
     val aacWordList by aacViewModel.aacWordList.collectAsState()
     val wordCountPerPage: Int
     val marginTop: Dp
@@ -374,6 +409,14 @@ fun AACCardBox(category: String, aacViewModel: AACViewModel = viewModel()) {
                 .padding(bottom = marginBottom)
                 .fillMaxWidth()
         ) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(start = 40.dp)
+            ) {
+                AACCustomWordDialogButton(showCustomWordDialog = showCustomWordDialog)
+            }
+
             Box(modifier = Modifier.align(Alignment.Center)) {
                 AACPaging(page = page, totalPage = totalPageCount, setPage = setPage)
             }
