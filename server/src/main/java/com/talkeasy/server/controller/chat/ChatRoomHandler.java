@@ -30,6 +30,7 @@ public class ChatRoomHandler {
         // Json : String -> Object : ChatDto
 
         log.info(" message : {}", message);
+
         System.out.println("hihihihhihi");
         ChatRoomDetail chat = chatService.convertChat(message);
         if(chat == null) {
