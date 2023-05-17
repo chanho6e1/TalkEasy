@@ -69,8 +69,8 @@ public class ChatReadService {
                     Message msg = MessageBuilder.withBody(gson.toJson(chatReadResponseDto).getBytes()).build();
 
                     if (getReadQueueInfo(chat.getRoomId(), chat.getFromUserId()) != null) {
-//                        rabbitTemplate.convertAndSend("read.exchange", sb.toString(), msg);
-                        rabbitTemplate.send("read.exchange", sb.toString(), msg);
+                        rabbitTemplate.convertAndSend("read.exchange", sb.toString(), msg);
+//                        rabbitTemplate.send("read.exchange", sb.toString(), msg);
                     }
                 }
             }
