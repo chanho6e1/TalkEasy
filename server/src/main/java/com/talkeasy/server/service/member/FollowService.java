@@ -213,6 +213,14 @@ public class FollowService {
         }
         return 0;
     }
+    int getNotReadCount1(LastChat lastChat, String myId){
+        QueueInformation queueInformation = chatService.getQueueInfo(lastChat.getRoomId(), myId);
+        if(queueInformation!=null) {
+            return queueInformation.getMessageCount();
+        }
+
+       return 0;
+    }
 
     private ChatRoom findChatRoom(String fromUserId, String toUserId) {
 
