@@ -293,10 +293,10 @@ fun ChatContent(
             if (it[0].fromUserId == chatPartner.userId) {
                 PartnerChat(
                     chatPartner = chatPartner,
-                    messages = it
+                    messages = it.reversed()
                 )
             } else {
-                MyChat(messages = it)
+                MyChat(messages = it.reversed())
             }
         }
     }
