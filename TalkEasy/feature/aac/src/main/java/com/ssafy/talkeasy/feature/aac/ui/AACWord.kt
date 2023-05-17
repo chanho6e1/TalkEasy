@@ -59,7 +59,7 @@ fun AACFixedCards(aacViewModel: AACViewModel = viewModel()) {
 
 @Composable
 fun AACRelatedCards(aacViewModel: AACViewModel = viewModel()) {
-    val relatedWordList = listOf<AACWord>()
+    val relatedWordList by aacViewModel.relativeVerbList.collectAsState()
 
     Box(modifier = Modifier.padding(start = 30.dp)) {
         Surface(

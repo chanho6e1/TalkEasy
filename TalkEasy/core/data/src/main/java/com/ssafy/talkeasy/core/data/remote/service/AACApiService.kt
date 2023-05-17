@@ -2,6 +2,7 @@ package com.ssafy.talkeasy.core.data.remote.service
 
 import com.ssafy.talkeasy.core.data.remote.datasource.aac.AACWordListResponse
 import com.ssafy.talkeasy.core.data.remote.datasource.aac.AACWordRequest
+import com.ssafy.talkeasy.core.data.remote.datasource.aac.AACWordResponse
 import com.ssafy.talkeasy.core.data.remote.datasource.common.DefaultResponse
 import com.ssafy.talkeasy.core.data.remote.datasource.common.PagingDefaultResponse
 import retrofit2.http.Body
@@ -17,9 +18,15 @@ interface AACApiService {
         body: AACWordRequest,
     ): DefaultResponse<String>
 
-    @GET("api/aac/categories/{categoryId}")
+    @GET("/api/aac/categories/{categoryId}")
     suspend fun getWordList(
         @Path("categoryId")
         categoryId: Int,
     ): PagingDefaultResponse<AACWordListResponse>
+
+    @GET("/api/aac/relative-verb/{aacId}")
+    suspend fun getRelativeVerbList(
+        @Path("aacId")
+        aacId: Int,
+    ): PagingDefaultResponse<List<AACWordResponse>>
 }

@@ -40,7 +40,10 @@ fun AACCardSmall(word: AACWord, aacViewModel: AACViewModel = viewModel()) {
         modifier = Modifier.fillMaxWidth(),
         shape = shapes.extraSmall,
         color = md_theme_light_surfaceVariant,
-        onClick = { aacViewModel.addCard(word.title) }
+        onClick = {
+            aacViewModel.getRelativeVerbList(word.id)
+            aacViewModel.addCard(word.title)
+        }
     ) {
         Text(
             modifier = Modifier.padding(vertical = 18.dp),

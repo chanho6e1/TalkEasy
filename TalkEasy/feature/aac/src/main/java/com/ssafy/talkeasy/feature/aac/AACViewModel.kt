@@ -8,6 +8,7 @@ import com.ssafy.talkeasy.core.domain.entity.response.AACWord
 import com.ssafy.talkeasy.core.domain.entity.response.AACWordList
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.core.domain.usecase.aac.GenerateSentenceUseCase
+import com.ssafy.talkeasy.core.domain.usecase.aac.GetRelativeVerbListUseCase
 import com.ssafy.talkeasy.core.domain.usecase.aac.GetWordListUseCase
 import com.ssafy.talkeasy.feature.common.SharedPreferences
 import com.ssafy.talkeasy.feature.common.util.ChatMode
@@ -23,6 +24,7 @@ class AACViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences,
     private val generateSentenceUseCase: GenerateSentenceUseCase,
     private val getWordListUseCase: GetWordListUseCase,
+    private val getRelativeVerbListUseCase: GetRelativeVerbListUseCase,
 ) : ViewModel() {
 
     private val _selectedCard: MutableStateFlow<List<String>> =
@@ -46,6 +48,9 @@ class AACViewModel @Inject constructor(
 
     private val _aacWordList: MutableStateFlow<AACWordList?> = MutableStateFlow(null)
     val aacWordList: StateFlow<AACWordList?> = _aacWordList
+
+    private val _relativeVerbList: MutableStateFlow<List<AACWord>> = MutableStateFlow(listOf())
+    val relativeVerbList: StateFlow<List<AACWord>> = _relativeVerbList
 
     val whoRequest: String = "위치 정보 요청한 사람"
 
@@ -97,6 +102,10 @@ class AACViewModel @Inject constructor(
         _aacWordList.value = null
     }
 
+    fun initRelativeVerbList() {
+        _relativeVerbList.value = listOf()
+    }
+
     fun generateSentence(words: List<String>) = viewModelScope.launch {
         var text = ""
         for (word in words) text += "$word "
@@ -126,6 +135,18 @@ class AACViewModel @Inject constructor(
 
             is Resource.Error -> {
                 Log.e("getWordList", "getWordList: ${value.errorMessage}")
+            }
+        }
+    }
+
+    fun getRelativeVerbList(aacId: Int) = viewModelScope.launch {
+        when (val value = getRelativeVerbListUseCase(aacId)) {
+            is Resource.Success<List<AACWord>> -> {
+                _relativeVerbList.value = value.data
+            }
+
+            is Resource.Error -> {
+                Log.e("getRelativeVerbList", "getRelativeVerbList: ${value.errorMessage}")
             }
         }
     }

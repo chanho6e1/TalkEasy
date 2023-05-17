@@ -8,4 +8,6 @@ interface AACRemoteDataSource {
     suspend fun generateSentence(body: AACWordRequest): DefaultResponse<String>
 
     suspend fun getWordList(categoryId: Int): PagingDefaultResponse<AACWordListResponse>
+
+    suspend fun getRelativeVerbList(aacId: Int): PagingDefaultResponse<List<AACWordResponse>>
 }

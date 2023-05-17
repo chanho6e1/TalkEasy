@@ -14,4 +14,8 @@ class AACRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getWordList(categoryId: Int): PagingDefaultResponse<AACWordListResponse> =
         aacApiService.getWordList(categoryId)
+
+    override suspend fun getRelativeVerbList(
+        aacId: Int,
+    ): PagingDefaultResponse<List<AACWordResponse>> = aacApiService.getRelativeVerbList(aacId)
 }

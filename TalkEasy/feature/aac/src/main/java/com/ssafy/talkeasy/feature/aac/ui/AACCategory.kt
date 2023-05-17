@@ -127,6 +127,7 @@ fun BackToCategory(category: String = "음식", aacViewModel: AACViewModel = vie
         colors = ButtonDefaults.buttonColors(Color.Transparent),
         onClick = {
             aacViewModel.setCategory()
+            aacViewModel.initRelativeVerbList()
             aacViewModel.initAACWordList()
         }
     ) {
