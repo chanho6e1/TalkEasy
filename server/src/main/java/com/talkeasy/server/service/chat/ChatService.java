@@ -254,7 +254,8 @@ public class ChatService {
         String routingKey = String.format("room.%s.%s", chat.getRoomId(), toUserId);
 
         Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
-        rabbitTemplate.send("chat.exchange", routingKey, msg);
+//        rabbitTemplate.send("chat.exchange", routingKey, msg);
+        rabbitTemplate.convertAndSend("chat.exchange", routingKey, msg);
     }
 
 
