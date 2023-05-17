@@ -49,6 +49,7 @@ public class ChatReadService {
 
                     log.info("roomId {}", chat.getRoomId());
                     log.info("userId {}", chat.getToUserId());
+                    log.info("msg {}", chat.getMsg());
 
                     StringBuilder sb = new StringBuilder()
                             .append("room.")
