@@ -8,6 +8,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import com.ssafy.talkeasy.feature.common.ui.theme.TalkEasyTheme
+import com.ssafy.talkeasy.feature.location.stomp.connectionTest
 import com.ssafy.talkeasy.ui.WardApp
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -22,6 +23,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    connectionTest()
                     WardApp()
                 }
             }

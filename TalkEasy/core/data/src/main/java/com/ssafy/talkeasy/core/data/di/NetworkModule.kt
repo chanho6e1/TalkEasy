@@ -1,15 +1,15 @@
 package com.ssafy.talkeasy.core.data.di
 
-import android.content.Context
+import com.gmail.bishoybasily.stomp.lib.StompClient
 import com.ssafy.talkeasy.core.data.common.util.AuthInterceptorClient
 import com.ssafy.talkeasy.core.data.common.util.Constants.BASE_URL
+import com.ssafy.talkeasy.core.data.common.util.Constants.STOMP_BASE_URL
 import com.ssafy.talkeasy.core.data.common.util.NoAuthInterceptorClient
 import com.ssafy.talkeasy.core.data.remote.interceptor.AuthInterceptor
 import com.ssafy.talkeasy.feature.common.SharedPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
@@ -40,8 +40,6 @@ object NetworkModule {
     @Singleton
     @AuthInterceptorClient
     fun provideAuthHttpClient(
-        @ApplicationContext
-        context: Context,
         sharedPreferences: SharedPreferences,
     ): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor()
@@ -81,4 +79,12 @@ object NetworkModule {
             .baseUrl(BASE_URL)
             .client(okHttpClient)
             .build()
+
+    @Provides
+    @Singleton
+    @AuthInterceptorClient
+    fun provideStompClient(
+        @AuthInterceptorClient
+        okHttpClient: OkHttpClient,
+    ): StompClient = StompClient(okHttpClient, 1000L).apply { this.url = STOMP_BASE_URL }
 }

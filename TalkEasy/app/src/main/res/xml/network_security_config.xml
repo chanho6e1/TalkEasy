@@ -6,4 +6,7 @@
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">k.kakaocdn.net</domain>
     </domain-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+    </domain-config>
 </network-security-config>

@@ -28,6 +28,8 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 
+    implementation(libs.stomp)
+
     implementation(project(":core:domain"))
     implementation(project(":feature:common"))
 }
