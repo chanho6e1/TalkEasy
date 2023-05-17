@@ -63,7 +63,7 @@ public class ChatReadService {
                     log.info("sb {}", sb);
 
                     ChatReadResponseDto chatReadResponseDto = ChatReadResponseDto.builder().msgId(chat.getId()).roomId(chat.getRoomId())
-                            .readCnt(chat.getReadCnt()).build();
+                            .readCnt(chat.getReadCnt()).msg(chat.getMsg()).build();
 
                     Message msg = MessageBuilder.withBody(gson.toJson(chatReadResponseDto).getBytes()).build();
 
