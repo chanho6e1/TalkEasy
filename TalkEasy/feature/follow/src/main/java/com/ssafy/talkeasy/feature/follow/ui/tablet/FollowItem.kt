@@ -251,18 +251,19 @@ fun FollowItem(
                         color = delta,
                         style = typography.bodySmall
                     )
-
-                    Badge(
-                        containerColor = sunset_orange,
-                        contentColor = md_theme_light_background
-                    ) {
-                        Text(
-                            text = if (it.readCount >= 99) {
-                                "+99"
-                            } else {
-                                it.readCount.toString()
-                            }
-                        )
+                    if (it.readCount > 0) {
+                        Badge(
+                            containerColor = sunset_orange,
+                            contentColor = md_theme_light_background
+                        ) {
+                            Text(
+                                text = if (it.readCount >= 99) {
+                                    "+99"
+                                } else {
+                                    it.readCount.toString()
+                                }
+                            )
+                        }
                     }
                 }
             }
