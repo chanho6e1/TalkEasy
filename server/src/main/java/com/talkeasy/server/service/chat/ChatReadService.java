@@ -47,6 +47,8 @@ public class ChatReadService {
                     chat.setReadCnt(0);
                     mongoTemplate.save(chat);
 
+                    log.info("read user {}", chatReadDto.getReadUserId());
+
                     log.info("roomId {}", chat.getRoomId());
                     log.info("userId {}", chat.getToUserId());
                     log.info("msg {}", chat.getMsg());
