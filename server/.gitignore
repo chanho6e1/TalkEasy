@@ -12,12 +12,6 @@ application.properties
 resources/
 
 
-#
-ChatRoomHandler
-/ChatRoomHandler
-ChatRoomHandler.java
-/ChatRoomHandler.java
-com/talkeasy/server/controller/chat/ChatRoomHandler.java
 
 ### STS ###
 .apt_generated
