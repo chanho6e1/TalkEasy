@@ -237,7 +237,7 @@ public class ChatService {
         UserAppToken userAppToken = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("userId").is(chat.getToUserId())), UserAppToken.class)).orElse(null);
 
         /*gson 형식의 스트링 바디를 보내는 경우*/
-        
+
         if (userAppToken != null)
             firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), new MessageDto(chat, member.getName())); // String targetToken, String title, String body
         /*기존 방식*/
