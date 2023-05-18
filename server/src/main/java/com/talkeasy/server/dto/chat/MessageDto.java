@@ -34,8 +34,8 @@ public class MessageDto{
         this.fromUserName = name;
     }
     public MessageDto(Alarm alarm, String name){
-//        this.msgId = chatRoomDetail.getId();
-//        this.roomId  = alarm.getRoomId();
+        this.msgId = alarm.getId();
+        this.roomId  = alarm.getRoomId();
         this.toUserId = alarm.getUserId();
         this.fromUserId = alarm.getUserId();
         this.msg = alarm.getContent();
