@@ -103,8 +103,9 @@ fun ButtonAlarmAndSetting(
     Row {
         IconButton(
             onClick = {
-                showNotificationDialog()
                 setNewAlarm(false)
+                followViewModel.requestNotificationList()
+                showNotificationDialog()
             }
         ) {
             Image(
