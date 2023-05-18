@@ -60,7 +60,13 @@ class AACViewModel @Inject constructor(
     val whoRequest: String = "위치 정보 요청한 사람"
 
     fun initSelectedCard() {
+        Log.i("Init", "selected card init")
         _selectedCard.value = listOf()
+    }
+
+    fun initGeneratedSentence() {
+        Log.i("Init", "generated sentence init")
+        _generatedSentence.value = ""
     }
 
     fun addCard(word: String) {
@@ -104,11 +110,18 @@ class AACViewModel @Inject constructor(
     }
 
     fun initAACWordList() {
+        Log.i("Init", "aac word list init")
         _aacWordList.value = null
     }
 
     fun initRelativeVerbList() {
+        Log.i("Init", "relative verb init")
         _relativeVerbList.value = listOf()
+    }
+
+    fun initTTSMp3Url() {
+        Log.i("Init", "tts mp3 url init")
+        _ttsMp3Url.value = ""
     }
 
     fun generateSentence(words: List<String>) = viewModelScope.launch {
@@ -117,10 +130,6 @@ class AACViewModel @Inject constructor(
         when (val value = generateSentenceUseCase(text)) {
             is Resource.Success<String> -> {
                 _generatedSentence.value = value.data
-
-                if (chatMode.value == ChatMode.TTS) {
-                    getTTSMp3Url(value.data)
-                }
             }
 
             is Resource.Error -> {
@@ -159,7 +168,8 @@ class AACViewModel @Inject constructor(
         }
     }
 
-    private fun getTTSMp3Url(text: String) = viewModelScope.launch {
+    fun getTTSMp3Url(text: String) = viewModelScope.launch {
+        Log.d("getTTSMp3Url", "api called: $text")
         when (val value = getTTSMp3UrlUseCase(text)) {
             is Resource.Success<String> -> {
                 _ttsMp3Url.value = value.data

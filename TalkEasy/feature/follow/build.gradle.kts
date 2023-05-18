@@ -53,7 +53,7 @@ dependencies {
 
     implementation(libs.retrofit.converter.gson)
 
-    implementation(libs.zxing.android.embedded)
+    implementation(libs.bundles.zxing)
 
     implementation(project(":core:domain"))
     implementation(project(":feature:common"))

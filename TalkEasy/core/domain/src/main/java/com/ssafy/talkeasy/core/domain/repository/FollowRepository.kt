@@ -9,5 +9,8 @@ import com.ssafy.talkeasy.core.domain.entity.response.PagingDefault
 interface FollowRepository {
 
     suspend fun requestFollowList(): Resource<PagingDefault<List<Follow>>>
+
+    suspend fun requestFollow(toUserId: String, memo: String): Resource<String>
+
     suspend fun requestNotificationList(): Resource<Default<List<MyNotificationItem>>>
 }

@@ -12,6 +12,11 @@ class FollowRemoteDataSourceImpl @Inject constructor(
     override suspend fun requestFollowList(): PagingDefaultResponse<List<FollowResponse>> =
         followApiService.requestFollowList()
 
+    override suspend fun requestFollow(
+        toUserId: String,
+        body: AddFollowRequest,
+    ): DefaultResponse<String> = followApiService.requestFollow(toUserId, body)
+
     override suspend fun requestNotificationList(): DefaultResponse<List<NotificationResponse>> =
         followApiService.requestNotificationList()
 }

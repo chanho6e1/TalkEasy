@@ -22,8 +22,18 @@ import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AACCardWrap(word: String, color: Color, onCardSelectedListener: () -> Unit) {
-    Surface(shape = shapes.extraSmall, color = color, onClick = onCardSelectedListener) {
+fun AACCardWrap(
+    word: String,
+    color: Color,
+    cardClickEnable: Boolean,
+    onCardSelectedListener: () -> Unit,
+) {
+    Surface(
+        shape = shapes.extraSmall,
+        color = color,
+        enabled = cardClickEnable,
+        onClick = onCardSelectedListener
+    ) {
         Text(
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 18.dp),
             text = word,
@@ -35,11 +45,16 @@ fun AACCardWrap(word: String, color: Color, onCardSelectedListener: () -> Unit) 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AACCardSmall(word: AACWord, aacViewModel: AACViewModel = viewModel()) {
+fun AACCardSmall(
+    word: AACWord,
+    cardClickEnable: Boolean,
+    aacViewModel: AACViewModel = viewModel(),
+) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
         shape = shapes.extraSmall,
         color = md_theme_light_surfaceVariant,
+        enabled = cardClickEnable,
         onClick = {
             aacViewModel.getRelativeVerbList(word.id)
             aacViewModel.addCard(word.title)

@@ -32,6 +32,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.gson.Gson
 import com.google.zxing.BarcodeFormat
+import com.google.zxing.EncodeHintType
 import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.ssafy.talkeasy.core.domain.entity.response.MemberInfo
 import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
@@ -129,7 +130,7 @@ fun QRCode(modifier: Modifier, memberInfo: MemberInfo) {
     val memberInfoString = Gson().toJson(
         mapOf(
             "userId" to memberInfo.userId,
-            "userName" to memberInfo.userId,
+            "userName" to memberInfo.userName,
             "imageUrl" to memberInfo.imageUrl,
             "gender" to memberInfo.gender,
             "birthDate" to memberInfo.birthDate
@@ -137,7 +138,13 @@ fun QRCode(modifier: Modifier, memberInfo: MemberInfo) {
     )
     val barcodeEncoder = BarcodeEncoder()
     val bitmap: Bitmap =
-        barcodeEncoder.encodeBitmap(memberInfoString, BarcodeFormat.QR_CODE, 500, 500)
+        barcodeEncoder.encodeBitmap(
+            memberInfoString,
+            BarcodeFormat.QR_CODE,
+            500,
+            500,
+            mapOf(EncodeHintType.CHARACTER_SET to "UTF-8")
+        )
 
     Image(
         modifier = modifier,

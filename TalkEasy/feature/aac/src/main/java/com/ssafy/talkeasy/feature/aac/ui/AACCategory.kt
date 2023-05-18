@@ -55,7 +55,8 @@ fun AACCategory(isOpened: Boolean, aacViewModel: AACViewModel = viewModel()) {
             context.packageName
         )
     }
-    val category = List(8) { index ->
+    // val category = List(8) { index ->
+    val category = List(7) { index ->
         Category(
             index = categoryIndexArray[index],
             value = categoryValueArray[index],

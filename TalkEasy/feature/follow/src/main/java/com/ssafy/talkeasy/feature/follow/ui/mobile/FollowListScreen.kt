@@ -1,6 +1,5 @@
 package com.ssafy.talkeasy.feature.follow.ui.mobile
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,7 +36,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
-import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
@@ -84,8 +82,13 @@ internal fun FollowListRoute(
         }
     }
 
-    FollowLisScreen(
+    LaunchedEffect(Unit) {
+        viewModel.requestFollowList()
+    }
+
+    FollowListScreen(
         modifier = modifier,
+        addScanResult = viewModel::getAddFollowDetailInfo,
         followList = followList ?: arrayListOf(),
         newAlarm = newAlarm,
         onClickedAddFollow = onClickedAddFollow,
@@ -104,8 +107,9 @@ internal fun FollowListRoute(
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
-internal fun FollowLisScreen(
+internal fun FollowListScreen(
     modifier: Modifier = Modifier,
+    addScanResult: (AddFollowDetailInfo) -> Unit = {},
     onClickedAddFollow: () -> Unit = {},
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
@@ -118,6 +122,10 @@ internal fun FollowLisScreen(
             modifier = modifier,
             newAlarm = newAlarm,
             onClickedAddFollow = onClickedAddFollow,
+            addScanResult = addScanResult,
+            onClickedAddFollow = {
+                onClickedAddFollow()
+            },
             onClickedNotification = onClickedNotification,
             onClickedSettings = onClickedSettings
         )
@@ -134,11 +142,35 @@ internal fun FollowLisScreen(
 @Composable
 fun FollowListHeader(
     modifier: Modifier = Modifier,
+    addScanResult: (AddFollowDetailInfo) -> Unit = {},
     onClickedAddFollow: () -> Unit = {},
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
+    context: Context = LocalContext.current,
     newAlarm: Boolean = false,
 ) {
+    val scanResultLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            val resultScan = IntentIntegrator.parseActivityResult(result.resultCode, result.data)
+            resultScan?.let {
+                val addMemberDetailInfo =
+                    Gson().fromJson(it.contents, AddFollowDetailInfo::class.java)
+                addScanResult(addMemberDetailInfo)
+                onClickedAddFollow()
+            }
+        }
+
+    val requestPermissionLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            if (isGranted) {
+                scanResultLauncher.launch(IntentIntegrator(context as Activity).createScanIntent())
+            }
+        }
+
     LazyRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -155,7 +187,22 @@ fun FollowListHeader(
 
         item {
             Row(modifier = modifier.padding(end = 18.dp)) {
-                IconButton(modifier = modifier, onClick = onClickedAddFollow) {
+                IconButton(
+                    modifier = modifier,
+                    onClick = {
+                        if (ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.CAMERA
+                            ) == PackageManager.PERMISSION_GRANTED
+                        ) {
+                            scanResultLauncher.launch(
+                                IntentIntegrator(context as Activity).createScanIntent()
+                            )
+                        } else {
+                            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        }
+                    }
+                ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_add_friend),
                         contentDescription = stringResource(
@@ -176,16 +223,17 @@ fun FollowListHeader(
                         contentDescription = stringResource(R.string.ic_notification_text)
                     )
                 }
-
-                IconButton(modifier = modifier, onClick = onClickedSettings) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_settings),
-                        contentDescription = stringResource(
-                            R.string.ic_settings_text
-                        ),
-                        modifier = modifier.size(24.dp)
-                    )
-                }
+                /*
+                            IconButton(modifier = modifier, onClick = onClickedSettings) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_settings),
+                                    contentDescription = stringResource(
+                                        R.string.ic_settings_text
+                                    ),
+                                    modifier = modifier.size(24.dp)
+                                )
+                            }
+                 */
             }
         }
     }

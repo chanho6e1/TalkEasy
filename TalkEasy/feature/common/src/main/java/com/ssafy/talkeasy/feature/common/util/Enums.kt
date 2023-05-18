@@ -15,3 +15,7 @@ enum class ChatType {
 enum class LocationStatus {
     REQUEST, RESULT, REJECT
 }
+
+enum class SendMode {
+    NONE, PREVIEW, SEND
+}

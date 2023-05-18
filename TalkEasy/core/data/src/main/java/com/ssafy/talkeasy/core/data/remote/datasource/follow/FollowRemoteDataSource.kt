@@ -6,5 +6,8 @@ import com.ssafy.talkeasy.core.data.remote.datasource.common.PagingDefaultRespon
 interface FollowRemoteDataSource {
 
     suspend fun requestFollowList(): PagingDefaultResponse<List<FollowResponse>>
+
     suspend fun requestNotificationList(): DefaultResponse<List<NotificationResponse>>
+
+    suspend fun requestFollow(toUserId: String, body: AddFollowRequest): DefaultResponse<String>
 }

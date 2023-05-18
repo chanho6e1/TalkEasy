@@ -1,6 +1,7 @@
 package com.ssafy.talkeasy.core.data.remote.repository
 
 import com.ssafy.talkeasy.core.data.common.util.wrapToResource
+import com.ssafy.talkeasy.core.data.remote.datasource.follow.AddFollowRequest
 import com.ssafy.talkeasy.core.data.remote.datasource.follow.FollowRemoteDataSource
 import com.ssafy.talkeasy.core.domain.Resource
 import com.ssafy.talkeasy.core.domain.entity.response.Default
@@ -31,5 +32,10 @@ class FollowRepositoryImpl @Inject constructor(
             val defaultResponse = followRemoteDataSource.requestNotificationList()
             val notification = defaultResponse.data.map { it.toDomainModel() }
             Default(status = defaultResponse.status, data = notification)
+        }
+
+    override suspend fun requestFollow(toUserId: String, memo: String): Resource<String> =
+        wrapToResource(Dispatchers.IO) {
+            followRemoteDataSource.requestFollow(toUserId, AddFollowRequest(memo = memo)).data
         }
 }

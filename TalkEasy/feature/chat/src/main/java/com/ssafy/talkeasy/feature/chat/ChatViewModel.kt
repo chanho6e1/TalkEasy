@@ -40,6 +40,9 @@ class ChatViewModel @Inject constructor(
     private val _newChat: MutableStateFlow<Chat?> = MutableStateFlow(null)
     val newChat: StateFlow<Chat?> = _newChat
 
+    private val _isSendSucceed: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isSendSucceed: StateFlow<Boolean> = _isSendSucceed
+
     fun getChatHistory(roomId: String, offset: Int, size: Int) =
         viewModelScope.launch {
             when (val value = getChatHistoryUseCase(roomId, offset, size)) {
@@ -75,7 +78,11 @@ class ChatViewModel @Inject constructor(
 
         message.let {
             when (val value = sendChatMessageUseCase(message)) {
-                is Resource.Success<Boolean> -> {}
+                is Resource.Success<Boolean> -> {
+                    if (value.data) {
+                        _isSendSucceed.value = !_isSendSucceed.value
+                    }
+                }
 
                 is Resource.Error -> {
                     Log.e("sendChatMessage", "sendChatMessage: ${value.errorMessage}")
@@ -115,9 +122,11 @@ class ChatViewModel @Inject constructor(
                         _newChat.value = it
                         addChatFromChats(it)
                     }
+
                     is Read -> {
                         readChatLocalData(it)
                     }
+
                     is String -> {
                         Log.e("receiveChatMessage", "receiveChatMessage : $it")
                     }

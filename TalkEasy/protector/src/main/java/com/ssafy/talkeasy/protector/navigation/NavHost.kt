@@ -10,6 +10,7 @@ import com.ssafy.talkeasy.feature.auth.navigation.loginScreen
 import com.ssafy.talkeasy.feature.auth.navigation.navigateToJoin
 import com.ssafy.talkeasy.feature.auth.navigation.navigateToWelcome
 import com.ssafy.talkeasy.feature.auth.navigation.welcomeScreen
+import com.ssafy.talkeasy.feature.chat.navigation.chatPartnerScreen
 import com.ssafy.talkeasy.feature.chat.navigation.chatScreen
 import com.ssafy.talkeasy.feature.chat.navigation.navigateToChat
 import com.ssafy.talkeasy.feature.follow.navigation.addFollowDetailScreen
@@ -65,12 +66,14 @@ fun AppNavHost(
             onSelectedItem = { navController.navigateToChat() }
         )
 
-        addFollowDetailScreen()
+        addFollowDetailScreen(navController = navController)
 
         myNotificationListScreen(navController = navController, onClickedNotificationItem = {})
 
         locationOpenScreen()
 
         chatScreen(navController = navController)
+
+        chatPartnerScreen(navController = navController)
     }
 }

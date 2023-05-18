@@ -5,7 +5,7 @@ android-application = "7.3.1"
 android-library = "7.3.1"
 
 # build.gradle.kts - Module:App
-androidx-core = "1.10.0"
+androidx-core = "1.10.1"
 androidx-test-espresso = "3.5.1"
 androidx-test-junit = "1.1.5"
 androidx-navigation = "2.5.3"
@@ -21,7 +21,7 @@ junit = "4.13.2"
 
 retrofit = "2.9.0"
 okhttp3 = "5.0.0-alpha.11"
-hilt = "2.46"
+hilt = "2.46.1"
 
 kakao = "2.13.0"
 
@@ -36,10 +36,11 @@ google-map-compose = "2.11.0"
 firebase-bom = "32.0.0"
 
 ktlint = "11.3.2"
-kotlinx-coroutines = "1.5.2"
+kotlinx-coroutines = "1.7.1"
 
 lottie-compose = "6.0.0"
 
+zxing-core = "3.4.1"
 zxing-android-embedded = "4.2.0"
 
 rabbitmq = "5.17.0"
@@ -109,6 +110,7 @@ javax-inject = { module = "javax.inject:javax.inject", version = "1" }
 
 lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie-compose" }
 
+zxing-core = { module = "com.google.zxing:core", version.ref = "zxing-core" }
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxing-android-embedded" }
 
 rabbitmq = { module = "com.rabbitmq:amqp-client", version.ref = "rabbitmq" }
@@ -125,6 +127,8 @@ retrofit = ["retrofit", "retrofit-converter-gson"]
 okhttp3 = ["okhttp3", "okhttp3-logging-interceptor"]
 kakao = ["kakao-user", "kakao-share"]
 google-map = ["google-map-location", "google-map-compose", "google-map"]
+
+zxing = ["zxing-core", "zxing-android-embedded"]
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
