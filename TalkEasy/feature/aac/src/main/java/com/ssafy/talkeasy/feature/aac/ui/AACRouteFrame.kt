@@ -159,12 +159,12 @@ fun AACRouteFrame(
             memberInfo = memberInfo
         )
 
-        BrowseLocationBox(
-            snackBarRef = snackBarRef,
-            chatPartnerRef = chatPartnerRef,
-            aacTopBarRef = aacTopBarRef,
-            aacRef = aacRef
-        )
+        // BrowseLocationBox(
+        //     snackBarRef = snackBarRef,
+        //     chatPartnerRef = chatPartnerRef,
+        //     aacTopBarRef = aacTopBarRef,
+        //     aacRef = aacRef
+        // )
 
         TopBarBox(
             aacTopBarRef = aacTopBarRef,

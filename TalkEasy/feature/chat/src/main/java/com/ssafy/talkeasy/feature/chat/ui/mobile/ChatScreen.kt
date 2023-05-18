@@ -230,37 +230,37 @@ fun ChatHeader(
             }
         },
         actions = {
-            IconButton(onClick = { mDisplayMenu = !mDisplayMenu }) {
-                Icon(
-                    imageVector = Icons.Filled.MoreVert,
-                    contentDescription = stringResource(id = R.string.image_more_info),
-                    tint = md_theme_light_onBackground
-                )
-            }
-
-            DropdownMenu(
-                expanded = mDisplayMenu,
-                onDismissRequest = { mDisplayMenu = false }
-            ) {
-                DropdownMenuItem(
-                    onClick = { onClickedInfoDetail() },
-                    text = {
-                        Text(
-                            text = stringResource(id = R.string.content_info_detail),
-                            style = typography.bodyLarge
-                        )
-                    }
-                )
-                DropdownMenuItem(
-                    onClick = { onClickedLocationOpenRequest() },
-                    text = {
-                        Text(
-                            text = stringResource(id = R.string.content_location_open_request),
-                            style = typography.bodyLarge
-                        )
-                    }
-                )
-            }
+            // IconButton(onClick = { mDisplayMenu = !mDisplayMenu }) {
+            //     Icon(
+            //         imageVector = Icons.Filled.MoreVert,
+            //         contentDescription = stringResource(id = R.string.image_more_info),
+            //         tint = md_theme_light_onBackground
+            //     )
+            // }
+            //
+            // DropdownMenu(
+            //     expanded = mDisplayMenu,
+            //     onDismissRequest = { mDisplayMenu = false }
+            // ) {
+            //     DropdownMenuItem(
+            //         onClick = { onClickedInfoDetail() },
+            //         text = {
+            //             Text(
+            //                 text = stringResource(id = R.string.content_info_detail),
+            //                 style = typography.bodyLarge
+            //             )
+            //         }
+            //     )
+            //     DropdownMenuItem(
+            //         onClick = { onClickedLocationOpenRequest() },
+            //         text = {
+            //             Text(
+            //                 text = stringResource(id = R.string.content_location_open_request),
+            //                 style = typography.bodyLarge
+            //             )
+            //         }
+            //     )
+            // }
         }
     )
 }

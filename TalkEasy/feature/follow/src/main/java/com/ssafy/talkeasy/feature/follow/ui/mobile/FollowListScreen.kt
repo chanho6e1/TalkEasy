@@ -190,6 +190,7 @@ fun FollowListHeader(
                     )
                 }
 
+    /*
                 IconButton(modifier = modifier, onClick = onClickedNotification) {
                     Icon(
                         painter = painterResource(R.drawable.ic_notification_off),
@@ -209,6 +210,7 @@ fun FollowListHeader(
                         modifier = modifier.size(24.dp)
                     )
                 }
+     */
             }
         }
     }
