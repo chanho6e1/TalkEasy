@@ -9,6 +9,8 @@ import com.ssafy.talkeasy.core.data.remote.datasource.chat.ChatRemoteDataSource
 import com.ssafy.talkeasy.core.data.remote.datasource.chat.ChatRemoteDataSourceImpl
 import com.ssafy.talkeasy.core.data.remote.datasource.chat.RabbitmqRemoteDataSource
 import com.ssafy.talkeasy.core.data.remote.datasource.chat.RabbitmqRemoteDataSourceImpl
+import com.ssafy.talkeasy.core.data.remote.datasource.fcm.FCMRemoteDataSource
+import com.ssafy.talkeasy.core.data.remote.datasource.fcm.FCMRemoteDataSourceImpl
 import com.ssafy.talkeasy.core.data.remote.datasource.follow.FollowRemoteDataSource
 import com.ssafy.talkeasy.core.data.remote.datasource.follow.FollowRemoteDataSourceImpl
 import com.ssafy.talkeasy.core.data.remote.datasource.member.MemberRemoteDataSource
@@ -16,6 +18,7 @@ import com.ssafy.talkeasy.core.data.remote.datasource.member.MemberRemoteDataSou
 import com.ssafy.talkeasy.core.data.remote.service.AACApiService
 import com.ssafy.talkeasy.core.data.remote.service.AuthApiService
 import com.ssafy.talkeasy.core.data.remote.service.ChatApiService
+import com.ssafy.talkeasy.core.data.remote.service.FCMApiService
 import com.ssafy.talkeasy.core.data.remote.service.FollowApiService
 import com.ssafy.talkeasy.core.data.remote.service.MemberApiService
 import dagger.Module
@@ -63,4 +66,9 @@ object DataSourceModule {
     fun provideRabbitmqRemoteDataSource(
         gson: Gson,
     ): RabbitmqRemoteDataSource = RabbitmqRemoteDataSourceImpl(gson)
+
+    @Provides
+    @Singleton
+    fun provideFCMRemoteDataSource(fcmApiService: FCMApiService): FCMRemoteDataSource =
+        FCMRemoteDataSourceImpl(fcmApiService)
 }
