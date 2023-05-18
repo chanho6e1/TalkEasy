@@ -122,7 +122,7 @@ public class OAuthService {
         }
 
         //채팅에 사용할 유저별 큐 생성
-        chatUserQueueService.createUserQueue(userId);
+//        chatUserQueueService.createUserQueue(userId);
 
         return jwtTokenProvider.createAccessToken(userId);
     }
