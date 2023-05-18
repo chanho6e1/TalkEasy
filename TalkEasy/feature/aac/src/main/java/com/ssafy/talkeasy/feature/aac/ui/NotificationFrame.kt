@@ -1,7 +1,6 @@
 package com.ssafy.talkeasy.feature.aac.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +24,7 @@ import com.ssafy.talkeasy.core.domain.entity.response.MyNotificationItem
 import com.ssafy.talkeasy.feature.aac.R
 import com.ssafy.talkeasy.feature.common.component.MyNotificationListItem
 import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
+import com.ssafy.talkeasy.feature.common.component.noRippleClickable
 import com.ssafy.talkeasy.feature.common.ui.theme.gradientEnd
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
@@ -48,7 +48,7 @@ fun NotificationFrame(
                         )
                     )
                 )
-                .clickable { closeNotificationDialog() }
+                .noRippleClickable { closeNotificationDialog() }
         )
 
         Surface(

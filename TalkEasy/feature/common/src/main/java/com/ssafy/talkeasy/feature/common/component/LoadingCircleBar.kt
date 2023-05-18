@@ -2,9 +2,6 @@ package com.ssafy.talkeasy.feature.common.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -19,12 +16,13 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.ssafy.talkeasy.feature.common.R
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 @Composable
-fun LoadingAnimation(modifier: Modifier = Modifier, isLoading: MutableState<Boolean>, size: Int) {
+fun LoadingAnimationIterate(
+    modifier: Modifier = Modifier,
+    isLoading: MutableState<Boolean>? = null,
+    size: Int,
+) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_loading))
     val lottieAnimatable = rememberLottieAnimatable()
 
@@ -43,15 +41,7 @@ fun LoadingAnimation(modifier: Modifier = Modifier, isLoading: MutableState<Bool
             composition = composition,
             progress = { lottieAnimatable.progress }
         )
-
-        TextButton(colors = ButtonDefaults.buttonColors(), onClick = {
-            CoroutineScope(Dispatchers.Default).launch {
-                // 이 함수 호출하면 바로 멈추니까 이거 써요~~
-                lottieAnimatable.snapTo(composition = composition, iteration = 0)
-                isLoading.value = false
-            }
-        }) {
-            Text(text = "로딩 중단")
-        }
+        // // 이 함수 호출하면 바로 멈추니까 이거 써요~~
+        // lottieAnimatable.snapTo(composition = composition, iteration = 0)
     }
 }

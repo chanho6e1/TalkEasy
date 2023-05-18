@@ -9,11 +9,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -41,7 +40,7 @@ import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
 @SuppressLint("DiscouragedApi")
 @Composable
-fun AACCategory(isOpened: Boolean) {
+fun AACCategory(isOpened: Boolean, aacViewModel: AACViewModel = viewModel()) {
     val categoryIndexArray =
         stringArrayResource(id = R.array.aac_category_index)
     val categoryValueArray = stringArrayResource(id = R.array.aac_category_word)
@@ -56,8 +55,6 @@ fun AACCategory(isOpened: Boolean) {
             context.packageName
         )
     }
-    val categoryCardWidth = if (isOpened) 190 else 250
-
     val category = List(8) { index ->
         Category(
             index = categoryIndexArray[index],
@@ -66,17 +63,20 @@ fun AACCategory(isOpened: Boolean) {
             contentDescription = categoryImageContentDescriptionArray[index]
         )
     }
+    val horizontalContentPadding = if (isOpened) 30.dp else 60.dp
 
-    LazyHorizontalGrid(
-        rows = GridCells.Fixed(2),
-        horizontalArrangement = Arrangement.spacedBy(24.dp)
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(4),
+        horizontalArrangement = Arrangement.spacedBy(24.dp),
+        verticalArrangement = Arrangement.spacedBy(40.dp),
+        contentPadding = PaddingValues(horizontal = horizontalContentPadding)
     ) {
-        items(items = category) {
+        itemsIndexed(items = category) { index, category ->
             AACCategoryCard(
-                categoryCardWidth,
-                iconId = it.imageId,
-                contentDescription = it.contentDescription,
-                category = it.value
+                iconId = category.imageId,
+                contentDescription = category.contentDescription,
+                category = category.value,
+                getWordList = { aacViewModel.getWordList(index + 2) }
             )
         }
     }
@@ -84,20 +84,21 @@ fun AACCategory(isOpened: Boolean) {
 
 @Composable
 fun AACCategoryCard(
-    width: Int,
     iconId: Int,
     contentDescription: String,
     category: String,
+    getWordList: () -> Unit,
     aacViewModel: AACViewModel = viewModel(),
 ) {
     Button(
-        modifier = Modifier
-            .width(width.dp)
-            .wrapContentHeight(),
+        modifier = Modifier.wrapContentHeight(),
         shape = shapes.medium,
         colors = ButtonDefaults.buttonColors(md_theme_light_surfaceVariant),
         contentPadding = PaddingValues(vertical = 18.dp),
-        onClick = { aacViewModel.setCategory(category) }
+        onClick = {
+            aacViewModel.setCategory(category)
+            getWordList()
+        }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally
@@ -120,7 +121,11 @@ fun AACCategoryCard(
 fun BackToCategory(category: String = "음식", aacViewModel: AACViewModel = viewModel()) {
     Button(
         colors = ButtonDefaults.buttonColors(Color.Transparent),
-        onClick = { aacViewModel.setCategory() }
+        onClick = {
+            aacViewModel.setCategory()
+            aacViewModel.initRelativeVerbList()
+            aacViewModel.initAACWordList()
+        }
     ) {
         Column(
             modifier = Modifier.padding(end = 8.dp),

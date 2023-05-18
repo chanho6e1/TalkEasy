@@ -2,6 +2,7 @@ package com.ssafy.talkeasy.feature.common.component
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
@@ -32,6 +33,8 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.core.content.ContextCompat
+import androidx.core.content.PermissionChecker
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.ssafy.talkeasy.feature.common.R
@@ -115,6 +118,15 @@ fun ShowProfileDialog(
             context.toast(context.getString(R.string.content_gallery_failed_message))
         }
     }
+    val cameraPermissionLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        if (isGranted) {
+            takePhotoFromCameraLauncher.launch()
+        } else {
+            context.toast("권한 요청이 반려되었습니다.")
+        }
+    }
 
     if (visible) {
         Dialog(
@@ -149,7 +161,19 @@ fun ShowProfileDialog(
                                 .wrapContentHeight()
                                 .fillMaxWidth()
                                 .clickable {
-                                    takePhotoFromCameraLauncher.launch()
+                                    val permission = android.Manifest.permission.CAMERA
+                                    val permissionCheck = ContextCompat.checkSelfPermission(
+                                        context,
+                                        permission
+                                    )
+
+                                    if (permissionCheck == PermissionChecker.PERMISSION_GRANTED) {
+                                        Log.d("Camera Permission", "Permission Granted")
+                                        takePhotoFromCameraLauncher.launch()
+                                    } else {
+                                        Log.d("Camera Permission", "request permission")
+                                        cameraPermissionLauncher.launch(permission)
+                                    }
                                 }
                         )
                     }

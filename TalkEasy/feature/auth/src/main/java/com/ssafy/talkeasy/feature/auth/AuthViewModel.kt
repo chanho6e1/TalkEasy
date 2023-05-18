@@ -36,7 +36,7 @@ class AuthViewModel @Inject constructor(
 
     private val role = MutableStateFlow(0)
 
-    private val gender = MutableStateFlow(0)
+    private val gender = MutableStateFlow(1)
 
     private val birthDate = MutableStateFlow("")
 
@@ -61,6 +61,7 @@ class AuthViewModel @Inject constructor(
                     _memberState.value = "NOT_MEMBER"
                 }
             }
+
             is Resource.Error -> Log.e("requestLogin", "requestLogin: ${value.errorMessage}")
         }
     }
@@ -82,6 +83,7 @@ class AuthViewModel @Inject constructor(
                         sharedPreferences.accessToken = value.data.data
                     }
                 }
+
                 is Resource.Error ->
                     Log.e("requestJoin", "requestJoin: ${value.errorMessage}")
             }
