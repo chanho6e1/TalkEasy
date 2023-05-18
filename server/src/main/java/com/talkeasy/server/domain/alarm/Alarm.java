@@ -21,6 +21,7 @@ public class Alarm {
     private int type; //(위치/sos : 1/2)
 //    private int status; //type:2 -> 0,1,2
     private String userId; //수신할 유저
+    private String roomId;
     private String chatId; //채팅 번호
     private String fromName; //요청을 한 사람 이름
 

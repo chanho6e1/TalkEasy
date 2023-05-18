@@ -12,6 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ResponseWardAlarmDto {
     private String alarmId;
+    private String roomId;
     private String content;
     private String created_dt;
     private Boolean readStatus; // 읽음 여부 true/false
@@ -19,6 +20,7 @@ public class ResponseWardAlarmDto {
 
     public ResponseWardAlarmDto(Alarm alarm) {
         this.alarmId = alarm.getId();
+        this.roomId = alarm.getRoomId();
         this.content = alarm.getContent();
         this.readStatus = alarm.getReadStatus();
         this.fromUserName = alarm.getFromName();

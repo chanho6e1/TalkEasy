@@ -12,6 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ResponseProtectorAlarmDto { //보호자용
     private String alarmId;
+    private String roomId;
     private String content;
     private Boolean readStatus; // 읽음 여부 true/false
     private String chatId; //채팅 번호
@@ -20,6 +21,8 @@ public class ResponseProtectorAlarmDto { //보호자용
 
     public ResponseProtectorAlarmDto(Alarm alarm) {
         this.alarmId = alarm.getId();
+
+        this.roomId = alarm.getRoomId();
         this.content = alarm.getContent();
         this.readStatus = alarm.getReadStatus();
         this.chatId = alarm.getChatId();

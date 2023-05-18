@@ -172,6 +172,7 @@ public class ChatService {
 
     private Alarm createAlarm(ChatRoomDetail chat, String content, String fromName, int type, String userId) {
         Alarm alarm = Alarm.builder()
+                .roomId(chat.getRoomId())
                 .chatId(chat.getId())
                 .readStatus(false)
                 .userId(userId)
