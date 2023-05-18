@@ -29,13 +29,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.aac.AACViewModel
-import com.ssafy.talkeasy.feature.aac.SampleData
 import com.ssafy.talkeasy.feature.chat.ChatViewModel
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatPartner
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatRoomBox
 import com.ssafy.talkeasy.feature.chat.ui.tablet.OpenChatRoomButton
 import com.ssafy.talkeasy.feature.common.component.LoadingAnimationIterate
-import com.ssafy.talkeasy.feature.common.component.noRippleClickable
 import com.ssafy.talkeasy.feature.common.ui.theme.dimens
 import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
@@ -184,8 +182,6 @@ fun AACRouteFrame(
             marginTop = marginTop,
             marginRight = marginRight,
             showCustomWordDialog = { setShowCustomWordDialog(true) },
-            marginRight = marginRight,
-            generatedSentence = generatedSentence,
             setIsClickedSendButton = setIsClickedSendButton
         )
     }
@@ -204,7 +200,7 @@ fun AACRouteFrame(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(dimens)
-                    .noRippleClickable { setShowCustomWordDialog(false) }
+                    .clickable { setShowCustomWordDialog(false) }
             )
 
             Box(modifier = Modifier.padding(start = 80.dp, bottom = 45.dp)) {
@@ -308,7 +304,6 @@ fun ConstraintLayoutScope.AACBox(
     marginTop: Dp = 18.dp,
     marginRight: Dp = 36.dp,
     showCustomWordDialog: () -> Unit,
-    generatedSentence: String,
     setIsClickedSendButton: (Boolean) -> Unit,
     aacViewModel: AACViewModel = viewModel(),
 ) {
