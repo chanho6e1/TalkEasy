@@ -1,6 +1,12 @@
 package com.ssafy.talkeasy.feature.follow.ui.mobile
 
 import androidx.compose.foundation.clickable
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -19,19 +25,25 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
+import com.google.gson.Gson
+import com.google.zxing.integration.android.IntentIntegrator
+import com.ssafy.talkeasy.core.domain.entity.AddFollowDetailInfo
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
 import com.ssafy.talkeasy.feature.common.component.Profile
@@ -56,8 +68,14 @@ internal fun FollowListRoute(
     onSelectedItem: () -> Unit,
 ) {
     val followList by rememberUpdatedState(newValue = viewModel.followList.collectAsState().value)
-    FollowLisScreen(
+
+    LaunchedEffect(Unit) {
+        viewModel.requestFollowList()
+    }
+
+    FollowListScreen(
         modifier = modifier,
+        addScanResult = viewModel::getAddFollowDetailInfo,
         followList = followList ?: arrayListOf(),
         onClickedAddFollow = onClickedAddFollow,
         onClickedNotification = onClickedNotification,
@@ -71,8 +89,9 @@ internal fun FollowListRoute(
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 640)
 @Composable
-internal fun FollowLisScreen(
+internal fun FollowListScreen(
     modifier: Modifier = Modifier,
+    addScanResult: (AddFollowDetailInfo) -> Unit = {},
     onClickedAddFollow: () -> Unit = {},
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
@@ -82,7 +101,10 @@ internal fun FollowLisScreen(
     Column() {
         FollowListHeader(
             modifier = modifier,
-            onClickedAddFollow = onClickedAddFollow,
+            addScanResult = addScanResult,
+            onClickedAddFollow = {
+                onClickedAddFollow()
+            },
             onClickedNotification = onClickedNotification,
             onClickedSettings = onClickedSettings
         )
@@ -99,10 +121,34 @@ internal fun FollowLisScreen(
 @Composable
 fun FollowListHeader(
     modifier: Modifier = Modifier,
+    addScanResult: (AddFollowDetailInfo) -> Unit = {},
     onClickedAddFollow: () -> Unit = {},
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
+    context: Context = LocalContext.current,
 ) {
+    val scanResultLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+            val resultScan = IntentIntegrator.parseActivityResult(result.resultCode, result.data)
+            resultScan?.let {
+                val addMemberDetailInfo =
+                    Gson().fromJson(it.contents, AddFollowDetailInfo::class.java)
+                addScanResult(addMemberDetailInfo)
+                onClickedAddFollow()
+            }
+        }
+
+    val requestPermissionLauncher =
+        rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { isGranted ->
+            if (isGranted) {
+                scanResultLauncher.launch(IntentIntegrator(context as Activity).createScanIntent())
+            }
+        }
+
     LazyRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -119,7 +165,22 @@ fun FollowListHeader(
 
         item {
             Row(modifier = modifier.padding(end = 18.dp)) {
-                IconButton(modifier = modifier, onClick = onClickedAddFollow) {
+                IconButton(
+                    modifier = modifier,
+                    onClick = {
+                        if (ContextCompat.checkSelfPermission(
+                                context,
+                                Manifest.permission.CAMERA
+                            ) == PackageManager.PERMISSION_GRANTED
+                        ) {
+                            scanResultLauncher.launch(
+                                IntentIntegrator(context as Activity).createScanIntent()
+                            )
+                        } else {
+                            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+                        }
+                    }
+                ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_add_friend),
                         contentDescription = stringResource(

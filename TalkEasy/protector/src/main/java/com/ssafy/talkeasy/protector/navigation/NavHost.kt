@@ -65,7 +65,7 @@ fun AppNavHost(
             onSelectedItem = { navController.navigateToChat() }
         )
 
-        addFollowDetailScreen()
+        addFollowDetailScreen(navController = navController)
 
         myNotificationListScreen()
 

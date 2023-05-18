@@ -18,6 +18,7 @@ import com.ssafy.talkeasy.core.domain.usecase.chat.ReceiveChatMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.SendChatMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.StopReceiveMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.FollowListUseCase
+import com.ssafy.talkeasy.core.domain.usecase.follow.RequestFollowUseCase
 import com.ssafy.talkeasy.core.domain.usecase.member.MemberInfoUseCase
 import dagger.Module
 import dagger.Provides
@@ -68,6 +69,11 @@ object UseCaseModule {
     @Provides
     fun provideGetTTSMp3UrlUseCase(aacRepository: AACRepository): GetTTSMp3UrlUseCase =
         GetTTSMp3UrlUseCase(aacRepository)
+
+    @Singleton
+    @Provides
+    fun provideRequestFollowUseCase(followRepository: FollowRepository): RequestFollowUseCase =
+        RequestFollowUseCase(followRepository)
 
     @Singleton
     @Provides
