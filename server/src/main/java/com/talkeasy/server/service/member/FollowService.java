@@ -145,7 +145,7 @@ public class FollowService {
     }
 
     // 피보호자 특이사항 수정
-    public String putMemo(String myId, String followId, FollowRequestDto followRequestDto) {
+    public FollowResponse putMemo(String myId, String followId, FollowRequestDto followRequestDto) {
 
         Follow follow = getTargetUser(followId);
 
@@ -155,7 +155,9 @@ public class FollowService {
 
         mongoTemplate.save(follow);
 
-        return "수정 성공";
+
+
+        return getUserInfoByFollow(myId, followId);
     }
 
     public String putNickName(Member myInfo, String followId, String nickName) {
