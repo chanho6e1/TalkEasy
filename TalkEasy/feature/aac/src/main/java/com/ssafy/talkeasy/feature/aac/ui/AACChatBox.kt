@@ -38,7 +38,7 @@ fun AACChatBox(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 20.dp),
+            .padding(bottom = 14.dp),
         shape = shapes.extraSmall,
         color = black_squeeze
     ) {

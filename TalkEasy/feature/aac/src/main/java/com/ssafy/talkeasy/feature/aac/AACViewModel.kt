@@ -4,12 +4,18 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.talkeasy.core.domain.Resource
+import com.ssafy.talkeasy.core.domain.entity.response.AACWord
+import com.ssafy.talkeasy.core.domain.entity.response.AACWordList
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.core.domain.usecase.aac.GenerateSentenceUseCase
+import com.ssafy.talkeasy.core.domain.usecase.aac.GetRelativeVerbListUseCase
+import com.ssafy.talkeasy.core.domain.usecase.aac.GetTTSMp3UrlUseCase
+import com.ssafy.talkeasy.core.domain.usecase.aac.GetWordListUseCase
 import com.ssafy.talkeasy.feature.common.SharedPreferences
 import com.ssafy.talkeasy.feature.common.util.ChatMode
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -18,6 +24,9 @@ import kotlinx.coroutines.launch
 class AACViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences,
     private val generateSentenceUseCase: GenerateSentenceUseCase,
+    private val getWordListUseCase: GetWordListUseCase,
+    private val getRelativeVerbListUseCase: GetRelativeVerbListUseCase,
+    private val getTTSMp3UrlUseCase: GetTTSMp3UrlUseCase,
 ) : ViewModel() {
 
     private val _selectedCard: MutableStateFlow<List<String>> =
@@ -36,7 +45,23 @@ class AACViewModel @Inject constructor(
     private val _generatedSentence: MutableStateFlow<String> = MutableStateFlow("")
     val generatedSentence: StateFlow<String> = _generatedSentence
 
+    private val _aacFixedList: MutableStateFlow<List<AACWord>> = MutableStateFlow(listOf())
+    val aacFixedList: StateFlow<List<AACWord>> = _aacFixedList
+
+    private val _aacWordList: MutableStateFlow<AACWordList?> = MutableStateFlow(null)
+    val aacWordList: StateFlow<AACWordList?> = _aacWordList
+
+    private val _relativeVerbList: MutableStateFlow<List<AACWord>> = MutableStateFlow(listOf())
+    val relativeVerbList: StateFlow<List<AACWord>> = _relativeVerbList
+
+    private val _ttsMp3Url: MutableStateFlow<String> = MutableStateFlow("")
+    val ttsMp3Url: StateFlow<String> = _ttsMp3Url
+
     val whoRequest: String = "위치 정보 요청한 사람"
+
+    fun initSelectedCard() {
+        _selectedCard.value = listOf()
+    }
 
     fun addCard(word: String) {
         val mutableList: MutableList<String> =
@@ -60,10 +85,6 @@ class AACViewModel @Inject constructor(
         _selectedCard.value = mutableList
     }
 
-    fun initSelectedCard() {
-        _selectedCard.value = listOf()
-    }
-
     fun setCategory(category: String = "") {
         _category.value = category
     }
@@ -82,17 +103,70 @@ class AACViewModel @Inject constructor(
         _chatPartner.value = chatPartner
     }
 
+    fun initAACWordList() {
+        _aacWordList.value = null
+    }
+
+    fun initRelativeVerbList() {
+        _relativeVerbList.value = listOf()
+    }
+
     fun generateSentence(words: List<String>) = viewModelScope.launch {
-        var text = ""
-        for (word in words) text += "$word "
+        val text = words.toString().split("[", "]")[1]
 
         when (val value = generateSentenceUseCase(text)) {
             is Resource.Success<String> -> {
                 _generatedSentence.value = value.data
+
+                if (chatMode.value == ChatMode.TTS) {
+                    getTTSMp3Url(value.data)
+                }
             }
 
             is Resource.Error -> {
                 Log.e("generateSentence", "generateSentence: ${value.errorMessage}")
+            }
+        }
+    }
+
+    fun getWordList(categoryId: Int) = viewModelScope.launch {
+        if (categoryId != 1) delay(300L)
+
+        when (val value = getWordListUseCase(categoryId)) {
+            is Resource.Success<AACWordList> -> {
+                if (categoryId == 1) {
+                    _aacFixedList.value = value.data.fixedList
+                } else {
+                    _aacWordList.value = value.data
+                }
+            }
+
+            is Resource.Error -> {
+                Log.e("getWordList", "getWordList: ${value.errorMessage}")
+            }
+        }
+    }
+
+    fun getRelativeVerbList(aacId: Int) = viewModelScope.launch {
+        when (val value = getRelativeVerbListUseCase(aacId)) {
+            is Resource.Success<List<AACWord>> -> {
+                _relativeVerbList.value = value.data
+            }
+
+            is Resource.Error -> {
+                Log.e("getRelativeVerbList", "getRelativeVerbList: ${value.errorMessage}")
+            }
+        }
+    }
+
+    private fun getTTSMp3Url(text: String) = viewModelScope.launch {
+        when (val value = getTTSMp3UrlUseCase(text)) {
+            is Resource.Success<String> -> {
+                _ttsMp3Url.value = value.data
+            }
+
+            is Resource.Error -> {
+                Log.e("getTTSMp3Url", "getTTSMp3Url: ${value.errorMessage}")
             }
         }
     }

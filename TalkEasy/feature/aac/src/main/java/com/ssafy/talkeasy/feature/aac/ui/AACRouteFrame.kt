@@ -1,8 +1,11 @@
 package com.ssafy.talkeasy.feature.aac.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -15,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
@@ -30,6 +34,9 @@ import com.ssafy.talkeasy.feature.chat.ChatViewModel
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatPartner
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatRoomBox
 import com.ssafy.talkeasy.feature.chat.ui.tablet.OpenChatRoomButton
+import com.ssafy.talkeasy.feature.common.component.LoadingAnimationIterate
+import com.ssafy.talkeasy.feature.common.component.noRippleClickable
+import com.ssafy.talkeasy.feature.common.ui.theme.dimens
 import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
 import com.ssafy.talkeasy.feature.follow.ui.tablet.FollowFrame
@@ -58,6 +65,9 @@ fun AACRouteFrame(
         mutableStateOf(false)
     }
     val (showSOSDialog, setShowSOSDialog) = remember {
+        mutableStateOf(false)
+    }
+    val (showCustomWordDialog, setShowCustomWordDialog) = remember {
         mutableStateOf(false)
     }
     val (isClickedSendButton, setIsClickedSendButton) = remember {
@@ -173,6 +183,8 @@ fun AACRouteFrame(
             isOpened = showChangeChatPartnerDialog,
             marginTop = marginTop,
             marginRight = marginRight,
+            showCustomWordDialog = { setShowCustomWordDialog(true) },
+            marginRight = marginRight,
             generatedSentence = generatedSentence,
             setIsClickedSendButton = setIsClickedSendButton
         )
@@ -182,6 +194,21 @@ fun AACRouteFrame(
         Box(modifier = Modifier.fillMaxSize()) {
             NotificationFrame(notifications = listOf()) {
                 setShowNotificationDialog(false)
+            }
+        }
+    }
+
+    if (showCustomWordDialog) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomStart) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(dimens)
+                    .noRippleClickable { setShowCustomWordDialog(false) }
+            )
+
+            Box(modifier = Modifier.padding(start = 80.dp, bottom = 45.dp)) {
+                AACCustomWordDialog()
             }
         }
     }
@@ -280,16 +307,33 @@ fun ConstraintLayoutScope.AACBox(
     isOpened: Boolean,
     marginTop: Dp = 18.dp,
     marginRight: Dp = 36.dp,
+    showCustomWordDialog: () -> Unit,
     generatedSentence: String,
     setIsClickedSendButton: (Boolean) -> Unit,
     aacViewModel: AACViewModel = viewModel(),
 ) {
-    val smallCardsColumn = if (isOpened) 4 else 5
     val words by aacViewModel.selectedCard.collectAsState()
     val category by aacViewModel.category.collectAsState()
+    val generatedSentence by aacViewModel.generatedSentence.collectAsState()
+    val aacWordList by aacViewModel.aacWordList.collectAsState()
+    val fixedList by aacViewModel.aacFixedList.collectAsState()
+    val ttsMp3Url by aacViewModel.ttsMp3Url.collectAsState()
+    val context = LocalContext.current
+
+    SideEffect {
+        if (fixedList.isEmpty()) {
+            aacViewModel.getWordList(categoryId = 1)
+        }
+    }
 
     LaunchedEffect(key1 = generatedSentence) {
         aacViewModel.initSelectedCard()
+    }
+
+    LaunchedEffect(key1 = ttsMp3Url) {
+        if (ttsMp3Url.isNotBlank()) {
+            ttsPlay(context, ttsMp3Url)
+        }
     }
 
     Column(
@@ -305,25 +349,73 @@ fun ConstraintLayoutScope.AACBox(
     ) {
         AACChatBox(words = words, setIsClickedSendButton = setIsClickedSendButton)
 
-        AACFixedCards()
-
-        if (category == "") {
+        if (category != "" && aacWordList == null) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                AACCategory(isOpened = isOpened)
+                LoadingAnimationIterate(size = 200)
             }
         } else {
-            AACCardBox(smallCardsColumn = smallCardsColumn, category = category)
+            AACFixedCards()
+
+            if (category == "") {
+                Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                    AACCategory(isOpened = isOpened)
+                }
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 22.dp, start = 40.dp),
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    // AACCustomWordDialogButton(showCustomWordDialog = showCustomWordDialog)
+                }
+            } else {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (category != "사용자 지정") {
+                        Spacer(modifier = Modifier.padding(top = 8.dp))
+
+                        AACRelatedCards()
+                    }
+
+                    AACCardBox(category = category, showCustomWordDialog = showCustomWordDialog)
+                }
+            }
         }
     }
 }
 
 @Composable
-fun AACCardBox(smallCardsColumn: Int, category: String) {
+fun AACCardBox(
+    category: String,
+    showCustomWordDialog: () -> Unit,
+    aacViewModel: AACViewModel = viewModel(),
+) {
+    val aacWordList by aacViewModel.aacWordList.collectAsState()
+    val wordCountPerPage: Int
+    val marginTop: Dp
+    val marginBottom: Dp
+    if (category != "사용자 지정") {
+        wordCountPerPage = 16
+        marginTop = 14.dp
+        marginBottom = 10.dp
+    } else {
+        wordCountPerPage = 20
+        marginTop = 20.dp
+        marginBottom = 16.dp
+    }
+    val (page, setPage) = remember {
+        mutableStateOf(0)
+    }
+    val aacWordListSize = aacWordList?.aacList?.size ?: 0
+    val totalPageCount =
+        aacWordListSize / wordCountPerPage + if (aacWordListSize % wordCountPerPage == 0) 0 else 1
+
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+            .padding(top = marginTop),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween
     ) {
         Box(
             modifier = Modifier
@@ -331,16 +423,30 @@ fun AACCardBox(smallCardsColumn: Int, category: String) {
                 .fillMaxWidth(),
             contentAlignment = Alignment.TopEnd
         ) {
-            AACSmallCards(words = SampleData.string25, column = smallCardsColumn)
+            aacWordList?.let {
+                AACSmallCards(
+                    page = page,
+                    wordCountPerPage = wordCountPerPage,
+                    wordList = it.aacList
+                )
+            }
         }
 
         Box(
             modifier = Modifier
-                .weight(1f)
+                .padding(bottom = marginBottom)
                 .fillMaxWidth()
         ) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .padding(start = 40.dp)
+            ) {
+                // AACCustomWordDialogButton(showCustomWordDialog = showCustomWordDialog)
+            }
+
             Box(modifier = Modifier.align(Alignment.Center)) {
-                AACPaging()
+                AACPaging(page = page, totalPage = totalPageCount, setPage = setPage)
             }
 
             Box(modifier = Modifier.align(Alignment.CenterEnd)) {
