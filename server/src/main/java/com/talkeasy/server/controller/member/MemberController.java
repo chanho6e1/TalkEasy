@@ -58,6 +58,7 @@ public class MemberController {
     public ResponseEntity<CommonResponse> deleteUserInfo(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
 
         return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+//                HttpStatus.NO_CONTENT, memberService.deleteUserInfo("64613b09971240357edbb88f")));
                 HttpStatus.NO_CONTENT, memberService.deleteUserInfo(oAuth2User.getId())));
     }
 

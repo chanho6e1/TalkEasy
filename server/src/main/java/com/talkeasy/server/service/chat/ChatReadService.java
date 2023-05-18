@@ -16,6 +16,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class ChatReadService {
     public ChatReadDto convertChat(Message message) {
         String str = new String(message.getBody());
         ChatReadDto chat = gson.fromJson(str, ChatReadDto.class);
-
+        chat.setReadTime(LocalDateTime.now().toString());
         return chat;
     }
 
@@ -47,24 +48,31 @@ public class ChatReadService {
                     chat.setReadCnt(0);
                     mongoTemplate.save(chat);
 
+                    log.info("read user {}", chatReadDto.getReadUserId());
+
                     log.info("roomId {}", chat.getRoomId());
                     log.info("userId {}", chat.getToUserId());
+                    log.info("msg {}", chat.getMsg());
 
                     StringBuilder sb = new StringBuilder()
                             .append("room.")
                             .append(chat.getRoomId())
                             .append(".")
-                            .append(chat.getToUserId()); // 상대방에게 보내기
+                            .append(chat.getFromUserId()); // 상대방에게 보내기
+//                            .append(chat.getToUserId()); // 상대방에게 보내기
 
                     log.info("sb {}", sb);
 
                     ChatReadResponseDto chatReadResponseDto = ChatReadResponseDto.builder().msgId(chat.getId()).roomId(chat.getRoomId())
-                            .readCnt(chat.getReadCnt()).build();
+                            .readCnt(chat.getReadCnt()).msg(chat.getMsg()).build();
 
                     Message msg = MessageBuilder.withBody(gson.toJson(chatReadResponseDto).getBytes()).build();
 
-                    if (getReadQueueInfo(chat.getRoomId(), chat.getToUserId()) != null) {
-                        rabbitTemplate.send("read.exchange", sb.toString(), msg);
+                    if (getReadQueueInfo(chat.getRoomId(), chat.getFromUserId()) != null) {
+                        QueueInformation queueInformation = getReadQueueInfo(chat.getRoomId(), chat.getFromUserId());
+                        queueInformation.getName();
+                        rabbitTemplate.convertAndSend("read.exchange", sb.toString(), msg);
+//                        rabbitTemplate.send("read.exchange", sb.toString(), msg);
                     }
                 }
             }

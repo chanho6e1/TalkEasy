@@ -151,24 +151,12 @@ public class AACService {
     /* gpt */
     public String getGenereteText(ChatTextDto text) {
 
-//        OpenAiService service = new OpenAiService(apiKey);
-//
-////        String inputText = "'" + text.getText() + " . this words rearrange and complete in korean please.'";
-//
-//        if (text == null)
-//            throw new NullPointerException("입력된 데이터가 없습니다.");
-//
-//        String inputText = "'" + text.getText() + " .' 이 단어들을 어순 맞게 문장 완성해줘.";
-//
-//        CompletionRequest completionRequest = CompletionRequest.builder()
-//                .prompt(inputText)
-//                .model("text-davinci-003")
-//                .maxTokens(100) // 원하는 출력 길이 조정 (선택사항)
-//                .temperature(0.5) // 다양성 조절 (선택사항)
-//                .n(1)
-//                .build();
-//
-//        return service.createCompletion(completionRequest).getChoices().get(0).getText().strip().replace("\"", "");
+        String[] input_texts = text.getText().split(",");
+        if (input_texts.length == 1){
+            return input_texts[0];
+        }
+
+        String data = text.getText().replace(",", "");
 
         /**/
         HttpHeaders headers = new HttpHeaders();
@@ -177,7 +165,7 @@ public class AACService {
 
         List<OpenAIMessage> messages = new ArrayList<>();
 
-        messages.add(new OpenAIMessage("user", text.getText() + " .' 이 단어를 사용해서 한문장으로 완성해줘."));
+        messages.add(new OpenAIMessage("user", data + " .' 한글로 완전한 문장으로 완성해줘."));
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("messages", messages);

@@ -220,22 +220,24 @@ public class ChatService {
 
 
         sendChatMessage(chat, chat.getToUserId());
+        sendChatMessage(chat, chat.getFromUserId());
 
-        PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
-        PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
-
-        if (getUserQueueInfo(chat.getToUserId()) != null) {
-            rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getToUserId(), gson.toJson(toUserList));
-        }
-        if (getUserQueueInfo(chat.getFromUserId()) != null) {
-            rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
-        }
+//        PagedResponse<ChatRoomListDto> fromUserList = getChatRoomList(chat.getFromUserId());
+//        PagedResponse<ChatRoomListDto> toUserList = getChatRoomList(chat.getToUserId());
+//
+//        if (getUserQueueInfo(chat.getToUserId()) != null) {
+//            rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getToUserId(), gson.toJson(toUserList));
+//        }
+//        if (getUserQueueInfo(chat.getFromUserId()) != null) {
+//            rabbitTemplate.convertAndSend("user.exchange", "user." + chat.getFromUserId(), gson.toJson(fromUserList));
+//        }
 
         /* FCM 알림 - 안드로이드 FCM 연결 시, 주석 풀 것. */
-//        Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getFromUserId())), Member.class);
-//        UserAppToken userAppToken = mongoTemplate.findOne(Query.query(Criteria.where("userId").is(chat.getToUserId())), UserAppToken.class);
-//        /*gson 형식의 스트링 바디를 보내는 경우*/
-//        firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), new MessageDto(chat, member.getName())); // String targetToken, String title, String body
+        Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getFromUserId())), Member.class);
+        UserAppToken userAppToken = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("userId").is(chat.getToUserId())), UserAppToken.class)).orElse(null);
+        /*gson 형식의 스트링 바디를 보내는 경우*/
+        if (userAppToken != null)
+            firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), new MessageDto(chat, member.getName())); // String targetToken, String title, String body
         /*기존 방식*/
 //        firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), chat.getMsg()); // String targetToken, String title, String body
 
@@ -253,7 +255,8 @@ public class ChatService {
         String routingKey = String.format("room.%s.%s", chat.getRoomId(), toUserId);
 
         Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
-        rabbitTemplate.send("chat.exchange", routingKey, msg);
+//        rabbitTemplate.send("chat.exchange", routingKey, msg);
+        rabbitTemplate.convertAndSend("chat.exchange", routingKey, msg);
     }
 
 

@@ -6,6 +6,11 @@ import com.google.cloud.texttospeech.v1.*;
 import com.google.protobuf.ByteString;
 
 import com.talkeasy.server.config.s3.S3Uploader;
+import com.talkeasy.server.domain.member.Member;
+import com.talkeasy.server.service.member.OAuth2UserImpl;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.core.io.Resource;
@@ -16,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -27,6 +33,7 @@ public class TTSService {
 
     private final ResourceLoader resourceLoader;
     private final S3Uploader s3Uploader;
+    private final MongoTemplate mongoTemplate;
 
 
     public String getTTS(String text) throws IOException, UnsupportedAudioFileException {
@@ -37,6 +44,11 @@ public class TTSService {
         TextToSpeechSettings settings = TextToSpeechSettings.newBuilder()
                 .setCredentialsProvider(FixedCredentialsProvider.create(credentials)).build();
 
+//        SsmlVoiceGender gender = SsmlVoiceGender.MALE;
+//        if (member != null) {
+//            gender = getGender(member.getId()) == 0 ? SsmlVoiceGender.MALE : SsmlVoiceGender.FEMALE;
+//        }
+
         try (TextToSpeechClient textToSpeechClient = TextToSpeechClient.create(settings)) {
             // Set the text input to be synthesized
             SynthesisInput input = SynthesisInput.newBuilder().setText(text).build();
@@ -46,7 +58,8 @@ public class TTSService {
             VoiceSelectionParams voice =
                     VoiceSelectionParams.newBuilder()
                             .setLanguageCode("ko-KR")
-                            .setSsmlGender(SsmlVoiceGender.NEUTRAL)
+                            .setSsmlGender(SsmlVoiceGender.FEMALE)
+//                            .setSsmlGender(gender)
                             .build();
 
             // Select the type of audio file you want returned
@@ -65,6 +78,17 @@ public class TTSService {
             byte[] audioBytes = audioContents.toByteArray();
             return uploadAudioToS3(audioBytes);
         }
+    }
+
+    private int getGender(String id) {
+
+        Member member = Optional.ofNullable(mongoTemplate.findOne(new Query(Criteria.where("id").is(id)), Member.class)).orElse(null);
+
+        if (member != null) {
+            return member.getGender();
+        }
+
+        return 0;
     }
 
 

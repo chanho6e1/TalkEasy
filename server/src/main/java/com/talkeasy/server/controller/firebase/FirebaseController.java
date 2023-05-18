@@ -30,7 +30,8 @@ public class FirebaseController {
                                       @RequestParam String body) throws IOException {
 
         firebaseCloudMessageService.sendMessageTo(token, title, body);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+                HttpStatus.CREATED, "Success"));
     }
 
     @PostMapping
@@ -38,7 +39,8 @@ public class FirebaseController {
     public ResponseEntity pushMessage(@RequestBody RequestFcmDto requestFcmDto) throws IOException {
 
         firebaseCloudMessageService.sendFcm(requestFcmDto);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
+                HttpStatus.CREATED, "Success"));
     }
 
 
@@ -49,8 +51,6 @@ public class FirebaseController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, firebaseCloudMessageService.saveAppToken(oAuth2User.getId(), appToken)));
-//        return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
-//                "유저 앱 토큰 저장 성공", firebaseCloudMessageService.saveAppToken("1", appToken)));
     }
 }
 
