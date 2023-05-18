@@ -1,5 +1,6 @@
 package com.ssafy.talkeasy.feature.follow.ui.mobile
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,8 +20,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
+import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
@@ -40,10 +45,12 @@ import com.ssafy.talkeasy.feature.common.ui.theme.delta
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.sunset_orange
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
+import com.ssafy.talkeasy.feature.common.util.ChatMessageManager
 import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.common.util.toTimeString
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
 import com.ssafy.talkeasy.feature.follow.R
+import kotlinx.coroutines.flow.asSharedFlow
 
 @Composable
 internal fun FollowListRoute(
@@ -56,11 +63,32 @@ internal fun FollowListRoute(
     onSelectedItem: () -> Unit,
 ) {
     val followList by rememberUpdatedState(newValue = viewModel.followList.collectAsState().value)
+
+    val chatMessageFlow = ChatMessageManager.chatMessageFlow.asSharedFlow()
+
+    val (newAlarm, setNewAlarm) = remember {
+        mutableStateOf(false)
+    }
+
+    LaunchedEffect(chatMessageFlow) {
+        chatMessageFlow.collect { chatMessage ->
+            // 채팅 메시지에 대한 처리를 여기서 합니다.
+            viewModel.requestFollowList()
+            if (chatMessage.type == 2) {
+                setNewAlarm(true)
+            }
+        }
+    }
+
     FollowLisScreen(
         modifier = modifier,
         followList = followList ?: arrayListOf(),
+        newAlarm = newAlarm,
         onClickedAddFollow = onClickedAddFollow,
-        onClickedNotification = onClickedNotification,
+        onClickedNotification = {
+            setNewAlarm(false)
+            onClickedNotification()
+        },
         onClickedSettings = onClickedSettings,
         onSelectedItem = { follow ->
             viewModel.setSelectFollow(follow)
@@ -78,10 +106,12 @@ internal fun FollowLisScreen(
     onClickedSettings: () -> Unit = {},
     followList: List<Follow> = arrayListOf(),
     onSelectedItem: (Follow) -> Unit = {},
+    newAlarm: Boolean = false,
 ) {
     Column() {
         FollowListHeader(
             modifier = modifier,
+            newAlarm = newAlarm,
             onClickedAddFollow = onClickedAddFollow,
             onClickedNotification = onClickedNotification,
             onClickedSettings = onClickedSettings
@@ -102,6 +132,7 @@ fun FollowListHeader(
     onClickedAddFollow: () -> Unit = {},
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
+    newAlarm: Boolean = false,
 ) {
     LazyRow(
         modifier = modifier.fillMaxWidth(),
@@ -130,12 +161,14 @@ fun FollowListHeader(
                 }
 
                 IconButton(modifier = modifier, onClick = onClickedNotification) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_notification_off),
-                        contentDescription = stringResource(
-                            R.string.ic_notification_text
-                        ),
-                        modifier = modifier.size(24.dp)
+                    Image(
+                        modifier = Modifier.size(24.dp),
+                        painter = if (newAlarm) {
+                            painterResource(id = drawable.ic_alarm_new)
+                        } else {
+                            painterResource(id = drawable.ic_alarm_default)
+                        },
+                        contentDescription = stringResource(R.string.ic_notification_text)
                     )
                 }
 
