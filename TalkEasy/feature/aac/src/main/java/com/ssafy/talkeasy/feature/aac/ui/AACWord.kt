@@ -36,7 +36,7 @@ import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
 
 @Composable
-fun AACFixedCards(aacViewModel: AACViewModel = viewModel()) {
+fun AACFixedCards(cardClickEnable: Boolean, aacViewModel: AACViewModel = viewModel()) {
     val fixedWords by aacViewModel.aacFixedList.collectAsState()
     val aacWordList by aacViewModel.aacWordList.collectAsState()
 
@@ -51,6 +51,7 @@ fun AACFixedCards(aacViewModel: AACViewModel = viewModel()) {
             AACCardWrap(
                 word = word.title,
                 color = seed,
+                cardClickEnable = cardClickEnable,
                 onCardSelectedListener = { aacViewModel.addCard(word.title) }
             )
         }
@@ -58,7 +59,7 @@ fun AACFixedCards(aacViewModel: AACViewModel = viewModel()) {
 }
 
 @Composable
-fun AACRelatedCards(aacViewModel: AACViewModel = viewModel()) {
+fun AACRelatedCards(cardClickEnable: Boolean, aacViewModel: AACViewModel = viewModel()) {
     val relatedWordList by aacViewModel.relativeVerbList.collectAsState()
 
     Box(modifier = Modifier.padding(start = 30.dp)) {
@@ -87,6 +88,7 @@ fun AACRelatedCards(aacViewModel: AACViewModel = viewModel()) {
                         AACCardWrap(
                             word = word.title,
                             color = md_theme_light_secondaryContainer,
+                            cardClickEnable = cardClickEnable,
                             onCardSelectedListener = { aacViewModel.addCard(word.title) }
                         )
                     }
@@ -107,7 +109,12 @@ fun AACRelatedCards(aacViewModel: AACViewModel = viewModel()) {
 }
 
 @Composable
-fun AACSmallCards(page: Int = 0, wordCountPerPage: Int, wordList: List<AACWord>) {
+fun AACSmallCards(
+    page: Int = 0,
+    wordCountPerPage: Int,
+    wordList: List<AACWord>,
+    cardClickEnable: Boolean,
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(4),
         horizontalArrangement = Arrangement.spacedBy(15.dp),
@@ -121,7 +128,7 @@ fun AACSmallCards(page: Int = 0, wordCountPerPage: Int, wordList: List<AACWord>)
                 Integer.min((page + 1) * wordCountPerPage, wordList.size)
             )
         ) { word ->
-            AACCardSmall(word = word)
+            AACCardSmall(word = word, cardClickEnable = cardClickEnable)
         }
     }
 }

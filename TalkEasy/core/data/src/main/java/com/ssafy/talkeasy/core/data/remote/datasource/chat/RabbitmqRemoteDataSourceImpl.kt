@@ -31,6 +31,7 @@ class RabbitmqRemoteDataSourceImpl @Inject constructor(
                 connection = factory.newConnection()
                 channel = connection.createChannel()
                 channel.confirmSelect()
+                channel.basicQos(1)
             }
         } catch (e: Exception) {
             Log.e("Rabbitmq", "Error connecting to RabbitMQ", e)

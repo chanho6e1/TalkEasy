@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.ssafy.talkeasy.core.domain.entity.response.AACWord
 import com.ssafy.talkeasy.feature.aac.R
 import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
@@ -41,9 +40,9 @@ fun AACCustomWordDialog() {
                 style = textStyleBold22
             )
 
-            AACCardSmall(word = AACWord(0, "안녕하세요", 0))
-            AACCardSmall(word = AACWord(0, "안녕하세요", 0))
-            AACCardSmall(word = AACWord(0, "안녕하세요", 0))
+            // AACCardSmall(word = AACWord(0, "안녕하세요", 0))
+            // AACCardSmall(word = AACWord(0, "안녕하세요", 0))
+            // AACCardSmall(word = AACWord(0, "안녕하세요", 0))
         }
     }
 }

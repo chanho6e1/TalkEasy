@@ -4,26 +4,24 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.Dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieClipSpec
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.ssafy.talkeasy.feature.common.R
 
 @Composable
 fun LoadingAnimationIterate(
     modifier: Modifier = Modifier,
-    isLoading: MutableState<Boolean>? = null,
-    size: Int,
+    loadingAnimationId: Int,
+    size: Dp,
 ) {
-    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.anim_loading))
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(loadingAnimationId))
     val lottieAnimatable = rememberLottieAnimatable()
 
     LaunchedEffect(composition) {
@@ -37,7 +35,7 @@ fun LoadingAnimationIterate(
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         LottieAnimation(
-            modifier = modifier.size(size.dp),
+            modifier = modifier.size(size),
             composition = composition,
             progress = { lottieAnimatable.progress }
         )

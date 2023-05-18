@@ -54,6 +54,7 @@ import com.ssafy.talkeasy.feature.common.ui.theme.typography
 import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.common.util.OnBottomReached
 import com.ssafy.talkeasy.feature.common.util.OnTopReached
+import com.ssafy.talkeasy.feature.common.util.SendMode
 import com.ssafy.talkeasy.feature.common.util.toTimeString
 
 @Composable
@@ -66,7 +67,7 @@ fun ConstraintLayoutScope.ChatRoomBox(
     chatPartner: Follow?,
     memberInfo: MemberInfo?,
     marginLeft: Dp = 20.dp,
-    isClickedSendButton: Boolean,
+    sendMode: SendMode,
     chatViewModel: ChatViewModel = viewModel(),
 ) {
     val chats by chatViewModel.chats.collectAsState()
@@ -148,7 +149,7 @@ fun ConstraintLayoutScope.ChatRoomBox(
                 ChatContent(
                     chatPartner = chatPartner,
                     chats = chats,
-                    isClickedSendButton = isClickedSendButton,
+                    sendMode = sendMode,
                     offset = offset,
                     OnTopReached = {
                         if (offset < chatsTotalPage) {
@@ -172,7 +173,7 @@ fun ConstraintLayoutScope.ChatRoomBox(
 
 @Composable
 fun ChatContent(
-    isClickedSendButton: Boolean,
+    sendMode: SendMode,
     chatPartner: Follow,
     chats: List<Chat>,
     offset: Int,
@@ -190,8 +191,10 @@ fun ChatContent(
         }
     }
 
-    LaunchedEffect(isClickedSendButton) {
-        scrollState.scrollToItem(0)
+    LaunchedEffect(sendMode) {
+        if (sendMode == SendMode.NONE) {
+            scrollState.scrollToItem(0)
+        }
     }
 
     LazyColumn(

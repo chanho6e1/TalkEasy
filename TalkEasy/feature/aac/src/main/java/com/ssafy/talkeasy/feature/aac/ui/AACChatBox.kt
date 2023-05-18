@@ -12,11 +12,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -24,16 +29,19 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ssafy.talkeasy.feature.aac.AACViewModel
 import com.ssafy.talkeasy.feature.aac.R.string
 import com.ssafy.talkeasy.feature.common.R
+import com.ssafy.talkeasy.feature.common.component.LoadingAnimationIterate
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
 import com.ssafy.talkeasy.feature.common.ui.theme.harp
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
+import com.ssafy.talkeasy.feature.common.util.SendMode
 
 @Composable
-@Preview(showBackground = true)
 fun AACChatBox(
     words: List<String> = listOf(),
+    cardClickEnable: Boolean,
+    sendMode: MutableState<SendMode>,
+    setCardClickEnable: (Boolean) -> Unit,
     aacViewModel: AACViewModel = viewModel(),
-    setIsClickedSendButton: (Boolean) -> Unit = {},
 ) {
     Surface(
         modifier = Modifier
@@ -54,23 +62,20 @@ fun AACChatBox(
 
             AACChatCards(
                 words = words,
-                modifier = Modifier
-                    .constrainAs(chatCards) {
-                        start.linkTo(parent.start)
-                        end.linkTo(buttons.start, margin = 16.dp)
-                        width = Dimension.fillToConstraints
-                    }
+                modifier = Modifier.constrainAs(chatCards) {
+                    start.linkTo(parent.start)
+                    end.linkTo(buttons.start, margin = 16.dp)
+                    width = Dimension.fillToConstraints
+                },
+                cardClickEnable = cardClickEnable
             )
 
             SendButtonRow(
-                modifier = Modifier.constrainAs(buttons) {
-                    end.linkTo(parent.end)
-                },
+                modifier = Modifier.constrainAs(buttons) { end.linkTo(parent.end) },
                 sendEnable = words.isNotEmpty(),
-                onSendButtonClick = {
-                    aacViewModel.generateSentence(words = words)
-                    setIsClickedSendButton(true)
-                }
+                sendMode = sendMode,
+                setCardClickEnable = { flag: Boolean -> setCardClickEnable(flag) },
+                generateSentence = { aacViewModel.generateSentence(words = words) }
             )
         }
     }
@@ -80,6 +85,7 @@ fun AACChatBox(
 fun AACChatCards(
     words: List<String>,
     modifier: Modifier,
+    cardClickEnable: Boolean,
     aacViewModel: AACViewModel = viewModel(),
 ) {
     LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = modifier) {
@@ -87,6 +93,7 @@ fun AACChatCards(
             AACCardWrap(
                 word = word,
                 color = harp,
+                cardClickEnable = cardClickEnable,
                 onCardSelectedListener = { aacViewModel.deleteCard(index) }
             )
         }
@@ -94,32 +101,73 @@ fun AACChatCards(
 }
 
 @Composable
-fun SendButtonRow(modifier: Modifier, sendEnable: Boolean, onSendButtonClick: () -> Unit) {
+fun SendButtonRow(
+    modifier: Modifier,
+    sendEnable: Boolean,
+    sendMode: MutableState<SendMode>,
+    setCardClickEnable: (Boolean) -> Unit,
+    generateSentence: () -> Unit,
+    aacViewModel: AACViewModel = viewModel(),
+) {
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(modifier = Modifier.size(62.dp), onClick = { }) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_preview),
-                contentDescription = stringResource(string.image_preview)
-            )
+        val previewCardList: MutableState<List<String>> = remember {
+            mutableStateOf(listOf())
+        }
+        val selectedCardList by aacViewModel.selectedCard.collectAsState()
+
+        LaunchedEffect(key1 = sendMode.value) {
+            if (sendMode.value == SendMode.NONE) {
+                setCardClickEnable(true)
+            }
         }
 
-        IconButton(
-            modifier = Modifier.size(62.dp),
-            enabled = sendEnable,
-            onClick = onSendButtonClick
-        ) {
-            Image(
-                painter = if (sendEnable) {
-                    painterResource(id = R.drawable.ic_send_enable)
-                } else {
-                    painterResource(id = R.drawable.ic_send_disable)
-                },
-                contentDescription = stringResource(string.image_send_chat)
-            )
+        if (sendMode.value == SendMode.PREVIEW) {
+            LoadingAnimationIterate(loadingAnimationId = R.raw.anim_loading_grey, size = 62.dp)
+        } else {
+            IconButton(
+                modifier = Modifier.size(62.dp),
+                onClick = {
+                    previewCardList.value = selectedCardList
+                    setCardClickEnable(false)
+                    generateSentence()
+                    sendMode.value = SendMode.PREVIEW
+                }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_preview),
+                    contentDescription = stringResource(string.image_preview)
+                )
+            }
+        }
+
+        if (sendMode.value == SendMode.SEND) {
+            LoadingAnimationIterate(loadingAnimationId = R.raw.anim_loading_green, size = 62.dp)
+        } else {
+            IconButton(
+                modifier = Modifier.size(62.dp),
+                enabled = sendEnable,
+                onClick = {
+                    setCardClickEnable(false)
+                    if (selectedCardList != previewCardList.value) {
+                        generateSentence()
+                    }
+                    previewCardList.value = listOf()
+                    sendMode.value = SendMode.SEND
+                }
+            ) {
+                Image(
+                    painter = if (sendEnable) {
+                        painterResource(id = R.drawable.ic_send_enable)
+                    } else {
+                        painterResource(id = R.drawable.ic_send_disable)
+                    },
+                    contentDescription = stringResource(string.image_send_chat)
+                )
+            }
         }
     }
 }

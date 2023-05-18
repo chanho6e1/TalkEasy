@@ -1,12 +1,12 @@
 package com.ssafy.talkeasy.feature.follow.ui.mobile
 
-import androidx.compose.foundation.clickable
 import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -190,27 +190,27 @@ fun FollowListHeader(
                     )
                 }
 
-    /*
-                IconButton(modifier = modifier, onClick = onClickedNotification) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_notification_off),
-                        contentDescription = stringResource(
-                            R.string.ic_notification_text
-                        ),
-                        modifier = modifier.size(24.dp)
-                    )
-                }
+                /*
+                            IconButton(modifier = modifier, onClick = onClickedNotification) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_notification_off),
+                                    contentDescription = stringResource(
+                                        R.string.ic_notification_text
+                                    ),
+                                    modifier = modifier.size(24.dp)
+                                )
+                            }
 
-                IconButton(modifier = modifier, onClick = onClickedSettings) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_settings),
-                        contentDescription = stringResource(
-                            R.string.ic_settings_text
-                        ),
-                        modifier = modifier.size(24.dp)
-                    )
-                }
-     */
+                            IconButton(modifier = modifier, onClick = onClickedSettings) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_settings),
+                                    contentDescription = stringResource(
+                                        R.string.ic_settings_text
+                                    ),
+                                    modifier = modifier.size(24.dp)
+                                )
+                            }
+                 */
             }
         }
     }

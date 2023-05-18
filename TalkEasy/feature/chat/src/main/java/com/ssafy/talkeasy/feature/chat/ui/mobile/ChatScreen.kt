@@ -16,9 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -65,7 +62,7 @@ fun ChatRouteProtector(
     popBackStack: () -> Unit,
     navBackStackEntry: NavBackStackEntry,
     followListViewModel: FollowViewModel = hiltViewModel(navBackStackEntry),
-    chatViewModel: ChatViewModel = hiltViewModel()
+    chatViewModel: ChatViewModel = hiltViewModel(),
 ) {
     val chats by chatViewModel.chats.collectAsState()
     val newChat by chatViewModel.newChat.collectAsState()
