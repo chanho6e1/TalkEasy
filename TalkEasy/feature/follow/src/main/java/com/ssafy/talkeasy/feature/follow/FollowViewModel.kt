@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.talkeasy.core.domain.Resource
 import com.ssafy.talkeasy.core.domain.entity.AddFollowDetailInfo
+import com.ssafy.talkeasy.core.domain.entity.request.SosAlarmRequestBody
 import com.ssafy.talkeasy.core.domain.entity.response.Default
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.core.domain.entity.response.MemberInfo
@@ -13,8 +14,12 @@ import com.ssafy.talkeasy.core.domain.entity.response.PagingDefault
 import com.ssafy.talkeasy.core.domain.usecase.follow.FollowListUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.NotificationListUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.RequestFollowUseCase
+import com.ssafy.talkeasy.core.domain.usecase.follow.RequestSaveWardSOSUseCase
 import com.ssafy.talkeasy.core.domain.usecase.member.MemberInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -26,6 +31,7 @@ class FollowViewModel @Inject constructor(
     private val followListUseCase: FollowListUseCase,
     private val notificationListUseCase: NotificationListUseCase,
     private val requestFollowUseCase: RequestFollowUseCase,
+    private val requestSaveWardSOSUseCase: RequestSaveWardSOSUseCase,
 ) : ViewModel() {
 
     private val _memberInfo = MutableStateFlow<MemberInfo?>(null)
@@ -106,6 +112,20 @@ class FollowViewModel @Inject constructor(
 
             is Resource.Error -> Log.e(
                 "requestNotificationList", "requestFollowList: ${value.errorMessage}"
+            )
+        }
+    }
+
+    fun requestSaveWardSOS() = viewModelScope.launch {
+        val dateFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val currentTime = Date(System.currentTimeMillis())
+        val time = dateFormat.format(currentTime)
+
+        when (val value = requestSaveWardSOSUseCase(SosAlarmRequestBody(time))) {
+            is Resource.Success<Default<String>> -> {}
+
+            is Resource.Error -> Log.e(
+                "requestSaveWardSOS", "requestSaveWardSOS: ${value.errorMessage}"
             )
         }
     }

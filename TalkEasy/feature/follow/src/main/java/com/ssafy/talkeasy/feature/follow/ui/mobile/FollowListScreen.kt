@@ -1,5 +1,12 @@
 package com.ssafy.talkeasy.feature.follow.ui.mobile
 
+import android.Manifest
+import android.app.Activity
+import android.content.Context
+import android.content.pm.PackageManager
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,15 +34,21 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
+import com.google.gson.Gson
+import com.google.zxing.integration.android.IntentIntegrator
+import com.ssafy.talkeasy.core.domain.entity.AddFollowDetailInfo
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
+import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
@@ -61,7 +74,9 @@ internal fun FollowListRoute(
     notificationListLoadFinished: () -> Unit,
 ) {
     val followList by rememberUpdatedState(newValue = viewModel.followList.collectAsState().value)
-    val notificationList by rememberUpdatedState(newValue = viewModel.notificationList.collectAsState().value)
+    val notificationList by rememberUpdatedState(
+        newValue = viewModel.notificationList.collectAsState().value
+    )
     val chatMessageFlow = ChatMessageManager.chatMessageFlow.asSharedFlow()
     val (newAlarm, setNewAlarm) = remember { mutableStateOf(false) }
     val (isClicked, setIsClicked) = remember { mutableStateOf(false) }
@@ -123,9 +138,6 @@ internal fun FollowListScreen(
             newAlarm = newAlarm,
             onClickedAddFollow = onClickedAddFollow,
             addScanResult = addScanResult,
-            onClickedAddFollow = {
-                onClickedAddFollow()
-            },
             onClickedNotification = onClickedNotification,
             onClickedSettings = onClickedSettings
         )
