@@ -25,7 +25,7 @@ public class ChatRoomHandler {
     private final Gson gson;
 
     //서버로 들어오는 채팅값
-    @RabbitListener(queues = "chat.queue")
+//    @RabbitListener(queues = "chat.queue")
     public void chatControl(Message message) throws IOException {
         // Json : String -> Object : ChatDto
 
@@ -50,7 +50,7 @@ public class ChatRoomHandler {
     }
 
 
-    @RabbitListener(queues = "read.queue")
+//    @RabbitListener(queues = "read.queue")
     public void readMessage(Message message) {
 
         log.info(" read : {}", message);
