@@ -6,6 +6,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("androidx.navigation.safeargs.kotlin")
     id("kotlin-kapt")
+    id("com.google.gms.google-services")
 }
 android {
     namespace = "com.ssafy.protector"
@@ -88,6 +89,7 @@ dependencies {
 
     implementation(project(":core:data"))
     implementation(project(":core:domain"))
+    implementation(project(":core:fcm"))
     implementation(project(":feature:common"))
     implementation(project(":feature:auth"))
     implementation(project(":feature:follow"))
