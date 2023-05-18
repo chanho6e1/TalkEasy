@@ -76,6 +76,8 @@ public class AlarmService {
     public String postAlarmBySOS(RequestSosAlarmDto requestSosAlarmDto, Member member) throws IOException {
 
         Alarm alarm = Alarm.builder()
+                .roomId("")
+                .chatId("")
                 .readStatus(false)
                 .userId(member.getId())
                 .content(requestSosAlarmDto.getTime() + "에 도움 요청 버튼이 눌렸습니다.")
