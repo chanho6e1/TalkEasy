@@ -119,7 +119,6 @@ public class ChatService {
 
         String newMsg = chat.getMsg();
 
-        Alarm alarm = Alarm.builder().chatId(chat.getId()).readStatus(false).build();
 
         /* toUser 와 fromUser가 해당 채팅방에 속해있는지 확인 */
 
@@ -151,7 +150,6 @@ public class ChatService {
                 2. 타입
                 에 따라 담는 메시지가 달라짐
                 */
-        setAlarmContent(chat, alarm);
 
         chat.setMsg(newMsg);
         chat.setCreated_dt(LocalDateTime.now().toString());
@@ -163,6 +161,14 @@ public class ChatService {
         return chat;
     }
 
+    public void setAlarm(ChatRoomDetail chatRoomDetail) {
+        Alarm alarm = Alarm.builder().chatId(chatRoomDetail.getId()).readStatus(false).build();
+
+        setAlarmContent(chatRoomDetail, alarm);
+
+    }
+
+
 
     private Alarm createAlarm(ChatRoomDetail chat, String content, String fromName, int type, String userId) {
         Alarm alarm = Alarm.builder()
@@ -171,6 +177,7 @@ public class ChatService {
                 .userId(userId)
                 .type(type)
                 .content(content)
+                .createdTime(LocalDateTime.now().toString())
                 .fromName(fromName)
                 .build();
         saveAlarm(alarm);
@@ -196,7 +203,7 @@ public class ChatService {
         if (chat.getType() == 2) {
             alarm.setType(2);
             /*00님이 긴급 도움 요청을 하셨습니다*/
-            createAlarm(chat, toMember.getName() + "님께서 긴급 도움 요청을 하셨습니다", toMember.getName(), 2, toMember.getId());
+            createAlarm(chat, fromMember.getName() + "님께서 긴급 도움 요청을 하셨습니다", fromMember.getName(), 2, toMember.getId());
 //            createAlarm(chat, fromMember.getName()+"이 긴급 도움 요청을 하셨습니다", fromMember.getName(), 2, toMember.getId());
         }
     }
