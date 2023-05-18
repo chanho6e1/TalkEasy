@@ -61,7 +61,8 @@ class FollowViewModel @Inject constructor(
             }
 
             is Resource.Error -> Log.e(
-                "requestMemberInfo", "requestMemberInfo: ${value.errorMessage}"
+                "requestMemberInfo",
+                "requestMemberInfo: ${value.errorMessage}"
             )
         }
     }
@@ -75,7 +76,8 @@ class FollowViewModel @Inject constructor(
             }
 
             is Resource.Error -> Log.e(
-                "requestFollowList", "requestFollowList: ${value.errorMessage}"
+                "requestFollowList",
+                "requestFollowList: ${value.errorMessage}"
             )
         }
     }
@@ -111,7 +113,8 @@ class FollowViewModel @Inject constructor(
             }
 
             is Resource.Error -> Log.e(
-                "requestNotificationList", "requestFollowList: ${value.errorMessage}"
+                "requestNotificationList",
+                "requestFollowList: ${value.errorMessage}"
             )
         }
     }
@@ -125,7 +128,8 @@ class FollowViewModel @Inject constructor(
             is Resource.Success<Default<String>> -> {}
 
             is Resource.Error -> Log.e(
-                "requestSaveWardSOS", "requestSaveWardSOS: ${value.errorMessage}"
+                "requestSaveWardSOS",
+                "requestSaveWardSOS: ${value.errorMessage}"
             )
         }
     }

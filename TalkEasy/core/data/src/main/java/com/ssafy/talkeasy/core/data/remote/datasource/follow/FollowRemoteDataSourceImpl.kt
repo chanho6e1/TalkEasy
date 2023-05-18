@@ -21,6 +21,8 @@ class FollowRemoteDataSourceImpl @Inject constructor(
     override suspend fun requestNotificationList(): DefaultResponse<List<NotificationResponse>> =
         followApiService.requestNotificationList()
 
-    override suspend fun requestSaveWardSOS(requestSosAlarmDto: SosAlarmRequestBody): DefaultResponse<String> =
+    override suspend fun requestSaveWardSOS(
+        requestSosAlarmDto: SosAlarmRequestBody,
+    ): DefaultResponse<String> =
         followApiService.requestSaveWardSOS(requestSosAlarmDto)
 }
