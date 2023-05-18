@@ -100,8 +100,8 @@ fun ConstraintLayoutScope.ChatRoomBox(
 
     // 메시지 읽음 처리
     LaunchedEffect(newChat) {
-        if (newChat != null && chatMode == ChatMode.CHAT
-            && chatPartner != null && memberInfo != null && chats.isNotEmpty()
+        if (newChat != null && chatMode == ChatMode.CHAT &&
+            chatPartner != null && memberInfo != null && chats.isNotEmpty()
         ) {
             chatViewModel.readChatMessage(
                 readTime = chats.last().time,
