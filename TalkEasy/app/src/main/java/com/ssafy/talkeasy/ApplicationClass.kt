@@ -12,6 +12,6 @@ class ApplicationClass : Application() {
     override fun onCreate() {
         super.onCreate()
         KakaoSdk.init(this@ApplicationClass, getString(R.string.KAKAO_NATIVE_APP_KEY))
-        Log.d("KaKao-KeyHash", Utility.getKeyHash(this@ApplicationClass))
+        Log.i("KaKao-KeyHash", Utility.getKeyHash(this@ApplicationClass))
     }
 }

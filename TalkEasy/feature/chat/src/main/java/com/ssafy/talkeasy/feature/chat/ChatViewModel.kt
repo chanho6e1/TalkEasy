@@ -42,7 +42,6 @@ class ChatViewModel @Inject constructor(
 
     fun getChatHistory(roomId: String, offset: Int, size: Int) =
         viewModelScope.launch {
-            Log.d("TAG", "getChatHistory: ")
             when (val value = getChatHistoryUseCase(roomId, offset, size)) {
                 is Resource.Success<PagingDefault<List<Chat>>> -> {
                     if (offset == 1) {
@@ -76,11 +75,7 @@ class ChatViewModel @Inject constructor(
 
         message.let {
             when (val value = sendChatMessageUseCase(message)) {
-                is Resource.Success<Boolean> -> {
-                    if (value.data) {
-                        Log.d("TAG", "sendChatMessage: Success")
-                    }
-                }
+                is Resource.Success<Boolean> -> {}
 
                 is Resource.Error -> {
                     Log.e("sendChatMessage", "sendChatMessage: ${value.errorMessage}")
@@ -96,14 +91,12 @@ class ChatViewModel @Inject constructor(
                 readTime = readTime,
                 readUserId = readUserId
             )
-            Log.d("TAG", "readChatMessage: ")
 
             readChatMessage.let {
                 when (val value = readChatMessageUseCase(readChatMessage)) {
                     is Resource.Success<Boolean> -> {
                         if (value.data) {
                             readChatLocalData(readUserId)
-                            Log.d("TAG", "readChatMessage: Success")
                         }
                     }
 
@@ -121,17 +114,14 @@ class ChatViewModel @Inject constructor(
                     is Chat -> {
                         _newChat.value = it
                         addChatFromChats(it)
-                        Log.d("TAG", "receiveChatMessage: Chat $it")
                     }
                     is Read -> {
                         readChatLocalData(it)
-                        Log.d("TAG", "receiveChatMessage: Read $it")
                     }
                     is String -> {
-                        Log.i("receiveChatMessage", "receiveChatMessage : $it")
+                        Log.e("receiveChatMessage", "receiveChatMessage : $it")
                     }
                 }
-                Log.d("TAG", "receiveChatMessage: _newChat.value : ${_newChat.value}")
             }
         }
 
@@ -146,14 +136,12 @@ class ChatViewModel @Inject constructor(
         }
         newChats.add(chat)
         _chats.value = newChats
-        Log.d("TAG", "addChatFromChats: _chats.value : ${_chats.value}")
     }
 
     private fun addChatsFromChats(chats: List<Chat>) {
         val newChats: MutableList<Chat> = _chats.value.toMutableList()
         newChats.addAll(0, chats)
         _chats.value = newChats
-        Log.d("TAG", "addChatsFromChats: _chats.value : ${_chats.value}")
     }
 
     private fun readChatLocalData(myUserId: String) {
@@ -164,7 +152,6 @@ class ChatViewModel @Inject constructor(
             }
         }
         _chats.value = newChats
-        Log.d("TAG", "readChatLocalData: _chats.value : ${_chats.value}")
     }
 
     private fun readChatLocalData(read: Read) {
@@ -175,7 +162,6 @@ class ChatViewModel @Inject constructor(
                 chat
             }
         }
-        Log.d("TAG", "readChatLocalData: last chat : $${_chats.value.last()}")
     }
 
     fun loadMoreChats(roomId: String, offset: Int, size: Int) {
@@ -186,7 +172,6 @@ class ChatViewModel @Inject constructor(
         super.onCleared()
         viewModelScope.launch {
             disConnectRabbitmqUseCase()
-            Log.d("TAG", "onCleared: ")
         }
     }
 }

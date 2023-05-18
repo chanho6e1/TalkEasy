@@ -102,9 +102,10 @@ fun ButtonAlarmAndSetting(
     Row {
         IconButton(
             onClick = {
-            showNotificationDialog()
-            setNewAlarm(false)
-        }) {
+                showNotificationDialog()
+                setNewAlarm(false)
+            }
+        ) {
             Image(
                 modifier = Modifier.size(40.dp),
                 painter = if (newAlarm) {

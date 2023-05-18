@@ -57,7 +57,7 @@ class AuthViewModel @Inject constructor(
                     _memberState.value = "MEMBER"
                     sharedPreferences.accessToken = value.data.data.token
                     _name.value = value.data.data.name!!
-                    Log.d("requestLogin", "requestLogin-JWT : ${sharedPreferences.accessToken}")
+                    Log.i("requestLogin", "requestLogin-JWT : ${sharedPreferences.accessToken}")
                 } else if (value.data.status == 201) {
                     // no member
                     _memberState.value = "NOT_MEMBER"
@@ -96,11 +96,7 @@ class AuthViewModel @Inject constructor(
     fun registerFCMToken() = viewModelScope.launch {
         if (sharedPreferences.appToken != null) {
             when (val value = fcmTokenUseCase(sharedPreferences.appToken!!)) {
-                is Resource.Success<Default<String>> -> {
-                    if (value.data.status == 201) {
-                        Log.d("registerFCMToken", "registerFCMToken: ${value.data.data}")
-                    }
-                }
+                is Resource.Success<Default<String>> -> {}
                 is Resource.Error ->
                     Log.e("registerFCMToken", "registerFCMToken: ${value.errorMessage}")
             }

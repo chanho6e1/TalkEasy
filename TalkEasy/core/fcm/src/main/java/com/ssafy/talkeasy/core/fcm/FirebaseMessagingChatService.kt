@@ -21,35 +21,33 @@ class FirebaseMessagingChatService
 
     override fun onNewToken(token: String) {
         sharedPreferences.appToken = token
-        Log.d(TAG, "Refreshed token: $token")
+        Log.i(TAG, "Refreshed token: $token")
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         // 메시지 수신
         message.notification?.let {
-            Log.d(TAG, "onMessageReceived: message: title ${it.title}")
-            Log.d(TAG, "onMessageReceived: message: body $${it.body}")
             val chat = Gson().fromJson(it.body, FCMChat::class.java)
             ChatMessageManager.chatMessageFlow.tryEmit(chat)
         }
     }
 
     override fun getFirebaseToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w(
-                    "FirebaseMessagingService",
-                    "Fetching FCM registration token failed",
-                    task.exception
-                )
-                return@OnCompleteListener
-            }
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(
+            OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w(
+                        "FirebaseMessagingService",
+                        "Fetching FCM registration token failed",
+                        task.exception
+                    )
+                    return@OnCompleteListener
+                }
 
-            val token = task.result
-            sharedPreferences.appToken = token
-            Log.d("getFirebaseToken", "getFirebaseToken: $token")
-        })
+                sharedPreferences.appToken = task.result
+            }
+        )
     }
 
     companion object {
