@@ -42,6 +42,7 @@ class ChatViewModel @Inject constructor(
 
     fun getChatHistory(roomId: String, offset: Int, size: Int) =
         viewModelScope.launch {
+            Log.d("TAG", "getChatHistory: ")
             when (val value = getChatHistoryUseCase(roomId, offset, size)) {
                 is Resource.Success<PagingDefault<List<Chat>>> -> {
                     if (offset == 1) {
@@ -95,6 +96,7 @@ class ChatViewModel @Inject constructor(
                 readTime = readTime,
                 readUserId = readUserId
             )
+            Log.d("TAG", "readChatMessage: ")
 
             readChatMessage.let {
                 when (val value = readChatMessageUseCase(readChatMessage)) {
@@ -139,7 +141,7 @@ class ChatViewModel @Inject constructor(
 
     private fun addChatFromChats(chat: Chat) {
         val newChats: MutableList<Chat> = _chats.value.toMutableList()
-        if (newChats.isNotEmpty()) {
+        if (newChats.size >= 50) {
             newChats.removeAt(0)
         }
         newChats.add(chat)
