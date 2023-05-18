@@ -80,6 +80,7 @@ public class AlarmService {
                 .userId(member.getId())
                 .content(requestSosAlarmDto.getTime() + "에 도움 요청 버튼이 눌렸습니다.")
                 .fromName(member.getName())
+                .createdTime(LocalDateTime.now().toString())
                 .build();
 
         Alarm alarm1 =  chatService.saveAlarm(alarm);
