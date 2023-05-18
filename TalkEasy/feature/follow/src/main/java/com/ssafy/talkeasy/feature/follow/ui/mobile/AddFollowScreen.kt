@@ -64,26 +64,31 @@ import java.time.LocalDateTime
 internal fun AddFollowDetailRoute(
     modifier: Modifier = Modifier,
     navBackStackEntry: NavBackStackEntry,
+    popBackStack: () -> Unit,
     followViewModel: FollowViewModel = hiltViewModel(navBackStackEntry),
 ) {
     val addFollowDetailInfo by followViewModel.addFollowInfo.collectAsState()
 
-    AddFollowDetailScreen(modifier = modifier, addFollowDetailInfo = addFollowDetailInfo)
+    AddFollowDetailScreen(
+        modifier = modifier,
+        addFollowDetailInfo = addFollowDetailInfo,
+        requestFollow = followViewModel::requestFollow,
+        popBackStack = popBackStack
+    )
 }
 
-@Preview(
-    showBackground = true,
-    widthDp = 360,
-    heightDp = 640,
-    backgroundColor = 0xFFFCFDF7
-)
 @Composable
 internal fun AddFollowDetailScreen(
     modifier: Modifier = Modifier,
     addFollowDetailInfo: AddFollowDetailInfo? = null,
+    requestFollow: (String, String) -> Unit,
+    popBackStack: () -> Unit,
 ) {
     val (dialogState: Boolean, setDialogState: (Boolean) -> Unit) = remember {
         mutableStateOf(false)
+    }
+    val (detailContent: String, setDetailContent: (String) -> Unit) = remember {
+        mutableStateOf("")
     }
 
     AddNotificationDialog(
@@ -114,6 +119,8 @@ internal fun AddFollowDetailScreen(
                 addFollowDetailInfo?.let {
                     AddFollowDetailContent(
                         modifier = modifier,
+                        detailContent = detailContent,
+                        setDetailContent = setDetailContent,
                         onClickedAddButton = {
                             setDialogState(!dialogState)
                         },
@@ -124,7 +131,12 @@ internal fun AddFollowDetailScreen(
             }
             WideSeedButton(
                 modifier = modifier.padding(horizontal = 34.dp, vertical = 10.dp),
-                onClicked = { },
+                onClicked = {
+                    addFollowDetailInfo?.let {
+                        requestFollow(addFollowDetailInfo.userId, detailContent)
+                        popBackStack()
+                    }
+                },
                 text = stringResource(id = R.string.title_add_follow),
                 textStyle = typography.bodyLarge
             )
@@ -222,13 +234,12 @@ fun AddNotificationDialog(
 @Composable
 internal fun AddFollowDetailContent(
     modifier: Modifier = Modifier,
+    detailContent: String,
+    setDetailContent: (String) -> Unit,
     onClickedAddButton: () -> Unit = {},
     onItemClicked: () -> Unit = {},
     addFollowDetailInfo: AddFollowDetailInfo,
 ) {
-    val (text: String, setText: (String) -> Unit) = remember {
-        mutableStateOf("")
-    }
     LazyColumn(
         modifier = modifier
             .fillMaxWidth()
@@ -272,7 +283,7 @@ internal fun AddFollowDetailContent(
             )
         }
 
-        item { AddFollowDetailSignificant(text = text, setText = setText) }
+        item { AddFollowDetailSignificant(text = detailContent, setText = setDetailContent) }
 
         item {
             AddFollowDetailNotification(

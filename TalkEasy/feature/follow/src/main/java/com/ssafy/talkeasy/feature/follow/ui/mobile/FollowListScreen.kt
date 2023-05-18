@@ -24,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
@@ -65,6 +66,11 @@ internal fun FollowListRoute(
     onClickedSettings: () -> Unit = {},
 ) {
     val followList by rememberUpdatedState(newValue = viewModel.followList.collectAsState().value)
+
+    LaunchedEffect(Unit) {
+        viewModel.requestFollowList()
+    }
+
     FollowListScreen(
         modifier = modifier,
         addScanResult = viewModel::getAddFollowDetailInfo,

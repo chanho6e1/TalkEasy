@@ -50,7 +50,10 @@ fun NavGraphBuilder.addFollowDetailScreen(navController: NavController) {
         val addFollowDetailEntry = remember(navBackStackEntry) {
             navController.getBackStackEntry(welcomeRouteProtector)
         }
-        AddFollowDetailRoute(navBackStackEntry = addFollowDetailEntry)
+        AddFollowDetailRoute(
+            navBackStackEntry = addFollowDetailEntry,
+            popBackStack = { navController.popBackStack() }
+        )
     }
 }
 
