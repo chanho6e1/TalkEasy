@@ -107,7 +107,8 @@ internal fun AddFollowDetailScreen(
         ) {
             ProtectorHeader(
                 modifier = modifier,
-                title = stringResource(id = R.string.title_add_follow)
+                title = stringResource(id = R.string.title_add_follow),
+                onClickedBackButton = popBackStack
             )
 
             Column(
