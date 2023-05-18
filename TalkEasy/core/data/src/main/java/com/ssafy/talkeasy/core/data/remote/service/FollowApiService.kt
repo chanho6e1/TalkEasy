@@ -29,5 +29,5 @@ interface FollowApiService {
         followId: String,
         @Body
         body: FollowMemoRequest,
-    ): DefaultResponse<String>
+    ): DefaultResponse<FollowResponse>
 }

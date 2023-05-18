@@ -30,8 +30,11 @@ class FollowRepositoryImpl @Inject constructor(
             followRemoteDataSource.requestFollow(toUserId, FollowMemoRequest(memo = memo)).data
         }
 
-    override suspend fun modifyFollowMemo(followId: String, memo: String): Resource<String> =
+    override suspend fun modifyFollowMemo(followId: String, memo: String): Resource<Follow> =
         wrapToResource(Dispatchers.IO) {
-            followRemoteDataSource.modifyFollowMemo(followId, FollowMemoRequest(memo = memo)).data
+            followRemoteDataSource.modifyFollowMemo(
+                followId,
+                FollowMemoRequest(memo = memo)
+            ).data.toDomainModel()
         }
 }

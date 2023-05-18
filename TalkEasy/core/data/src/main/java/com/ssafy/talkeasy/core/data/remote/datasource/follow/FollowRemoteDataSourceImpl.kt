@@ -20,5 +20,5 @@ class FollowRemoteDataSourceImpl @Inject constructor(
     override suspend fun modifyFollowMemo(
         followId: String,
         body: FollowMemoRequest,
-    ): DefaultResponse<String> = followApiService.modifyFollowMemo(followId, body)
+    ): DefaultResponse<FollowResponse> = followApiService.modifyFollowMemo(followId, body)
 }

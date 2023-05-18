@@ -9,5 +9,5 @@ interface FollowRemoteDataSource {
 
     suspend fun requestFollow(toUserId: String, body: FollowMemoRequest): DefaultResponse<String>
 
-    suspend fun modifyFollowMemo(followId: String, body: FollowMemoRequest): DefaultResponse<String>
+    suspend fun modifyFollowMemo(followId: String, body: FollowMemoRequest): DefaultResponse<FollowResponse>
 }

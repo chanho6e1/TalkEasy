@@ -10,5 +10,5 @@ interface FollowRepository {
 
     suspend fun requestFollow(toUserId: String, memo: String): Resource<String>
 
-    suspend fun modifyFollowMemo(followId: String, memo: String): Resource<String>
+    suspend fun modifyFollowMemo(followId: String, memo: String): Resource<Follow>
 }

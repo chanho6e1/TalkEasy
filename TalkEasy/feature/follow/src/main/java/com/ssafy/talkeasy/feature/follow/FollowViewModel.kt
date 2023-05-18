@@ -88,7 +88,10 @@ class FollowViewModel @Inject constructor(
 
     fun modifyFollowMemo(followId: String, memo: String) = viewModelScope.launch {
         when (val value = modifyFollowMemoUseCase(followId, memo)) {
-            is Resource.Success<String> -> {}
+            is Resource.Success<Follow> -> {
+                _selectFollow.value = value.data
+            }
+
             is Resource.Error -> {
                 Log.e("modifyFollowMemo", "modifyFollowMemo: ${value.errorMessage}")
             }
