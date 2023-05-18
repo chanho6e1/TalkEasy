@@ -23,6 +23,8 @@
     <string name="image_notification">알림을 추가하는 아이콘입니다.</string>
     <string name="content_add_notification">추가하기</string>
     <string name="content_memo">메모</string>
+    <string name="content_camera_failed_message">촬영을 실패하였습니다. 다시 시도해주세요.</string>
+    <string name="content_reject_permission">권한 요청이 반려되었습니다.</string>
 
     <!--  MyNotificationList  -->
     <string name="title_my_notification_list">내 알림함</string>

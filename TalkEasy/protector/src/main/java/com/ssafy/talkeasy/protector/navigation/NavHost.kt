@@ -62,7 +62,7 @@ fun AppNavHost(
             onClickedSettings = { }
         )
 
-        addFollowDetailScreen()
+        addFollowDetailScreen(navController = navController)
 
         myNotificationListScreen()
 

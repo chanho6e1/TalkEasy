@@ -4,11 +4,13 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.talkeasy.core.domain.Resource
+import com.ssafy.talkeasy.core.domain.entity.AddFollowDetailInfo
 import com.ssafy.talkeasy.core.domain.entity.response.Default
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.core.domain.entity.response.MemberInfo
 import com.ssafy.talkeasy.core.domain.entity.response.PagingDefault
 import com.ssafy.talkeasy.core.domain.usecase.follow.FollowListUseCase
+import com.ssafy.talkeasy.core.domain.usecase.follow.RequestFollowUseCase
 import com.ssafy.talkeasy.core.domain.usecase.member.MemberInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -20,6 +22,7 @@ import kotlinx.coroutines.launch
 class FollowViewModel @Inject constructor(
     private val memberInfoUseCase: MemberInfoUseCase,
     private val followListUseCase: FollowListUseCase,
+    private val requestFollowUseCase: RequestFollowUseCase,
 ) : ViewModel() {
 
     private val _memberInfo = MutableStateFlow<MemberInfo?>(null)
@@ -28,6 +31,9 @@ class FollowViewModel @Inject constructor(
     private val _followList = MutableStateFlow<List<Follow>?>(null)
     val followList: StateFlow<List<Follow>?> = _followList
 
+    private val _addFollowInfo: MutableStateFlow<AddFollowDetailInfo?> = MutableStateFlow(null)
+    val addFollowInfo: StateFlow<AddFollowDetailInfo?> = _addFollowInfo
+
     fun requestMemberInfo() = viewModelScope.launch {
         when (val value = memberInfoUseCase()) {
             is Resource.Success<Default<MemberInfo>> -> {
@@ -35,6 +41,7 @@ class FollowViewModel @Inject constructor(
                     _memberInfo.value = value.data.data
                 }
             }
+
             is Resource.Error -> Log.e(
                 "requestMemberInfo",
                 "requestMemberInfo: ${value.errorMessage}"
@@ -49,10 +56,24 @@ class FollowViewModel @Inject constructor(
                     _followList.value = value.data.data
                 }
             }
+
             is Resource.Error -> Log.e(
                 "requestFollowList",
                 "requestFollowList: ${value.errorMessage}"
             )
+        }
+    }
+
+    fun getAddFollowDetailInfo(addFollowDetailInfo: AddFollowDetailInfo) = viewModelScope.launch {
+        _addFollowInfo.value = addFollowDetailInfo
+    }
+
+    fun requestFollow(toUserId: String, memo: String) = viewModelScope.launch {
+        when (val value = requestFollowUseCase(toUserId, memo)) {
+            is Resource.Success<String> -> {}
+            is Resource.Error -> {
+                Log.e("requestFollow", "requestFollow: ${value.errorMessage}")
+            }
         }
     }
 }

@@ -12,6 +12,7 @@ import com.ssafy.talkeasy.core.domain.usecase.auth.JoinUseCase
 import com.ssafy.talkeasy.core.domain.usecase.auth.LoginUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.GetChatHistoryUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.FollowListUseCase
+import com.ssafy.talkeasy.core.domain.usecase.follow.RequestFollowUseCase
 import com.ssafy.talkeasy.core.domain.usecase.member.MemberInfoUseCase
 import dagger.Module
 import dagger.Provides
@@ -62,4 +63,9 @@ object UseCaseModule {
     @Provides
     fun provideGetTTSMp3UrlUseCase(aacRepository: AACRepository): GetTTSMp3UrlUseCase =
         GetTTSMp3UrlUseCase(aacRepository)
+
+    @Singleton
+    @Provides
+    fun provideRequestFollowUseCase(followRepository: FollowRepository): RequestFollowUseCase =
+        RequestFollowUseCase(followRepository)
 }

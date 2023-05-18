@@ -124,7 +124,7 @@ fun ShowProfileDialog(
         if (isGranted) {
             takePhotoFromCameraLauncher.launch()
         } else {
-            context.toast("권한 요청이 반려되었습니다.")
+            context.toast(context.getString(R.string.content_reject_permission))
         }
     }
 
