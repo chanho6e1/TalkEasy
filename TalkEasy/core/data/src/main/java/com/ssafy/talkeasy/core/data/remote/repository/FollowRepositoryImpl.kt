@@ -1,7 +1,7 @@
 package com.ssafy.talkeasy.core.data.remote.repository
 
 import com.ssafy.talkeasy.core.data.common.util.wrapToResource
-import com.ssafy.talkeasy.core.data.remote.datasource.follow.AddFollowRequest
+import com.ssafy.talkeasy.core.data.remote.datasource.follow.FollowMemoRequest
 import com.ssafy.talkeasy.core.data.remote.datasource.follow.FollowRemoteDataSource
 import com.ssafy.talkeasy.core.domain.Resource
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
@@ -27,6 +27,11 @@ class FollowRepositoryImpl @Inject constructor(
 
     override suspend fun requestFollow(toUserId: String, memo: String): Resource<String> =
         wrapToResource(Dispatchers.IO) {
-            followRemoteDataSource.requestFollow(toUserId, AddFollowRequest(memo = memo)).data
+            followRemoteDataSource.requestFollow(toUserId, FollowMemoRequest(memo = memo)).data
+        }
+
+    override suspend fun modifyFollowMemo(followId: String, memo: String): Resource<String> =
+        wrapToResource(Dispatchers.IO) {
+            followRemoteDataSource.modifyFollowMemo(followId, FollowMemoRequest(memo = memo)).data
         }
 }

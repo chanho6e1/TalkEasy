@@ -18,6 +18,7 @@ import com.ssafy.talkeasy.core.domain.usecase.chat.ReceiveChatMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.SendChatMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.StopReceiveMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.FollowListUseCase
+import com.ssafy.talkeasy.core.domain.usecase.follow.ModifyFollowMemoUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.RequestFollowUseCase
 import com.ssafy.talkeasy.core.domain.usecase.member.MemberInfoUseCase
 import dagger.Module
@@ -109,4 +110,11 @@ object UseCaseModule {
         rabbitmqRepository: RabbitmqRepository,
     ): DisConnectRabbitmqUseCase =
         DisConnectRabbitmqUseCase(rabbitmqRepository)
+
+    @Singleton
+    @Provides
+    fun provideModifyFollowMemoUseCase(
+        followRepository: FollowRepository,
+    ): ModifyFollowMemoUseCase =
+        ModifyFollowMemoUseCase(followRepository)
 }

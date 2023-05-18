@@ -10,6 +10,7 @@ import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.core.domain.entity.response.MemberInfo
 import com.ssafy.talkeasy.core.domain.entity.response.PagingDefault
 import com.ssafy.talkeasy.core.domain.usecase.follow.FollowListUseCase
+import com.ssafy.talkeasy.core.domain.usecase.follow.ModifyFollowMemoUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.RequestFollowUseCase
 import com.ssafy.talkeasy.core.domain.usecase.member.MemberInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ class FollowViewModel @Inject constructor(
     private val memberInfoUseCase: MemberInfoUseCase,
     private val followListUseCase: FollowListUseCase,
     private val requestFollowUseCase: RequestFollowUseCase,
+    private val modifyFollowMemoUseCase: ModifyFollowMemoUseCase,
 ) : ViewModel() {
 
     private val _memberInfo = MutableStateFlow<MemberInfo?>(null)
@@ -82,5 +84,14 @@ class FollowViewModel @Inject constructor(
 
     fun setSelectFollow(follow: Follow) {
         _selectFollow.value = follow
+    }
+
+    fun modifyFollowMemo(followId: String, memo: String) = viewModelScope.launch {
+        when (val value = modifyFollowMemoUseCase(followId, memo)) {
+            is Resource.Success<String> -> {}
+            is Resource.Error -> {
+                Log.e("modifyFollowMemo", "modifyFollowMemo: ${value.errorMessage}")
+            }
+        }
     }
 }
