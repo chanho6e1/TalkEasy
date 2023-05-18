@@ -98,9 +98,10 @@ public class AACController {
 
     @PostMapping("/tts")
     @ApiOperation(value = "text-to-speech", notes = "text를 주면 음성 파일로 반환")
-    public ResponseEntity<CommonResponse> getTTS(@RequestBody ChatTextDto text) throws IOException, UnsupportedAudioFileException {
+    public ResponseEntity<CommonResponse> getTTS(@RequestBody ChatTextDto text, @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl member) throws IOException, UnsupportedAudioFileException {
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, ttsService.getTTS(text.getText())));
+
     }
 
 }
