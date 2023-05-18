@@ -201,9 +201,9 @@ public class ChatService {
         }
     }
 
-    public String saveAlarm(Alarm alarm) {
+    public Alarm saveAlarm(Alarm alarm) {
         Alarm alarmDomain = mongoTemplate.insert(alarm);
-        return alarmDomain.getId();
+        return alarmDomain;
     }
 
 

@@ -34,14 +34,15 @@ public class MessageDto{
         this.fromUserName = name;
     }
     public MessageDto(Alarm alarm, String name){
-//        this.msgId = alarm.getId();
+//        this.msgId = chatRoomDetail.getId();
 //        this.roomId  = alarm.getRoomId();
-//        this.toUserId = alarm.getToUserId();
-//        this.fromUserId = alarm.getFromUserId();
+        this.toUserId = alarm.getUserId();
+        this.fromUserId = alarm.getUserId();
         this.msg = alarm.getContent();
-        this.created_dt = alarm.getCreatedTime().toString();
+        this.created_dt = alarm.getCreatedTime();
         this.type = 2;
-        this.status = 1;
+        this.status = 2;
+//        this.status = 1;
         this.fromUserName = name;
     }
 
