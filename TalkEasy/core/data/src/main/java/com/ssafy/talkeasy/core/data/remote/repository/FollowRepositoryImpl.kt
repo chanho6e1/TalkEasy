@@ -4,6 +4,7 @@ import com.ssafy.talkeasy.core.data.common.util.wrapToResource
 import com.ssafy.talkeasy.core.data.remote.datasource.follow.AddFollowRequest
 import com.ssafy.talkeasy.core.data.remote.datasource.follow.FollowRemoteDataSource
 import com.ssafy.talkeasy.core.domain.Resource
+import com.ssafy.talkeasy.core.domain.entity.request.SosAlarmRequestBody
 import com.ssafy.talkeasy.core.domain.entity.response.Default
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.core.domain.entity.response.MyNotificationItem
@@ -37,5 +38,14 @@ class FollowRepositoryImpl @Inject constructor(
     override suspend fun requestFollow(toUserId: String, memo: String): Resource<String> =
         wrapToResource(Dispatchers.IO) {
             followRemoteDataSource.requestFollow(toUserId, AddFollowRequest(memo = memo)).data
+        }
+
+    override suspend fun requestSaveWardSOS(
+        requestSosAlarmDto: SosAlarmRequestBody,
+    ): Resource<Default<String>> =
+        wrapToResource(Dispatchers.IO) {
+            val defaultResponse = followRemoteDataSource.requestSaveWardSOS(requestSosAlarmDto)
+            val str = defaultResponse.data
+            Default(status = defaultResponse.status, data = str)
         }
 }

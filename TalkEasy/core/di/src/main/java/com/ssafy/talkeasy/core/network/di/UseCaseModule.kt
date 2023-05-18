@@ -20,7 +20,9 @@ import com.ssafy.talkeasy.core.domain.usecase.chat.SendChatMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.StopReceiveMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.fcm.RegisterFCMTokenUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.FollowListUseCase
+import com.ssafy.talkeasy.core.domain.usecase.follow.NotificationListUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.RequestFollowUseCase
+import com.ssafy.talkeasy.core.domain.usecase.follow.RequestSaveWardSOSUseCase
 import com.ssafy.talkeasy.core.domain.usecase.member.MemberInfoUseCase
 import dagger.Module
 import dagger.Provides
@@ -118,4 +120,18 @@ object UseCaseModule {
         fcmRepository: FCMRepository,
     ): RegisterFCMTokenUseCase =
         RegisterFCMTokenUseCase(fcmRepository)
+
+    @Singleton
+    @Provides
+    fun provideNotificationListUseCase(
+        followRepository: FollowRepository,
+    ): NotificationListUseCase =
+        NotificationListUseCase(followRepository)
+
+    @Singleton
+    @Provides
+    fun provideRequestSaveWardSOS(
+        followRepository: FollowRepository,
+    ): RequestSaveWardSOSUseCase =
+        RequestSaveWardSOSUseCase(followRepository)
 }

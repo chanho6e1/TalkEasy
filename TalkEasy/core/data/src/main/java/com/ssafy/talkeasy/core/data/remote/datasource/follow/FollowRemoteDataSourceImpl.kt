@@ -3,6 +3,7 @@ package com.ssafy.talkeasy.core.data.remote.datasource.follow
 import com.ssafy.talkeasy.core.data.remote.datasource.common.DefaultResponse
 import com.ssafy.talkeasy.core.data.remote.datasource.common.PagingDefaultResponse
 import com.ssafy.talkeasy.core.data.remote.service.FollowApiService
+import com.ssafy.talkeasy.core.domain.entity.request.SosAlarmRequestBody
 import javax.inject.Inject
 
 class FollowRemoteDataSourceImpl @Inject constructor(
@@ -19,4 +20,7 @@ class FollowRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun requestNotificationList(): DefaultResponse<List<NotificationResponse>> =
         followApiService.requestNotificationList()
+
+    override suspend fun requestSaveWardSOS(requestSosAlarmDto: SosAlarmRequestBody): DefaultResponse<String> =
+        followApiService.requestSaveWardSOS(requestSosAlarmDto)
 }
