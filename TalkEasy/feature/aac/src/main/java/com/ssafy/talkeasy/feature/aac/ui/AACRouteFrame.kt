@@ -339,7 +339,7 @@ fun ConstraintLayoutScope.AACBox(
                         .padding(bottom = 22.dp, start = 40.dp),
                     contentAlignment = Alignment.CenterStart
                 ) {
-                    AACCustomWordDialogButton(showCustomWordDialog = showCustomWordDialog)
+                    // AACCustomWordDialogButton(showCustomWordDialog = showCustomWordDialog)
                 }
             } else {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -414,7 +414,7 @@ fun AACCardBox(
                     .align(Alignment.CenterStart)
                     .padding(start = 40.dp)
             ) {
-                AACCustomWordDialogButton(showCustomWordDialog = showCustomWordDialog)
+                // AACCustomWordDialogButton(showCustomWordDialog = showCustomWordDialog)
             }
 
             Box(modifier = Modifier.align(Alignment.Center)) {

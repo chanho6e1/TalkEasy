@@ -17,7 +17,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.core.domain.entity.response.AACWord
-import com.ssafy.talkeasy.feature.common.R
+import com.ssafy.talkeasy.feature.aac.R
+import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_secondary
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
@@ -56,13 +57,13 @@ fun AACCustomWordDialogButton(showCustomWordDialog: () -> Unit) {
     ) {
         Icon(
             modifier = Modifier.size(40.dp),
-            painter = painterResource(id = R.drawable.ic_plus),
-            contentDescription = stringResource(com.ssafy.talkeasy.feature.aac.R.string.image_show_custom_word_dialog_button),
+            painter = painterResource(id = drawable.ic_plus),
+            contentDescription = stringResource(R.string.image_show_custom_word_dialog_button),
             tint = md_theme_light_secondary
         )
 
         Text(
-            text = stringResource(com.ssafy.talkeasy.feature.aac.R.string.content_show_custom_word_dialog_button),
+            text = stringResource(R.string.content_show_custom_word_dialog_button),
             style = typography.titleSmall
         )
     }
