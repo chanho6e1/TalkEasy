@@ -101,6 +101,7 @@ public class AACController {
     public ResponseEntity<CommonResponse> getTTS(@RequestBody ChatTextDto text) throws IOException, UnsupportedAudioFileException {
         return ResponseEntity.status(HttpStatus.CREATED).body(CommonResponse.of(
                 HttpStatus.CREATED, ttsService.getTTS(text.getText())));
+
     }
 
 }
