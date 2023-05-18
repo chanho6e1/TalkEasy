@@ -1,11 +1,10 @@
 package com.ssafy.talkeasy.core.domain.entity.response
 
 data class MyNotificationItem(
-    val type: NotificationType,
-    val data: String,
-    val time: String,
+    val alarmId: String,
+    val content: String,
+    val readStatus: Boolean,
+    val chatId: String,
+    val fromUserName: String,
+    val created_dt: String,
 )
-
-enum class NotificationType {
-    LOCATION, SOS_REQUEST, SOS_RESPONSE
-}

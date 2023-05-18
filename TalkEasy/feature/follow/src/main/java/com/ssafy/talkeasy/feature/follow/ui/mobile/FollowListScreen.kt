@@ -58,17 +58,15 @@ internal fun FollowListRoute(
     navBackStackEntry: NavBackStackEntry,
     viewModel: FollowViewModel = hiltViewModel(navBackStackEntry),
     onClickedAddFollow: () -> Unit = {},
-    onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
     onSelectedItem: () -> Unit,
+    notificationListLoadFinished: () -> Unit,
 ) {
     val followList by rememberUpdatedState(newValue = viewModel.followList.collectAsState().value)
-
+    val notificationList by rememberUpdatedState(newValue = viewModel.notificationList.collectAsState().value)
     val chatMessageFlow = ChatMessageManager.chatMessageFlow.asSharedFlow()
-
-    val (newAlarm, setNewAlarm) = remember {
-        mutableStateOf(false)
-    }
+    val (newAlarm, setNewAlarm) = remember { mutableStateOf(false) }
+    val (isClicked, setIsClicked) = remember { mutableStateOf(false) }
 
     LaunchedEffect(chatMessageFlow) {
         chatMessageFlow.collect { chatMessage ->
@@ -80,6 +78,12 @@ internal fun FollowListRoute(
         }
     }
 
+    LaunchedEffect(key1 = notificationList, key2 = isClicked) {
+        if (notificationList?.isNotEmpty() == true && isClicked) {
+            notificationListLoadFinished()
+        }
+    }
+
     FollowLisScreen(
         modifier = modifier,
         followList = followList ?: arrayListOf(),
@@ -87,7 +91,8 @@ internal fun FollowListRoute(
         onClickedAddFollow = onClickedAddFollow,
         onClickedNotification = {
             setNewAlarm(false)
-            onClickedNotification()
+            viewModel.requestNotificationList()
+            setIsClicked(true)
         },
         onClickedSettings = onClickedSettings,
         onSelectedItem = { follow ->

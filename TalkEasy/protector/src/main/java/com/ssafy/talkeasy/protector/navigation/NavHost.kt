@@ -60,14 +60,14 @@ fun AppNavHost(
         followListScreen(
             navController = navController,
             onClickedAddFollow = { navController.navigateToAddFollowDetail() },
-            onClickedNotification = { navController.navigateToMyNotificationList() },
             onClickedSettings = { },
+            notificationListLoadFinished = { navController.navigateToMyNotificationList() },
             onSelectedItem = { navController.navigateToChat() }
         )
 
         addFollowDetailScreen()
 
-        myNotificationListScreen()
+        myNotificationListScreen(navController = navController, onClickedNotificationItem = {})
 
         locationOpenScreen()
 
