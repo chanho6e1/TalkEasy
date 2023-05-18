@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -64,6 +65,7 @@ internal fun FollowListRoute(
     onClickedAddFollow: () -> Unit = {},
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
+    onSelectedItem: () -> Unit,
 ) {
     val followList by rememberUpdatedState(newValue = viewModel.followList.collectAsState().value)
 
@@ -77,7 +79,11 @@ internal fun FollowListRoute(
         followList = followList ?: arrayListOf(),
         onClickedAddFollow = onClickedAddFollow,
         onClickedNotification = onClickedNotification,
-        onClickedSettings = onClickedSettings
+        onClickedSettings = onClickedSettings,
+        onSelectedItem = { follow ->
+            viewModel.setSelectFollow(follow)
+            onSelectedItem()
+        }
     )
 }
 
@@ -90,6 +96,7 @@ internal fun FollowListScreen(
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
     followList: List<Follow> = arrayListOf(),
+    onSelectedItem: (Follow) -> Unit = {},
 ) {
     Column() {
         FollowListHeader(
@@ -102,7 +109,11 @@ internal fun FollowListScreen(
             onClickedSettings = onClickedSettings
         )
 
-        FollowListContent(modifier = modifier, followList = followList)
+        FollowListContent(
+            modifier = modifier,
+            followList = followList,
+            onSelectedItem = onSelectedItem
+        )
     }
 }
 
@@ -179,25 +190,27 @@ fun FollowListHeader(
                     )
                 }
 
-                IconButton(modifier = modifier, onClick = onClickedNotification) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_notification_off),
-                        contentDescription = stringResource(
-                            R.string.ic_notification_text
-                        ),
-                        modifier = modifier.size(24.dp)
-                    )
-                }
+                /*
+                            IconButton(modifier = modifier, onClick = onClickedNotification) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_notification_off),
+                                    contentDescription = stringResource(
+                                        R.string.ic_notification_text
+                                    ),
+                                    modifier = modifier.size(24.dp)
+                                )
+                            }
 
-                IconButton(modifier = modifier, onClick = onClickedSettings) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_settings),
-                        contentDescription = stringResource(
-                            R.string.ic_settings_text
-                        ),
-                        modifier = modifier.size(24.dp)
-                    )
-                }
+                            IconButton(modifier = modifier, onClick = onClickedSettings) {
+                                Icon(
+                                    painter = painterResource(R.drawable.ic_settings),
+                                    contentDescription = stringResource(
+                                        R.string.ic_settings_text
+                                    ),
+                                    modifier = modifier.size(24.dp)
+                                )
+                            }
+                 */
             }
         }
     }
@@ -206,6 +219,7 @@ fun FollowListHeader(
 @Composable
 fun FollowListContent(
     modifier: Modifier = Modifier,
+    onSelectedItem: (Follow) -> Unit,
     followList: List<Follow> = arrayListOf(),
 ) {
     if (followList.isNotEmpty()) {
@@ -213,18 +227,10 @@ fun FollowListContent(
             contentPadding = PaddingValues(horizontal = 18.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            itemsIndexed(items = followList) { index, item ->
+            itemsIndexed(items = followList) { _, item ->
                 FollowListItem(
-                    profileUrl = item.imageUrl,
-                    name = item.userName,
-                    age = item.age ?: 0,
-                    time = "",
-                    newMessageCount = 0,
-                    gender = if (item.gender == 0) {
-                        stringResource(id = R.string.content_man)
-                    } else {
-                        stringResource(id = R.string.content_woman)
-                    }
+                    item = item,
+                    onSelectedItem = onSelectedItem
                 )
             }
         }
@@ -240,23 +246,20 @@ fun FollowListContent(
     }
 }
 
-@Preview(showBackground = true)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FollowListItem(
     modifier: Modifier = Modifier,
-    profileUrl: String = "",
-    name: String = "",
-    gender: String = "여성",
-    age: Int = 0,
-    time: String = "",
-    newMessageCount: Int = 99,
+    item: Follow,
+    onSelectedItem: (Follow) -> Unit,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { onSelectedItem(item) },
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Profile(profileUrl, 56, ChatMode.CHAT)
+        Profile(item.imageUrl, 56, ChatMode.CHAT)
 
         Column(
             modifier = modifier
@@ -272,7 +275,7 @@ fun FollowListItem(
             ) {
                 Text(
                     modifier = Modifier.weight(1f),
-                    text = name,
+                    text = item.userName,
                     style = typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     overflow = TextOverflow.Ellipsis,
@@ -281,10 +284,10 @@ fun FollowListItem(
 
                 Spacer(modifier = modifier.width(10.dp))
 
-                if (time.isNotEmpty()) {
+                item.lastChat?.let { lastChat ->
                     Row(modifier = modifier, horizontalArrangement = Arrangement.Center) {
                         Text(
-                            text = time.toTimeString(),
+                            text = lastChat.time.toTimeString(),
                             style = typography.bodySmall,
                             color = delta
                         )
@@ -297,32 +300,36 @@ fun FollowListItem(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row() {
-                    Text(
-                        text = String.format(
-                            stringResource(
-                                id = R.string.content_gender_age,
-                                gender,
-                                age
-                            )
-                        ),
-                        style = typography.bodyLarge,
-                        color = cabbage_pont
-                    )
-                }
-
-                if (newMessageCount > 0) {
-                    Badge(
-                        containerColor = sunset_orange,
-                        contentColor = md_theme_light_background
-                    ) {
-                        Text(
-                            text = if (newMessageCount >= 99) {
-                                "+99"
+                Text(
+                    text = String.format(
+                        stringResource(
+                            id = R.string.content_gender_age,
+                            if (item.gender == 0) {
+                                stringResource(id = R.string.content_man)
                             } else {
-                                newMessageCount.toString()
-                            }
+                                stringResource(id = R.string.content_woman)
+                            },
+                            item.age ?: 0
                         )
+                    ),
+                    style = typography.bodyLarge,
+                    color = cabbage_pont
+                )
+
+                item.lastChat?.let { lastChat ->
+                    if (lastChat.readCount > 0) {
+                        Badge(
+                            containerColor = sunset_orange,
+                            contentColor = md_theme_light_background
+                        ) {
+                            Text(
+                                text = if (lastChat.readCount >= 99) {
+                                    "+99"
+                                } else {
+                                    lastChat.readCount.toString()
+                                }
+                            )
+                        }
                     }
                 }
             }

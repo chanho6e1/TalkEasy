@@ -39,4 +39,17 @@
     <string name="image_reject_location">위치 열람 거부 아이콘</string>
     <string name="image_sos">긴급 도움 요청 아이콘</string>
     <string name="content_button_browse_location">위치보기</string>
+
+    <!--  Add Follow Detail  -->
+    <string name="title_add_follow">친구등록</string>
+    <string name="content_add_follow_register">등록하기</string>
+    <string name="title_name">이름</string>
+    <string name="title_gender">성별</string>
+    <string name="title_birth_date">생년월일</string>
+    <string name="title_significant">특이사항</string>
+    <string name="content_significant_hint">특이사항을 적어주세요</string>
+    <string name="title_notification">알림</string>
+    <string name="image_notification">알림을 추가하는 아이콘입니다.</string>
+    <string name="content_add_notification">추가하기</string>
+    <string name="content_memo">메모</string>
 </resources>

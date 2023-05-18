@@ -1,5 +1,6 @@
 package com.ssafy.talkeasy.feature.aac.ui
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,13 +31,16 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
 import com.ssafy.talkeasy.feature.aac.AACViewModel
+import com.ssafy.talkeasy.feature.chat.ChatViewModel
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatPartner
 import com.ssafy.talkeasy.feature.chat.ui.tablet.ChatRoomBox
 import com.ssafy.talkeasy.feature.chat.ui.tablet.OpenChatRoomButton
+import com.ssafy.talkeasy.feature.common.R
 import com.ssafy.talkeasy.feature.common.component.LoadingAnimationIterate
-import com.ssafy.talkeasy.feature.common.component.noRippleClickable
 import com.ssafy.talkeasy.feature.common.ui.theme.dimens
 import com.ssafy.talkeasy.feature.common.util.ChatMode
+import com.ssafy.talkeasy.feature.common.util.SendMode
+import com.ssafy.talkeasy.feature.common.util.toast
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
 import com.ssafy.talkeasy.feature.follow.ui.tablet.FollowFrame
 import com.ssafy.talkeasy.feature.location.ui.tablet.SOSFrame
@@ -45,6 +50,8 @@ import com.ssafy.talkeasy.feature.location.ui.tablet.SOSRequestFrame
 fun AACRouteFrame(
     aacViewModel: AACViewModel = hiltViewModel(),
     followViewModel: FollowViewModel = hiltViewModel(),
+    chatViewModel: ChatViewModel = hiltViewModel(),
+    context: Context = LocalContext.current,
 ) {
     val marginTop = 18.dp
     val marginRight = 36.dp
@@ -67,12 +74,55 @@ fun AACRouteFrame(
     val (showCustomWordDialog, setShowCustomWordDialog) = remember {
         mutableStateOf(false)
     }
+    val sendMode = remember {
+        mutableStateOf(SendMode.NONE)
+    }
     val chatMode by aacViewModel.chatMode.collectAsState()
     val chatPartner by aacViewModel.chatPartner.collectAsState()
+    val generatedSentence by aacViewModel.generatedSentence.collectAsState()
+    val selectedCard by aacViewModel.selectedCard.collectAsState()
+    val memberInfo by followViewModel.memberInfo.collectAsState()
+    val isSendSucceed by chatViewModel.isSendSucceed.collectAsState()
 
     SideEffect {
         followViewModel.requestMemberInfo()
         followViewModel.requestFollowList()
+    }
+
+    LaunchedEffect(key1 = generatedSentence, key2 = sendMode.value) {
+        if (selectedCard.isNotEmpty() && generatedSentence != "") {
+            when (sendMode.value) {
+                SendMode.NONE -> {}
+                SendMode.PREVIEW -> {
+                    context.toast(generatedSentence)
+                    sendMode.value = SendMode.NONE
+                }
+
+                SendMode.SEND -> {
+                    when (chatMode) {
+                        ChatMode.TTS -> {
+                            aacViewModel.getTTSMp3Url(generatedSentence)
+                        }
+
+                        ChatMode.CHAT -> {
+                            chatViewModel.sendChatMessage(
+                                toUserId = chatPartner!!.userId,
+                                roomId = chatPartner!!.roomId,
+                                msg = "",
+                                fromUserId = memberInfo!!.userId,
+                                type = 2
+                            )
+                            sendMode.value = SendMode.NONE
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = isSendSucceed) {
+        aacViewModel.initSelectedCard()
+        aacViewModel.initGeneratedSentence()
     }
 
     if (showFollowDialog) {
@@ -135,15 +185,17 @@ fun AACRouteFrame(
             isOpened = showChangeChatPartnerDialog,
             chatMode = chatMode,
             chatPartner = chatPartner,
-            marginLeft = marginLeft
+            marginLeft = marginLeft,
+            sendMode = sendMode.value,
+            memberInfo = memberInfo
         )
 
-        BrowseLocationBox(
-            snackBarRef = snackBarRef,
-            chatPartnerRef = chatPartnerRef,
-            aacTopBarRef = aacTopBarRef,
-            aacRef = aacRef
-        )
+        // BrowseLocationBox(
+        //     snackBarRef = snackBarRef,
+        //     chatPartnerRef = chatPartnerRef,
+        //     aacTopBarRef = aacTopBarRef,
+        //     aacRef = aacRef
+        // )
 
         TopBarBox(
             aacTopBarRef = aacTopBarRef,
@@ -157,9 +209,10 @@ fun AACRouteFrame(
             aacRef = aacRef,
             chatRoomRef = chatRoomRef,
             aacTopBarRef = aacTopBarRef,
-            isOpened = showChangeChatPartnerDialog,
             marginTop = marginTop,
             marginRight = marginRight,
+            isOpened = showChangeChatPartnerDialog,
+            sendMode = sendMode,
             showCustomWordDialog = { setShowCustomWordDialog(true) }
         )
     }
@@ -178,7 +231,7 @@ fun AACRouteFrame(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(dimens)
-                    .noRippleClickable { setShowCustomWordDialog(false) }
+                    .clickable { setShowCustomWordDialog(false) }
             )
 
             Box(modifier = Modifier.padding(start = 80.dp, bottom = 45.dp)) {
@@ -278,19 +331,22 @@ fun ConstraintLayoutScope.AACBox(
     aacRef: ConstrainedLayoutReference,
     chatRoomRef: ConstrainedLayoutReference,
     aacTopBarRef: ConstrainedLayoutReference,
-    isOpened: Boolean,
     marginTop: Dp = 18.dp,
     marginRight: Dp = 36.dp,
+    isOpened: Boolean,
+    sendMode: MutableState<SendMode>,
     showCustomWordDialog: () -> Unit,
     aacViewModel: AACViewModel = viewModel(),
 ) {
     val words by aacViewModel.selectedCard.collectAsState()
     val category by aacViewModel.category.collectAsState()
-    val generatedSentence by aacViewModel.generatedSentence.collectAsState()
     val aacWordList by aacViewModel.aacWordList.collectAsState()
     val fixedList by aacViewModel.aacFixedList.collectAsState()
     val ttsMp3Url by aacViewModel.ttsMp3Url.collectAsState()
     val context = LocalContext.current
+    val (cardClickEnable, setCardClickEnable) = remember {
+        mutableStateOf(true)
+    }
 
     SideEffect {
         if (fixedList.isEmpty()) {
@@ -298,13 +354,13 @@ fun ConstraintLayoutScope.AACBox(
         }
     }
 
-    LaunchedEffect(key1 = generatedSentence) {
-        aacViewModel.initSelectedCard()
-    }
-
     LaunchedEffect(key1 = ttsMp3Url) {
-        if (ttsMp3Url.isNotBlank()) {
+        if (ttsMp3Url != "" && sendMode.value == SendMode.SEND) {
             ttsPlay(context, ttsMp3Url)
+            sendMode.value = SendMode.NONE
+            aacViewModel.initTTSMp3Url()
+            aacViewModel.initSelectedCard()
+            aacViewModel.initGeneratedSentence()
         }
     }
 
@@ -319,14 +375,22 @@ fun ConstraintLayoutScope.AACBox(
         },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AACChatBox(words = words)
+        AACChatBox(
+            words = words,
+            cardClickEnable = cardClickEnable,
+            sendMode = sendMode,
+            setCardClickEnable = { flag: Boolean -> setCardClickEnable(flag) }
+        )
 
         if (category != "" && aacWordList == null) {
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                LoadingAnimationIterate(size = 200)
+                LoadingAnimationIterate(
+                    loadingAnimationId = R.raw.anim_loading_green,
+                    size = 200.dp
+                )
             }
         } else {
-            AACFixedCards()
+            AACFixedCards(cardClickEnable = cardClickEnable)
 
             if (category == "") {
                 Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
@@ -346,10 +410,14 @@ fun ConstraintLayoutScope.AACBox(
                     if (category != "사용자 지정") {
                         Spacer(modifier = Modifier.padding(top = 8.dp))
 
-                        AACRelatedCards()
+                        AACRelatedCards(cardClickEnable = cardClickEnable)
                     }
 
-                    AACCardBox(category = category, showCustomWordDialog = showCustomWordDialog)
+                    AACCardBox(
+                        category = category,
+                        cardClickEnable = cardClickEnable,
+                        showCustomWordDialog = showCustomWordDialog
+                    )
                 }
             }
         }
@@ -359,6 +427,7 @@ fun ConstraintLayoutScope.AACBox(
 @Composable
 fun AACCardBox(
     category: String,
+    cardClickEnable: Boolean,
     showCustomWordDialog: () -> Unit,
     aacViewModel: AACViewModel = viewModel(),
 ) {
@@ -399,7 +468,8 @@ fun AACCardBox(
                 AACSmallCards(
                     page = page,
                     wordCountPerPage = wordCountPerPage,
-                    wordList = it.aacList
+                    wordList = it.aacList,
+                    cardClickEnable = cardClickEnable
                 )
             }
         }

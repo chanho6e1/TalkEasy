@@ -28,6 +28,7 @@ data class ChatResponse(
 ) : DataToDomainMapper<Chat> {
 
     override fun toDomainModel(): Chat = Chat(
+        id = id,
         roomId = roomId,
         message = msg,
         time = created_dt,

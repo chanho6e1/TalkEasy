@@ -1,8 +1,6 @@
 package com.ssafy.talkeasy.feature.aac.ui
 
 // import com.ssafy.talkeasy.feature.aac.SampleData.Companion.memberName
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,13 +17,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.feature.aac.R.string
 import com.ssafy.talkeasy.feature.common.R
-import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_error
-import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_errorContainer
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold22
 
@@ -60,15 +57,23 @@ fun AACTopBar(
 
 @Composable
 fun ButtonSOS(showSOSRequestDialog: () -> Unit) {
-    Surface(
-        modifier = Modifier.clickable { showSOSRequestDialog() },
-        shape = shapes.extraSmall,
-        color = md_theme_light_errorContainer
-    ) {
+    // Surface(
+    //     modifier = Modifier.clickable { showSOSRequestDialog() },
+    //     shape = shapes.extraSmall,
+    //     color = md_theme_light_errorContainer
+    // ) {
+    //     Text(
+    //         modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
+    //         text = "SOS",
+    //         color = md_theme_light_error,
+    //         style = textStyleBold22
+    //     )
+    // }
+    Surface(shape = shapes.extraSmall, color = Color.Transparent) {
         Text(
             modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
             text = "SOS",
-            color = md_theme_light_error,
+            color = Color.Transparent,
             style = textStyleBold22
         )
     }
@@ -81,28 +86,43 @@ fun ButtonAlarmAndSetting(showNotificationDialog: () -> Unit) {
     }
 
     Row {
-        IconButton(onClick = showNotificationDialog) {
-            Image(
+        IconButton(onClick = showNotificationDialog, enabled = false) {
+            // IconButton(onClick = showNotificationDialog) {
+            // Image(
+            //     modifier = Modifier.size(40.dp),
+            //     painter = if (newAlarm) {
+            //         painterResource(id = R.drawable.ic_alarm_new)
+            //     } else {
+            //         painterResource(id = R.drawable.ic_alarm_default)
+            //     },
+            //     contentDescription = stringResource(string.image_alarm_default)
+            // )
+            Icon(
                 modifier = Modifier.size(40.dp),
                 painter = if (newAlarm) {
                     painterResource(id = R.drawable.ic_alarm_new)
                 } else {
                     painterResource(id = R.drawable.ic_alarm_default)
                 },
-                contentDescription = stringResource(string.image_alarm_default)
+                contentDescription = stringResource(string.image_alarm_default),
+                tint = Color.Transparent
             )
         }
 
         Spacer(modifier = Modifier.width(18.dp))
 
-        IconButton(onClick = {
-            // 세팅 화면으로 전환
-            setNewAlarm(!newAlarm)
-        }) {
+        IconButton(onClick = {}, enabled = false) {
+            // IconButton(onClick = {}) {
+            // Icon(
+            //     modifier = Modifier.size(40.dp),
+            //     painter = painterResource(id = R.drawable.ic_setting),
+            //     contentDescription = stringResource(string.image_setting)
+            // )
             Icon(
                 modifier = Modifier.size(40.dp),
                 painter = painterResource(id = R.drawable.ic_setting),
-                contentDescription = stringResource(string.image_setting)
+                contentDescription = stringResource(string.image_setting),
+                tint = Color.Transparent
             )
         }
     }

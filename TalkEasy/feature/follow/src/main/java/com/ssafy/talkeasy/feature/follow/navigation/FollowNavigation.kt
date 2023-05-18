@@ -31,16 +31,19 @@ fun NavGraphBuilder.followListScreen(
     onClickedAddFollow: () -> Unit,
     onClickedNotification: () -> Unit,
     onClickedSettings: () -> Unit,
+    onSelectedItem: () -> Unit,
 ) {
     composable(route = followListNavigationRoute) { navBackStackEntry ->
         val followListEntry = remember(navBackStackEntry) {
             navController.getBackStackEntry(welcomeRouteProtector)
         }
+
         FollowListRoute(
             navBackStackEntry = followListEntry,
             onClickedAddFollow = onClickedAddFollow,
             onClickedNotification = onClickedNotification,
-            onClickedSettings = onClickedSettings
+            onClickedSettings = onClickedSettings,
+            onSelectedItem = onSelectedItem
         )
     }
 }

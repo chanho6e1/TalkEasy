@@ -80,6 +80,7 @@ class AuthViewModel @Inject constructor(
                     if (value.data.status == 201) {
                         // login success
                         _memberState.value = "MEMBER"
+                        _name.value = nickname
                         sharedPreferences.accessToken = value.data.data
                         _name.value = nickname
                     }

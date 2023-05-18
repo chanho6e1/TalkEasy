@@ -43,6 +43,8 @@ lottie-compose = "6.0.0"
 zxing-core = "3.4.1"
 zxing-android-embedded = "4.2.0"
 
+rabbitmq = "5.17.0"
+
 [libraries]
 androidx-core = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 junit = { module = "junit:junit", version.ref = "junit" }
@@ -108,6 +110,8 @@ lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "
 
 zxing-core = { module = "com.google.zxing:core", version.ref = "zxing-core" }
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxing-android-embedded" }
+
+rabbitmq = { module = "com.rabbitmq:amqp-client", version.ref = "rabbitmq" }
 
 [bundles]
 androidx = ["androidx-core", "androidx-navigation-fragment", "androidx-navigation-ui", "androidx-navigation-fragment-ktx", "androidx-navigation-ui-ktx",

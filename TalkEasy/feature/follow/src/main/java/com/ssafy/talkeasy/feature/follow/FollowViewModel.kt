@@ -31,6 +31,9 @@ class FollowViewModel @Inject constructor(
     private val _followList = MutableStateFlow<List<Follow>?>(null)
     val followList: StateFlow<List<Follow>?> = _followList
 
+    private val _selectFollow = MutableStateFlow<Follow?>(null)
+    val selectFollow: StateFlow<Follow?> = _selectFollow
+
     private val _addFollowInfo: MutableStateFlow<AddFollowDetailInfo?> = MutableStateFlow(null)
     val addFollowInfo: StateFlow<AddFollowDetailInfo?> = _addFollowInfo
 
@@ -75,5 +78,9 @@ class FollowViewModel @Inject constructor(
                 Log.e("requestFollow", "requestFollow: ${value.errorMessage}")
             }
         }
+    }
+
+    fun setSelectFollow(follow: Follow) {
+        _selectFollow.value = follow
     }
 }

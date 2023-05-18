@@ -1,5 +1,6 @@
 package com.ssafy.talkeasy.feature.chat.ui.tablet
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,11 +16,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -29,9 +32,10 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstrainedLayoutReference
 import androidx.constraintlayout.compose.ConstraintLayoutScope
 import androidx.constraintlayout.compose.Dimension
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ssafy.talkeasy.core.domain.entity.response.Chat
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
+import com.ssafy.talkeasy.core.domain.entity.response.MemberInfo
 import com.ssafy.talkeasy.feature.chat.ChatViewModel
 import com.ssafy.talkeasy.feature.chat.R
 import com.ssafy.talkeasy.feature.common.R.drawable
@@ -48,6 +52,9 @@ import com.ssafy.talkeasy.feature.common.ui.theme.textStyleNormal14Vertical
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleNormal22
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
 import com.ssafy.talkeasy.feature.common.util.ChatMode
+import com.ssafy.talkeasy.feature.common.util.OnBottomReached
+import com.ssafy.talkeasy.feature.common.util.OnTopReached
+import com.ssafy.talkeasy.feature.common.util.SendMode
 import com.ssafy.talkeasy.feature.common.util.toTimeString
 
 @Composable
@@ -58,18 +65,55 @@ fun ConstraintLayoutScope.ChatRoomBox(
     isOpened: Boolean,
     chatMode: ChatMode,
     chatPartner: Follow?,
+    memberInfo: MemberInfo?,
     marginLeft: Dp = 20.dp,
-    chatViewModel: ChatViewModel = hiltViewModel(),
+    sendMode: SendMode,
+    chatViewModel: ChatViewModel = viewModel(),
 ) {
     val chats by chatViewModel.chats.collectAsState()
-    val (offset, setOffset) = remember {
-        mutableStateOf(1)
-    }
+    val newChat by chatViewModel.newChat.collectAsState()
+    val chatsTotalPage by chatViewModel.chatsTotalPage.collectAsState()
+    var offset by remember { mutableStateOf(1) }
 
+    // chat 초기화
     LaunchedEffect(key1 = chatPartner?.followId, key2 = chatMode) {
         if (chatMode == ChatMode.CHAT && chatPartner != null) {
             chatViewModel.getChatHistory(chatPartner.roomId, offset, 50)
         }
+    }
+
+    // 메시지 구독
+    DisposableEffect(key1 = chatPartner?.followId, key2 = chatMode) {
+        if (chatMode == ChatMode.CHAT && chatPartner != null && memberInfo != null) {
+            chatViewModel.receiveChatMessage(chatPartner.roomId, memberInfo.userId)
+        }
+        Log.d(
+            "TAG",
+            "ChatRoomBox: receiveChatMessage chatPartner :$chatPartner, memberInfo : $memberInfo"
+        )
+
+        // 메시지 구독 취소
+        onDispose {
+            chatViewModel.stopReceiveMessage()
+            Log.d("TAG", "ChatRoomBox: stopReceiveMessage")
+        }
+    }
+
+    // 메시지 읽음 처리
+    LaunchedEffect(newChat) {
+        if (newChat != null && chatMode == ChatMode.CHAT &&
+            chatPartner != null && memberInfo != null && chats.isNotEmpty()
+        ) {
+            chatViewModel.readChatMessage(
+                readTime = chats.last().time,
+                roomId = chatPartner.roomId,
+                readUserId = memberInfo.userId
+            )
+        }
+        Log.d(
+            "TAG",
+            "ChatRoomBox: chatPartner :$chatPartner, memberInfo : $memberInfo, chats : $chats"
+        )
     }
 
     if (isOpened) {
@@ -93,7 +137,7 @@ fun ConstraintLayoutScope.ChatRoomBox(
                     height = 72,
                     betweenValue = 20
                 )
-            } else if (chats.isNullOrEmpty()) {
+            } else if (chats.isEmpty()) {
                 NoContentLogoMessage(
                     message = stringResource(id = R.string.content_no_chat),
                     textStyle = typography.titleMedium,
@@ -102,7 +146,18 @@ fun ConstraintLayoutScope.ChatRoomBox(
                     betweenValue = 20
                 )
             } else {
-                chats?.let { ChatContent(chatPartner = chatPartner, chats = it) }
+                ChatContent(
+                    chatPartner = chatPartner,
+                    chats = chats,
+                    sendMode = sendMode,
+                    offset = offset,
+                    OnTopReached = {
+                        if (offset < chatsTotalPage) {
+                            offset += 1
+                            chatViewModel.loadMoreChats(chatPartner.roomId, offset, 50)
+                        }
+                    }
+                )
             }
         }
     } else {
@@ -117,21 +172,62 @@ fun ConstraintLayoutScope.ChatRoomBox(
 }
 
 @Composable
-fun ChatContent(chatPartner: Follow, chats: List<Chat>) {
-    val chatList = sublistChat(chats)
-    val scrollState = rememberLazyListState(initialFirstVisibleItemIndex = chatList.lastIndex)
+fun ChatContent(
+    sendMode: SendMode,
+    chatPartner: Follow,
+    chats: List<Chat>,
+    offset: Int,
+    OnTopReached: () -> Unit,
+) {
+    val chatList = sublistChat(chats.reversed())
+    val scrollState = rememberLazyListState()
+    var isBottomMode by remember { mutableStateOf(true) }
+    var previousScrollPosition by remember { mutableStateOf(0) }
+    var previousScrollOffset by remember { mutableStateOf(0) }
+
+    LaunchedEffect(chats) {
+        if (isBottomMode) {
+            scrollState.scrollToItem(0)
+        }
+    }
+
+    LaunchedEffect(sendMode) {
+        if (sendMode == SendMode.NONE) {
+            scrollState.scrollToItem(0)
+        }
+    }
 
     LazyColumn(
         modifier = Modifier.padding(11.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
-        state = scrollState
+        state = scrollState,
+        reverseLayout = true
     ) {
         items(items = chatList) {
             if (it[0].fromUserId == chatPartner.userId) {
-                PartnerChat(chatPartner = chatPartner, messages = it)
+                PartnerChat(chatPartner = chatPartner, messages = it.reversed())
             } else {
-                MyChat(messages = it)
+                MyChat(messages = it.reversed())
             }
+        }
+    }
+
+    scrollState.OnBottomReached() {
+        if (chats.isNotEmpty() && !isBottomMode) {
+            previousScrollPosition = scrollState.firstVisibleItemIndex
+            previousScrollOffset = scrollState.firstVisibleItemScrollOffset
+            OnTopReached()
+        }
+    }
+
+    scrollState.OnTopReached(
+        onIsBottom = { isBottomMode = true },
+        onIsNotBottom = { isBottomMode = false }
+    )
+
+    if (!isBottomMode) {
+        LaunchedEffect(key1 = offset) {
+            scrollState.scrollToItem(previousScrollPosition, previousScrollOffset)
         }
     }
 }
