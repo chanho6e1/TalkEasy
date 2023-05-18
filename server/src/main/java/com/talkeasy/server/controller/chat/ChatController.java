@@ -87,19 +87,19 @@ public class ChatController {//producer
 
 
     /* test */
-    @GetMapping("/user")
-    @ApiOperation(value = "회원가입시 큐생성(테스트용)", notes = "쿼리스트링으로 userId를 주면 큐를 만듬")
-    public ResponseEntity<CommonResponse> createUserQueue(@RequestParam String userId) throws IOException, UnsupportedAudioFileException {
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                HttpStatus.OK, chatUserQueueService.createUserQueue(userId)));
-    }
-
-    @GetMapping("/test/receive")
-    @ApiOperation(value = "메시지 받기 테스트(테스트용)", notes = " chat/read")
-    public ResponseEntity<CommonResponse> receiveMessage(@RequestParam String roomId, String recieveUserId, String queueName) throws IOException, UnsupportedAudioFileException, TimeoutException {
-        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
-                HttpStatus.OK, chatTestService.receiveMessage(roomId, recieveUserId, queueName)));
-    }
+//    @GetMapping("/user")
+//    @ApiOperation(value = "회원가입시 큐생성(테스트용)", notes = "쿼리스트링으로 userId를 주면 큐를 만듬")
+//    public ResponseEntity<CommonResponse> createUserQueue(@RequestParam String userId) throws IOException, UnsupportedAudioFileException {
+//        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+//                HttpStatus.OK, chatUserQueueService.createUserQueue(userId)));
+//    }
+//
+//    @GetMapping("/test/receive")
+//    @ApiOperation(value = "메시지 받기 테스트(테스트용)", notes = " chat/read")
+//    public ResponseEntity<CommonResponse> receiveMessage(@RequestParam String roomId, String recieveUserId, String queueName) throws IOException, UnsupportedAudioFileException, TimeoutException {
+//        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
+//                HttpStatus.OK, chatTestService.receiveMessage(roomId, recieveUserId, queueName)));
+//    }
 
 
 
