@@ -20,10 +20,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavBackStackEntry
 import com.ssafy.talkeasy.feature.auth.AuthViewModel
 import com.ssafy.talkeasy.feature.auth.R
-import com.ssafy.talkeasy.feature.common.R.drawable as Common
 import com.ssafy.talkeasy.feature.common.component.WelcomeAnimation
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
+import com.ssafy.talkeasy.feature.common.R.drawable as Common
 
 @Composable
 internal fun WelcomeRouteProtector(
@@ -52,6 +52,7 @@ internal fun WelcomeRouteProtector(
     LaunchedEffect(key1 = memberInfo, key2 = followList) {
         if (memberInfo != null && followList != null) {
             isInfoLoadingFinished = true
+            authViewModel.registerFCMToken()
         }
     }
 
