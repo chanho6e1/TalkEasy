@@ -78,12 +78,12 @@ public class ChatController {//producer
     }
 
 
-    @GetMapping("/my")
-    @ApiOperation(value = "채팅방 조회(테스트용)", notes = "내가 속한 채팅방 리스트를 반환")
-    public ResponseEntity<?> getChatRoom(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) {
-        return ResponseEntity.status(HttpStatus.OK).body(
-                chatService.getChatRoomList(oAuth2User.getId()));
-    }
+//    @GetMapping("/my")
+//    @ApiOperation(value = "채팅방 조회(테스트용)", notes = "내가 속한 채팅방 리스트를 반환")
+//    public ResponseEntity<?> getChatRoom(@ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) {
+//        return ResponseEntity.status(HttpStatus.OK).body(
+//                chatService.getChatRoomList(oAuth2User.getId()));
+//    }
 
 
     /* test */
