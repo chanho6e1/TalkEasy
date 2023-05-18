@@ -16,4 +16,6 @@
     <string name="content_location_open_request">위치 정보 열람 요청</string>
     <string name="content_chat_hint">채팅을 입력해주세요.</string>
     <string name="image_send_chat">채팅 전송 버튼입니다</string>
+    <string name="title_show_chat_partner_detail">정보 상세보기</string>
+    <string name="content_save">저장하기</string>
 </resources>

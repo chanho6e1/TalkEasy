@@ -16,6 +16,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -227,37 +230,37 @@ fun ChatHeader(
             }
         },
         actions = {
-            // IconButton(onClick = { mDisplayMenu = !mDisplayMenu }) {
-            //     Icon(
-            //         imageVector = Icons.Filled.MoreVert,
-            //         contentDescription = stringResource(id = R.string.image_more_info),
-            //         tint = md_theme_light_onBackground
-            //     )
-            // }
-            //
-            // DropdownMenu(
-            //     expanded = mDisplayMenu,
-            //     onDismissRequest = { mDisplayMenu = false }
-            // ) {
-            //     DropdownMenuItem(
-            //         onClick = { onClickedInfoDetail() },
-            //         text = {
-            //             Text(
-            //                 text = stringResource(id = R.string.content_info_detail),
-            //                 style = typography.bodyLarge
-            //             )
-            //         }
-            //     )
-            //     DropdownMenuItem(
-            //         onClick = { onClickedLocationOpenRequest() },
-            //         text = {
-            //             Text(
-            //                 text = stringResource(id = R.string.content_location_open_request),
-            //                 style = typography.bodyLarge
-            //             )
-            //         }
-            //     )
-            // }
+            IconButton(onClick = { mDisplayMenu = !mDisplayMenu }) {
+                Icon(
+                    imageVector = Icons.Filled.MoreVert,
+                    contentDescription = stringResource(id = R.string.image_more_info),
+                    tint = md_theme_light_onBackground
+                )
+            }
+
+            DropdownMenu(
+                expanded = mDisplayMenu,
+                onDismissRequest = { mDisplayMenu = false }
+            ) {
+                DropdownMenuItem(
+                    onClick = { onClickedInfoDetail() },
+                    text = {
+                        Text(
+                            text = stringResource(id = R.string.content_info_detail),
+                            style = typography.bodyLarge
+                        )
+                    }
+                )
+                //     DropdownMenuItem(
+                //         onClick = { onClickedLocationOpenRequest() },
+                //         text = {
+                //             Text(
+                //                 text = stringResource(id = R.string.content_location_open_request),
+                //                 style = typography.bodyLarge
+                //             )
+                //         }
+                //     )
+            }
         }
     )
 }

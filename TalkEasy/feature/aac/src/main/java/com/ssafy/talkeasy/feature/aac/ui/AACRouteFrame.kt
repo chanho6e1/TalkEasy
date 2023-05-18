@@ -108,9 +108,9 @@ fun AACRouteFrame(
                             chatViewModel.sendChatMessage(
                                 toUserId = chatPartner!!.userId,
                                 roomId = chatPartner!!.roomId,
-                                msg = generatedSentence,
+                                msg = "",
                                 fromUserId = memberInfo!!.userId,
-                                type = 0
+                                type = 2
                             )
                             sendMode.value = SendMode.NONE
                         }
