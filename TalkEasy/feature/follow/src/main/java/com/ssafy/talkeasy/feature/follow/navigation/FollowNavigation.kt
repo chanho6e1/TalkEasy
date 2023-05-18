@@ -45,9 +45,12 @@ fun NavGraphBuilder.followListScreen(
     }
 }
 
-fun NavGraphBuilder.addFollowDetailScreen() {
-    composable(route = addFollowDetailNavigationRoute) {
-        AddFollowDetailRoute()
+fun NavGraphBuilder.addFollowDetailScreen(navController: NavController) {
+    composable(route = addFollowDetailNavigationRoute) { navBackStackEntry ->
+        val addFollowDetailEntry = remember(navBackStackEntry) {
+            navController.getBackStackEntry(welcomeRouteProtector)
+        }
+        AddFollowDetailRoute(navBackStackEntry = addFollowDetailEntry)
     }
 }
 

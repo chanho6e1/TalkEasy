@@ -24,6 +24,7 @@ import androidx.compose.material3.TimeInput
 import androidx.compose.material3.TimePickerDefaults
 import androidx.compose.material3.TimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +37,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
+import com.ssafy.talkeasy.core.domain.entity.AddFollowDetailInfo
 import com.ssafy.talkeasy.feature.common.component.CustomTextField
 import com.ssafy.talkeasy.feature.common.component.NoLabelTextField
 import com.ssafy.talkeasy.feature.common.component.Profile
@@ -52,14 +56,19 @@ import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_secondaryContai
 import com.ssafy.talkeasy.feature.common.ui.theme.seed
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
 import com.ssafy.talkeasy.feature.common.util.ChatMode
+import com.ssafy.talkeasy.feature.follow.FollowViewModel
 import com.ssafy.talkeasy.feature.follow.R
 import java.time.LocalDateTime
 
 @Composable
 internal fun AddFollowDetailRoute(
     modifier: Modifier = Modifier,
+    navBackStackEntry: NavBackStackEntry,
+    followViewModel: FollowViewModel = hiltViewModel(navBackStackEntry),
 ) {
-    AddFollowDetailScreen(modifier = modifier)
+    val addFollowDetailInfo by followViewModel.addFollowInfo.collectAsState()
+
+    AddFollowDetailScreen(modifier = modifier, addFollowDetailInfo = addFollowDetailInfo)
 }
 
 @Preview(
@@ -71,6 +80,7 @@ internal fun AddFollowDetailRoute(
 @Composable
 internal fun AddFollowDetailScreen(
     modifier: Modifier = Modifier,
+    addFollowDetailInfo: AddFollowDetailInfo? = null,
 ) {
     val (dialogState: Boolean, setDialogState: (Boolean) -> Unit) = remember {
         mutableStateOf(false)
@@ -101,13 +111,16 @@ internal fun AddFollowDetailScreen(
                     .padding(horizontal = 34.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                AddFollowDetailContent(
-                    modifier = modifier,
-                    onClickedAddButton = {
-                        setDialogState(!dialogState)
-                    },
-                    onItemClicked = { setDialogState(!dialogState) }
-                )
+                addFollowDetailInfo?.let {
+                    AddFollowDetailContent(
+                        modifier = modifier,
+                        onClickedAddButton = {
+                            setDialogState(!dialogState)
+                        },
+                        onItemClicked = { setDialogState(!dialogState) },
+                        addFollowDetailInfo = addFollowDetailInfo
+                    )
+                }
             }
             WideSeedButton(
                 modifier = modifier.padding(horizontal = 34.dp, vertical = 10.dp),
@@ -209,12 +222,9 @@ fun AddNotificationDialog(
 @Composable
 internal fun AddFollowDetailContent(
     modifier: Modifier = Modifier,
-    profileUrl: String = "",
-    name: String = "",
-    gender: String = "",
-    birthDate: String = "",
     onClickedAddButton: () -> Unit = {},
     onItemClicked: () -> Unit = {},
+    addFollowDetailInfo: AddFollowDetailInfo,
 ) {
     val (text: String, setText: (String) -> Unit) = remember {
         mutableStateOf("")
@@ -233,28 +243,32 @@ internal fun AddFollowDetailContent(
                     .wrapContentHeight(),
                 contentAlignment = Alignment.Center
             ) {
-                Profile(profileUrl = profileUrl, size = 116, chatMode = ChatMode.CHAT)
+                Profile(
+                    profileUrl = addFollowDetailInfo.imageUrl,
+                    size = 116,
+                    chatMode = ChatMode.CHAT
+                )
             }
         }
 
         item {
             AddFollowDetailStringContent(
                 title = stringResource(id = R.string.title_name),
-                content = name
+                content = addFollowDetailInfo.userName
             )
         }
 
         item {
             AddFollowDetailStringContent(
                 title = stringResource(id = R.string.title_gender),
-                content = gender
+                content = if (addFollowDetailInfo.gender == 0) "남성" else "여성"
             )
         }
 
         item {
             AddFollowDetailStringContent(
                 title = stringResource(id = R.string.title_birth_date),
-                content = birthDate
+                content = addFollowDetailInfo.birthDate
             )
         }
 
@@ -364,7 +378,7 @@ fun AddFollowDetailNotification(
             modifier = modifier,
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
-            repeat(10) {
+            repeat(0) {
                 AddFollowDetailNotificationItem(onItemClicked = onItemClicked)
             }
         }

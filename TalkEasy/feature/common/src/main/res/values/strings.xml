@@ -8,6 +8,7 @@
     <string name="content_camera_failed_message">촬영을 실패하였습니다. 다시 시도해주세요.</string>
     <string name="content_gallery_failed_message">앨범에서 사진 불러오기를 실패했습니다. 다시 시도해주세요.</string>
     <string name="image_icon_check">체크 아이콘입니다</string>
+    <string name="content_reject_permission">권한 요청이 반려되었습니다.</string>
 
     <!-- Welcome -->
     <string name="title_welcome">%s 님\n환영합니다!</string>

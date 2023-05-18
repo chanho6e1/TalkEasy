@@ -81,6 +81,7 @@ class AuthViewModel @Inject constructor(
                         // login success
                         _memberState.value = "MEMBER"
                         sharedPreferences.accessToken = value.data.data
+                        _name.value = nickname
                     }
                 }
 
