@@ -24,8 +24,10 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfig {
 
     private static final String CHAT_QUEUE_NAME = "chat.queue";
+    private static final String READ_QUEUE_NAME = "read.queue";
     private static final String ROOM_QUEUE_NAME = "room.queue";
     private static final String CHAT_EXCHANGE_NAME = "chat.exchange";
+    private static final String READ_EXCHANGE_NAME = "read.exchange";
     private static final String ROUTING_KEY = "room.*";
 //    private static final String ROUTING_KEY = "chat.queue.*";
 
@@ -37,23 +39,26 @@ public class RabbitConfig {
     }
     @Bean
     public Queue queue() {
-        return new Queue(ROOM_QUEUE_NAME, true);
+        return new Queue(READ_QUEUE_NAME, true);
     }
 
     //
-//    // Exchange 등록
-//    @Bean
-//    public TopicExchange exchange() {
-//        return new TopicExchange(CHAT_EXCHANGE_NAME);
-//    }
-//
-//    //
-////    // Exchange 와 Queue 바인딩
-//    @Bean
-//    public Binding binding() {
-//        return BindingBuilder.bind(queue1()).to(exchange()).with(ROUTING_KEY);
-//    }
-//
+    // Exchange 등록
+    @Bean
+    public TopicExchange exchange() {
+        return new TopicExchange(CHAT_EXCHANGE_NAME);
+    }
+    @Bean
+    public TopicExchange exchange2() {
+        return new TopicExchange(READ_EXCHANGE_NAME);
+    }
+    //
+//    // Exchange 와 Queue 바인딩
+    @Bean
+    public Binding binding() {
+        return BindingBuilder.bind(queue1()).to(exchange()).with(ROUTING_KEY);
+    }
+
 
     @Bean
     public RabbitTemplate template() {
