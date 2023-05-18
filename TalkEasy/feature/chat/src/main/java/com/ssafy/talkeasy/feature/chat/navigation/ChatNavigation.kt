@@ -19,6 +19,9 @@ fun NavGraphBuilder.chatScreen(navController: NavController) {
         val chatEntry = remember(navBackStackEntry) {
             navController.getBackStackEntry(welcomeRouteProtector)
         }
-        ChatRouteProtector(navBackStackEntry = chatEntry)
+        ChatRouteProtector(
+            navBackStackEntry = chatEntry,
+            popBackStack = navController::popBackStack
+        )
     }
 }

@@ -62,9 +62,10 @@ import com.ssafy.talkeasy.feature.follow.FollowViewModel
 fun ChatRouteProtector(
     onClickedLocationOpenRequest: () -> Unit = {},
     onClickedInfoDetail: () -> Unit = {},
+    popBackStack: () -> Unit,
     navBackStackEntry: NavBackStackEntry,
     followListViewModel: FollowViewModel = hiltViewModel(navBackStackEntry),
-    chatViewModel: ChatViewModel = hiltViewModel(),
+    chatViewModel: ChatViewModel = hiltViewModel()
 ) {
     val chats by chatViewModel.chats.collectAsState()
     val newChat by chatViewModel.newChat.collectAsState()
@@ -131,7 +132,8 @@ fun ChatRouteProtector(
                     chatViewModel.loadMoreChats(follow.roomId, offset, 50)
                 }
             },
-            isClickedSendButton = isClickedSendButton
+            isClickedSendButton = isClickedSendButton,
+            popBackStack = popBackStack
         )
     }
 }
@@ -148,13 +150,15 @@ fun ChatScreen(
     onClickedInfoDetail: () -> Unit = {},
     onSendButtonClick: () -> Unit = {},
     OnTopReached: () -> Unit,
+    popBackStack: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             ChatHeader(
                 chatPartner = chatPartner,
                 onClickedLocationOpenRequest = onClickedLocationOpenRequest,
-                onClickedInfoDetail = onClickedInfoDetail
+                onClickedInfoDetail = onClickedInfoDetail,
+                popBackStack = popBackStack
             )
         },
         bottomBar = {
@@ -198,6 +202,7 @@ fun ChatHeader(
     chatPartner: Follow,
     onClickedLocationOpenRequest: () -> Unit,
     onClickedInfoDetail: () -> Unit,
+    popBackStack: () -> Unit,
 ) {
     var mDisplayMenu by remember { mutableStateOf(false) }
 
@@ -216,7 +221,7 @@ fun ChatHeader(
             }
         },
         navigationIcon = {
-            IconButton(onClick = { }) {
+            IconButton(onClick = popBackStack) {
                 Icon(
                     imageVector = Icons.Filled.ArrowBack,
                     contentDescription = stringResource(id = R.string.image_back_icon),
