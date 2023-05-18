@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/alarm")
 @RequiredArgsConstructor
@@ -57,7 +59,7 @@ public class MyAlarmController {
     @PostMapping
     @ApiOperation(value = "피보호자의 SOS 요청 저장", notes = "피보호자가 sos 버튼을 누를때마다 알림 저장한다.")
     public ResponseEntity<CommonResponse> postAlarmBySOS(@RequestBody RequestSosAlarmDto requestSosAlarmDto,
-                                                            @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) {
+                                                            @ApiIgnore @AuthenticationPrincipal OAuth2UserImpl oAuth2User) throws IOException {
 
 //        Member member = Member.builder().id("645307321511deecd5c5441a").role(0).build();
 //        return ResponseEntity.status(HttpStatus.OK).body(CommonResponse.of(
