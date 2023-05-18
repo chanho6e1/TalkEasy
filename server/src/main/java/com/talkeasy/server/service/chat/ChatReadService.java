@@ -71,8 +71,8 @@ public class ChatReadService {
                     if (getReadQueueInfo(chat.getRoomId(), chat.getFromUserId()) != null) {
                         QueueInformation queueInformation = getReadQueueInfo(chat.getRoomId(), chat.getFromUserId());
                         queueInformation.getName();
-                        rabbitTemplate.convertAndSend("read.exchange", sb.toString(), msg);
-//                        rabbitTemplate.send("read.exchange", sb.toString(), msg);
+//                        rabbitTemplate.convertAndSend("read.exchange", sb.toString(), msg);
+                        rabbitTemplate.send("read.exchange", sb.toString(), msg);
                     }
                 }
             }

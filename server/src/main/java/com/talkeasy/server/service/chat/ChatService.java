@@ -257,8 +257,8 @@ public class ChatService {
         String routingKey = String.format("room.%s.%s", chat.getRoomId(), toUserId);
 
         Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
-//        rabbitTemplate.send("chat.exchange", routingKey, msg);
-        rabbitTemplate.convertAndSend("chat.exchange", routingKey, msg);
+        rabbitTemplate.send("chat.exchange", routingKey, msg);
+//        rabbitTemplate.convertAndSend("chat.exchange", routingKey, msg);
     }
 
 
@@ -293,35 +293,35 @@ public class ChatService {
     }
 
 
-    public PagedResponse<ChatRoomListDto> getChatRoomList(String userId) {
-        List<ChatRoomListDto> chatRoomListDtoList = new ArrayList<>();
-
-        List<LastChat> lastChatList = getLastChatList(userId);
-        lastChatList.sort((c1, c2) -> c2.getCreated_dt().compareTo(c1.getCreated_dt())); // 최신순으로 정렬
-
-        for (LastChat lastChat : lastChatList) {
-            String otherUserId = lastChat.getFromUserId().equals(userId) ? lastChat.getToUserId() : lastChat.getFromUserId();
-            Member member = getMemberById(otherUserId);
-
-            if (member != null) {
-                ChatRoomListDto chatRoomListDto = new ChatRoomListDto(lastChat);
-                chatRoomListDto.setProfile(member.getImageUrl());
-                chatRoomListDto.setName(member.getName());
-
-                QueueInformation queueInformation = getQueueInfo(lastChat.getRoomId(), userId);
-                if (queueInformation != null) {
-                    log.info("queueInfo cnt : {}", queueInformation.getMessageCount());
-                    chatRoomListDto.setNoReadCnt(queueInformation.getMessageCount());
-                } else {
-                    log.warn("queueInformation is null");
-                }
-
-                chatRoomListDtoList.add(chatRoomListDto);
-            }
-        }
-
-        return new PagedResponse(HttpStatus.OK, chatRoomListDtoList, 1);
-    }
+//    public PagedResponse<ChatRoomListDto> getChatRoomList(String userId) {
+//        List<ChatRoomListDto> chatRoomListDtoList = new ArrayList<>();
+//
+//        List<LastChat> lastChatList = getLastChatList(userId);
+//        lastChatList.sort((c1, c2) -> c2.getCreated_dt().compareTo(c1.getCreated_dt())); // 최신순으로 정렬
+//
+//        for (LastChat lastChat : lastChatList) {
+//            String otherUserId = lastChat.getFromUserId().equals(userId) ? lastChat.getToUserId() : lastChat.getFromUserId();
+//            Member member = getMemberById(otherUserId);
+//
+//            if (member != null) {
+//                ChatRoomListDto chatRoomListDto = new ChatRoomListDto(lastChat);
+//                chatRoomListDto.setProfile(member.getImageUrl());
+//                chatRoomListDto.setName(member.getName());
+//
+//                QueueInformation queueInformation = getQueueInfo(lastChat.getRoomId(), userId);
+//                if (queueInformation != null) {
+//                    log.info("queueInfo cnt : {}", queueInformation.getMessageCount());
+//                    chatRoomListDto.setNoReadCnt(queueInformation.getMessageCount());
+//                } else {
+//                    log.warn("queueInformation is null");
+//                }
+//
+//                chatRoomListDtoList.add(chatRoomListDto);
+//            }
+//        }
+//
+//        return new PagedResponse(HttpStatus.OK, chatRoomListDtoList, 1);
+//    }
 
 
     public Member getMemberById(String id) {

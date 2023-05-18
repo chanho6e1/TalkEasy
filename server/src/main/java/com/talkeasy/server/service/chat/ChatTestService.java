@@ -1,17 +1,17 @@
 package com.talkeasy.server.service.chat;
 
-import com.rabbitmq.client.Connection;
+//import com.rabbitmq.client.Connection;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DeliverCallback;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.TimeoutException;
+//import com.rabbitmq.client.Channel;
+//import com.rabbitmq.client.ConnectionFactory;
+//import com.rabbitmq.client.DeliverCallback;
+//
+//import java.io.IOException;
+//import java.util.ArrayList;
+//import java.util.List;
+//import java.util.concurrent.TimeoutException;
 
 @Service
 @RequiredArgsConstructor
