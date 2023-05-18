@@ -96,7 +96,7 @@ fun NotificationFrame(
                             .padding(10.dp)
                             .fillMaxWidth()
                     ) {
-                        itemsIndexed(items = notifications) { index, notification ->
+                        itemsIndexed(items = notifications.reversed()) { index, notification ->
                             val isLastItem = index == notifications.lastIndex
 
                             MyNotificationListItem(item = notification, isLastItem = isLastItem)
