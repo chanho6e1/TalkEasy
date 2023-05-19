@@ -183,4 +183,15 @@ class ChatViewModel @Inject constructor(
             disConnectRabbitmqUseCase()
         }
     }
+
+    fun requestFCMSOS(fromUserId: String, roomId: String, toUserId: String) =
+        viewModelScope.launch {
+            sendChatMessage(
+                type = 2,
+                fromUserId = fromUserId,
+                msg = "",
+                roomId = roomId,
+                toUserId = toUserId
+            )
+        }
 }
