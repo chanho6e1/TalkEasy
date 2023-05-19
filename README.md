@@ -127,16 +127,21 @@ AAC를 활용하여 뇌병변장애를 가진 피보호자와 보호자의 의�
 ### 로그인
 
 - OAuth2.0을 활용한 카카오 로그인
+  ![태블릿로그인](https://github.com/Jiwon-Im/Algorithm/assets/55631620/2956b44e-7b7e-465c-9736-6d1534f99ba3)
+- 보호자 피보호자 팔로우
+  ![친구맺기](https://github.com/Jiwon-Im/Algorithm/assets/55631620/edd8361f-4f92-4204-a3de-26fa6bf23875)
 
 ### AAC
 
 - 단어 선택을 통해 문장 완성하여 TTS를 통해 주변 사람과 소통할 수 있음
 - GPT Open AI를 활용한 문장 완성
+![AAC생성](https://github.com/Jiwon-Im/Algorithm/assets/55631620/935e5bf7-2477-435c-83af-f5b6021e3b9f)
 
 ### 채팅
 
 - 단어 선택을 통해 만든 문장을 보호자에게 보내 소통할 수 있음.
 - RabbitMQ를 활용해 실시간 채팅 관리
+![채팅하기](https://github.com/Jiwon-Im/Algorithm/assets/55631620/090f8840-ae26-4a15-8e2b-3a712e0528f8)
 
 ### SOS 서비스
 
