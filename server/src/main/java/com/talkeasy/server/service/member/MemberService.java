@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.talkeasy.server.config.s3.S3Uploader;
 import com.talkeasy.server.domain.aac.CustomAAC;
+import com.talkeasy.server.domain.alarm.Alarm;
 import com.talkeasy.server.domain.app.UserAppToken;
 import com.talkeasy.server.domain.chat.ChatRoom;
 import com.talkeasy.server.domain.member.Follow;
@@ -100,11 +101,13 @@ public class MemberService {
         for (Follow follow : follows)
             mongoTemplate.remove(follow);
 
+        Query query = new Query(Criteria.where("userId").is(userId));
         // 커스텀 AAC 삭제
-        mongoTemplate.remove(Query.query(Criteria.where("userId").is(userId)), CustomAAC.class);
-
+        mongoTemplate.remove(query, CustomAAC.class);
         // 유저 앱 토큰 삭제
-        mongoTemplate.remove(Query.query(Criteria.where("userId").is(userId)), UserAppToken.class);
+        mongoTemplate.remove(query, UserAppToken.class);
+        // 알람 삭제
+        mongoTemplate.remove(query, Alarm.class);
 
         return userId;
     }
