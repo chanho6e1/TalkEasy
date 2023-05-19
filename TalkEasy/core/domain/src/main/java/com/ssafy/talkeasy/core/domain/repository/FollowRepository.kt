@@ -18,4 +18,6 @@ interface FollowRepository {
     suspend fun requestSaveWardSOS(
         requestSosAlarmDto: SosAlarmRequestBody,
     ): Resource<Default<String>>
+
+    suspend fun modifyFollowMemo(followId: String, memo: String): Resource<Follow>
 }

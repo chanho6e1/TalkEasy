@@ -25,7 +25,12 @@ internal fun ChatPartnerInfoScreen(
         title = stringResource(R.string.title_show_chat_partner_detail),
         buttonContent = stringResource(R.string.content_save),
         selectFollowInfo = selectFollow,
-        buttonClickListener = {},
+        buttonClickListener = { memo: String ->
+            followViewModel.modifyFollowMemo(
+                followId = selectFollow?.followId ?: "",
+                memo = memo
+            )
+        },
         popBackStack = popBackStack
     )
 }

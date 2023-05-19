@@ -21,6 +21,7 @@ import com.ssafy.talkeasy.core.domain.usecase.chat.StopReceiveMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.fcm.RegisterFCMTokenUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.FollowListUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.NotificationListUseCase
+import com.ssafy.talkeasy.core.domain.usecase.follow.ModifyFollowMemoUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.RequestFollowUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.RequestSaveWardSOSUseCase
 import com.ssafy.talkeasy.core.domain.usecase.member.MemberInfoUseCase
@@ -134,4 +135,11 @@ object UseCaseModule {
         followRepository: FollowRepository,
     ): RequestSaveWardSOSUseCase =
         RequestSaveWardSOSUseCase(followRepository)
+
+    @Singleton
+    @Provides
+    fun provideModifyFollowMemoUseCase(
+        followRepository: FollowRepository,
+    ): ModifyFollowMemoUseCase =
+        ModifyFollowMemoUseCase(followRepository)
 }

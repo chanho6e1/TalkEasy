@@ -12,6 +12,7 @@ import com.ssafy.talkeasy.core.domain.entity.response.MemberInfo
 import com.ssafy.talkeasy.core.domain.entity.response.MyNotificationItem
 import com.ssafy.talkeasy.core.domain.entity.response.PagingDefault
 import com.ssafy.talkeasy.core.domain.usecase.follow.FollowListUseCase
+import com.ssafy.talkeasy.core.domain.usecase.follow.ModifyFollowMemoUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.NotificationListUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.RequestFollowUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.RequestSaveWardSOSUseCase
@@ -31,6 +32,7 @@ class FollowViewModel @Inject constructor(
     private val followListUseCase: FollowListUseCase,
     private val notificationListUseCase: NotificationListUseCase,
     private val requestFollowUseCase: RequestFollowUseCase,
+    private val modifyFollowMemoUseCase: ModifyFollowMemoUseCase,
     private val requestSaveWardSOSUseCase: RequestSaveWardSOSUseCase,
 ) : ViewModel() {
 
@@ -98,6 +100,18 @@ class FollowViewModel @Inject constructor(
 
     fun setSelectFollow(follow: Follow) {
         _selectFollow.value = follow
+    }
+
+    fun modifyFollowMemo(followId: String, memo: String) = viewModelScope.launch {
+        when (val value = modifyFollowMemoUseCase(followId, memo)) {
+            is Resource.Success<Follow> -> {
+                _selectFollow.value = value.data
+            }
+
+            is Resource.Error -> {
+                Log.e("modifyFollowMemo", "modifyFollowMemo: ${value.errorMessage}")
+            }
+        }
     }
 
     fun setSelectNotification(notificationItem: MyNotificationItem) {

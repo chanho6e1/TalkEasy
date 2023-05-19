@@ -15,8 +15,13 @@ class FollowRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun requestFollow(
         toUserId: String,
-        body: AddFollowRequest,
+        body: FollowMemoRequest,
     ): DefaultResponse<String> = followApiService.requestFollow(toUserId, body)
+
+    override suspend fun modifyFollowMemo(
+        followId: String,
+        body: FollowMemoRequest,
+    ): DefaultResponse<FollowResponse> = followApiService.modifyFollowMemo(followId, body)
 
     override suspend fun requestNotificationList(): DefaultResponse<List<NotificationResponse>> =
         followApiService.requestNotificationList()

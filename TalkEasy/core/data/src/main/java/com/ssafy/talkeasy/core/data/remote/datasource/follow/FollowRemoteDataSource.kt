@@ -8,6 +8,10 @@ interface FollowRemoteDataSource {
 
     suspend fun requestFollowList(): PagingDefaultResponse<List<FollowResponse>>
 
+    suspend fun requestFollow(toUserId: String, body: FollowMemoRequest): DefaultResponse<String>
+
+    suspend fun modifyFollowMemo(followId: String, body: FollowMemoRequest): DefaultResponse<FollowResponse>
+
     suspend fun requestNotificationList(): DefaultResponse<List<NotificationResponse>>
 
     suspend fun requestFollow(toUserId: String, body: AddFollowRequest): DefaultResponse<String>

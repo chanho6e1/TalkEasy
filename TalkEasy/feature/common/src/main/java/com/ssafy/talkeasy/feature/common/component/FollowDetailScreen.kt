@@ -68,10 +68,8 @@ fun FollowDetailScreen(
             WideSeedButton(
                 modifier = modifier.padding(horizontal = 34.dp, vertical = 10.dp),
                 onClicked = {
-                    addFollowDetailInfo?.let {
-                        buttonClickListener(detailContent)
-                        popBackStack()
-                    }
+                    buttonClickListener(detailContent)
+                    popBackStack()
                 },
                 text = buttonContent,
                 textStyle = typography.bodyLarge
