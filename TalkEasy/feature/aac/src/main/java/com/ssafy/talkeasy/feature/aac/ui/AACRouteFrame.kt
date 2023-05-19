@@ -83,6 +83,7 @@ fun AACRouteFrame(
     val selectedCard by aacViewModel.selectedCard.collectAsState()
     val memberInfo by followViewModel.memberInfo.collectAsState()
     val notificationList by followViewModel.notificationList.collectAsState()
+    val followList by followViewModel.followList.collectAsState()
     val isSendSucceed by chatViewModel.isSendSucceed.collectAsState()
 
     SideEffect {
@@ -140,7 +141,16 @@ fun AACRouteFrame(
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             SOSRequestFrame(
                 closeSOSRequestDialog = { setShowSOSRequestDialog(false) },
-                showSOSDialog = { setShowSOSDialog(true) }
+                showSOSDialog = {
+                    setShowSOSDialog(true)
+                    if (followList?.isNotEmpty() == true && memberInfo != null) {
+                        chatViewModel.requestFCMSOS(
+                            toUserId = followList!![0].userId,
+                            fromUserId = memberInfo!!.userId,
+                            roomId = followList!![0].roomId
+                        )
+                    }
+                }
             )
         }
     }
