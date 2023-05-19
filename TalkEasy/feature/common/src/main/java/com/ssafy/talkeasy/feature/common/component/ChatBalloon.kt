@@ -141,7 +141,7 @@ fun ChatBalloon(chatDirection: ChatDirection, chat: Chat, isLastMessage: Boolean
             Box(
                 modifier = Modifier
                     .padding(horizontal = 18.dp, vertical = 10.dp)
-                    .widthIn(max = 214.dp),
+                    .widthIn(max = 200.dp),
                 contentAlignment = Alignment.Center
             ) {
                 when (chat.type) {
