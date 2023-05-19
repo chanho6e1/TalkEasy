@@ -78,7 +78,7 @@ fun MyNotificationListContent(
                 .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            itemsIndexed(items = notificationList) { index, item ->
+            itemsIndexed(items = notificationList.reversed()) { index, item ->
                 val isLastItem = index == notificationList.lastIndex
 
                 MyNotificationListItem(
