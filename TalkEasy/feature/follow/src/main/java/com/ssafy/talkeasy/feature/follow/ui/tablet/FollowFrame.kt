@@ -58,6 +58,7 @@ fun FollowFrame(
 
     if (isShowManageFollowDialog) {
         ManageFollowFrame {
+            followViewModel.requestFollowList()
             setIsShowManageFollowDialog(false)
         }
     }
