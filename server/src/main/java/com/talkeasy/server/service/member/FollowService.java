@@ -41,12 +41,12 @@ public class FollowService {
     //    public String follow(OAuth2UserImpl myId, String toUserId, FollowRequestDto followRequestDto) throws IOException {
     public String follow(String myId, String toUserId, FollowRequestDto followRequestDto) throws IOException {
 //
-        Follow follow1 = followDetail(myId, toUserId); // 보호자가 피보호자를 친구추가
-        Follow follow2 = followDetail(toUserId, myId);
+        Follow follow1 = followDetail(myId, toUserId, followRequestDto.getMemo()); // 보호자가 피보호자를 친구추가
+        Follow follow2 = followDetail(toUserId, myId, followRequestDto.getMemo());
         chatService.createRoom(myId, toUserId);
 
         /* memo 저장*/
-        saveMemo(follow1, followRequestDto);
+//        saveMemo(follow1, followRequestDto);
 
         return "팔로우 성공";
     }
@@ -58,7 +58,7 @@ public class FollowService {
         }
     }
 
-    public Follow followDetail(String myId, String toUserId) {
+    public Follow followDetail(String myId, String toUserId, String memo) {
 
         Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("id").is(myId)), Member.class)).orElseThrow(() -> new ResourceNotFoundException("member", "userId", myId));
 
@@ -73,10 +73,10 @@ public class FollowService {
 
         if (member.getRole() == 1) { // 내가 피보호자
             //보호자
-            toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo("").mainStatus(false).locationStatus(false).nickName("").build();
+            toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo(memo).mainStatus(false).locationStatus(false).nickName("").build();
         } else {
             //비보호자
-            toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo("").mainStatus(false).locationStatus(true).nickName("").build();
+            toFollow = Follow.builder().fromUserId(myId).toUserId(toUserId).memo(memo).mainStatus(false).locationStatus(true).nickName("").build();
         }
 
         return mongoTemplate.insert(toFollow);
