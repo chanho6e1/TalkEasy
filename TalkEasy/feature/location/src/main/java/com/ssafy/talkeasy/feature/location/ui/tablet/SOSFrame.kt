@@ -39,6 +39,7 @@ import com.ssafy.talkeasy.feature.common.ui.theme.delta
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_error
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_errorContainer
+import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_outline
 import com.ssafy.talkeasy.feature.common.ui.theme.shapes
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold36
 import com.ssafy.talkeasy.feature.common.ui.theme.textStyleBold90
@@ -95,7 +96,8 @@ fun SOSRequestFrame(closeSOSRequestDialog: () -> Unit, showSOSDialog: () -> Unit
                 }
 
                 Text(
-                    text = stringResource(R.string.content_request_sos),
+                    // text = stringResource(R.string.content_request_sos),
+                    text = "카운트 다운이 끝나면\n주 보호자에게 긴급 도움 요청 메세지가 전송됩니다.",
                     style = typography.titleMedium,
                     textAlign = TextAlign.Center
                 )
@@ -135,12 +137,12 @@ fun SOSFrame(quitSOSListener: () -> Unit) {
     Dialog(onDismissRequest = quitSOSListener) {
         Box(
             modifier = Modifier
-                .size(width = 780.dp, height = 600.dp)
+                .size(width = 800.dp, height = 650.dp)
                 .background(color = md_theme_light_background, shape = shapes.medium)
         ) {
             Column(
                 modifier = Modifier.align(Alignment.Center),
-                verticalArrangement = Arrangement.spacedBy(30.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 TopBar()
@@ -161,8 +163,17 @@ fun SOSFrame(quitSOSListener: () -> Unit) {
                 }
 
                 Text(
-                    text = stringResource(R.string.content_sos),
+                    // text = stringResource(R.string.content_sos),
+                    text = "주 보호자에게 긴급 도움 요청\n메세지가 전송되었습니다.",
                     style = typography.titleMedium,
+                    textAlign = TextAlign.Center
+                )
+
+                Text(
+                    // text = stringResource(R.string.content_sos),
+                    text = "\n주 보호자 미 설정 시\n친구 목록의 가장 첫 번째 보호자에게 메세지가 전송됩니다.",
+                    color = md_theme_light_outline,
+                    style = typography.bodyLarge,
                     textAlign = TextAlign.Center
                 )
 
@@ -178,7 +189,8 @@ fun SOSFrame(quitSOSListener: () -> Unit) {
                     onClick = quitSOSListener
                 ) {
                     Text(
-                        text = stringResource(R.string.content_quit_sos),
+                        // text = stringResource(R.string.content_quit_sos),
+                        text = "확인",
                         style = textStyleNormal28,
                         textAlign = TextAlign.Center
                     )
