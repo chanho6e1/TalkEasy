@@ -92,7 +92,7 @@ internal fun FollowListRoute(
     }
 
     LaunchedEffect(key1 = notificationList, key2 = isClicked) {
-        if (notificationList?.isNotEmpty() == true && isClicked) {
+        if (notificationList != null && isClicked) {
             notificationListLoadFinished()
         }
     }
@@ -167,10 +167,11 @@ fun FollowListHeader(
         ) { result ->
             val resultScan = IntentIntegrator.parseActivityResult(result.resultCode, result.data)
             resultScan?.let {
-                val addMemberDetailInfo =
-                    Gson().fromJson(it.contents, AddFollowDetailInfo::class.java)
-                addScanResult(addMemberDetailInfo)
-                onClickedAddFollow()
+                Gson().fromJson(it.contents, AddFollowDetailInfo::class.java)
+                    ?.let { addMemberDetailInfo ->
+                        addScanResult(addMemberDetailInfo)
+                        onClickedAddFollow()
+                    }
             }
         }
 
