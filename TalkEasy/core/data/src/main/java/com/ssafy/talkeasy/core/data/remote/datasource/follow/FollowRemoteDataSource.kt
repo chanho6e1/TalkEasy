@@ -12,7 +12,7 @@ interface FollowRemoteDataSource {
 
     suspend fun modifyFollowMemo(
         followId: String,
-        body: FollowMemoRequest
+        body: FollowMemoRequest,
     ): DefaultResponse<FollowResponse>
 
     suspend fun requestNotificationList(): DefaultResponse<List<NotificationResponse>>

@@ -38,7 +38,7 @@ class FirebaseMessagingChatService
             OnCompleteListener { task ->
                 if (!task.isSuccessful) {
                     Log.w(
-                        "FirebaseMessagingService",
+                        "TAG",
                         "Fetching FCM registration token failed",
                         task.exception
                     )

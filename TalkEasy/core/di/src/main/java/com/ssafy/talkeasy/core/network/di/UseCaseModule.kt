@@ -20,8 +20,8 @@ import com.ssafy.talkeasy.core.domain.usecase.chat.SendChatMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.StopReceiveMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.fcm.RegisterFCMTokenUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.FollowListUseCase
-import com.ssafy.talkeasy.core.domain.usecase.follow.NotificationListUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.ModifyFollowMemoUseCase
+import com.ssafy.talkeasy.core.domain.usecase.follow.NotificationListUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.RequestFollowUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.RequestSaveWardSOSUseCase
 import com.ssafy.talkeasy.core.domain.usecase.member.MemberInfoUseCase
