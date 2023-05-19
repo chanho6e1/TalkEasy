@@ -240,41 +240,42 @@ fun SOS(chatDirection: ChatDirection, message: String) {
 
         Text(style = typography.bodyMedium, text = message)
 
-        when (chatDirection) {
-            ChatDirection.PARTNER -> {
-                TextButton(
-                    shape = shapes.extraSmall,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = md_theme_light_error,
-                        contentColor = md_theme_light_onError
-                    ),
-                    contentPadding = PaddingValues(horizontal = 62.dp, vertical = 8.dp),
-                    onClick = { }
-                ) {
-                    Text(
-                        style = typography.labelMedium,
-                        text = stringResource(R.string.content_button_browse_location)
-                    )
-                }
-            }
-
-            ChatDirection.ME -> {
-                TextButton(
-                    modifier = Modifier.height(0.dp),
-                    shape = shapes.extraSmall,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = md_theme_light_error,
-                        contentColor = md_theme_light_onError
-                    ),
-                    contentPadding = PaddingValues(horizontal = 62.dp, vertical = 8.dp),
-                    onClick = { }
-                ) {
-                    Text(
-                        style = typography.labelMedium,
-                        text = stringResource(R.string.content_button_browse_location)
-                    )
-                }
-            }
+        // when (chatDirection) {
+        // ChatDirection.PARTNER -> {
+        //     TextButton(
+        //         shape = shapes.extraSmall,
+        //         colors = ButtonDefaults.buttonColors(
+        //             containerColor = md_theme_light_error,
+        //             contentColor = md_theme_light_onError
+        //         ),
+        //         contentPadding = PaddingValues(horizontal = 62.dp, vertical = 8.dp),
+        //         onClick = { }
+        //     ) {
+        //         Text(
+        //             style = typography.labelMedium,
+        //             text = stringResource(R.string.content_button_browse_location)
+        //         )
+        //     }
+        // }
+        //
+        // ChatDirection.ME -> {
+        TextButton(
+            modifier = Modifier.height(0.dp),
+            shape = shapes.extraSmall,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = md_theme_light_error,
+                contentColor = md_theme_light_onError
+            ),
+            contentPadding = PaddingValues(horizontal = 62.dp, vertical = 8.dp),
+            enabled = false,
+            onClick = { }
+        ) {
+            Text(
+                style = typography.labelMedium,
+                text = stringResource(R.string.content_button_browse_location)
+            )
         }
     }
 }
+//     }
+// }
