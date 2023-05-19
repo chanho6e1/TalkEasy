@@ -24,10 +24,7 @@ AAC를 활용하여 뇌병변장애를 가진 피보호자와 보호자의 의�
 - AAC(보완 · 대체 의사소통)을 활용한 안드로이드 채팅 앱
 
 ### 아키텍처
-
-![TalkEasy](https://github.com/skaguswl/algorithm/assets/105181946/389761db-d52e-44e3-82f8-eb2c4abbb900)
-
-
+![image](https://github.com/Jiwon-Im/Algorithm/assets/55631620/b4e36a77-f7b9-4e10-838d-d9e7b74e8e4d)
 ## 개발환경
 
 ### 형상 관리
@@ -119,7 +116,11 @@ AAC를 활용하여 뇌병변장애를 가진 피보호자와 보호자의 의�
 
 ---
 
-- 
+- Gradle 7.4
+- JDK 11
+- Java 1.8
+  
+
 
 ## 주요기능
 
