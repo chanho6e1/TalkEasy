@@ -10,6 +10,7 @@ import com.ssafy.talkeasy.core.domain.entity.response.Auth
 import com.ssafy.talkeasy.core.domain.entity.response.Default
 import com.ssafy.talkeasy.core.domain.usecase.auth.JoinUseCase
 import com.ssafy.talkeasy.core.domain.usecase.auth.LoginUseCase
+import com.ssafy.talkeasy.core.domain.usecase.fcm.RegisterFCMTokenUseCase
 import com.ssafy.talkeasy.feature.common.SharedPreferences
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.File
@@ -24,6 +25,7 @@ class AuthViewModel @Inject constructor(
     private val sharedPreferences: SharedPreferences,
     private val logInUseCase: LoginUseCase,
     private val joinUseCase: JoinUseCase,
+    private val fcmTokenUseCase: RegisterFCMTokenUseCase,
 ) : ViewModel() {
 
     private val kakaoAccessToken = MutableStateFlow("")
@@ -55,7 +57,7 @@ class AuthViewModel @Inject constructor(
                     _memberState.value = "MEMBER"
                     sharedPreferences.accessToken = value.data.data.token
                     _name.value = value.data.data.name!!
-                    Log.d("requestLogin", "requestLogin-JWT : ${sharedPreferences.accessToken}")
+                    Log.i("requestLogin", "requestLogin-JWT : ${sharedPreferences.accessToken}")
                 } else if (value.data.status == 201) {
                     // no member
                     _memberState.value = "NOT_MEMBER"
@@ -89,6 +91,18 @@ class AuthViewModel @Inject constructor(
                 is Resource.Error ->
                     Log.e("requestJoin", "requestJoin: ${value.errorMessage}")
             }
+        }
+    }
+
+    fun registerFCMToken() = viewModelScope.launch {
+        if (sharedPreferences.appToken != null) {
+            when (val value = fcmTokenUseCase(sharedPreferences.appToken!!)) {
+                is Resource.Success<Default<String>> -> {}
+                is Resource.Error ->
+                    Log.e("registerFCMToken", "registerFCMToken: ${value.errorMessage}")
+            }
+        } else {
+            Log.e("registerFCMToken", "registerFCMToken: appToken이 없습니다.")
         }
     }
 

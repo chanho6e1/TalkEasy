@@ -3,6 +3,7 @@ package com.ssafy.talkeasy.core.network.di
 import com.ssafy.talkeasy.core.domain.repository.AACRepository
 import com.ssafy.talkeasy.core.domain.repository.AuthRepository
 import com.ssafy.talkeasy.core.domain.repository.ChatRepository
+import com.ssafy.talkeasy.core.domain.repository.FCMRepository
 import com.ssafy.talkeasy.core.domain.repository.FollowRepository
 import com.ssafy.talkeasy.core.domain.repository.MemberRepository
 import com.ssafy.talkeasy.core.domain.repository.RabbitmqRepository
@@ -17,9 +18,12 @@ import com.ssafy.talkeasy.core.domain.usecase.chat.ReadChatMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.ReceiveChatMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.SendChatMessageUseCase
 import com.ssafy.talkeasy.core.domain.usecase.chat.StopReceiveMessageUseCase
+import com.ssafy.talkeasy.core.domain.usecase.fcm.RegisterFCMTokenUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.FollowListUseCase
+import com.ssafy.talkeasy.core.domain.usecase.follow.NotificationListUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.ModifyFollowMemoUseCase
 import com.ssafy.talkeasy.core.domain.usecase.follow.RequestFollowUseCase
+import com.ssafy.talkeasy.core.domain.usecase.follow.RequestSaveWardSOSUseCase
 import com.ssafy.talkeasy.core.domain.usecase.member.MemberInfoUseCase
 import dagger.Module
 import dagger.Provides
@@ -110,6 +114,27 @@ object UseCaseModule {
         rabbitmqRepository: RabbitmqRepository,
     ): DisConnectRabbitmqUseCase =
         DisConnectRabbitmqUseCase(rabbitmqRepository)
+
+    @Singleton
+    @Provides
+    fun provideRegisterFCMTokenUseCase(
+        fcmRepository: FCMRepository,
+    ): RegisterFCMTokenUseCase =
+        RegisterFCMTokenUseCase(fcmRepository)
+
+    @Singleton
+    @Provides
+    fun provideNotificationListUseCase(
+        followRepository: FollowRepository,
+    ): NotificationListUseCase =
+        NotificationListUseCase(followRepository)
+
+    @Singleton
+    @Provides
+    fun provideRequestSaveWardSOS(
+        followRepository: FollowRepository,
+    ): RequestSaveWardSOSUseCase =
+        RequestSaveWardSOSUseCase(followRepository)
 
     @Singleton
     @Provides

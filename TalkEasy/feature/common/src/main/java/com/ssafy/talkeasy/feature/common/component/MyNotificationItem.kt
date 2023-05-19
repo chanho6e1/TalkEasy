@@ -21,7 +21,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ssafy.talkeasy.core.domain.entity.response.MyNotificationItem
-import com.ssafy.talkeasy.core.domain.entity.response.NotificationType
 import com.ssafy.talkeasy.feature.common.R
 import com.ssafy.talkeasy.feature.common.ui.theme.black_squeeze
 import com.ssafy.talkeasy.feature.common.ui.theme.delta
@@ -33,13 +32,13 @@ fun MyNotificationListItem(
     modifier: Modifier = Modifier,
     item: MyNotificationItem,
     isLastItem: Boolean,
-    onItemClicked: () -> Unit = {},
+    onClickedNotificationItem: (MyNotificationItem) -> Unit = {},
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .clickable { onItemClicked() }
+            .clickable { onClickedNotificationItem(item) }
     ) {
         Row(
             modifier = modifier
@@ -49,18 +48,8 @@ fun MyNotificationListItem(
         ) {
             Image(
                 modifier = modifier.size(60.dp),
-                contentDescription = stringResource(
-                    id = when (item.type) {
-                        NotificationType.LOCATION -> R.string.image_siren_circle
-                        else -> R.string.image_location_circle
-                    }
-                ),
-                painter = painterResource(
-                    id = when (item.type) {
-                        NotificationType.LOCATION -> R.drawable.ic_location_circle
-                        else -> R.drawable.ic_siren_circle
-                    }
-                )
+                contentDescription = stringResource(id = R.string.image_location_circle),
+                painter = painterResource(id = R.drawable.ic_siren_circle)
             )
 
             Column(
@@ -77,28 +66,14 @@ fun MyNotificationListItem(
             ) {
                 Text(
                     modifier = Modifier,
-                    text = String.format(
-                        stringResource(
-                            id = when (item.type) {
-                                NotificationType.LOCATION ->
-                                    R.string.content_notification_request_location
-
-                                NotificationType.SOS_REQUEST ->
-                                    R.string.content_notification_request_sos
-
-                                NotificationType.SOS_RESPONSE ->
-                                    R.string.content_notification_response_location
-                            }
-                        ),
-                        item.data
-                    ),
+                    text = item.content,
                     style = typography.bodyLarge
                 )
 
                 Text(
                     modifier = modifier,
                     color = delta,
-                    text = item.time.toTimeString(),
+                    text = item.created_dt.toTimeString(),
                     style = typography.bodyMedium,
                     textAlign = TextAlign.Center
                 )

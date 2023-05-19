@@ -29,8 +29,8 @@ fun NavController.navigateToMyNotificationList(navOptions: NavOptions? = null) {
 fun NavGraphBuilder.followListScreen(
     navController: NavController,
     onClickedAddFollow: () -> Unit,
-    onClickedNotification: () -> Unit,
     onClickedSettings: () -> Unit,
+    notificationListLoadFinished: () -> Unit,
     onSelectedItem: () -> Unit,
 ) {
     composable(route = followListNavigationRoute) { navBackStackEntry ->
@@ -41,9 +41,9 @@ fun NavGraphBuilder.followListScreen(
         FollowListRoute(
             navBackStackEntry = followListEntry,
             onClickedAddFollow = onClickedAddFollow,
-            onClickedNotification = onClickedNotification,
             onClickedSettings = onClickedSettings,
-            onSelectedItem = onSelectedItem
+            onSelectedItem = onSelectedItem,
+            notificationListLoadFinished = notificationListLoadFinished
         )
     }
 }
@@ -60,8 +60,19 @@ fun NavGraphBuilder.addFollowDetailScreen(navController: NavController) {
     }
 }
 
-fun NavGraphBuilder.myNotificationListScreen() {
-    composable(route = myNotificationListNavigationRoute) {
-        MyNotificationListRoute()
+fun NavGraphBuilder.myNotificationListScreen(
+    navController: NavController,
+    onClickedNotificationItem: () -> Unit,
+) {
+    composable(route = myNotificationListNavigationRoute) { navBackStackEntry ->
+        val notificationEntry = remember(navBackStackEntry) {
+            navController.getBackStackEntry(welcomeRouteProtector)
+        }
+
+        MyNotificationListRoute(
+            navBackStackEntry = notificationEntry,
+            onClickedNotificationItem = onClickedNotificationItem,
+            popBackStack = { navController.popBackStack() }
+        )
     }
 }

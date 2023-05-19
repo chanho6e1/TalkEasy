@@ -48,6 +48,7 @@ fun WelcomeRouteWard(
     LaunchedEffect(memberInfo) {
         if (memberInfo != null) {
             isInfoLoadingFinished = true
+            authViewModel.registerFCMToken()
         }
     }
 

@@ -52,6 +52,7 @@ internal fun WelcomeRouteProtector(
     LaunchedEffect(key1 = memberInfo, key2 = followList) {
         if (memberInfo != null && followList != null) {
             isInfoLoadingFinished = true
+            authViewModel.registerFCMToken()
         }
     }
 

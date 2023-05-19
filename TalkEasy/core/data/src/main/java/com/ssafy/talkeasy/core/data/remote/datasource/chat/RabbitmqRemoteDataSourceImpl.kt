@@ -42,9 +42,7 @@ class RabbitmqRemoteDataSourceImpl @Inject constructor(
         connect()
 
         val queueName = "chat.queue"
-        Log.d("TAG", "sendChatMessage: message : $message")
         val messageJson = gson.toJson(message).toByteArray()
-        Log.d("TAG", "sendChatMessage: messageJson : $messageJson")
 
         return try {
             channel.basicPublish("", queueName, null, messageJson)
@@ -63,25 +61,19 @@ class RabbitmqRemoteDataSourceImpl @Inject constructor(
         connect()
         val chatQueueName = "chat.queue.$roomId.$fromUserId"
         val readQueueName = "read.queue.$roomId.$fromUserId"
-        Log.d("TAG", "receiveChatMessage: roomId : $roomId, fromUserId : $fromUserId")
 
         val deliverCallback = DeliverCallback { _, delivery ->
             try {
-                Log.d("TAG", "receiveChatMessage: delivery.body : ${delivery.body}")
                 val messageJson = String(delivery.body, StandardCharsets.UTF_8)
-                Log.d("TAG", "receiveChatMessage: messageJson : $messageJson")
 
                 val key = messageJson.split("\"")
-                Log.d("TAG", "receiveChatMessage: key[1] : ${key[1]}, key : $key")
                 when (key[1]) {
                     "msgId" -> {
                         val message = gson.fromJson(messageJson, ReadResponse::class.java)
-                        Log.d("TAG", "receiveChatMessage: msgId message : $message")
                         callback(message.toDomainModel())
                     }
                     "id" -> {
                         val message = gson.fromJson(messageJson, ChatResponse::class.java)
-                        Log.d("TAG", "receiveChatMessage: id message : $message")
                         callback(message.toDomainModel())
                     }
                     else -> callback("형식이 아닙니다.")
@@ -96,8 +88,6 @@ class RabbitmqRemoteDataSourceImpl @Inject constructor(
                 channel.basicConsume(chatQueueName, true, deliverCallback, CancelCallback { })
             readConsumerTag =
                 channel.basicConsume(readQueueName, true, deliverCallback, CancelCallback { })
-            Log.d("TAG", "receiveChatMessage: chatConsumerTag : $chatConsumerTag")
-            Log.d("TAG", "receiveChatMessage: readConsumerTag : $readConsumerTag")
         } catch (e: Exception) {
             Log.e("Rabbitmq", "Error setting up message consumption", e)
             chatConsumerTag = reconnectAndConsume(chatQueueName, deliverCallback)
@@ -108,9 +98,7 @@ class RabbitmqRemoteDataSourceImpl @Inject constructor(
     override suspend fun readChatMessage(readMessageRequest: ReadMessageRequest): Boolean {
         connect()
         val queueName = "read.queue"
-        Log.d("TAG", "readChatMessage: readMessageRequest : $readMessageRequest")
         val messageJson = gson.toJson(readMessageRequest).toByteArray()
-        Log.d("TAG", "readChatMessage: messageJson : $messageJson")
         return try {
             channel.basicPublish("", queueName, null, messageJson)
             channel.waitForConfirms()

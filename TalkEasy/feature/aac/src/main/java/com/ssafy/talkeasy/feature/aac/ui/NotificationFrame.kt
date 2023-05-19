@@ -2,6 +2,7 @@ package com.ssafy.talkeasy.feature.aac.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -60,15 +61,15 @@ fun NotificationFrame(
             color = md_theme_light_background,
             shape = shapes.medium
         ) {
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 24.dp)
+                    .padding(horizontal = 20.dp, vertical = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.TopStart),
+                        .fillMaxWidth(),
                     text = stringResource(R.string.title_notification),
                     style = textStyleBold22
                 )
@@ -95,7 +96,7 @@ fun NotificationFrame(
                             .padding(10.dp)
                             .fillMaxWidth()
                     ) {
-                        itemsIndexed(items = notifications) { index, notification ->
+                        itemsIndexed(items = notifications.reversed()) { index, notification ->
                             val isLastItem = index == notifications.lastIndex
 
                             MyNotificationListItem(item = notification, isLastItem = isLastItem)

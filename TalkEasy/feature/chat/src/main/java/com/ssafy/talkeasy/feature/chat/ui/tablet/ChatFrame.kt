@@ -1,6 +1,5 @@
 package com.ssafy.talkeasy.feature.chat.ui.tablet
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -87,15 +86,10 @@ fun ConstraintLayoutScope.ChatRoomBox(
         if (chatMode == ChatMode.CHAT && chatPartner != null && memberInfo != null) {
             chatViewModel.receiveChatMessage(chatPartner.roomId, memberInfo.userId)
         }
-        Log.d(
-            "TAG",
-            "ChatRoomBox: receiveChatMessage chatPartner :$chatPartner, memberInfo : $memberInfo"
-        )
 
         // 메시지 구독 취소
         onDispose {
             chatViewModel.stopReceiveMessage()
-            Log.d("TAG", "ChatRoomBox: stopReceiveMessage")
         }
     }
 
@@ -110,10 +104,6 @@ fun ConstraintLayoutScope.ChatRoomBox(
                 readUserId = memberInfo.userId
             )
         }
-        Log.d(
-            "TAG",
-            "ChatRoomBox: chatPartner :$chatPartner, memberInfo : $memberInfo, chats : $chats"
-        )
     }
 
     if (isOpened) {

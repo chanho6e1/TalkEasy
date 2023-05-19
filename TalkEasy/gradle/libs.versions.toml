@@ -102,6 +102,8 @@ google-map-compose = { module = "com.google.maps.android:maps-compose", version.
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics-ktx" }
+firebase-cloud-messaging = { module = "com.google.firebase:firebase-messaging-ktx" }
+firebase-cloud-messaging-directboot = { module = "com.google.firebase:firebase-messaging-directboot" }
 
 kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "kotlinx-coroutines" }
 javax-inject = { module = "javax.inject:javax.inject", version = "1" }

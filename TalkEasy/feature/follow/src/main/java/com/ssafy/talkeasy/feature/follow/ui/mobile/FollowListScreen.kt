@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,6 +29,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +48,7 @@ import com.google.gson.Gson
 import com.google.zxing.integration.android.IntentIntegrator
 import com.ssafy.talkeasy.core.domain.entity.AddFollowDetailInfo
 import com.ssafy.talkeasy.core.domain.entity.response.Follow
+import com.ssafy.talkeasy.feature.common.R.drawable
 import com.ssafy.talkeasy.feature.common.component.NoContentLogoMessage
 import com.ssafy.talkeasy.feature.common.component.Profile
 import com.ssafy.talkeasy.feature.common.ui.theme.cabbage_pont
@@ -52,10 +56,12 @@ import com.ssafy.talkeasy.feature.common.ui.theme.delta
 import com.ssafy.talkeasy.feature.common.ui.theme.md_theme_light_background
 import com.ssafy.talkeasy.feature.common.ui.theme.sunset_orange
 import com.ssafy.talkeasy.feature.common.ui.theme.typography
+import com.ssafy.talkeasy.feature.common.util.ChatMessageManager
 import com.ssafy.talkeasy.feature.common.util.ChatMode
 import com.ssafy.talkeasy.feature.common.util.toTimeString
 import com.ssafy.talkeasy.feature.follow.FollowViewModel
 import com.ssafy.talkeasy.feature.follow.R
+import kotlinx.coroutines.flow.asSharedFlow
 
 @Composable
 internal fun FollowListRoute(
@@ -63,11 +69,33 @@ internal fun FollowListRoute(
     navBackStackEntry: NavBackStackEntry,
     viewModel: FollowViewModel = hiltViewModel(navBackStackEntry),
     onClickedAddFollow: () -> Unit = {},
-    onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
     onSelectedItem: () -> Unit,
+    notificationListLoadFinished: () -> Unit,
 ) {
     val followList by rememberUpdatedState(newValue = viewModel.followList.collectAsState().value)
+    val notificationList by rememberUpdatedState(
+        newValue = viewModel.notificationList.collectAsState().value
+    )
+    val chatMessageFlow = ChatMessageManager.chatMessageFlow.asSharedFlow()
+    val (newAlarm, setNewAlarm) = remember { mutableStateOf(false) }
+    val (isClicked, setIsClicked) = remember { mutableStateOf(false) }
+
+    LaunchedEffect(chatMessageFlow) {
+        chatMessageFlow.collect { chatMessage ->
+            // 채팅 메시지에 대한 처리를 여기서 합니다.
+            viewModel.requestFollowList()
+            if (chatMessage.type == 2) {
+                setNewAlarm(true)
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = notificationList, key2 = isClicked) {
+        if (notificationList?.isNotEmpty() == true && isClicked) {
+            notificationListLoadFinished()
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.requestFollowList()
@@ -77,8 +105,13 @@ internal fun FollowListRoute(
         modifier = modifier,
         addScanResult = viewModel::getAddFollowDetailInfo,
         followList = followList ?: arrayListOf(),
+        newAlarm = newAlarm,
         onClickedAddFollow = onClickedAddFollow,
-        onClickedNotification = onClickedNotification,
+        onClickedNotification = {
+            setNewAlarm(false)
+            viewModel.requestNotificationList()
+            setIsClicked(true)
+        },
         onClickedSettings = onClickedSettings,
         onSelectedItem = { follow ->
             viewModel.setSelectFollow(follow)
@@ -97,14 +130,14 @@ internal fun FollowListScreen(
     onClickedSettings: () -> Unit = {},
     followList: List<Follow> = arrayListOf(),
     onSelectedItem: (Follow) -> Unit = {},
+    newAlarm: Boolean = false,
 ) {
     Column() {
         FollowListHeader(
             modifier = modifier,
+            newAlarm = newAlarm,
+            onClickedAddFollow = onClickedAddFollow,
             addScanResult = addScanResult,
-            onClickedAddFollow = {
-                onClickedAddFollow()
-            },
             onClickedNotification = onClickedNotification,
             onClickedSettings = onClickedSettings
         )
@@ -126,6 +159,7 @@ fun FollowListHeader(
     onClickedNotification: () -> Unit = {},
     onClickedSettings: () -> Unit = {},
     context: Context = LocalContext.current,
+    newAlarm: Boolean = false,
 ) {
     val scanResultLauncher =
         rememberLauncherForActivityResult(
@@ -190,17 +224,18 @@ fun FollowListHeader(
                     )
                 }
 
+                IconButton(modifier = modifier, onClick = onClickedNotification) {
+                    Image(
+                        modifier = Modifier.size(24.dp),
+                        painter = if (newAlarm) {
+                            painterResource(id = drawable.ic_alarm_new)
+                        } else {
+                            painterResource(id = drawable.ic_alarm_default)
+                        },
+                        contentDescription = stringResource(R.string.ic_notification_text)
+                    )
+                }
                 /*
-                            IconButton(modifier = modifier, onClick = onClickedNotification) {
-                                Icon(
-                                    painter = painterResource(R.drawable.ic_notification_off),
-                                    contentDescription = stringResource(
-                                        R.string.ic_notification_text
-                                    ),
-                                    modifier = modifier.size(24.dp)
-                                )
-                            }
-
                             IconButton(modifier = modifier, onClick = onClickedSettings) {
                                 Icon(
                                     painter = painterResource(R.drawable.ic_settings),

@@ -18,6 +18,10 @@ class SharedPreferences(context: Context) {
         get() = prefs.getBoolean("onRight", true)
         set(value) = prefs.edit().putBoolean("onRight", value).apply()
 
+    var appToken: String?
+        get() = prefs.getString("appToken", null)
+        set(value) = prefs.edit().putString("appToken", value).apply()
+
     fun clearPreferences() {
         prefs.edit().clear().apply()
     }

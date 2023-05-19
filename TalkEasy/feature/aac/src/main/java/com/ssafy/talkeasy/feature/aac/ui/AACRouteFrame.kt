@@ -82,6 +82,7 @@ fun AACRouteFrame(
     val generatedSentence by aacViewModel.generatedSentence.collectAsState()
     val selectedCard by aacViewModel.selectedCard.collectAsState()
     val memberInfo by followViewModel.memberInfo.collectAsState()
+    val notificationList by followViewModel.notificationList.collectAsState()
     val isSendSucceed by chatViewModel.isSendSucceed.collectAsState()
 
     SideEffect {
@@ -202,7 +203,10 @@ fun AACRouteFrame(
             marginTop = marginTop,
             marginRight = marginRight,
             showNotificationDialog = { setShowNotificationDialog(true) },
-            showSOSRequestDialog = { setShowSOSRequestDialog(true) }
+            showSOSRequestDialog = {
+                followViewModel.requestSaveWardSOS()
+                setShowSOSRequestDialog(true)
+            }
         )
 
         AACBox(
@@ -219,7 +223,7 @@ fun AACRouteFrame(
 
     if (showNotificationDialog) {
         Box(modifier = Modifier.fillMaxSize()) {
-            NotificationFrame(notifications = listOf()) {
+            NotificationFrame(notifications = notificationList ?: arrayListOf()) {
                 setShowNotificationDialog(false)
             }
         }
