@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="ic_default_profile_text">기본 프로필 이미지</string>
+    <string name="content_select">선택</string>
+    <string name="title_photo_picker">프로필 사진/앨범</string>
+    <string name="content_gallery_select">앨범에서 선택</string>
+    <string name="content_camera_select">사진 촬영으로 선택</string>
+    <string name="content_camera_failed_message">촬영을 실패하였습니다. 다시 시도해주세요.</string>
+    <string name="content_gallery_failed_message">앨범에서 사진 불러오기를 실패했습니다. 다시 시도해주세요.</string>
+    <string name="image_icon_check">체크 아이콘입니다</string>
+    <string name="content_reject_permission">권한 요청이 반려되었습니다.</string>
+
+    <!-- Welcome -->
+    <string name="title_welcome">%s 님\n환영합니다!</string>
+
+    <!-- Profile -->
+    <string name="image_follow_list_profile">프로필 이미지입니다.</string>
+
+    <!--  Header  -->
+    <string name="ic_arrow_back_text">뒤로가기 버튼입니다.</string>
+
+    <!--  NoContentLogoMessage  -->
+    <string name="image_logo">앱 로고입니다</string>
+
+    <!--  MyNotificationItem  -->
+    <string name="image_siren_circle">긴급 도움 요청 아이콘입니다.</string>
+    <string name="image_location_circle">위치정보 열람 요청 아이콘입니다.</string>
+    <string name="content_notification_request_sos">%s님께서 긴급 도움 요청을 하셨습니다.</string>
+    <string name="content_notification_request_location">%s님으로부터 정보 열람 요청이 왔습니다.</string>
+    <string name="content_notification_response_location">%s에 도움 요청 버튼이 눌렸습니다.</string>
+
+    <!--  LocationOpenAnimation  -->
+    <string name="content_location_open_animation">위치정보 열람 요청 중입니다.</string>
+
+    <!-- Chat Balloon -->
+    <string name="content_name_and_nickname">%s (%s)</string>
+    <string name="image_the_person_chat_balloon_head">상대방의 첫번째 채팅 배경</string>
+    <string name="image_request_location">위치 열람 요청 아이콘</string>
+    <string name="image_reject_location">위치 열람 거부 아이콘</string>
+    <string name="image_sos">긴급 도움 요청 아이콘</string>
+    <string name="content_button_browse_location">위치보기</string>
+
+    <!--  Add Follow Detail  -->
+    <string name="title_add_follow">친구등록</string>
+    <string name="content_add_follow_register">등록하기</string>
+    <string name="title_name">이름</string>
+    <string name="title_gender">성별</string>
+    <string name="title_birth_date">생년월일</string>
+    <string name="title_significant">특이사항</string>
+    <string name="content_significant_hint">특이사항을 적어주세요</string>
+    <string name="title_notification">알림</string>
+    <string name="image_notification">알림을 추가하는 아이콘입니다.</string>
+    <string name="content_add_notification">추가하기</string>
+    <string name="content_memo">메모</string>
+</resources>

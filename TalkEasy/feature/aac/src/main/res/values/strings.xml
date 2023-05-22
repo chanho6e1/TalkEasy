@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- AAC Top Bar -->
+    <string name="image_profile_default">기본 프로필 이미지입니다.</string>
+    <string name="image_alarm_default">알림 버튼입니다.</string>
+    <string name="image_setting">환경설정 버튼입니다.</string>
+    <string name="content_chat_mode_tts">TTS(음성 출력) 모드</string>
+
+    <!-- AAC Chat Box -->
+    <string name="image_preview">미리보기 버튼입니다</string>
+    <string name="image_send_chat">채팅 전송 버튼입니다</string>
+
+    <!-- AAC Category -->
+    <string-array name="aac_category_index">
+        <item>food</item>
+        <item>designation</item>
+        <item>emotion</item>
+        <item>sos</item>
+        <item>health</item>
+        <item>life</item>
+        <item>traffic</item>
+        <item>custom</item>
+    </string-array>
+    <string-array name="aac_category_word">
+        <item>음식</item>
+        <item>인물/호칭</item>
+        <item>기분</item>
+        <item>긴급/피해상황</item>
+        <item>병원/건강</item>
+        <item>생활</item>
+        <item>교통</item>
+        <item>사용자 지정</item>
+    </string-array>
+    <string-array name="aac_category_content_description">
+        <item> 카테고리 버튼입니다</item>
+        <item>인물/호칭 카테고리 버튼입니다</item>
+        <item>기분 카테고리 버튼입니다</item>
+        <item>긴급/피해상황 카테고리 버튼입니다</item>
+        <item>병원/건강 카테고리 버튼입니다</item>
+        <item>생활 카테고리 버튼입니다</item>
+        <item>교통 카테고리 버튼입니다</item>
+        <item>사용자 지정 카테고리 버튼입니다</item>
+    </string-array>
+
+    <!-- AAC Paging -->
+    <string name="image_backward_hard">맨 처음 페이지로 이동하는 버튼</string>
+    <string name="image_backward_soft">이전 페이지로 이동하는 버튼</string>
+    <string name="image_forward_soft">다음 페이지로 이동하는 버튼</string>
+    <string name="image_forward_hard">맨 마지막 페이지로 이동하는 버튼</string>
+
+    <!-- AAC Back To Category Button -->
+    <string name="image_back_to_category_select">카테고리 선택 화면으로 이동하는 버튼</string>
+    <string name="title_back_to_category_select">카테고리 선택으로</string>
+    <string name="content_back_to_category_select">현재 카테고리: %s</string>
+
+    <!-- AAC Snack Bar -->
+    <string name="content_browse_location">%s님이 위치 정보를 열람중입니다. 중단 버튼을 누르시면 열람이 즉시 중단됩니다.</string>
+    <string name="content_stop_browse">중단</string>
+    <string name="content_request_browse"> 님이 위치 정보 열람을 요청합니다</string>
+    <string name="content_reject">거절</string>
+    <string name="content_approve_with_time">수락(%d)</string>
+    <string name="title_notification">알림함</string>
+    <string name="content_no_notification">도착한 알림이 없습니다</string>
+    <string name="image_show_custom_word_dialog_button">사용자 정의 단어를 관리하는 다이얼로그를 열어주는 아이콘</string>
+    <string name="content_show_custom_word_dialog_button">사용자 정의 단어 추가</string>
+</resources>

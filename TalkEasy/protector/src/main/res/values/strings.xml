@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">TalkEasy+</string>
+    <string name="content_not_connected">인터넷 연결이 불안정합니다.</string>
+</resources>

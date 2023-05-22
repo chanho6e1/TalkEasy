@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Chat Frame -->
+    <string name="image_app_logo">앱 로고 아이콘</string>
+    <string name="content_no_chat">채팅 내역이 없습니다</string>
+    <string name="image_open_chat_frame">채팅창 여는 버튼 아이콘</string>
+    <string name="content_open_chat_room">채\n팅\n창\n열\n기</string>
+    <string name="image_profile_default">기본 프로필 이미지입니다.</string>
+    <string name="content_chat_mode_tts">TTS(음성 출력) 모드</string>
+    <string name="content_no_content_tts">TTS(음성 출력) 모드입니다</string>
+
+    <!--  ChatScreen  -->
+    <string name="content_info_detail">정보 상세보기</string>
+    <string name="image_back_icon">뒤로가기 버튼입니다.</string>
+    <string name="image_more_info">더보기 버튼입니다.</string>
+    <string name="content_location_open_request">위치 정보 열람 요청</string>
+    <string name="content_chat_hint">채팅을 입력해주세요.</string>
+    <string name="image_send_chat">채팅 전송 버튼입니다</string>
+    <string name="title_show_chat_partner_detail">정보 상세보기</string>
+    <string name="content_save">저장하기</string>
+</resources>
