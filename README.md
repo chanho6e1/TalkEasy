@@ -63,54 +63,54 @@ AAC를 활용하여 뇌병변장애를 가진 피보호자와 보호자의 의�
 
 ---
 
-- **Figma**
+- Figma
 
 ### IDE
 
 ---
 
-- **IntelliJ IDEA 2022.3.2**
-- **PyCharm** **2022.1.4**
-- **안드로이드 스튜디오 Flamingo**
+- IntelliJ IDEA 2022.3.2
+- PyCharm 2022.1.4
+- 안드로이드 스튜디오 Flamingo
 
 ### DATABASE
 
 ---
 
-- **MongoDB Community Server**
-    - **windows 6.0.6**
-- **Mongo db Compass 1.36.2**
-- **PostgreSQL 15.2**
-- **DBeaver 23.0.3**
+- MongoDB Community Server
+    - windows 6.0.6
+- Mongo db Compass 1.36.2
+- PostgreSQL 15.2
+- DBeaver 23.0.3
 
 ### SERVER
 
 ---
 
-- **AWS EC2**
-    - **UBUNTU 20.04 LTS**
-    - **MobaXterm_Personal_22.3.exe**
-    - **DOCKER 20.10.23**
-    - **NGINX 1.18.0**
-    - **S3**
+- AWS EC2
+    - UBUNTU 20.04 LTS
+    - MobaXterm_Personal_22.3.exe
+    - DOCKER 20.10.23
+    - NGINX 1.18.0
+    - S3
 
 ### 협업툴
 
 ---
 
-- **SWAGGER 2.9.2**
-- **POSTMAN for Windows Version 10.9.4**
+- SWAGGER 2.9.2
+- POSTMAN for Windows Version 10.9.4
 
 ### BACK-END
 
 ---
 
-- **Java Open-JDK azul 11**
-- **SpringBoot Gradle 2.7.7**
-    - **Spring Data JPA**
-    - **Lombok**
-    - **Swagger 2.9.2**
-- **Python 3.10.9**
+- Java Open-JDK azul 11
+- SpringBoot Gradle 2.7.7
+    - Spring Data JPA
+    - Lombok
+    - Swagger 2.9.2
+- Python 3.10.9
 
 ### Android
 
