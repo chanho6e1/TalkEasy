@@ -119,7 +119,6 @@ public class ChatService {
 
         String newMsg = chat.getMsg();
 
-        Alarm alarm = Alarm.builder().chatId(chat.getId()).readStatus(false).build();
 
         /* toUser 와 fromUser가 해당 채팅방에 속해있는지 확인 */
 
@@ -151,7 +150,6 @@ public class ChatService {
                 2. 타입
                 에 따라 담는 메시지가 달라짐
                 */
-        setAlarmContent(chat, alarm);
 
         chat.setMsg(newMsg);
         chat.setCreated_dt(LocalDateTime.now().toString());
@@ -163,14 +161,24 @@ public class ChatService {
         return chat;
     }
 
+    public void setAlarm(ChatRoomDetail chatRoomDetail) {
+        Alarm alarm = Alarm.builder().chatId(chatRoomDetail.getId()).readStatus(false).build();
+
+        setAlarmContent(chatRoomDetail, alarm);
+
+    }
+
+
 
     private Alarm createAlarm(ChatRoomDetail chat, String content, String fromName, int type, String userId) {
         Alarm alarm = Alarm.builder()
+                .roomId(chat.getRoomId())
                 .chatId(chat.getId())
                 .readStatus(false)
                 .userId(userId)
                 .type(type)
                 .content(content)
+                .createdTime(LocalDateTime.now().toString())
                 .fromName(fromName)
                 .build();
         saveAlarm(alarm);
@@ -196,14 +204,14 @@ public class ChatService {
         if (chat.getType() == 2) {
             alarm.setType(2);
             /*00님이 긴급 도움 요청을 하셨습니다*/
-            createAlarm(chat, toMember.getName() + "님께서 긴급 도움 요청을 하셨습니다", toMember.getName(), 2, toMember.getId());
+            createAlarm(chat, fromMember.getName() + "님께서 긴급 도움 요청을 하셨습니다", fromMember.getName(), 2, toMember.getId());
 //            createAlarm(chat, fromMember.getName()+"이 긴급 도움 요청을 하셨습니다", fromMember.getName(), 2, toMember.getId());
         }
     }
 
-    public String saveAlarm(Alarm alarm) {
+    public Alarm saveAlarm(Alarm alarm) {
         Alarm alarmDomain = mongoTemplate.insert(alarm);
-        return alarmDomain.getId();
+        return alarmDomain;
     }
 
 
@@ -235,7 +243,9 @@ public class ChatService {
         /* FCM 알림 - 안드로이드 FCM 연결 시, 주석 풀 것. */
         Member member = mongoTemplate.findOne(Query.query(Criteria.where("id").is(chat.getFromUserId())), Member.class);
         UserAppToken userAppToken = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("userId").is(chat.getToUserId())), UserAppToken.class)).orElse(null);
+
         /*gson 형식의 스트링 바디를 보내는 경우*/
+
         if (userAppToken != null)
             firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), new MessageDto(chat, member.getName())); // String targetToken, String title, String body
         /*기존 방식*/
@@ -255,8 +265,8 @@ public class ChatService {
         String routingKey = String.format("room.%s.%s", chat.getRoomId(), toUserId);
 
         Message msg = MessageBuilder.withBody(gson.toJson(chat).getBytes()).build();
-//        rabbitTemplate.send("chat.exchange", routingKey, msg);
-        rabbitTemplate.convertAndSend("chat.exchange", routingKey, msg);
+        rabbitTemplate.send("chat.exchange", routingKey, msg);
+//        rabbitTemplate.convertAndSend("chat.exchange", routingKey, msg);
     }
 
 
@@ -291,35 +301,35 @@ public class ChatService {
     }
 
 
-    public PagedResponse<ChatRoomListDto> getChatRoomList(String userId) {
-        List<ChatRoomListDto> chatRoomListDtoList = new ArrayList<>();
-
-        List<LastChat> lastChatList = getLastChatList(userId);
-        lastChatList.sort((c1, c2) -> c2.getCreated_dt().compareTo(c1.getCreated_dt())); // 최신순으로 정렬
-
-        for (LastChat lastChat : lastChatList) {
-            String otherUserId = lastChat.getFromUserId().equals(userId) ? lastChat.getToUserId() : lastChat.getFromUserId();
-            Member member = getMemberById(otherUserId);
-
-            if (member != null) {
-                ChatRoomListDto chatRoomListDto = new ChatRoomListDto(lastChat);
-                chatRoomListDto.setProfile(member.getImageUrl());
-                chatRoomListDto.setName(member.getName());
-
-                QueueInformation queueInformation = getQueueInfo(lastChat.getRoomId(), userId);
-                if (queueInformation != null) {
-                    log.info("queueInfo cnt : {}", queueInformation.getMessageCount());
-                    chatRoomListDto.setNoReadCnt(queueInformation.getMessageCount());
-                } else {
-                    log.warn("queueInformation is null");
-                }
-
-                chatRoomListDtoList.add(chatRoomListDto);
-            }
-        }
-
-        return new PagedResponse(HttpStatus.OK, chatRoomListDtoList, 1);
-    }
+//    public PagedResponse<ChatRoomListDto> getChatRoomList(String userId) {
+//        List<ChatRoomListDto> chatRoomListDtoList = new ArrayList<>();
+//
+//        List<LastChat> lastChatList = getLastChatList(userId);
+//        lastChatList.sort((c1, c2) -> c2.getCreated_dt().compareTo(c1.getCreated_dt())); // 최신순으로 정렬
+//
+//        for (LastChat lastChat : lastChatList) {
+//            String otherUserId = lastChat.getFromUserId().equals(userId) ? lastChat.getToUserId() : lastChat.getFromUserId();
+//            Member member = getMemberById(otherUserId);
+//
+//            if (member != null) {
+//                ChatRoomListDto chatRoomListDto = new ChatRoomListDto(lastChat);
+//                chatRoomListDto.setProfile(member.getImageUrl());
+//                chatRoomListDto.setName(member.getName());
+//
+//                QueueInformation queueInformation = getQueueInfo(lastChat.getRoomId(), userId);
+//                if (queueInformation != null) {
+//                    log.info("queueInfo cnt : {}", queueInformation.getMessageCount());
+//                    chatRoomListDto.setNoReadCnt(queueInformation.getMessageCount());
+//                } else {
+//                    log.warn("queueInformation is null");
+//                }
+//
+//                chatRoomListDtoList.add(chatRoomListDto);
+//            }
+//        }
+//
+//        return new PagedResponse(HttpStatus.OK, chatRoomListDtoList, 1);
+//    }
 
 
     public Member getMemberById(String id) {

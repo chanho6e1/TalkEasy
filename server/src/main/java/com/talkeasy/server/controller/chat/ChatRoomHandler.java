@@ -45,10 +45,14 @@ public class ChatRoomHandler {
         String roomId = chatService.saveChat(chat);
         chat.setRoomId(roomId);
 
+        //sos 알람 저장
+        chatService.setAlarm(chat);
+
+
         chatService.doChat(chat);
 
     }
-
+//
 
     @RabbitListener(queues = "read.queue")
     public void readMessage(Message message) {

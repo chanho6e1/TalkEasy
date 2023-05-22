@@ -3,11 +3,14 @@ package com.talkeasy.server.service.alarm;
 import com.talkeasy.server.common.PagedResponse;
 import com.talkeasy.server.common.exception.ArgumentMismatchException;
 import com.talkeasy.server.domain.alarm.Alarm;
+import com.talkeasy.server.domain.app.UserAppToken;
 import com.talkeasy.server.domain.member.Member;
 import com.talkeasy.server.dto.alarm.RequestSosAlarmDto;
 import com.talkeasy.server.dto.alarm.ResponseProtectorAlarmDto;
 import com.talkeasy.server.dto.alarm.ResponseWardAlarmDto;
+import com.talkeasy.server.dto.chat.MessageDto;
 import com.talkeasy.server.service.chat.ChatService;
+import com.talkeasy.server.service.firebase.FirebaseCloudMessageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -16,8 +19,10 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -27,11 +32,12 @@ public class AlarmService {
 
     private final MongoTemplate mongoTemplate;
     private final ChatService chatService;
+    private final FirebaseCloudMessageService firebaseCloudMessageService;
 
     // 보호자용 알람 전체 조회
     public PagedResponse<?> getAlarms(Member member) {
 
-        LocalDateTime oneWeekAgo = LocalDateTime.now().minusWeeks(1);
+        String oneWeekAgo = LocalDateTime.now().minusWeeks(1).toString();
 
         List<Alarm> alarms = mongoTemplate.find(Query.query(Criteria.where("userId").is(member.getId())
                 .and("createdTime").gte(oneWeekAgo)
@@ -67,22 +73,35 @@ public class AlarmService {
         }
     }
 
-    public String postAlarmBySOS(RequestSosAlarmDto requestSosAlarmDto, Member member) {
+    public String postAlarmBySOS(RequestSosAlarmDto requestSosAlarmDto, Member member) throws IOException {
 
         Alarm alarm = Alarm.builder()
+                .roomId("")
+                .chatId("")
                 .readStatus(false)
-                .userId("645307321511deecd5c5441a")
+                .userId(member.getId())
                 .content(requestSosAlarmDto.getTime() + "에 도움 요청 버튼이 눌렸습니다.")
-                .fromName("ㅇㄹㅇ")
+                .fromName(member.getName())
+                .createdTime(LocalDateTime.now().toString())
                 .build();
-//                Alarm alarm = Alarm.builder()
-//                .readStatus(false)
-//                .userId(member.getId())
-//                .content(requestSosAlarmDto.getTime() + "에 도움 요청 버튼이 눌렸습니다.")
-//                .fromName(member.getName())
-//                .build();
 
-        return chatService.saveAlarm(alarm);
+        Alarm alarm1 =  chatService.saveAlarm(alarm);
+
+        sendFCM(member, alarm1);
+
+        return alarm1.getId();
 
     }
+
+    //다 된건가...?
+    public void sendFCM(Member member, Alarm alarm) throws IOException {
+
+        UserAppToken userAppToken = Optional.ofNullable(mongoTemplate.findOne(Query.query(Criteria.where("userId").is(alarm.getUserId())), UserAppToken.class)).orElse(null);
+
+        /*gson 형식의 스트링 바디를 보내는 경우*/
+
+        if (userAppToken != null)
+            firebaseCloudMessageService.sendMessageTo(userAppToken.getAppToken(), member.getName(), new MessageDto(alarm, member.getName())); // String targetToken, String title, String body
+    }
+
 }

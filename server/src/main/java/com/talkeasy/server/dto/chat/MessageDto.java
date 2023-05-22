@@ -1,6 +1,7 @@
 package com.talkeasy.server.dto.chat;
 
 import com.querydsl.codegen.Serializer;
+import com.talkeasy.server.domain.alarm.Alarm;
 import com.talkeasy.server.domain.chat.ChatRoomDetail;
 import lombok.Data;
 import lombok.Getter;
@@ -30,6 +31,18 @@ public class MessageDto{
         this.created_dt = chatRoomDetail.getCreated_dt();
         this.type = chatRoomDetail.getType();
         this.status = chatRoomDetail.getStatus();
+        this.fromUserName = name;
+    }
+    public MessageDto(Alarm alarm, String name){
+        this.msgId = alarm.getId();
+        this.roomId  = alarm.getRoomId();
+        this.toUserId = alarm.getUserId();
+        this.fromUserId = alarm.getUserId();
+        this.msg = alarm.getContent();
+        this.created_dt = alarm.getCreatedTime();
+        this.type = 2;
+        this.status = 2;
+//        this.status = 1;
         this.fromUserName = name;
     }
 
